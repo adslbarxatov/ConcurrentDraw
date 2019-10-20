@@ -1,0 +1,16 @@
+ConcurrentDraw changes log
+
+Version 1.2 (first publication):
+• Supports getting FFT data from specified audio output using BASS library;
+• Supports getting list of supported devices;
+• Supports drawing static and moving spectrograms based on FFT data;
+• Supports adjustable beats detection (frequencies range and amplitude threshold);
+• Supports 4 palettes for spectrograms;
+• Supports holding of settings for spectrogram palettes, window size and
+  position, specified output device, beats detection metrics.
+
+Version 1.3:
+• Generic code improvements;
+• Added support for 'always on top' flag;
+• Added support for adjustable FFT scale multiplier (spectrogram contrast);
+• Added histogram mode up to 22050 Hz.

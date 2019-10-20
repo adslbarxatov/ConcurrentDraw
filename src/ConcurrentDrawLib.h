@@ -1,7 +1,6 @@
 /////////////////////////////////////////////////////
 // Режим работы
 //#define BASSTEST
-//#define EXETEST
 //#define SD_DOUBLE_WIDTH
 
 /////////////////////////////////////////////////////
@@ -33,10 +32,15 @@
 
 /////////////////////////////////////////////////////
 // Константы
+#define BASS_VERSION				0x02040E00
+#define CD_VERSION					1,3,0,0
+#define CD_VERSION2					"1.3.0.0"
+#define CD_PRODUCT					"ConcurrentDraw visualization tool's BASS adapter"
+#define CD_COMPANY					"RD AAOW"
+
+
 #define MAX_RECORD_DEVICES			10
 #define MAX_DEVICE_NAME_LENGTH		128
-
-#define BASS_VERSION				0x02040E00
 
 #define FFT_VALUES_COUNT			1024
 #define FFT_MODE					BASS_DATA_FFT2048
@@ -44,20 +48,23 @@
 #define MINFRAMEWIDTH				128
 #define MAXFRAMEWIDTH				2048
 #define MINFRAMEHEIGHT				128
-#define MAXFRAMEHEIGHT				FFT_VALUES_COUNT
-
 #define CD_BMPINFO_COLORS_COUNT		256
+#define MAXFRAMEHEIGHT				CD_BMPINFO_COLORS_COUNT	// до 11025 Гц
+#define HISTOGRAM_FFT_VALUES_COUNT	512						// до 22050 Гц
 
 #define PEAK_EVALUATION_LOW_EDGE	0
 #define PEAK_EVALUATION_HIGH_EDGE	10
 #define PEAK_EVALUATION_LOW_LEVEL	0xF0
+#define CD_DEFAULT_FFT_SCALE_MULT	30
+#define CD_MIN_FFT_SCALE_MULT		10
+#define CD_MAX_FFT_SCALE_MULT		100
 
-#define NAMES_DELIMITER				'\x1'
-#define NAMES_DELIMITER2			"\x1"
+#define NAMES_DELIMITER_C			'\x1'
+#define NAMES_DELIMITER_S			"\x1"
 
 /////////////////////////////////////////////////////
 // Пререквизиты таймера
-#define SD_FFT_SCALE				765.0f		// 255 * 3, для масштабирования значения амплитуды
+//#define SD_FFT_SCALE				765.0f		// 255 * 3, для масштабирования значения амплитуды
 #ifdef SD_DOUBLE_WIDTH
 	#define SD_STEP 2							// Ширина шага спектрограммы
 #else
@@ -106,7 +113,7 @@ CD_API(void) DestroySoundStreamEx ();
 
 // Функция инициализирует спектрограмму
 CD_API(sint) InitializeSpectrogramEx (uint FrameWidth, uint FrameHeight, 
-	uchar PaletteNumber, uchar MoveThrough);
+	uchar PaletteNumber, uchar SpectrogramMode);
 
 // Функция удаляет активную спектрограмму
 CD_API(void) DestroySpectrogramEx ();
@@ -118,13 +125,20 @@ CD_API(HBITMAP) GetSpectrogramFrameEx ();
 CD_API(uchar) GetCurrentPeakEx ();
 
 // Функция устанавливает метрики определения пикового значения
-CD_API(void) SetPeakEvaluationParametersEx (uchar LowEdge, uchar HighEdge, uchar LowLevel);
+CD_API(void) SetPeakEvaluationParametersEx (uchar LowEdge, uchar HighEdge, 
+	uchar LowLevel, uchar FFTScaleMultiplier);
 
 // Функция возвращает основной цвет текущей палитры с указанной яркостью
 CD_API(ulong) GetMasterPaletteColorEx (uchar Brightness);
 
 // Функция возвращает названия доступных палитр
 CD_API(schar *) GetPalettesNamesEx ();
+
+// Функция возвращает ограничивающие размеры фреймов спектрограмм
+CD_API(udlong) GetSpectrogramFrameMetricsEx ();
+
+// Функция возвращает стандартные метрики определения пикового значения
+CD_API(ulong) GetDefaultPeakEvaluationParametersEx ();
 
 #ifdef BASSTEST
 	// Тестовая функция для библиотеки BASS

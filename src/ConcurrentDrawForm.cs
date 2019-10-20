@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
+
+#if AUDIO
+using System.Runtime.InteropServices;
+#endif
 
 // Классы
 namespace ESHQSetupStub
@@ -16,15 +18,13 @@ namespace ESHQSetupStub
 		// Общие переменные и константы
 		private Phases currentPhase = Phases.LayersPrecache;	// Текущая фаза отрисовки
 		private uint steps = 0;									// Счётчик шагов отрисовки
-		private const float fps = 30.0f;						// Частота кадров видео
-		private string commandLine;								// Параметры командной строки
 
 		private ConcurrentDrawParameters cdp;					// Параметры работы программы
 
 		// Графика
-		private LogoDrawerLayer layers;							// Базовый слой изображения
+		private LogoDrawerLayer mainLayer;						// Базовый слой изображения
 
-		private Graphics gr, g2;								// Объекты-отрисовщики
+		private Graphics gr, gl;								// Объекты-отрисовщики
 		private List<SolidBrush> brushes = new List<SolidBrush> ();
 		private List<Font> fonts = new List<Font> ();
 		private Bitmap logo1a, logo1b, b;
@@ -52,11 +52,12 @@ namespace ESHQSetupStub
 
 		// Видео
 #if VIDEO
+		private const float fps = 30.0f;						// Частота кадров видео
 		private VideoManager vm = new VideoManager ();			// Видеофайл (балластная инициализация)
 		private uint savingLayersCounter = 0;					// Счётчик сохранений
 #endif
 
-		// Возможные фазы отрисовки
+		// Фазы отрисовки
 		private enum Phases
 			{
 			// Подготовка слоёв
@@ -72,22 +73,14 @@ namespace ESHQSetupStub
 			LogoIntermission = 4,
 
 			// Затенение лого
-			Spectrogram = 5,
-
-			// Завершение и конечная остановка
-			Finished = 9,
-
-			End = 10
+			Spectrogram = 5
 			}
 
 		/// <summary>
 		/// Конструктор. Инициализирует экземпляр отрисовщика
 		/// </summary>
-		/// <param name="CommandLine">Параметры командной строки</param>
-		public ConcurrentDrawForm (string CommandLine)
+		public ConcurrentDrawForm ()
 			{
-			// Инициализация
-			commandLine = CommandLine;
 			InitializeComponent ();
 			}
 
@@ -141,16 +134,16 @@ namespace ESHQSetupStub
 			fonts.Add (new Font ("Consolas", 22, FontStyle.Regular));
 
 			// Подготовка к записи в видеопоток
-			SFVideo.FileName = Path.GetFileNameWithoutExtension (commandLine) + ".avi";
-			layers = new LogoDrawerLayer (0, 0, (uint)this.Width, (uint)this.Height);	// Главный слой
+			mainLayer = new LogoDrawerLayer (0, 0, (uint)this.Width, (uint)this.Height);
 
-			// Инициализация видеопотока (запрещена в режиме отладки конфигурации)
+			// Инициализация видеопотока
 #if VIDEO
+			SFVideo.FileName = "NewVideo.avi";
 			if ((MessageBox.Show ("Write frames to AVI?", ProgramDescription.AssemblyTitle, MessageBoxButtons.YesNo,
 				MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes) &&
 				(SFVideo.ShowDialog () == DialogResult.OK))
 				{
-				vm = new VideoManager (SFVideo.FileName, fps, layers.Layer, true);
+				vm = new VideoManager (SFVideo.FileName, fps, mainLayer.Layer, true);
 
 				if (!vm.IsInited)
 					{
@@ -224,7 +217,7 @@ namespace ESHQSetupStub
 				return true;
 
 			switch (ConcurrentDrawLib.InitializeSpectrogram ((uint)this.Width, cdp.SpectrogramHeight,
-				cdp.PaletteNumber, VisualizationModesChecker.ContainsMovingSpectrogram (cdp.VisualizationMode)))
+				cdp.PaletteNumber, VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode)))
 				{
 				case ConcurrentDrawLib.SpectrogramInitializationErrors.InitOK:
 					break;
@@ -280,7 +273,7 @@ namespace ESHQSetupStub
 				// Пауза
 				case Phases.LogoIntermission:
 					RotateAndDrawLogo (true);
-					layers.Descriptor.FillRectangle (brushes[0], 0, this.Height - (cdp.SpectrogramHeight * steps / 100),
+					mainLayer.Descriptor.FillRectangle (brushes[0], 0, this.Height - (cdp.SpectrogramHeight * steps / 100),
 						this.Width, cdp.SpectrogramHeight * steps / 100);
 
 					if (++steps > 100)
@@ -296,8 +289,7 @@ namespace ESHQSetupStub
 				}
 
 			// Отрисовка слоёв
-			if (currentPhase < Phases.Finished)
-				DrawLayers ();
+			DrawLayers ();
 			}
 
 		// Поворачивает и отрисовывает лого
@@ -308,9 +300,9 @@ namespace ESHQSetupStub
 				currentArc = (currentArc - logoIdleSpeed) / 2;
 
 			// Отрисовка
-			g2.RotateTransform (currentArc);
-			g2.DrawImage (logo1a, -(int)(logoHeight * 0.6), -(int)(logoHeight * 0.6));
-			layers.Descriptor.DrawImage (logo1b, (this.Width - logo1b.Width) / 2, 0);
+			gl.RotateTransform (currentArc);
+			gl.DrawImage (logo1a, -(int)(logoHeight * 0.6), -(int)(logoHeight * 0.6));
+			mainLayer.Descriptor.DrawImage (logo1b, (this.Width - logo1b.Width) / 2, 0);
 			}
 
 		// Первичное вращение лого
@@ -332,23 +324,23 @@ namespace ESHQSetupStub
 		private void DrawingLogo ()
 			{
 			// Задний круг
-			g2.FillEllipse (brushes[1], (int)(logoHeight * 0.1), (int)(logoHeight * 0.1), logoHeight, logoHeight);
+			gl.FillEllipse (brushes[1], (int)(logoHeight * 0.1), (int)(logoHeight * 0.1), logoHeight, logoHeight);
 
 			// Передний круг
-			g2.FillEllipse (brushes[0], (int)(logoHeight * 0.1) + steps, (int)(logoHeight * 0.1) - steps,
+			gl.FillEllipse (brushes[0], (int)(logoHeight * 0.1) + steps, (int)(logoHeight * 0.1) - steps,
 				logoHeight - 2 * steps, logoHeight + 2 * steps);
 
 			// Отрисовка
-			layers.Descriptor.DrawImage (logo1a, (this.Width - logo1a.Width) / 2, 0);
+			mainLayer.Descriptor.DrawImage (logo1a, (this.Width - logo1a.Width) / 2, 0);
 
 			steps++;
 			if (steps >= 0.05 * logoHeight)
 				{
-				g2.Dispose ();
+				gl.Dispose ();
 				logo1b = new Bitmap ((int)(logoHeight * 1.2), (int)(logoHeight * 1.2));
-				g2 = Graphics.FromImage (logo1b);
+				gl = Graphics.FromImage (logo1b);
 
-				g2.TranslateTransform ((int)(logoHeight * 0.6), (int)(logoHeight * 0.6));
+				gl.TranslateTransform ((int)(logoHeight * 0.6), (int)(logoHeight * 0.6));
 				steps = 0;
 				currentPhase++;
 				}
@@ -357,7 +349,7 @@ namespace ESHQSetupStub
 		// Отрисовка фрагментов лого
 		private void DrawingSpectrogram ()
 			{
-			byte v = ConcurrentDrawLib.GetCurrentPeak ();
+			byte v = ConcurrentDrawLib.CurrentPeak;
 
 			// Отрисовка лого при необходимости
 			if (VisualizationModesChecker.ContainsLogo (cdp.VisualizationMode))
@@ -367,7 +359,7 @@ namespace ESHQSetupStub
 					currentArc = -logoSpeedImpulse;
 
 				br = new SolidBrush (ConcurrentDrawLib.GetMasterPaletteColor (v));
-				layers.Descriptor.FillEllipse (br, (this.Width - logo1b.Width / 3) / 2,
+				mainLayer.Descriptor.FillEllipse (br, (this.Width - logo1b.Width / 3) / 2,
 					(logo1b.Height - logo1b.Height / 3) / 2, logo1b.Width / 3, logo1b.Height / 3);
 				br.Dispose ();
 				}
@@ -375,8 +367,8 @@ namespace ESHQSetupStub
 			// Отрисовка спектрограммы при необходимости
 			if (VisualizationModesChecker.ContainsSpectrogram (cdp.VisualizationMode))
 				{
-				b = ConcurrentDrawLib.GetSpectrogramFrame ();
-				layers.Descriptor.DrawImage (b, 0, this.Height - b.Height);
+				b = ConcurrentDrawLib.CurrentSpectrogramFrame;
+				mainLayer.Descriptor.DrawImage (b, 0, this.Height - b.Height);
 				b.Dispose ();
 				}
 			}
@@ -386,14 +378,14 @@ namespace ESHQSetupStub
 			{
 			// Подготовка слоёв
 			this.BackColor = brushes[0].Color;
-			layers.Descriptor.FillRectangle (brushes[0], 0, 0, layers.Layer.Width, layers.Layer.Height);
+			mainLayer.Descriptor.FillRectangle (brushes[0], 0, 0, mainLayer.Layer.Width, mainLayer.Layer.Height);
 
 			// Первичная отрисовка
 			DrawLayers ();
 
 			// Инициализация лого
 			logo1a = new Bitmap ((int)(logoHeight * 1.2), (int)(logoHeight * 1.2));
-			g2 = Graphics.FromImage (logo1a);
+			gl = Graphics.FromImage (logo1a);
 
 			// Переход к следующему обработчику
 			steps = 0;
@@ -403,17 +395,11 @@ namespace ESHQSetupStub
 		// Отрисовка слоёв
 		private void DrawLayers ()
 			{
-			// Сведение слоёв
-			/*for (int i = 1; i < layers.Count; i++)
-				{
-				layers[0].Descriptor.DrawImage (layers[i].Layer, layers[i].Left, layers[i].Top);
-				}*/
-
 			// Отрисовка
 #if VIDEO
 			if (vm.IsInited)
 				{
-				b = (Bitmap)layers.Layer.Clone ();
+				b = (Bitmap)mainLayer.Layer.Clone ();
 				vm.AddFrame (b);
 				b.Dispose ();
 				savingLayersCounter++;
@@ -425,14 +411,10 @@ namespace ESHQSetupStub
 			else
 				{
 #endif
-			gr.DrawImage (layers.Layer, layers.Left, layers.Top);
+			gr.DrawImage (mainLayer.Layer, mainLayer.Left, mainLayer.Top);
 #if VIDEO
 				}
 #endif
-
-			// Контроль завершения
-			if (currentPhase > Phases.Finished)
-				this.Close ();
 			}
 
 		// Закрытие окна
@@ -461,8 +443,13 @@ namespace ESHQSetupStub
 
 			if (gr != null)
 				gr.Dispose ();
-
-			layers.Dispose ();
+			if (gl != null)
+				gl.Dispose ();
+			if (logo1a != null)
+				logo1a.Dispose ();
+			if (logo1b != null)
+				logo1b.Dispose ();
+			mainLayer.Dispose ();
 
 #if VIDEO
 			vm.Dispose ();
@@ -488,7 +475,7 @@ namespace ESHQSetupStub
 					ExtendedTimer.Enabled = false;
 					if (VisualizationModesChecker.ContainsSpectrogram (cdp.VisualizationMode))
 						ConcurrentDrawLib.DestroySoundStream ();	// Объединяет функционал
-					layers.Dispose ();
+					mainLayer.Dispose ();
 					gr.Dispose ();
 
 					// Перезапрос параметров
@@ -504,8 +491,8 @@ namespace ESHQSetupStub
 
 				// Пересоздание кисти лого и сброс поля отрисовки
 				brushes[1].Color = ConcurrentDrawLib.GetMasterPaletteColor ();
-				layers = new LogoDrawerLayer (0, 0, (uint)this.Width, (uint)this.Height);
-				layers.Descriptor.FillRectangle (brushes[0], 0, 0, layers.Layer.Width, layers.Layer.Height);
+				mainLayer = new LogoDrawerLayer (0, 0, (uint)this.Width, (uint)this.Height);
+				mainLayer.Descriptor.FillRectangle (brushes[0], 0, 0, mainLayer.Layer.Width, mainLayer.Layer.Height);
 
 				gr = Graphics.FromHwnd (this.Handle);
 

@@ -45,11 +45,7 @@ namespace ESHQSetupStub
 			// Начальная обработка и отображение лого
 			Application.EnableVisualStyles ();
 			Application.SetCompatibleTextRenderingDefault (false);
-
-			if (args.Length > 0)
-				Application.Run (new ConcurrentDrawForm (args[0]));
-			else
-				Application.Run (new ConcurrentDrawForm (""));
+			Application.Run (new ConcurrentDrawForm ());
 			}
 		}
 	}

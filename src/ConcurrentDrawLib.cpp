@@ -10,8 +10,11 @@ HBITMAP sdBMP = NULL;				// Дескриптор BITMAP спектральной диаграммы
 uchar *sdBuffer;					// Буфер спектральной диаграммы
 uint sdFrameWidth, sdFrameHeight,	// Размеры изображения спектрограммы
 	sdCurrentPosition = 0;			// Текущая позиция на спектрограмме
-uchar sdSpectrogramMode = 0,		// Режим спектрограммы (0 - выключена, 1 - с курсором, 2 - движущаяся)
-	cdFFTPeak = 0,					// Текущее пиковое значение
+uchar sdSpectrogramMode = 0;		// Режим спектрограммы (0 - выключена, 1 - с курсором, 2 - движущаяся)
+
+float cdFFTScale = (float)CD_DEFAULT_FFT_SCALE_MULT * 
+	25.5f;												// Масштаб значений FFT
+uchar cdFFTPeak = 0,									// Текущее пиковое значение
 	cdFFTPeakEvLowEdge = PEAK_EVALUATION_LOW_EDGE,		// Нижняя граница диапазона определения пика
 	cdFFTPeakEvHighEdge = PEAK_EVALUATION_HIGH_EDGE,	// Верхняя граница диапазона определения пика
 	cdFFTPeakEvLowLevel = PEAK_EVALUATION_LOW_LEVEL;	// Наименьшая амплитуда, на которой определяется пик
@@ -53,7 +56,7 @@ CD_API(uchar) GetDevicesEx (schar **Devices)
 
 		lastLength = min (strlen (info.name), MAX_DEVICE_NAME_LENGTH - 1);
 		memcpy (*Devices + pos, info.name, lastLength);
-		*(*Devices + pos + lastLength) = NAMES_DELIMITER;
+		*(*Devices + pos + lastLength) = NAMES_DELIMITER_C;
 		pos += (lastLength + 1);
 		}
 
@@ -108,7 +111,7 @@ CD_API(void) DestroySoundStreamEx ()
 float *GetDataFromStreamEx ()
 	{
 	// Контроль
-	uint v;
+	ulong v;
 	if (!cdChannel)
 		return NULL;
 
@@ -126,7 +129,7 @@ float *GetDataFromStreamEx ()
 void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWORD dw2)
 	{
 	// Переменные
-	uint y, x, v;
+	uint y, x, v, xd;
 
 	// Заполнение массива (если возможно)
 	if (!GetDataFromStreamEx ())
@@ -145,7 +148,7 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 			for (y = 0; y < sdFrameHeight; y++)
 				{
 				// Масштабирование (квадратный корень позволяет лучше видеть нижние значения)
-				v = (uint)(sqrt (cdFFT[y + 1]) * SD_FFT_SCALE);
+				v = (uint)(sqrt (cdFFT[y + 1]) * cdFFTScale);
 
 				// Вписывание в диапазон и пересчёт пика
 				INBOUND_FFT_VALUE (v)
@@ -181,7 +184,7 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 					}
 
 				// Масштаб
-				v = (int)(sqrt (cdFFT[y + 1]) * SD_FFT_SCALE);
+				v = (uint)(sqrt (cdFFT[y + 1]) * cdFFTScale);
 
 				// Вписывание в диапазон и пересчёт пика
 				INBOUND_FFT_VALUE (v)
@@ -194,11 +197,32 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 				sdBuffer[y * sdFrameWidth + sdFrameWidth - 1] = v;
 				}
 			break;
+
+		// Гистограмма
+		case 3:
+			for (x = 0; x < sdFrameWidth; x++)
+				{
+				// Получение значения и масштаб
+				xd = HISTOGRAM_FFT_VALUES_COUNT * (ulong)x / sdFrameWidth;
+				v = (uint)(sqrt (cdFFT[xd]) * cdFFTScale);
+
+				// Вписывание в диапазон и пересчёт пика
+				INBOUND_FFT_VALUE (v)
+				UPDATE_PEAK (xd, v)
+
+				// Отрисовка
+				v = sdFrameHeight * (ulong)v / CD_BMPINFO_COLORS_COUNT;
+				for (y = 0; y < v; y++)
+					sdBuffer[y * sdFrameWidth + x] = 3 * y / 4 + 64;	// Убираем чёрный низ палитры
+				for (y = v; y < sdFrameHeight; y++)
+					sdBuffer[y * sdFrameWidth + x] = 0;
+				}
+			break;
 		}
 	}
 
 // Функция инициализирует спектрограмму
-CD_API(sint) InitializeSpectrogramEx (uint FrameWidth, uint FrameHeight, uchar PaletteNumber, uchar MoveThrough)
+CD_API(sint) InitializeSpectrogramEx (uint FrameWidth, uint FrameHeight, uchar PaletteNumber, uchar SpectrogramMode)
 	{
 	// Переменные
 	union CD_BITMAPINFO info;
@@ -220,7 +244,7 @@ CD_API(sint) InitializeSpectrogramEx (uint FrameWidth, uint FrameHeight, uchar P
 	if (sdFrameHeight != FrameHeight)
 		sdFrameHeight += 4;
 
-	sdSpectrogramMode = (MoveThrough ? 2 : 1);
+	sdSpectrogramMode = SpectrogramMode;
 
 	// Инициализация описателя
 	memset (info.cd_bmpinfo_ptr, 0x00, sizeof (union CD_BITMAPINFO));	// Сброс на нули всех значений
@@ -285,12 +309,19 @@ CD_API(uchar) GetCurrentPeakEx ()
 	}
 
 // Функция устанавливает метрики определения пикового значения
-CD_API(void) SetPeakEvaluationParametersEx (uchar LowEdge, uchar HighEdge, uchar LowLevel)
+CD_API(void) SetPeakEvaluationParametersEx (uchar LowEdge, uchar HighEdge, 
+	uchar LowLevel, uchar FFTScaleMultiplier)
 	{
 	// Не требует защиты
 	cdFFTPeakEvLowLevel = LowLevel;
 	cdFFTPeakEvLowEdge = LowEdge;
 	cdFFTPeakEvHighEdge = (HighEdge < LowEdge) ? LowEdge : HighEdge;
+
+	if ((FFTScaleMultiplier >= CD_MIN_FFT_SCALE_MULT) && (FFTScaleMultiplier <= CD_MAX_FFT_SCALE_MULT))
+		cdFFTScale = (float)FFTScaleMultiplier;
+	else
+		cdFFTScale = (float)CD_DEFAULT_FFT_SCALE_MULT;
+	cdFFTScale *= 25.5f;
 	}
 
 // Функция формирует палитру
@@ -364,7 +395,7 @@ void FillPalette (RGBQUAD *Palette, uchar PaletteNumber)
 		case 3:
 			for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++) 
 				{
-				Palette[i].rgbRed = Palette[i].rgbGreen = Palette[i].rgbBlue = i;
+				Palette[i].rgbRed = Palette[i].rgbGreen = Palette[i].rgbBlue = i & 0xFF;
 				}
 			currentPalette = PaletteNumber;
 			break;
@@ -418,48 +449,25 @@ CD_API(ulong) GetMasterPaletteColorEx (uchar Brightness)
 // Функция возвращает названия доступных палитр
 CD_API(schar *) GetPalettesNamesEx ()
 	{
-	#define PALETTES_NAMES	("Default (blue-magenta-yellow-white)" NAMES_DELIMITER2 \
-		"Sea (blue-cyan-white)" NAMES_DELIMITER2 \
-		"Fire (red-orange-yellow-white)" NAMES_DELIMITER2 \
-		"Grey" NAMES_DELIMITER2 \
+	#define PALETTES_NAMES	("Default (blue-magenta-yellow-white)" NAMES_DELIMITER_S \
+		"Sea (blue-cyan-white)" NAMES_DELIMITER_S \
+		"Fire (red-orange-yellow-white)" NAMES_DELIMITER_S \
+		"Grey" NAMES_DELIMITER_S \
 		"Sunshine (blue-green-orange-white)")
 
 	return PALETTES_NAMES;
 	}
 
-#ifdef EXETEST
-
-sint main (void)
+// Функция возвращает ограничивающие размеры фреймов спектрограмм
+CD_API(udlong) GetSpectrogramFrameMetricsEx ()
 	{
-	schar *devs;
-	float *fftr;
-	uchar count = GetDevicesEx (&devs);
-	sint y;
-
-	if (count < 1)
-		return - 1;
-
-	if (InitializeSoundStream (0) != 0)
-		return -2;
-
-	InitializeSpectrogram (200, 0, 0);
-
-	while (1)
-		{
-		fftr = GetDataFromStream ();
-		for (int i = 0; i < 40; i++)
-			{
-			y = (sint)(sqrt (fftr[i * 3 + 1]) * 3 * 9);
-			if (y > 9)
-				y = 9;
-
-			printf ("%c", 0x30 + y);
-			}
-		printf ("\n");
-		Sleep (40);
-		}
-
-	DestroySoundStream ();
+	return ((udlong)MINFRAMEWIDTH << 48) | ((udlong)MAXFRAMEWIDTH << 32) | 
+		((udlong)MINFRAMEHEIGHT << 16) | (udlong)MAXFRAMEHEIGHT;
 	}
 
-#endif
+// Функция возвращает стандартные метрики определения пикового значения
+CD_API(ulong) GetDefaultPeakEvaluationParametersEx ()
+	{
+	return (CD_DEFAULT_FFT_SCALE_MULT << 24) | (PEAK_EVALUATION_LOW_EDGE << 16) | 
+		(PEAK_EVALUATION_HIGH_EDGE << 8) | PEAK_EVALUATION_LOW_LEVEL;
+	}

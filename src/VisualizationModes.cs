@@ -29,6 +29,16 @@
 		/// Движущаяся спектрограмма с курсором, без лого
 		/// </summary>
 		MovingSpectrogram = 4,
+
+		/// <summary>
+		/// Гистограмма, с лого
+		/// </summary>
+		HistogramAndLogo = 5,
+
+		/// <summary>
+		/// Гистограмма, без лого
+		/// </summary>
+		Histogram = 6
 		}
 
 	/// <summary>
@@ -36,6 +46,11 @@
 	/// </summary>
 	public static class VisualizationModesChecker
 		{
+		/// <summary>
+		/// Количество доступных режимов визуализации
+		/// </summary>
+		public const uint VisualizationModesCount = 7;
+
 		/// <summary>
 		/// Метод проверяет, требует ли указанный режим отрисовки лого
 		/// </summary>
@@ -45,18 +60,35 @@
 			{
 			return (Mode == VisualizationModes.LogoOnly) ||
 				(Mode == VisualizationModes.MovingSpectrogramAndLogo) ||
-				(Mode == VisualizationModes.StaticSpectrogramAndLogo);
+				(Mode == VisualizationModes.StaticSpectrogramAndLogo) ||
+				(Mode == VisualizationModes.HistogramAndLogo);
 			}
 
 		/// <summary>
-		/// Метод проверяет, предполагает ли указанный режим движущуюся спектрограмму
+		/// Метод возвращает режим спектрограммы по режиму визуализации
 		/// </summary>
-		/// <param name="Mode">Режим для проверки</param>
-		/// <returns>Возвращает true в случае, если предполагается движущаяся спектрограмма</returns>
-		public static bool ContainsMovingSpectrogram (VisualizationModes Mode)
+		/// <param name="Mode">Режим для преобразования</param>
+		/// <returns>Возвращает режим спектрограммы</returns>
+		public static ConcurrentDrawLib.SpectrogramModes VisualizationModeToSpectrogramMode (VisualizationModes Mode)
 			{
-			return (Mode == VisualizationModes.MovingSpectrogram) ||
-				(Mode == VisualizationModes.MovingSpectrogramAndLogo);
+			switch (Mode)
+				{
+				case VisualizationModes.Histogram:
+				case VisualizationModes.HistogramAndLogo:
+					return ConcurrentDrawLib.SpectrogramModes.Histogram;
+
+				default:
+				case VisualizationModes.LogoOnly:
+					return ConcurrentDrawLib.SpectrogramModes.NoSpectrogram;
+
+				case VisualizationModes.MovingSpectrogram:
+				case VisualizationModes.MovingSpectrogramAndLogo:
+					return ConcurrentDrawLib.SpectrogramModes.MovingSpectrogram;
+
+				case VisualizationModes.StaticSpectrogram:
+				case VisualizationModes.StaticSpectrogramAndLogo:
+					return ConcurrentDrawLib.SpectrogramModes.StaticSpectrogram;
+				}
 			}
 
 		/// <summary>
@@ -69,7 +101,9 @@
 			return (Mode == VisualizationModes.MovingSpectrogram) ||
 				(Mode == VisualizationModes.MovingSpectrogramAndLogo) ||
 				(Mode == VisualizationModes.StaticSpectrogram) ||
-				(Mode == VisualizationModes.StaticSpectrogramAndLogo);
+				(Mode == VisualizationModes.StaticSpectrogramAndLogo) ||
+				(Mode == VisualizationModes.Histogram) ||
+				(Mode == VisualizationModes.HistogramAndLogo);
 			}
 		}
 	}

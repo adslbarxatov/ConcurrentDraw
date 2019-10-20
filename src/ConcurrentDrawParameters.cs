@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Windows.Forms;
-using Microsoft.Win32;
 
 namespace ESHQSetupStub
 	{
@@ -12,11 +12,6 @@ namespace ESHQSetupStub
 		// Константы и переменные
 		private const string settingsKey = "HKEY_LOCAL_MACHINE\\SOFTWARE\\" + ProgramDescription.AssemblyMainName;
 		private char[] splitter = new char[] { ';' };
-
-		/// <summary>
-		/// Максимальная высота спектрограммы
-		/// </summary>
-		public const uint MaxHeight = 300;
 
 		/// <summary>
 		/// Конструктор. Позволяет запросить параметры из реестра.
@@ -42,7 +37,7 @@ namespace ESHQSetupStub
 			bool requestRequired = (settings == "");
 
 			// Настройка контролов
-			DevicesCombo.Items.AddRange (ConcurrentDrawLib.GetDevices ());
+			DevicesCombo.Items.AddRange (ConcurrentDrawLib.AvailableDevices);
 			if (DevicesCombo.Items.Count < 1)
 				{
 				DevicesCombo.Items.Add ("(no devices)");
@@ -50,33 +45,30 @@ namespace ESHQSetupStub
 				}
 			DevicesCombo.SelectedIndex = 0;
 
-			SDPaletteCombo.Items.AddRange (ConcurrentDrawLib.GetPalettesNames ());
-			/*SDPaletteCombo.Items.Add ("Default");
-			SDPaletteCombo.Items.Add ("Sea");
-			SDPaletteCombo.Items.Add ("Fire");
-			SDPaletteCombo.Items.Add ("Grey");
-			SDPaletteCombo.Items.Add ("Sunrise (contrast)");*/
+			SDPaletteCombo.Items.AddRange (ConcurrentDrawLib.AvailablePalettesNames);
 			SDPaletteCombo.SelectedIndex = 0;
 
-			for (int i = 0; i < 5; i++)
+			for (int i = 0; i < VisualizationModesChecker.VisualizationModesCount; i++)
 				VisualizationCombo.Items.Add (((VisualizationModes)i).ToString ());
 			VisualizationCombo.SelectedIndex = 0;
 
-			SDHeight.Minimum = 128;
-			SDHeight.Maximum = MaxHeight;
+			SDHeight.Minimum = VisHeight.Minimum = ConcurrentDrawLib.MinSpectrogramFrameHeight;
+			SDHeight.Maximum = ConcurrentDrawLib.MaxSpectrogramFrameHeight;
 
-			VisWidth.Minimum = VisHeight.Minimum = 128;
-			VisWidth.Maximum = Math.Min (ScreenWidth, 2048);
+			VisWidth.Minimum = ConcurrentDrawLib.MinSpectrogramFrameWidth;
+			VisWidth.Maximum = Math.Min (ScreenWidth, ConcurrentDrawLib.MaxSpectrogramFrameWidth);
 			VisHeight.Maximum = Math.Min (ScreenHeight, 1024);
+
 			VisWidth.Value = VisWidth.Maximum;
 			VisHeight.Value = VisHeight.Maximum;
 
 			VisLeft.Maximum = ScreenWidth;
 			VisTop.Maximum = ScreenHeight;
 
-			BDLowEdge.Value = 0;
-			BDHighEdge.Value = 10;
-			BDLowLevel.Value = 0xF0;
+			BDLowEdge.Value = ConcurrentDrawLib.DefaultPeakEvaluationLowEdge;
+			BDHighEdge.Value = ConcurrentDrawLib.DefaultPeakEvaluationHighEdge;
+			BDLowLevel.Value = ConcurrentDrawLib.DefaultPeakEvaluationLowLevel;
+			BDFFTScaleMultiplier.Value = ConcurrentDrawLib.DefaultFFTScaleMultiplier;
 
 			// Разбор настроек
 			if (!requestRequired)
@@ -98,6 +90,7 @@ namespace ESHQSetupStub
 					BDLowEdge.Value = (int)(bdSettings & 0xFF);
 					BDHighEdge.Value = (int)((bdSettings >> 8) & 0xFF);
 					BDLowLevel.Value = (int)((bdSettings >> 16) & 0xFF);
+					BDFFTScaleMultiplier.Value = (int)((bdSettings >> 24) & 0xFF);
 
 					AlwaysOnTopFlag.Checked = (values[9] != "0");
 					}
@@ -108,7 +101,8 @@ namespace ESHQSetupStub
 				}
 
 			// Завершение
-			ConcurrentDrawLib.SetPeakEvaluationParameters ((byte)BDLowEdge.Value, (byte)BDHighEdge.Value, (byte)BDLowLevel.Value);
+			ConcurrentDrawLib.SetPeakEvaluationParameters ((byte)BDLowEdge.Value, (byte)BDHighEdge.Value,
+				(byte)BDLowLevel.Value, (byte)BDFFTScaleMultiplier.Value);
 			BCancel.Enabled = !requestRequired;
 			if (requestRequired)
 				this.ShowDialog ();
@@ -193,12 +187,13 @@ namespace ESHQSetupStub
 				VisLeft.Value.ToString () + splitter[0].ToString () +
 				VisTop.Value.ToString () + splitter[0].ToString () +
 
-				(((BDLowLevel.Value & 0xFF) << 16) | ((BDHighEdge.Value & 0xFF) << 8) |
-				(BDLowEdge.Value & 0xFF)).ToString () + splitter[0].ToString () +
+				(((BDFFTScaleMultiplier.Value & 0xFF) << 24) | ((BDLowLevel.Value & 0xFF) << 16) |
+				((BDHighEdge.Value & 0xFF) << 8) | (BDLowEdge.Value & 0xFF)).ToString () + splitter[0].ToString () +
 
 				(AlwaysOnTopFlag.Checked ? "1" : "0");
 
-			ConcurrentDrawLib.SetPeakEvaluationParameters ((byte)BDLowEdge.Value, (byte)BDHighEdge.Value, (byte)BDLowLevel.Value);
+			ConcurrentDrawLib.SetPeakEvaluationParameters ((byte)BDLowEdge.Value, (byte)BDHighEdge.Value,
+				(byte)BDLowLevel.Value, (byte)BDFFTScaleMultiplier.Value);
 
 			try
 				{
@@ -289,8 +284,8 @@ namespace ESHQSetupStub
 				BDHighEdge.Value = BDLowEdge.Value;
 
 			BDSettings.Text = "Range: " + (44100 * BDLowEdge.Value / 2048).ToString () + " – " +
-				(44100 * BDHighEdge.Value / 2048).ToString () + " Hz; amp. threshold: " +
-				BDLowLevel.Value.ToString () + " of 255";
+				(44100 * BDHighEdge.Value / 2048).ToString () + " Hz; amplitude threshold: " +
+				BDLowLevel.Value.ToString () + " of 255; FFT scale multiplier: " + BDFFTScaleMultiplier.Value.ToString ();
 			}
 
 		// Выравнивание окна по экрану
