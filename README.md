@@ -15,10 +15,10 @@ No additional codecs or application. Just launch and behold!
 
 Needs Windows XP or newer, Framework 4.0 or newer. Interface language: en_us
 
-BASS library v 2.4.14 required: http://www.un4seen.com/
+[BASS library v 2.4.14](http://www.un4seen.com/) required
 
 
 
 Требуется ОС Windows XP и новее, Framework 4.0 и новее. Язык интерфейса: en_us
 
-Наличие библиотеки BASS версии 2.4.14 обязательно: http://www.un4seen.com/
+Наличие [библиотеки BASS версии 2.4.14](http://www.un4seen.com/) обязательно
