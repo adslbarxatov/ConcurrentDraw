@@ -10,7 +10,8 @@ HBITMAP sdBMP = NULL;				// Дескриптор BITMAP спектральной
 uchar *sdBuffer;					// Буфер спектральной диаграммы
 uint sdFrameWidth, sdFrameHeight,	// Размеры изображения спектрограммы
 	sdCurrentPosition = 0;			// Текущая позиция на спектрограмме
-uchar sdSpectrogramMode = 0;		// Режим спектрограммы (0 - выключена, 1 - с курсором, 2 - движущаяся)
+uchar sdSpectrogramMode = 0;		// Режим спектрограммы (0 - выключена, 1 - с курсором, 
+									// 2 - движущаяся, 3 - гистограмма)
 
 float cdFFTScale = (float)CD_DEFAULT_FFT_SCALE_MULT * 
 	25.5f;												// Масштаб значений FFT
@@ -533,4 +534,10 @@ CD_API(ulong) GetDefaultPeakEvaluationParametersEx ()
 	{
 	return (CD_DEFAULT_FFT_SCALE_MULT << 24) | (PEAK_EVALUATION_LOW_EDGE << 16) | 
 		(PEAK_EVALUATION_HIGH_EDGE << 8) | PEAK_EVALUATION_LOW_LEVEL;
+	}
+
+// Функция возвращает версию данной библиотеки
+CD_API(schar *) GetCDLibVersionEx ()
+	{
+	return CD_VERSION_S;
 	}

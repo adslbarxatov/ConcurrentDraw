@@ -23,3 +23,7 @@ Version 1.4:
 • Fixed incorrect behaviour of main window when it's always on top and user
   calls settings interface;
 • Fixed logo redraw and placement in different modes
+
+Version 1.4.1:
+• Added versions checker: now application will launch only with compatible
+  libraries

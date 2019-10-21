@@ -33,8 +33,8 @@
 /////////////////////////////////////////////////////
 // Константы
 #define BASS_VERSION				0x02040E00
-#define CD_VERSION					1,4,0,0
-#define CD_VERSION2					"1.4.0.0"
+#define CD_VERSION					1,4,1,0
+#define CD_VERSION_S				"1.4.1.0"
 #define CD_PRODUCT					"ConcurrentDraw visualization tool's BASS adapter"
 #define CD_COMPANY					"RD AAOW"
 
@@ -63,7 +63,6 @@
 
 /////////////////////////////////////////////////////
 // Пререквизиты таймера
-//#define SD_FFT_SCALE				765.0f		// 255 * 3, для масштабирования значения амплитуды
 #ifdef SD_DOUBLE_WIDTH
 	#define SD_STEP 2							// Ширина шага спектрограммы
 #else
@@ -138,6 +137,9 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber);
 
 // Функция получает указанный цвет из текущей палитры
 CD_API(ulong) GetColorFromPaletteEx (uchar ColorNumber);
+
+// Функция возвращает версию данной библиотеки
+CD_API(schar *) GetCDLibVersionEx ();
 
 #ifdef BASSTEST
 	// Тестовая функция для библиотеки BASS

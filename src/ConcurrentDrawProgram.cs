@@ -32,10 +32,19 @@ namespace ESHQSetupStub
 				{
 				if (!File.Exists (Application.StartupPath + "\\" + ProgramDescription.AssemblyRequirements[i]))
 					{
-					MessageBox.Show ("Библиотека «" + ProgramDescription.AssemblyRequirements[i] + "» не найдена или недоступна. " +
-						"Работа программы невозможна", ProgramDescription.AssemblyTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
+					MessageBox.Show (ProgramDescription.AssemblyRequirements[i] + " not found or unavailable",
+						ProgramDescription.AssemblyTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
 					return;
 					}
+				}
+
+			// Проверка корреткности версии библиотеки CDLib.dll (BASS проверяется позже)
+			if (!ConcurrentDrawLib.CheckCDLibVersion ())
+				{
+				MessageBox.Show ("This version of " + ProgramDescription.AssemblyRequirements[0] +
+					" is incompatible with current version of application", ProgramDescription.AssemblyTitle,
+					MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return;
 				}
 
 #if BASSTEST

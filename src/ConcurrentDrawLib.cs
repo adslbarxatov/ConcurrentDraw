@@ -514,5 +514,21 @@ namespace ESHQSetupStub
 			{
 			return Color.FromArgb ((int)GetColorFromPaletteEx (ColorNumber));
 			}
+
+		/// <summary>
+		/// Функция возвращает версию библиотеки CDLib.dll
+		/// </summary>
+		/// <returns></returns>
+		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
+		private static extern string GetCDLibVersionEx ();
+
+		/// <summary>
+		/// Метод проверяет корректность версии библиотеки CDLib.dll
+		/// </summary>
+		/// <returns>Возвращает true, если версия корректна</returns>
+		public static bool CheckCDLibVersion ()
+			{
+			return (ProgramDescription.AssemblyVersion == GetCDLibVersionEx ());
+			}
 		}
 	}
