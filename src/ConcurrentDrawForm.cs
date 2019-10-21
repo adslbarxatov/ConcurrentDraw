@@ -35,6 +35,10 @@ namespace ESHQSetupStub
 		private int currentArc = 0;								// Текущий угол приращения поворота лого
 		private uint logoHeight;								// Диаметр лого
 
+		private Pen p;											// Карандаш для линий гистограммы
+		private int[] histoX = new int[4],
+			histoY = new int[4];								// Координаты линий гистограммы
+
 		// Аудио
 #if AUDIO
 		AudioManager am = new AudioManager (Application.StartupPath + "\\4.wav", false);
@@ -73,7 +77,7 @@ namespace ESHQSetupStub
 			LogoIntermission = 4,
 
 			// Затенение лого
-			Spectrogram = 5
+			Visualization = 5
 			}
 
 		/// <summary>
@@ -121,7 +125,7 @@ namespace ESHQSetupStub
 
 			// Настройка окна
 			gr = Graphics.FromHwnd (this.Handle);
-			logoHeight = (uint)(this.Height * 2) / 3;
+			logoHeight = (uint)(Math.Min (this.Width, this.Height) * 7) / 12;
 
 			// Настройка диалогов
 			SFVideo.Title = "Select placement of new video";
@@ -130,6 +134,7 @@ namespace ESHQSetupStub
 			// Формирование шрифтов и кистей
 			brushes.Add (new SolidBrush (Color.FromArgb (0, 0, 0)));
 			brushes.Add (new SolidBrush (ConcurrentDrawLib.GetMasterPaletteColor ()));
+			brushes.Add (new SolidBrush (Color.FromArgb (20, brushes[0].Color)));
 
 			fonts.Add (new Font ("Consolas", 22, FontStyle.Regular));
 
@@ -212,10 +217,16 @@ namespace ESHQSetupStub
 				return false;
 				}
 
-			// Запуск спектрограммы, если требуется
-			if (!VisualizationModesChecker.ContainsSpectrogram (cdp.VisualizationMode))
+			// Отмена инициализации спектрограммы, если она не требуется
+			if (VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) ==
+				ConcurrentDrawLib.SpectrogramModes.NoSpectrogram)
+				{
+				// Ручное заполнение палитры и выход
+				ConcurrentDrawLib.FillPalette (cdp.PaletteNumber);
 				return true;
+				}
 
+			// Запуск спектрограммы, если требуется
 			switch (ConcurrentDrawLib.InitializeSpectrogram ((uint)this.Width, cdp.SpectrogramHeight,
 				cdp.PaletteNumber, VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode)))
 				{
@@ -273,8 +284,17 @@ namespace ESHQSetupStub
 				// Пауза
 				case Phases.LogoIntermission:
 					RotateAndDrawLogo (true);
-					mainLayer.Descriptor.FillRectangle (brushes[0], 0, this.Height - (cdp.SpectrogramHeight * steps / 100),
-						this.Width, cdp.SpectrogramHeight * steps / 100);
+
+					if ((VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) !=
+						ConcurrentDrawLib.SpectrogramModes.NoSpectrogram))
+						{
+						mainLayer.Descriptor.FillRectangle (brushes[0], 0, this.Height - (cdp.SpectrogramHeight * steps / 100),
+							this.Width, cdp.SpectrogramHeight * steps / 100);
+						}
+					else
+						{
+						currentPhase++;
+						}
 
 					if (++steps > 100)
 						{
@@ -283,8 +303,8 @@ namespace ESHQSetupStub
 						}
 					break;
 
-				case Phases.Spectrogram:
-					DrawingSpectrogram ();
+				case Phases.Visualization:
+					DrawingVisualization ();
 					break;
 				}
 
@@ -302,7 +322,9 @@ namespace ESHQSetupStub
 			// Отрисовка
 			gl.RotateTransform (currentArc);
 			gl.DrawImage (logo1a, -(int)(logoHeight * 0.6), -(int)(logoHeight * 0.6));
-			mainLayer.Descriptor.DrawImage (logo1b, (this.Width - logo1b.Width) / 2, 0);
+			mainLayer.Descriptor.DrawImage (logo1b, (this.Width - logo1b.Width) / 2,
+				((VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) !=
+					ConcurrentDrawLib.SpectrogramModes.NoSpectrogram) ? 0 : (this.Height - logo1b.Height) / 2));
 			}
 
 		// Первичное вращение лого
@@ -331,7 +353,9 @@ namespace ESHQSetupStub
 				logoHeight - 2 * steps, logoHeight + 2 * steps);
 
 			// Отрисовка
-			mainLayer.Descriptor.DrawImage (logo1a, (this.Width - logo1a.Width) / 2, 0);
+			mainLayer.Descriptor.DrawImage (logo1a, (this.Width - logo1a.Width) / 2,
+				((VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) !=
+				ConcurrentDrawLib.SpectrogramModes.NoSpectrogram) ? 0 : (this.Height - logo1a.Height) / 2));
 
 			steps++;
 			if (steps >= 0.05 * logoHeight)
@@ -347,30 +371,77 @@ namespace ESHQSetupStub
 			}
 
 		// Отрисовка фрагментов лого
-		private void DrawingSpectrogram ()
+		private void DrawingVisualization ()
 			{
-			byte v = ConcurrentDrawLib.CurrentPeak;
+			byte peak = ConcurrentDrawLib.CurrentPeak;
+
+			// Отрисовка гистограммы-бабочки при необходимости (исключает спектрограмму)
+			if (cdp.VisualizationMode == VisualizationModes.ButterflyHistogram)
+				{
+				// Сброс изображения
+				mainLayer.Descriptor.FillEllipse (brushes[2], (this.Width - logo1b.Width) / 2 - 256,
+					(this.Height - logo1b.Height) / 2 - 256, logo1b.Width + 512, logo1b.Height + 512);
+
+				// Отрисовка
+				for (int i = 0; i < 256; i++)
+					{
+					// Получаем амплитуду
+					int amp = ConcurrentDrawLib.GetScaledAmplitude ((byte)(i));
+
+					// Получаем цвет
+					if (p != null)
+						p.Dispose ();
+					p = new Pen (ConcurrentDrawLib.GetColorFromPalette ((byte)amp));
+
+					// Определяем координаты линий
+					int r = (logo1b.Width) / 2 + amp;
+					histoX[0] = this.Width / 2 + (int)(r * Math.Cos (ArcToRad (i / 4.0)));
+					histoX[1] = this.Width / 2 + (int)(r * Math.Cos (ArcToRad (180.0 + i / 4.0)));
+					histoY[0] = this.Height / 2 + (int)(r * Math.Sin (ArcToRad (i / 4.0)));
+					histoY[1] = this.Height / 2 + (int)(r * Math.Sin (ArcToRad (180.0 + i / 4.0)));
+					histoX[2] = this.Width / 2 + (int)(r * Math.Cos (ArcToRad (-i / 4.0)));
+					histoX[3] = this.Width / 2 + (int)(r * Math.Cos (ArcToRad (180.0 - i / 4.0)));
+					histoY[2] = this.Height / 2 + (int)(r * Math.Sin (ArcToRad (-i / 4.0)));
+					histoY[3] = this.Height / 2 + (int)(r * Math.Sin (ArcToRad (180.0 - i / 4.0)));
+
+					// Рисуем
+					mainLayer.Descriptor.DrawLine (p, histoX[0], histoY[0], histoX[1], histoY[1]);
+					mainLayer.Descriptor.DrawLine (p, histoX[2], histoY[2], histoX[3], histoY[3]);
+					}
+				}
 
 			// Отрисовка лого при необходимости
 			if (VisualizationModesChecker.ContainsLogo (cdp.VisualizationMode))
 				{
 				RotateAndDrawLogo (true);
-				if (v > 0xF0)
+				if (peak > 0xF0)
 					currentArc = -logoSpeedImpulse;
 
-				br = new SolidBrush (ConcurrentDrawLib.GetMasterPaletteColor (v));
+				br = new SolidBrush (ConcurrentDrawLib.GetMasterPaletteColor (peak));
+
 				mainLayer.Descriptor.FillEllipse (br, (this.Width - logo1b.Width / 3) / 2,
-					(logo1b.Height - logo1b.Height / 3) / 2, logo1b.Width / 3, logo1b.Height / 3);
+					(
+					((VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) !=
+					ConcurrentDrawLib.SpectrogramModes.NoSpectrogram) ? logo1b.Height : this.Height)
+					- logo1b.Height / 3) / 2, logo1b.Width / 3, logo1b.Height / 3);
+
 				br.Dispose ();
 				}
 
 			// Отрисовка спектрограммы при необходимости
-			if (VisualizationModesChecker.ContainsSpectrogram (cdp.VisualizationMode))
+			if (VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) !=
+				ConcurrentDrawLib.SpectrogramModes.NoSpectrogram)
 				{
 				b = ConcurrentDrawLib.CurrentSpectrogramFrame;
 				mainLayer.Descriptor.DrawImage (b, 0, this.Height - b.Height);
 				b.Dispose ();
 				}
+			}
+
+		// Метод пересчитывает градусы в радианы
+		private double ArcToRad (double Arc)
+			{
+			return Math.PI * Arc / 180.0;
 			}
 
 		// Создание и подготовка слоёв и лого
@@ -379,9 +450,6 @@ namespace ESHQSetupStub
 			// Подготовка слоёв
 			this.BackColor = brushes[0].Color;
 			mainLayer.Descriptor.FillRectangle (brushes[0], 0, 0, mainLayer.Layer.Width, mainLayer.Layer.Height);
-
-			// Первичная отрисовка
-			DrawLayers ();
 
 			// Инициализация лого
 			logo1a = new Bitmap ((int)(logoHeight * 1.2), (int)(logoHeight * 1.2));
@@ -449,7 +517,8 @@ namespace ESHQSetupStub
 				logo1a.Dispose ();
 			if (logo1b != null)
 				logo1b.Dispose ();
-			mainLayer.Dispose ();
+			if (mainLayer != null)
+				mainLayer.Dispose ();
 
 #if VIDEO
 			vm.Dispose ();
@@ -473,10 +542,12 @@ namespace ESHQSetupStub
 					{
 					// Остановка отрисовки и сброс слоя
 					ExtendedTimer.Enabled = false;
-					if (VisualizationModesChecker.ContainsSpectrogram (cdp.VisualizationMode))
-						ConcurrentDrawLib.DestroySoundStream ();	// Объединяет функционал
-					mainLayer.Dispose ();
-					gr.Dispose ();
+					ConcurrentDrawLib.DestroySoundStream ();	// Объединяет функционал
+					if (mainLayer != null)
+						mainLayer.Dispose ();
+					if (gr != null)
+						gr.Dispose ();
+					this.TopMost = false;	// Разрешает отображение окна параметров
 
 					// Перезапрос параметров
 					cdp.ShowDialog ();
@@ -493,8 +564,20 @@ namespace ESHQSetupStub
 				brushes[1].Color = ConcurrentDrawLib.GetMasterPaletteColor ();
 				mainLayer = new LogoDrawerLayer (0, 0, (uint)this.Width, (uint)this.Height);
 				mainLayer.Descriptor.FillRectangle (brushes[0], 0, 0, mainLayer.Layer.Width, mainLayer.Layer.Height);
-
 				gr = Graphics.FromHwnd (this.Handle);
+
+				// Реинициализация лого (при необходимости)
+				if (cdp.ReselLogo)
+					{
+					if (gl != null)
+						gl.Dispose ();
+					if (logo1a != null)
+						logo1a.Dispose ();
+					if (logo1b != null)
+						logo1b.Dispose ();
+					logoHeight = (uint)(Math.Min (this.Width, this.Height) * 7) / 12;
+					currentPhase = Phases.LayersPrecache;
+					}
 
 				// Перезапуск
 				ExtendedTimer.Enabled = true;

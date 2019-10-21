@@ -1,34 +1,36 @@
-// Общий заголовок
+// РћР±С‰РёР№ Р·Р°РіРѕР»РѕРІРѕРє
 #include "ConcurrentDrawLib.h"
 
-// Общие переменные
-HRECORD cdChannel = NULL;			// Дескриптор записи
-float cdFFT[FFT_VALUES_COUNT];		// Массив значений, получаемый из канала
-MMRESULT cdFFTTimer = NULL;			// Дескриптор таймера запроса данных из буфера
+// РћР±С‰РёРµ РїРµСЂРµРјРµРЅРЅС‹Рµ
+HRECORD cdChannel = NULL;			// Р”РµСЃРєСЂРёРїС‚РѕСЂ Р·Р°РїРёСЃРё
+float cdFFT[FFT_VALUES_COUNT];		// РњР°СЃСЃРёРІ Р·РЅР°С‡РµРЅРёР№, РїРѕР»СѓС‡Р°РµРјС‹Р№ РёР· РєР°РЅР°Р»Р°
+MMRESULT cdFFTTimer = NULL;			// Р”РµСЃРєСЂРёРїС‚РѕСЂ С‚Р°Р№РјРµСЂР° Р·Р°РїСЂРѕСЃР° РґР°РЅРЅС‹С… РёР· Р±СѓС„РµСЂР°
 
-HBITMAP sdBMP = NULL;				// Дескриптор BITMAP спектральной диаграммы
-uchar *sdBuffer;					// Буфер спектральной диаграммы
-uint sdFrameWidth, sdFrameHeight,	// Размеры изображения спектрограммы
-	sdCurrentPosition = 0;			// Текущая позиция на спектрограмме
-uchar sdSpectrogramMode = 0;		// Режим спектрограммы (0 - выключена, 1 - с курсором, 2 - движущаяся)
+HBITMAP sdBMP = NULL;				// Р”РµСЃРєСЂРёРїС‚РѕСЂ BITMAP СЃРїРµРєС‚СЂР°Р»СЊРЅРѕР№ РґРёР°РіСЂР°РјРјС‹
+uchar *sdBuffer;					// Р‘СѓС„РµСЂ СЃРїРµРєС‚СЂР°Р»СЊРЅРѕР№ РґРёР°РіСЂР°РјРјС‹
+uint sdFrameWidth, sdFrameHeight,	// Р Р°Р·РјРµСЂС‹ РёР·РѕР±СЂР°Р¶РµРЅРёСЏ СЃРїРµРєС‚СЂРѕРіСЂР°РјРјС‹
+	sdCurrentPosition = 0;			// РўРµРєСѓС‰Р°СЏ РїРѕР·РёС†РёСЏ РЅР° СЃРїРµРєС‚СЂРѕРіСЂР°РјРјРµ
+uchar sdSpectrogramMode = 0;		// Р РµР¶РёРј СЃРїРµРєС‚СЂРѕРіСЂР°РјРјС‹ (0 - РІС‹РєР»СЋС‡РµРЅР°, 1 - СЃ РєСѓСЂСЃРѕСЂРѕРј, 2 - РґРІРёР¶СѓС‰Р°СЏСЃСЏ)
 
 float cdFFTScale = (float)CD_DEFAULT_FFT_SCALE_MULT * 
-	25.5f;												// Масштаб значений FFT
-uchar cdFFTPeak = 0,									// Текущее пиковое значение
-	cdFFTPeakEvLowEdge = PEAK_EVALUATION_LOW_EDGE,		// Нижняя граница диапазона определения пика
-	cdFFTPeakEvHighEdge = PEAK_EVALUATION_HIGH_EDGE,	// Верхняя граница диапазона определения пика
-	cdFFTPeakEvLowLevel = PEAK_EVALUATION_LOW_LEVEL;	// Наименьшая амплитуда, на которой определяется пик
-uchar currentPalette = 0;			// Номер текущей палитры
+	25.5f;												// РњР°СЃС€С‚Р°Р± Р·РЅР°С‡РµРЅРёР№ FFT
+uchar cdFFTPeak = 0,									// РўРµРєСѓС‰РµРµ РїРёРєРѕРІРѕРµ Р·РЅР°С‡РµРЅРёРµ
+	cdFFTPeakEvLowEdge = PEAK_EVALUATION_LOW_EDGE,		// РќРёР¶РЅСЏСЏ РіСЂР°РЅРёС†Р° РґРёР°РїР°Р·РѕРЅР° РѕРїСЂРµРґРµР»РµРЅРёСЏ РїРёРєР°
+	cdFFTPeakEvHighEdge = PEAK_EVALUATION_HIGH_EDGE,	// Р’РµСЂС…РЅСЏСЏ РіСЂР°РЅРёС†Р° РґРёР°РїР°Р·РѕРЅР° РѕРїСЂРµРґРµР»РµРЅРёСЏ РїРёРєР°
+	cdFFTPeakEvLowLevel = PEAK_EVALUATION_LOW_LEVEL;	// РќР°РёРјРµРЅСЊС€Р°СЏ Р°РјРїР»РёС‚СѓРґР°, РЅР° РєРѕС‚РѕСЂРѕР№ РѕРїСЂРµРґРµР»СЏРµС‚СЃСЏ РїРёРє
 
-// Функция получает имена устройств вывода звука (массив символов по 128 на имя)
+union CD_BITMAPINFO cdBMPInfo;		// Р”Р°РЅРЅС‹Рµ РґР»СЏ РёРЅРёС†РёР°Р»РёР·Р°С†РёРё СЃРїРµРєС‚СЂРѕРіСЂР°РјРјС‹
+uchar cdCurrentPalette = 0;			// РќРѕРјРµСЂ С‚РµРєСѓС‰РµР№ РїР°Р»РёС‚СЂС‹
+
+// Р¤СѓРЅРєС†РёСЏ РїРѕР»СѓС‡Р°РµС‚ РёРјРµРЅР° СѓСЃС‚СЂРѕР№СЃС‚РІ РІС‹РІРѕРґР° Р·РІСѓРєР° (РјР°СЃСЃРёРІ СЃРёРјРІРѕР»РѕРІ РїРѕ 128 РЅР° РёРјСЏ)
 CD_API(uchar) GetDevicesEx (schar **Devices)
 	{
-	// Переменные
+	// РџРµСЂРµРјРµРЅРЅС‹Рµ
 	BASS_DEVICEINFO info;
 	uchar i, pos, lastLength;
 	uchar devicesCount = 0;
 
-	// Получение количества устройств
+	// РџРѕР»СѓС‡РµРЅРёРµ РєРѕР»РёС‡РµСЃС‚РІР° СѓСЃС‚СЂРѕР№СЃС‚РІ
 	for (devicesCount = 0; devicesCount < MAX_RECORD_DEVICES; devicesCount++)
 		{
 		if (!BASS_RecordGetDeviceInfo (devicesCount, &info))
@@ -38,20 +40,20 @@ CD_API(uchar) GetDevicesEx (schar **Devices)
 		}
 
 	if (devicesCount == 0)
-		return devicesCount;	// Нет доступных устройств
+		return devicesCount;	// РќРµС‚ РґРѕСЃС‚СѓРїРЅС‹С… СѓСЃС‚СЂРѕР№СЃС‚РІ
 
-	// Разметка массива имён
+	// Р Р°Р·РјРµС‚РєР° РјР°СЃСЃРёРІР° РёРјС‘РЅ
 	if ((*Devices = (schar *)malloc (devicesCount * MAX_DEVICE_NAME_LENGTH)) == NULL)
 		return 0;
 	memset (*Devices, 0x00, devicesCount * MAX_DEVICE_NAME_LENGTH);
 
-	// Получение имён
+	// РџРѕР»СѓС‡РµРЅРёРµ РёРјС‘РЅ
 	for (i = pos = 0; i < devicesCount; i++)
 		{
 		if (!BASS_RecordGetDeviceInfo (i, &info))
 			{
 			free (*Devices);
-			return 0;	// Фигня какая-то
+			return 0;	// Р¤РёРіРЅСЏ РєР°РєР°СЏ-С‚Рѕ
 			}
 
 		lastLength = min (strlen (info.name), MAX_DEVICE_NAME_LENGTH - 1);
@@ -60,62 +62,62 @@ CD_API(uchar) GetDevicesEx (schar **Devices)
 		pos += (lastLength + 1);
 		}
 
-	// Завершено
+	// Р—Р°РІРµСЂС€РµРЅРѕ
 	return devicesCount;
 	}
 
-// Функция запускает процесс считывания данных со звукового вывода
+// Р¤СѓРЅРєС†РёСЏ Р·Р°РїСѓСЃРєР°РµС‚ РїСЂРѕС†РµСЃСЃ СЃС‡РёС‚С‹РІР°РЅРёСЏ РґР°РЅРЅС‹С… СЃРѕ Р·РІСѓРєРѕРІРѕРіРѕ РІС‹РІРѕРґР°
 CD_API(sint) InitializeSoundStreamEx (uchar DeviceNumber)
 	{
-	// Получение доступа к библиотеке
+	// РџРѕР»СѓС‡РµРЅРёРµ РґРѕСЃС‚СѓРїР° Рє Р±РёР±Р»РёРѕС‚РµРєРµ
 	if (BASS_GetVersion () != BASS_VERSION)
 		return -10;
 
-	// Инициализация
+	// РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ
 	if (!BASS_RecordInit (DeviceNumber))
 		return BASS_ErrorGetCode ();
 
 	if (!(cdChannel = BASS_RecordStart (44100, 2, 0x00, NULL, 0)))
 		return BASS_ErrorGetCode ();
 
-	// Запуск таймера запроса данных
+	// Р—Р°РїСѓСЃРє С‚Р°Р№РјРµСЂР° Р·Р°РїСЂРѕСЃР° РґР°РЅРЅС‹С…
 	cdFFTTimer = timeSetEvent (25, 25, (LPTIMECALLBACK)&UpdateFFT, 0, TIME_PERIODIC);
 
-	// Успешно
+	// РЈСЃРїРµС€РЅРѕ
 	return 0;
 	}
 
-// Функция завершает процесс считывания
+// Р¤СѓРЅРєС†РёСЏ Р·Р°РІРµСЂС€Р°РµС‚ РїСЂРѕС†РµСЃСЃ СЃС‡РёС‚С‹РІР°РЅРёСЏ
 CD_API(void) DestroySoundStreamEx ()
 	{
-	// Контроль
+	// РљРѕРЅС‚СЂРѕР»СЊ
 	if (!cdChannel)
 		return;
 
-	// Закрытие спектрограммы, если есть
+	// Р—Р°РєСЂС‹С‚РёРµ СЃРїРµРєС‚СЂРѕРіСЂР°РјРјС‹, РµСЃР»Рё РµСЃС‚СЊ
 	DestroySpectrogramEx ();
 
-	// Закрытие таймера
+	// Р—Р°РєСЂС‹С‚РёРµ С‚Р°Р№РјРµСЂР°
 	if (cdFFTTimer)
 		{
 		timeKillEvent (cdFFTTimer);
 		cdFFTTimer = NULL;
 		}
 
-	// Остановка
+	// РћСЃС‚Р°РЅРѕРІРєР°
 	BASS_RecordFree ();
 	cdChannel = NULL;
 	}
 
-// Функция запрашивает данные из канала считывания
+// Р¤СѓРЅРєС†РёСЏ Р·Р°РїСЂР°С€РёРІР°РµС‚ РґР°РЅРЅС‹Рµ РёР· РєР°РЅР°Р»Р° СЃС‡РёС‚С‹РІР°РЅРёСЏ
 float *GetDataFromStreamEx ()
 	{
-	// Контроль
+	// РљРѕРЅС‚СЂРѕР»СЊ
 	ulong v;
 	if (!cdChannel)
 		return NULL;
 
-	// Получение
+	// РџРѕР»СѓС‡РµРЅРёРµ
 	if ((v = BASS_ChannelGetData (cdChannel, &cdFFT, BASS_DATA_AVAILABLE)) < FFT_VALUES_COUNT)
 		return NULL;
 
@@ -125,55 +127,77 @@ float *GetDataFromStreamEx ()
 	return cdFFT;
 	}
 
-// Функция-таймер перерисовки спектрограммы
+// Р¤СѓРЅРєС†РёСЏ РІРѕР·РІСЂР°С‰Р°РµС‚ РјР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРЅРѕРµ Р·РЅР°С‡РµРЅРёРµ Р°РјРїР»РёС‚СѓРґС‹ РЅР° СѓРєР°Р·Р°РЅРЅРѕР№ С‡Р°СЃС‚РѕС‚Рµ
+CD_API(uchar) GetScaledAmplitudeEx (uint FrequencyLevel)
+	{
+	// РџРµСЂРµРјРµРЅРЅС‹Рµ
+	uint v;
+
+	// РљРѕРЅС‚СЂРѕР»СЊ
+	if (FrequencyLevel >= FFT_VALUES_COUNT)
+		return 0;
+	
+	// РџРѕР»СѓС‡РµРЅРёРµ (uint, С‡С‚РѕР±С‹ РёСЃРєР»СЋС‡РёС‚СЊ СЃСѓРјРјРёСЂРѕРІР°РЅРёРµ СЃ РїРµСЂРµРЅРѕСЃРѕРј)
+	v = (uint)(sqrt (cdFFT[FrequencyLevel]) * cdFFTScale);
+
+	// Р’РїРёСЃС‹РІР°РЅРёРµ РІ РґРёР°РїР°Р·РѕРЅ (uchar)
+	if (v > CD_BMPINFO_COLORS_COUNT - 1) 
+		v = CD_BMPINFO_COLORS_COUNT - 1;
+
+	// РџРµСЂРµСЃС‡С‘С‚ РїРёРєР°
+	if ((FrequencyLevel >= cdFFTPeakEvLowEdge) && (FrequencyLevel <= cdFFTPeakEvHighEdge) && 
+		(v >= cdFFTPeakEvLowLevel)) 
+		cdFFTPeak = 0xFF;
+
+	// Р—Р°РІРµСЂС€РµРЅРѕ
+	return v;
+	}
+
+// Р¤СѓРЅРєС†РёСЏ-С‚Р°Р№РјРµСЂ РїРµСЂРµСЂРёСЃРѕРІРєРё СЃРїРµРєС‚СЂРѕРіСЂР°РјРјС‹
 void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWORD dw2)
 	{
-	// Переменные
-	uint y, x, v, xd;
+	// РџРµСЂРµРјРµРЅРЅС‹Рµ
+	uint y, x, v;
 
-	// Заполнение массива (если возможно)
+	// Р—Р°РїРѕР»РЅРµРЅРёРµ РјР°СЃСЃРёРІР° (РµСЃР»Рё РІРѕР·РјРѕР¶РЅРѕ)
 	if (!GetDataFromStreamEx ())
 		return;
 
-	// Обновление спектрограммы, если требуется
+	// РћР±РЅРѕРІР»РµРЅРёРµ СЃРїРµРєС‚СЂРѕРіСЂР°РјРјС‹, РµСЃР»Рё С‚СЂРµР±СѓРµС‚СЃСЏ
 	switch (sdSpectrogramMode)
 		{
-		// Без спектрограммы
+		// Р‘РµР· СЃРїРµРєС‚СЂРѕРіСЂР°РјРјС‹
 		default:
 		case 0:
 			break;
 
-		// С курсором
+		// РЎ РєСѓСЂСЃРѕСЂРѕРј
 		case 1:
 			for (y = 0; y < sdFrameHeight; y++)
 				{
-				// Масштабирование (квадратный корень позволяет лучше видеть нижние значения)
-				v = (uint)(sqrt (cdFFT[y + 1]) * cdFFTScale);
+				// РџРѕР»СѓС‡РµРЅРёРµ Р·РЅР°С‡РµРЅРёСЏ
+				v = GetScaledAmplitudeEx (y + 1);
 
-				// Вписывание в диапазон и пересчёт пика
-				INBOUND_FFT_VALUE (v)
-				UPDATE_PEAK (y, v)
-
-				// Отрисовка
+				// РћС‚СЂРёСЃРѕРІРєР°
 				sdBuffer[y * sdFrameWidth + sdCurrentPosition] =
 #ifdef SD_DOUBLE_WIDTH
 				sdBuffer[y * sdFrameWidth + (sdCurrentPosition + 1) % sdFrameWidth] = 
 #endif
 				v;
 
-				// Маркер
+				// РњР°СЂРєРµСЂ
 				sdBuffer[y * sdFrameWidth + (sdCurrentPosition + SD_STEP) % sdFrameWidth] = 255;
 				}
 
-			// Движение маркера
+			// Р”РІРёР¶РµРЅРёРµ РјР°СЂРєРµСЂР°
 			sdCurrentPosition = (sdCurrentPosition + SD_STEP) % sdFrameWidth;
 			break;
 
-		// Движущаяся
+		// Р”РІРёР¶СѓС‰Р°СЏСЃСЏ
 		case 2:
 			for (y = 0; y < sdFrameHeight; y++)
 				{
-				// Сдвиг изображения
+				// РЎРґРІРёРі РёР·РѕР±СЂР°Р¶РµРЅРёСЏ
 				for (x = 0; x < sdFrameWidth - SD_STEP; x += SD_STEP)
 					{
 					sdBuffer[y * sdFrameWidth + x] = sdBuffer[y * sdFrameWidth + x + 1]
@@ -183,14 +207,10 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 					;
 					}
 
-				// Масштаб
-				v = (uint)(sqrt (cdFFT[y + 1]) * cdFFTScale);
+				// РџРѕР»СѓС‡РµРЅРёРµ Р·РЅР°С‡РµРЅРёСЏ
+				v = GetScaledAmplitudeEx (y + 1);
 
-				// Вписывание в диапазон и пересчёт пика
-				INBOUND_FFT_VALUE (v)
-				UPDATE_PEAK (y, v)
-
-				// Отрисовка
+				// РћС‚СЂРёСЃРѕРІРєР°
 #ifdef SD_DOUBLE_WIDTH
 				sdBuffer[y * sdFrameWidth + sdFrameWidth - 2] = 
 #endif
@@ -198,22 +218,17 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 				}
 			break;
 
-		// Гистограмма
+		// Р“РёСЃС‚РѕРіСЂР°РјРјР°
 		case 3:
 			for (x = 0; x < sdFrameWidth; x++)
 				{
-				// Получение значения и масштаб
-				xd = HISTOGRAM_FFT_VALUES_COUNT * (ulong)x / sdFrameWidth;
-				v = (uint)(sqrt (cdFFT[xd]) * cdFFTScale);
+				// РџРѕР»СѓС‡РµРЅРёРµ Р·РЅР°С‡РµРЅРёСЏ
+				v = GetScaledAmplitudeEx (HISTOGRAM_FFT_VALUES_COUNT * (ulong)x / sdFrameWidth);
 
-				// Вписывание в диапазон и пересчёт пика
-				INBOUND_FFT_VALUE (v)
-				UPDATE_PEAK (xd, v)
-
-				// Отрисовка
-				v = sdFrameHeight * (ulong)v / CD_BMPINFO_COLORS_COUNT;
+				// РћС‚СЂРёСЃРѕРІРєР°
+				v = sdFrameHeight * (ulong)v / CD_BMPINFO_COLORS_COUNT;	// РџРµСЂРµРјР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёРµ
 				for (y = 0; y < v; y++)
-					sdBuffer[y * sdFrameWidth + x] = 3 * y / 4 + 64;	// Убираем чёрный низ палитры
+					sdBuffer[y * sdFrameWidth + x] = 3 * y / 4 + 64;	// РЈР±РёСЂР°РµРј С‡С‘СЂРЅС‹Р№ РЅРёР· РїР°Р»РёС‚СЂ
 				for (y = v; y < sdFrameHeight; y++)
 					sdBuffer[y * sdFrameWidth + x] = 0;
 				}
@@ -221,59 +236,56 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 		}
 	}
 
-// Функция инициализирует спектрограмму
+// Р¤СѓРЅРєС†РёСЏ РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµС‚ СЃРїРµРєС‚СЂРѕРіСЂР°РјРјСѓ
 CD_API(sint) InitializeSpectrogramEx (uint FrameWidth, uint FrameHeight, uchar PaletteNumber, uchar SpectrogramMode)
 	{
-	// Переменные
-	union CD_BITMAPINFO info;
-
-	// Контроль параметров
+	// РљРѕРЅС‚СЂРѕР»СЊ РїР°СЂР°РјРµС‚СЂРѕРІ
 	if ((FrameWidth < MINFRAMEWIDTH) || (FrameWidth > MAXFRAMEWIDTH) ||
 		(FrameHeight < MINFRAMEHEIGHT) || (FrameHeight > MAXFRAMEHEIGHT))
 		return -3;
-	if (!cdChannel)		// Канал должен быть инициализирован
+	if (!cdChannel)		// РљР°РЅР°Р» РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РёРЅРёС†РёР°Р»РёР·РёСЂРѕРІР°РЅ
 		return -1;
-	if (sdBMP)			// Спектрограмма не должна быть занята
+	if (sdBMP)			// РЎРїРµРєС‚СЂРѕРіСЂР°РјРјР° РЅРµ РґРѕР»Р¶РЅР° Р±С‹С‚СЊ Р·Р°РЅСЏС‚Р°
 		return -2;
 
-	sdFrameWidth = FrameWidth & 0xFFFC;		// Хрен знает, почему, но CreateDIBSection не понимает размеры,
+	sdFrameWidth = FrameWidth & 0xFFFC;		// РҐСЂРµРЅ Р·РЅР°РµС‚, РїРѕС‡РµРјСѓ, РЅРѕ CreateDIBSection РЅРµ РїРѕРЅРёРјР°РµС‚ СЂР°Р·РјРµСЂС‹,
 	if (sdFrameWidth != FrameWidth)
 		sdFrameWidth += 4;
 
-	sdFrameHeight = FrameHeight & 0xFFFC;	// которые не делятся на 4
+	sdFrameHeight = FrameHeight & 0xFFFC;	// РєРѕС‚РѕСЂС‹Рµ РЅРµ РґРµР»СЏС‚СЃСЏ РЅР° 4
 	if (sdFrameHeight != FrameHeight)
 		sdFrameHeight += 4;
 
 	sdSpectrogramMode = SpectrogramMode;
 
-	// Инициализация описателя
-	memset (info.cd_bmpinfo_ptr, 0x00, sizeof (union CD_BITMAPINFO));	// Сброс на нули всех значений
+	// РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РѕРїРёСЃР°С‚РµР»СЏ
+	memset (cdBMPInfo.cd_bmpinfo_ptr, 0x00, sizeof (union CD_BITMAPINFO));	// РЎР±СЂРѕСЃ РЅР° РЅСѓР»Рё РІСЃРµС… Р·РЅР°С‡РµРЅРёР№
 
-	info.cd_bmpinfo.header.biSize = sizeof (BITMAPINFOHEADER);
-	info.cd_bmpinfo.header.biWidth = sdFrameWidth;
-	info.cd_bmpinfo.header.biHeight = sdFrameHeight;
-	info.cd_bmpinfo.header.biPlanes = 1;
-	info.cd_bmpinfo.header.biBitCount = 8;
-	info.cd_bmpinfo.header.biClrUsed = info.cd_bmpinfo.header.biClrImportant = CD_BMPINFO_COLORS_COUNT;
+	cdBMPInfo.cd_bmpinfo.header.biSize = sizeof (BITMAPINFOHEADER);
+	cdBMPInfo.cd_bmpinfo.header.biWidth = sdFrameWidth;
+	cdBMPInfo.cd_bmpinfo.header.biHeight = sdFrameHeight;
+	cdBMPInfo.cd_bmpinfo.header.biPlanes = 1;
+	cdBMPInfo.cd_bmpinfo.header.biBitCount = 8;
+	cdBMPInfo.cd_bmpinfo.header.biClrUsed = cdBMPInfo.cd_bmpinfo.header.biClrImportant = CD_BMPINFO_COLORS_COUNT;
 
-	FillPalette (info.cd_bmpinfo.colors, PaletteNumber);
+	FillPaletteEx (PaletteNumber);
 
-	// Создание BITMAP
-	if ((sdBMP = CreateDIBSection (NULL, (BITMAPINFO *)&info, DIB_RGB_COLORS, (void **)&sdBuffer, NULL, 0)) == NULL)
+	// РЎРѕР·РґР°РЅРёРµ BITMAP
+	if ((sdBMP = CreateDIBSection (NULL, (BITMAPINFO *)&cdBMPInfo, DIB_RGB_COLORS, (void **)&sdBuffer, NULL, 0)) == NULL)
 		return -4;
 
-	// Завершено
+	// Р—Р°РІРµСЂС€РµРЅРѕ
 	return 0;
 	}
 
-// Функция удаляет активную спектрограмму
+// Р¤СѓРЅРєС†РёСЏ СѓРґР°Р»СЏРµС‚ Р°РєС‚РёРІРЅСѓСЋ СЃРїРµРєС‚СЂРѕРіСЂР°РјРјСѓ
 CD_API(void) DestroySpectrogramEx ()
 	{
-	// Контроль
+	// РљРѕРЅС‚СЂРѕР»СЊ
 	if (!cdChannel)
 		return;
 
-	// Сброс
+	// РЎР±СЂРѕСЃ
 	if (sdBMP)
 		{
 		sdSpectrogramMode = 0;
@@ -283,36 +295,36 @@ CD_API(void) DestroySpectrogramEx ()
 		}
 	}
 
-// Функция возвращает текущий фрейм спектрограммы
+// Р¤СѓРЅРєС†РёСЏ РІРѕР·РІСЂР°С‰Р°РµС‚ С‚РµРєСѓС‰РёР№ С„СЂРµР№Рј СЃРїРµРєС‚СЂРѕРіСЂР°РјРјС‹
 CD_API(HBITMAP) GetSpectrogramFrameEx ()
 	{
-	// Контроль
+	// РљРѕРЅС‚СЂРѕР»СЊ
 	if (!sdBMP)
 		return NULL;
 
-	// Завершено
+	// Р—Р°РІРµСЂС€РµРЅРѕ
 	return sdBMP;
 	}
 
-// Функция возвращает значение амплитуды на указанном уровне
+// Р¤СѓРЅРєС†РёСЏ РІРѕР·РІСЂР°С‰Р°РµС‚ Р·РЅР°С‡РµРЅРёРµ Р°РјРїР»РёС‚СѓРґС‹ РЅР° СѓРєР°Р·Р°РЅРЅРѕРј СѓСЂРѕРІРЅРµ
 CD_API(uchar) GetCurrentPeakEx ()
 	{
-	// Не требует защиты
+	// РќРµ С‚СЂРµР±СѓРµС‚ Р·Р°С‰РёС‚С‹
 	if (cdFFTPeak == 0xFF)
-		cdFFTPeak--;		// На первый раз прощаем
+		cdFFTPeak--;		// РќР° РїРµСЂРІС‹Р№ СЂР°Р· РїСЂРѕС‰Р°РµРј
 	else if (cdFFTPeak > 40)
-		cdFFTPeak -= 40;	// Далее - затухание
+		cdFFTPeak -= 40;	// Р”Р°Р»РµРµ - Р·Р°С‚СѓС…Р°РЅРёРµ
 	else
-		cdFFTPeak = 0;		// Глушение
+		cdFFTPeak = 0;		// Р“Р»СѓС€РµРЅРёРµ
 
 	return cdFFTPeak;
 	}
 
-// Функция устанавливает метрики определения пикового значения
+// Р¤СѓРЅРєС†РёСЏ СѓСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ РјРµС‚СЂРёРєРё РѕРїСЂРµРґРµР»РµРЅРёСЏ РїРёРєРѕРІРѕРіРѕ Р·РЅР°С‡РµРЅРёСЏ
 CD_API(void) SetPeakEvaluationParametersEx (uchar LowEdge, uchar HighEdge, 
 	uchar LowLevel, uchar FFTScaleMultiplier)
 	{
-	// Не требует защиты
+	// РќРµ С‚СЂРµР±СѓРµС‚ Р·Р°С‰РёС‚С‹
 	cdFFTPeakEvLowLevel = LowLevel;
 	cdFFTPeakEvLowEdge = LowEdge;
 	cdFFTPeakEvHighEdge = (HighEdge < LowEdge) ? LowEdge : HighEdge;
@@ -324,108 +336,155 @@ CD_API(void) SetPeakEvaluationParametersEx (uchar LowEdge, uchar HighEdge,
 	cdFFTScale *= 25.5f;
 	}
 
-// Функция формирует палитру
-void FillPalette (RGBQUAD *Palette, uchar PaletteNumber)
+// Р¤СѓРЅРєС†РёСЏ С„РѕСЂРјРёСЂСѓРµС‚ РїР°Р»РёС‚СЂСѓ
+CD_API(void) FillPaletteEx (uchar PaletteNumber)
 	{
 	uint i;
 	uint qSize = CD_BMPINFO_COLORS_COUNT / 4;
 
 	switch (PaletteNumber)
 		{
-		// Стандартная
+		// РЎС‚Р°РЅРґР°СЂС‚РЅР°СЏ
 		default:
 		case 0:
 			for (i = 0; i < qSize; i++) 
 				{
-				Palette[i].rgbBlue = 4 * i;
+				cdBMPInfo.cd_bmpinfo.colors[i].rgbRed = 
+					cdBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
+				cdBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 4 * i;
 
-				Palette[qSize + i].rgbBlue = 255;
-				Palette[qSize + i].rgbRed = 4 * i;
+				cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbRed = 4 * i;
+				cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbGreen = 0;
+				cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbBlue = 255;
 
-				Palette[2 * qSize + i].rgbRed = 255;
-				Palette[2 * qSize + i].rgbBlue = 4 * (qSize - 1 - i);
-				Palette[2 * qSize + i].rgbGreen = 4 * i;
+				cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbRed = 255;
+				cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbGreen = 4 * i;
+				cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbBlue = 4 * (qSize - 1 - i);
 
-				Palette[3 * qSize + i].rgbRed = 255;
-				Palette[3 * qSize + i].rgbGreen = 255;
-				Palette[3 * qSize + i].rgbBlue = 4 * i;
+				cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbRed = 255;
+				cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbGreen = 255;
+				cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbBlue = 4 * i;
 				}
-			currentPalette = 0;
+			cdCurrentPalette = 0;
 			break;
 
-		// Море
+		// РњРѕСЂРµ
 		case 1:
 			for (i = 0; i < qSize; i++) 
 				{
-				Palette[i].rgbBlue = 4 * i;
+				cdBMPInfo.cd_bmpinfo.colors[i].rgbRed = 
+					cdBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
+				cdBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 4 * i;
 
-				Palette[qSize + i].rgbBlue = 255;
-				Palette[qSize + i].rgbGreen = 2 * i;
+				cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbRed = 0;
+				cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbGreen = 2 * i;
+				cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbBlue = 255;
 
-				Palette[2 * qSize + i].rgbBlue = 255;
-				Palette[2 * qSize + i].rgbGreen = 2 * (qSize + i);
+				cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbRed = 0;
+				cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbGreen = 2 * (qSize + i);
+				cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbBlue = 255;
 
-				Palette[3 * qSize + i].rgbBlue = 255;
-				Palette[3 * qSize + i].rgbGreen = 255;
-				Palette[3 * qSize + i].rgbRed = 4 * i;
+				cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbRed = 4 * i;
+				cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbGreen =
+					cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbBlue = 255;
 				}
-			currentPalette = PaletteNumber;
+			cdCurrentPalette = PaletteNumber;
 			break;
 
-		// Огонь
+		// РћРіРѕРЅСЊ
 		case 2:
 			for (i = 0; i < qSize; i++) 
 				{
-				Palette[i].rgbRed = 4 * i;
+				cdBMPInfo.cd_bmpinfo.colors[i].rgbRed = 4 * i;
+				cdBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 
+					cdBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
 
-				Palette[qSize + i].rgbRed = 255;
-				Palette[qSize + i].rgbGreen = 2 * i;
+				cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbRed = 255;
+				cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbGreen = 2 * i;
+				cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbBlue = 0;
 
-				Palette[2 * qSize + i].rgbRed = 255;
-				Palette[2 * qSize + i].rgbGreen = 2 * (qSize + i);
+				cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbRed = 255;
+				cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbGreen = 2 * (qSize + i);
+				cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbBlue = 0;
 
-				Palette[3 * qSize + i].rgbRed = 255;
-				Palette[3 * qSize + i].rgbGreen = 255;
-				Palette[3 * qSize + i].rgbBlue = 4 * i;
+				cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbRed = 
+					cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbGreen = 255;
+				cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbBlue = 4 * i;
 				}
-			currentPalette = PaletteNumber;
+			cdCurrentPalette = PaletteNumber;
 			break;
 
-		// Серая
+		// РЎРµСЂР°СЏ
 		case 3:
 			for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++) 
 				{
-				Palette[i].rgbRed = Palette[i].rgbGreen = Palette[i].rgbBlue = i & 0xFF;
+				cdBMPInfo.cd_bmpinfo.colors[i].rgbRed = cdBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 
+					cdBMPInfo.cd_bmpinfo.colors[i].rgbBlue = i;
 				}
-			currentPalette = PaletteNumber;
+			cdCurrentPalette = PaletteNumber;
 			break;
 
-		// Рассвет
+		// Р Р°СЃСЃРІРµС‚
 		case 4:
 			for (i = 0; i < qSize; i++) 
 				{
-				Palette[i].rgbBlue = 2 * i;
-				Palette[qSize + i].rgbBlue = 128 - 2 * i;
-				Palette[qSize + i].rgbGreen = 3 * i;
-				Palette[2 * qSize + i].rgbRed = 4 * i;
-				Palette[2 * qSize + i].rgbGreen = 192 - i;
-				Palette[3 * qSize + i].rgbRed = 255;
-				Palette[3 * qSize + i].rgbGreen = 128 + 2 * i;
-				Palette[3 * qSize + i].rgbBlue = 4 * i;
+				cdBMPInfo.cd_bmpinfo.colors[i].rgbRed = 
+					cdBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
+				cdBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 2 * i;
+
+				cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbRed = 0;
+				cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbGreen = 3 * i;
+				cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbBlue = 2 * (qSize - i);
+
+				cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbRed = 4 * i;
+				cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbGreen = 3 * qSize - i;
+				cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbBlue = 0;
+
+				cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbRed = 255;
+				cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbGreen = 2 * (qSize + i);
+				cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbBlue = 4 * i;
 				}
-			currentPalette = PaletteNumber;
+			cdCurrentPalette = PaletteNumber;
+			break;
+
+		// РљРёСЃР»РѕС‚Р°
+		case 5:
+			for (i = 0; i < qSize; i++) 
+				{
+				cdBMPInfo.cd_bmpinfo.colors[i].rgbGreen = i;
+				cdBMPInfo.cd_bmpinfo.colors[i].rgbRed = 
+					cdBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
+
+				cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbGreen = 64 + i;
+				cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbRed =
+					cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbBlue = 0;
+
+				cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbGreen = 128 + 2 * i;
+				cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbRed =
+					cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbBlue = 0;
+
+				cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbRed =
+					cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbBlue = 4 *  i;
+				cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbGreen = 255;
+				}
+			cdCurrentPalette = PaletteNumber;
 			break;
 		}
-
-	//ACT_SavePaletteEx ("test.act", (union RGBA_Color *)Palette, 256);
 	}
 
-// Функция возвращает основной цвет текущей палитры с указанной яркостью
+// Р¤СѓРЅРєС†РёСЏ РїРѕР»СѓС‡Р°РµС‚ СѓРєР°Р·Р°РЅРЅС‹Р№ С†РІРµС‚ РёР· С‚РµРєСѓС‰РµР№ РїР°Р»РёС‚СЂС‹
+CD_API(ulong) GetColorFromPaletteEx (uchar ColorNumber)
+	{
+	return 0xFF000000 | (cdBMPInfo.cd_bmpinfo.colors[ColorNumber].rgbRed << 16) |
+		(cdBMPInfo.cd_bmpinfo.colors[ColorNumber].rgbGreen << 8) | cdBMPInfo.cd_bmpinfo.colors[ColorNumber].rgbBlue;
+	}
+
+// Р¤СѓРЅРєС†РёСЏ РІРѕР·РІСЂР°С‰Р°РµС‚ РѕСЃРЅРѕРІРЅРѕР№ С†РІРµС‚ С‚РµРєСѓС‰РµР№ РїР°Р»РёС‚СЂС‹ СЃ СѓРєР°Р·Р°РЅРЅРѕР№ СЏСЂРєРѕСЃС‚СЊСЋ
 CD_API(ulong) GetMasterPaletteColorEx (uchar Brightness)
 	{
 	uint v;
 
-	switch (currentPalette)
+	switch (cdCurrentPalette)
 		{
 		default:
 		case 0:
@@ -442,30 +501,34 @@ CD_API(ulong) GetMasterPaletteColorEx (uchar Brightness)
 			return 0xFF000000 | (v << 16) | (v << 8) | v;
 
 		case 4:
-			return 0xFF000000 | ((3 * Brightness / 4) << 8);
+			return 0xFF000000 | (Brightness << 8) | Brightness;
+
+		case 5:
+			return 0xFF000000 | (Brightness << 8);
 		}
 	}
 
-// Функция возвращает названия доступных палитр
+// Р¤СѓРЅРєС†РёСЏ РІРѕР·РІСЂР°С‰Р°РµС‚ РЅР°Р·РІР°РЅРёСЏ РґРѕСЃС‚СѓРїРЅС‹С… РїР°Р»РёС‚СЂ
 CD_API(schar *) GetPalettesNamesEx ()
 	{
 	#define PALETTES_NAMES	("Default (blue-magenta-yellow-white)" NAMES_DELIMITER_S \
 		"Sea (blue-cyan-white)" NAMES_DELIMITER_S \
 		"Fire (red-orange-yellow-white)" NAMES_DELIMITER_S \
 		"Grey" NAMES_DELIMITER_S \
-		"Sunshine (blue-green-orange-white)")
+		"Sunshine (blue-green-orange-white)" NAMES_DELIMITER_S \
+		"Acid (green-lime-white)")
 
 	return PALETTES_NAMES;
 	}
 
-// Функция возвращает ограничивающие размеры фреймов спектрограмм
+// Р¤СѓРЅРєС†РёСЏ РІРѕР·РІСЂР°С‰Р°РµС‚ РѕРіСЂР°РЅРёС‡РёРІР°СЋС‰РёРµ СЂР°Р·РјРµСЂС‹ С„СЂРµР№РјРѕРІ СЃРїРµРєС‚СЂРѕРіСЂР°РјРј
 CD_API(udlong) GetSpectrogramFrameMetricsEx ()
 	{
 	return ((udlong)MINFRAMEWIDTH << 48) | ((udlong)MAXFRAMEWIDTH << 32) | 
 		((udlong)MINFRAMEHEIGHT << 16) | (udlong)MAXFRAMEHEIGHT;
 	}
 
-// Функция возвращает стандартные метрики определения пикового значения
+// Р¤СѓРЅРєС†РёСЏ РІРѕР·РІСЂР°С‰Р°РµС‚ СЃС‚Р°РЅРґР°СЂС‚РЅС‹Рµ РјРµС‚СЂРёРєРё РѕРїСЂРµРґРµР»РµРЅРёСЏ РїРёРєРѕРІРѕРіРѕ Р·РЅР°С‡РµРЅРёСЏ
 CD_API(ulong) GetDefaultPeakEvaluationParametersEx ()
 	{
 	return (CD_DEFAULT_FFT_SCALE_MULT << 24) | (PEAK_EVALUATION_LOW_EDGE << 16) | 

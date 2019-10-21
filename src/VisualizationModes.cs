@@ -38,7 +38,12 @@
 		/// <summary>
 		/// Гистограмма, без лого
 		/// </summary>
-		Histogram = 6
+		Histogram = 6,
+
+		/// <summary>
+		/// Гистограмма «бабочка» со встроенным лого
+		/// </summary>
+		ButterflyHistogram = 7
 		}
 
 	/// <summary>
@@ -49,7 +54,7 @@
 		/// <summary>
 		/// Количество доступных режимов визуализации
 		/// </summary>
-		public const uint VisualizationModesCount = 7;
+		public const uint VisualizationModesCount = 8;
 
 		/// <summary>
 		/// Метод проверяет, требует ли указанный режим отрисовки лого
@@ -61,7 +66,8 @@
 			return (Mode == VisualizationModes.LogoOnly) ||
 				(Mode == VisualizationModes.MovingSpectrogramAndLogo) ||
 				(Mode == VisualizationModes.StaticSpectrogramAndLogo) ||
-				(Mode == VisualizationModes.HistogramAndLogo);
+				(Mode == VisualizationModes.HistogramAndLogo) ||
+				(Mode == VisualizationModes.ButterflyHistogram);
 			}
 
 		/// <summary>
@@ -78,7 +84,8 @@
 					return ConcurrentDrawLib.SpectrogramModes.Histogram;
 
 				default:
-				case VisualizationModes.LogoOnly:
+					// case VisualizationModes.LogoOnly:
+					// case VisualizationModes.ButterflyHistogram:
 					return ConcurrentDrawLib.SpectrogramModes.NoSpectrogram;
 
 				case VisualizationModes.MovingSpectrogram:
@@ -89,21 +96,6 @@
 				case VisualizationModes.StaticSpectrogramAndLogo:
 					return ConcurrentDrawLib.SpectrogramModes.StaticSpectrogram;
 				}
-			}
-
-		/// <summary>
-		/// Метод проверяет, предполагает ли указанный режим спектрограмму
-		/// </summary>
-		/// <param name="Mode">Режим для проверки</param>
-		/// <returns>Возвращает true в случае, если предполагается спектрограмма</returns>
-		public static bool ContainsSpectrogram (VisualizationModes Mode)
-			{
-			return (Mode == VisualizationModes.MovingSpectrogram) ||
-				(Mode == VisualizationModes.MovingSpectrogramAndLogo) ||
-				(Mode == VisualizationModes.StaticSpectrogram) ||
-				(Mode == VisualizationModes.StaticSpectrogramAndLogo) ||
-				(Mode == VisualizationModes.Histogram) ||
-				(Mode == VisualizationModes.HistogramAndLogo);
 			}
 		}
 	}

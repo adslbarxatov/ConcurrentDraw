@@ -1,10 +1,10 @@
 /////////////////////////////////////////////////////
-// Режим работы
+// Р РµР¶РёРј СЂР°Р±РѕС‚С‹
 //#define BASSTEST
 //#define SD_DOUBLE_WIDTH
 
 /////////////////////////////////////////////////////
-// Заголовочные файлы и библиотеки
+// Р—Р°РіРѕР»РѕРІРѕС‡РЅС‹Рµ С„Р°Р№Р»С‹ Рё Р±РёР±Р»РёРѕС‚РµРєРё
 #include <windows.h>
 #include <stdio.h>
 #include <math.h>
@@ -15,7 +15,7 @@
 #pragma comment (lib, "winmm.lib")
 
 /////////////////////////////////////////////////////
-// Переопределения типов
+// РџРµСЂРµРѕРїСЂРµРґРµР»РµРЅРёСЏ С‚РёРїРѕРІ
 #define __u		unsigned
 
 #define schar	__int8
@@ -31,13 +31,12 @@
 #define CD_API(t)	extern __declspec(dllexport) t __stdcall
 
 /////////////////////////////////////////////////////
-// Константы
+// РљРѕРЅСЃС‚Р°РЅС‚С‹
 #define BASS_VERSION				0x02040E00
-#define CD_VERSION					1,3,0,0
-#define CD_VERSION2					"1.3.0.0"
+#define CD_VERSION					1,4,0,0
+#define CD_VERSION2					"1.4.0.0"
 #define CD_PRODUCT					"ConcurrentDraw visualization tool's BASS adapter"
 #define CD_COMPANY					"RD AAOW"
-
 
 #define MAX_RECORD_DEVICES			10
 #define MAX_DEVICE_NAME_LENGTH		128
@@ -49,13 +48,13 @@
 #define MAXFRAMEWIDTH				2048
 #define MINFRAMEHEIGHT				128
 #define CD_BMPINFO_COLORS_COUNT		256
-#define MAXFRAMEHEIGHT				CD_BMPINFO_COLORS_COUNT	// до 11025 Гц
-#define HISTOGRAM_FFT_VALUES_COUNT	512						// до 22050 Гц
+#define MAXFRAMEHEIGHT				CD_BMPINFO_COLORS_COUNT	// РґРѕ 11025 Р“С†
+#define HISTOGRAM_FFT_VALUES_COUNT	512						// РґРѕ 22050 Р“С†
 
 #define PEAK_EVALUATION_LOW_EDGE	0
-#define PEAK_EVALUATION_HIGH_EDGE	10
+#define PEAK_EVALUATION_HIGH_EDGE	3
 #define PEAK_EVALUATION_LOW_LEVEL	0xF0
-#define CD_DEFAULT_FFT_SCALE_MULT	30
+#define CD_DEFAULT_FFT_SCALE_MULT	45
 #define CD_MIN_FFT_SCALE_MULT		10
 #define CD_MAX_FFT_SCALE_MULT		100
 
@@ -63,24 +62,16 @@
 #define NAMES_DELIMITER_S			"\x1"
 
 /////////////////////////////////////////////////////
-// Пререквизиты таймера
-//#define SD_FFT_SCALE				765.0f		// 255 * 3, для масштабирования значения амплитуды
+// РџСЂРµСЂРµРєРІРёР·РёС‚С‹ С‚Р°Р№РјРµСЂР°
+//#define SD_FFT_SCALE				765.0f		// 255 * 3, РґР»СЏ РјР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёСЏ Р·РЅР°С‡РµРЅРёСЏ Р°РјРїР»РёС‚СѓРґС‹
 #ifdef SD_DOUBLE_WIDTH
-	#define SD_STEP 2							// Ширина шага спектрограммы
+	#define SD_STEP 2							// РЁРёСЂРёРЅР° С€Р°РіР° СЃРїРµРєС‚СЂРѕРіСЂР°РјРјС‹
 #else
 	#define SD_STEP 1
 #endif
 
-// Макрос ограничивает масштабированное значение амплитуды
-#define INBOUND_FFT_VALUE(fftv)	if (fftv > CD_BMPINFO_COLORS_COUNT - 1) fftv = CD_BMPINFO_COLORS_COUNT - 1;
-
-// Макрос обновляет значение пика при соблюдении условий
-// (заданный диапазон частот, достаточная величина амплитуды)
-#define UPDATE_PEAK(freq,fftv)	if ((freq >= cdFFTPeakEvLowEdge) && (freq <= cdFFTPeakEvHighEdge) && \
-								(fftv >= cdFFTPeakEvLowLevel)) cdFFTPeak = 0xFF;
-
 /////////////////////////////////////////////////////
-// Структура-описатель заголовка BITMAP
+// РЎС‚СЂСѓРєС‚СѓСЂР°-РѕРїРёСЃР°С‚РµР»СЊ Р·Р°РіРѕР»РѕРІРєР° BITMAP
 union CD_BITMAPINFO
 	{
 	struct CD_BMPINFO 
@@ -92,55 +83,63 @@ union CD_BITMAPINFO
 	};
 
 /////////////////////////////////////////////////////
-// Внутренние функции
+// Р’РЅСѓС‚СЂРµРЅРЅРёРµ С„СѓРЅРєС†РёРё
 float *GetDataFromStreamEx ();
 void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWORD dw2);
-void FillPalette (RGBQUAD *Palette, uchar PaletteNumber);
 
 /////////////////////////////////////////
-// Внешние функции
+// Р’РЅРµС€РЅРёРµ С„СѓРЅРєС†РёРё
 
-// Функция получает имена устройств вывода звука (массив символов по 128 на имя)
+// Р¤СѓРЅРєС†РёСЏ РїРѕР»СѓС‡Р°РµС‚ РёРјРµРЅР° СѓСЃС‚СЂРѕР№СЃС‚РІ РІС‹РІРѕРґР° Р·РІСѓРєР° (РјР°СЃСЃРёРІ СЃРёРјРІРѕР»РѕРІ РїРѕ 128 РЅР° РёРјСЏ)
 CD_API(uchar) GetDevicesEx (schar **Devices);
 
-// Функция запускает процесс считывания данных со звукового вывода
+// Р¤СѓРЅРєС†РёСЏ Р·Р°РїСѓСЃРєР°РµС‚ РїСЂРѕС†РµСЃСЃ СЃС‡РёС‚С‹РІР°РЅРёСЏ РґР°РЅРЅС‹С… СЃРѕ Р·РІСѓРєРѕРІРѕРіРѕ РІС‹РІРѕРґР°
 CD_API(sint) InitializeSoundStreamEx (uchar DeviceNumber);
-// -10 - недопустимая версия библиотеки
-// Положительные коды ошибок и ошибка -1 (UnknownError) - ошибки BASS
+// -10 - РЅРµРґРѕРїСѓСЃС‚РёРјР°СЏ РІРµСЂСЃРёСЏ Р±РёР±Р»РёРѕС‚РµРєРё
+// РџРѕР»РѕР¶РёС‚РµР»СЊРЅС‹Рµ РєРѕРґС‹ РѕС€РёР±РѕРє Рё РѕС€РёР±РєР° -1 (UnknownError) - РѕС€РёР±РєРё BASS
 
-// Функция завершает процесс считывания
+// Р¤СѓРЅРєС†РёСЏ Р·Р°РІРµСЂС€Р°РµС‚ РїСЂРѕС†РµСЃСЃ СЃС‡РёС‚С‹РІР°РЅРёСЏ
 CD_API(void) DestroySoundStreamEx ();
 
-// Функция инициализирует спектрограмму
+// Р¤СѓРЅРєС†РёСЏ РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµС‚ СЃРїРµРєС‚СЂРѕРіСЂР°РјРјСѓ
 CD_API(sint) InitializeSpectrogramEx (uint FrameWidth, uint FrameHeight, 
 	uchar PaletteNumber, uchar SpectrogramMode);
 
-// Функция удаляет активную спектрограмму
+// Р¤СѓРЅРєС†РёСЏ СѓРґР°Р»СЏРµС‚ Р°РєС‚РёРІРЅСѓСЋ СЃРїРµРєС‚СЂРѕРіСЂР°РјРјСѓ
 CD_API(void) DestroySpectrogramEx ();
 
-// Функция возвращает текущий фрейм спектрограммы
+// Р¤СѓРЅРєС†РёСЏ РІРѕР·РІСЂР°С‰Р°РµС‚ С‚РµРєСѓС‰РёР№ С„СЂРµР№Рј СЃРїРµРєС‚СЂРѕРіСЂР°РјРјС‹
 CD_API(HBITMAP) GetSpectrogramFrameEx ();
 
-// Функция возвращает текущее значение амплитуды
+// Р¤СѓРЅРєС†РёСЏ РІРѕР·РІСЂР°С‰Р°РµС‚ С‚РµРєСѓС‰РµРµ Р·РЅР°С‡РµРЅРёРµ Р°РјРїР»РёС‚СѓРґС‹
 CD_API(uchar) GetCurrentPeakEx ();
 
-// Функция устанавливает метрики определения пикового значения
+// Р¤СѓРЅРєС†РёСЏ СѓСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ РјРµС‚СЂРёРєРё РѕРїСЂРµРґРµР»РµРЅРёСЏ РїРёРєРѕРІРѕРіРѕ Р·РЅР°С‡РµРЅРёСЏ
 CD_API(void) SetPeakEvaluationParametersEx (uchar LowEdge, uchar HighEdge, 
 	uchar LowLevel, uchar FFTScaleMultiplier);
 
-// Функция возвращает основной цвет текущей палитры с указанной яркостью
+// Р¤СѓРЅРєС†РёСЏ РІРѕР·РІСЂР°С‰Р°РµС‚ РѕСЃРЅРѕРІРЅРѕР№ С†РІРµС‚ С‚РµРєСѓС‰РµР№ РїР°Р»РёС‚СЂС‹ СЃ СѓРєР°Р·Р°РЅРЅРѕР№ СЏСЂРєРѕСЃС‚СЊСЋ
 CD_API(ulong) GetMasterPaletteColorEx (uchar Brightness);
 
-// Функция возвращает названия доступных палитр
+// Р¤СѓРЅРєС†РёСЏ РІРѕР·РІСЂР°С‰Р°РµС‚ РЅР°Р·РІР°РЅРёСЏ РґРѕСЃС‚СѓРїРЅС‹С… РїР°Р»РёС‚СЂ
 CD_API(schar *) GetPalettesNamesEx ();
 
-// Функция возвращает ограничивающие размеры фреймов спектрограмм
+// Р¤СѓРЅРєС†РёСЏ РІРѕР·РІСЂР°С‰Р°РµС‚ РѕРіСЂР°РЅРёС‡РёРІР°СЋС‰РёРµ СЂР°Р·РјРµСЂС‹ С„СЂРµР№РјРѕРІ СЃРїРµРєС‚СЂРѕРіСЂР°РјРј
 CD_API(udlong) GetSpectrogramFrameMetricsEx ();
 
-// Функция возвращает стандартные метрики определения пикового значения
+// Р¤СѓРЅРєС†РёСЏ РІРѕР·РІСЂР°С‰Р°РµС‚ СЃС‚Р°РЅРґР°СЂС‚РЅС‹Рµ РјРµС‚СЂРёРєРё РѕРїСЂРµРґРµР»РµРЅРёСЏ РїРёРєРѕРІРѕРіРѕ Р·РЅР°С‡РµРЅРёСЏ
 CD_API(ulong) GetDefaultPeakEvaluationParametersEx ();
 
+// Р¤СѓРЅРєС†РёСЏ РІРѕР·РІСЂР°С‰Р°РµС‚ РјР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРЅРѕРµ Р·РЅР°С‡РµРЅРёРµ Р°РјРїР»РёС‚СѓРґС‹ РЅР° СѓРєР°Р·Р°РЅРЅРѕР№ С‡Р°СЃС‚РѕС‚Рµ
+CD_API(uchar) GetScaledAmplitudeEx (uint FrequencyLevel);
+
+// Р¤СѓРЅРєС†РёСЏ С„РѕСЂРјРёСЂСѓРµС‚ РїР°Р»РёС‚СЂСѓ
+CD_API(void) FillPaletteEx (uchar PaletteNumber);
+
+// Р¤СѓРЅРєС†РёСЏ РїРѕР»СѓС‡Р°РµС‚ СѓРєР°Р·Р°РЅРЅС‹Р№ С†РІРµС‚ РёР· С‚РµРєСѓС‰РµР№ РїР°Р»РёС‚СЂС‹
+CD_API(ulong) GetColorFromPaletteEx (uchar ColorNumber);
+
 #ifdef BASSTEST
-	// Тестовая функция для библиотеки BASS
+	// РўРµСЃС‚РѕРІР°СЏ С„СѓРЅРєС†РёСЏ РґР»СЏ Р±РёР±Р»РёРѕС‚РµРєРё BASS
 	CD_API(void) BASSTest ();
 #endif BASSTEST

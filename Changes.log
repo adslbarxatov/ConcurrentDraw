@@ -7,10 +7,19 @@ Version 1.2 (first publication):
 • Supports adjustable beats detection (frequencies range and amplitude threshold);
 • Supports 4 palettes for spectrograms;
 • Supports holding of settings for spectrogram palettes, window size and
-  position, specified output device, beats detection metrics.
+  position, specified output device, beats detection metrics
 
 Version 1.3:
 • Generic code improvements;
 • Added support for 'always on top' flag;
 • Added support for adjustable FFT scale multiplier (spectrogram contrast);
-• Added histogram mode up to 22050 Hz.
+• Added histogram mode up to 22050 Hz;
+• Added high contrast palette 'Sunshine'
+
+Version 1.4:
+• Added 'Acid' palette with high contrast on high amplitudes;
+• Added 'Butterfly' histogram mode;
+• Generic code improvements;
+• Fixed incorrect behaviour of main window when it's always on top and user
+  calls settings interface;
+• Fixed logo redraw and placement in different modes

@@ -232,7 +232,7 @@ namespace ESHQSetupStub
 		/// <param name="Mode">Режим спектрограммы</param>
 		/// <returns>Возвращает результат инициализации</returns>
 		public static SpectrogramInitializationErrors InitializeSpectrogram (uint FrameWidth, uint FrameHeight,
-			uint PaletteNumber, SpectrogramModes Mode)
+			byte PaletteNumber, SpectrogramModes Mode)
 			{
 			return (SpectrogramInitializationErrors)InitializeSpectrogramEx ((UInt16)FrameWidth, (UInt16)FrameHeight,
 				(Byte)PaletteNumber, (Byte)Mode);
@@ -463,6 +463,56 @@ namespace ESHQSetupStub
 				{
 				return (byte)((GetDefaultPeakEvaluationParametersEx () >> 24) & 0xFF);
 				}
+			}
+
+		/// <summary>
+		/// Функция возвращает масштабированное значение амплитуды на указанной частоте
+		/// </summary>
+		/// <param name="FrequencyLevel">Уровень, соответствующий требуемой частоте в масштабе 44100 / 1024</param>
+		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
+		private static extern Byte GetScaledAmplitudeEx (UInt16 FrequencyLevel);
+
+		/// <summary>
+		/// Метод возвращает масштабированное значение амплитуды на указанной частоте
+		/// </summary>
+		/// <param name="FrequencyLevel">Уровень, соответствующий требуемой частоте в масштабе 44100 / 1024</param>
+		public static byte GetScaledAmplitude (uint FrequencyLevel)
+			{
+			return GetScaledAmplitudeEx ((UInt16)FrequencyLevel);
+			}
+
+		/// <summary>
+		/// Функция формирует палитру (вручную, если спектрограмма не используется)
+		/// </summary>
+		/// <param name="PaletteNumber">Номер палитры</param>
+		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
+		private static extern void FillPaletteEx (Byte PaletteNumber);
+
+		/// <summary>
+		/// Метод формирует палитру (вручную, если спектрограмма не используется)
+		/// </summary>
+		/// <param name="PaletteNumber">Номер палитры</param>
+		public static void FillPalette (byte PaletteNumber)
+			{
+			FillPaletteEx (PaletteNumber);
+			}
+
+		/// <summary>
+		/// Функция получает указанный цвет из текущей палитры
+		/// </summary>
+		/// <param name="ColorNumber">Номер цвета в палитре</param>
+		/// <returns>Цвет в представлении ARGB</returns>
+		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
+		private static extern UInt32 GetColorFromPaletteEx (Byte ColorNumber);
+
+		/// <summary>
+		/// Метод возвращает указанный цвет из текущей палитры
+		/// </summary>
+		/// <param name="ColorNumber">Номер цвета в палитре</param>
+		/// <returns>Требуемый цвет</returns>
+		public static Color GetColorFromPalette (byte ColorNumber)
+			{
+			return Color.FromArgb ((int)GetColorFromPaletteEx (ColorNumber));
 			}
 		}
 	}

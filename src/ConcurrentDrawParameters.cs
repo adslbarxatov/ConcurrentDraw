@@ -144,11 +144,11 @@ namespace ESHQSetupStub
 		/// <summary>
 		/// Номер выбранной палитры
 		/// </summary>
-		public uint PaletteNumber
+		public byte PaletteNumber
 			{
 			get
 				{
-				return (uint)SDPaletteCombo.SelectedIndex;
+				return (byte)SDPaletteCombo.SelectedIndex;
 				}
 			}
 
@@ -211,13 +211,6 @@ namespace ESHQSetupStub
 		private void BCancel_Click (object sender, System.EventArgs e)
 			{
 			this.Close ();
-			}
-
-		// Выбор варианта визуализации
-		private void VisualizationCombo_SelectedIndexChanged (object sender, System.EventArgs e)
-			{
-			SpectrogramGroup.Enabled =
-				VisualizationModesChecker.ContainsSpectrogram ((VisualizationModes)VisualizationCombo.SelectedIndex);
 			}
 
 		/// <summary>
@@ -307,6 +300,17 @@ namespace ESHQSetupStub
 		private void AlignToRight_Click (object sender, EventArgs e)
 			{
 			VisLeft.Value = VisWidth.Maximum - VisWidth.Value;
+			}
+
+		/// <summary>
+		/// Возвращает флаг, требующий реинициализации лого
+		/// </summary>
+		public bool ReselLogo
+			{
+			get
+				{
+				return LogoResetFlag.Checked;
+				}
 			}
 		}
 	}
