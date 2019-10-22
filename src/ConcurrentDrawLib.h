@@ -33,8 +33,8 @@
 /////////////////////////////////////////////////////
 // Константы
 #define BASS_VERSION				0x02040E00
-#define CD_VERSION					1,4,1,0
-#define CD_VERSION_S				"1.4.1.0"
+#define CD_VERSION					1,5,0,0
+#define CD_VERSION_S				"1.5.0.0"
 #define CD_PRODUCT					"ConcurrentDraw visualization tool's BASS adapter"
 #define CD_COMPANY					"RD AAOW"
 
@@ -42,6 +42,7 @@
 #define MAX_DEVICE_NAME_LENGTH		128
 
 #define FFT_VALUES_COUNT			1024
+#define DEFAULT_FFT_VALUES_COUNT	128
 #define FFT_MODE					BASS_DATA_FFT2048
 
 #define MINFRAMEWIDTH				128
@@ -49,12 +50,11 @@
 #define MINFRAMEHEIGHT				128
 #define CD_BMPINFO_COLORS_COUNT		256
 #define MAXFRAMEHEIGHT				CD_BMPINFO_COLORS_COUNT	// до 11025 Гц
-#define HISTOGRAM_FFT_VALUES_COUNT	512						// до 22050 Гц
 
 #define PEAK_EVALUATION_LOW_EDGE	0
-#define PEAK_EVALUATION_HIGH_EDGE	3
-#define PEAK_EVALUATION_LOW_LEVEL	0xF0
-#define CD_DEFAULT_FFT_SCALE_MULT	45
+#define PEAK_EVALUATION_HIGH_EDGE	4
+#define PEAK_EVALUATION_LOW_LEVEL	0xF8
+#define CD_DEFAULT_FFT_SCALE_MULT	40
 #define CD_MIN_FFT_SCALE_MULT		10
 #define CD_MAX_FFT_SCALE_MULT		100
 
@@ -64,7 +64,7 @@
 /////////////////////////////////////////////////////
 // Пререквизиты таймера
 #ifdef SD_DOUBLE_WIDTH
-	#define SD_STEP 2							// Ширина шага спектрограммы
+	#define SD_STEP 2				// Ширина шага спектрограммы
 #else
 	#define SD_STEP 1
 #endif
@@ -140,6 +140,9 @@ CD_API(ulong) GetColorFromPaletteEx (uchar ColorNumber);
 
 // Функция возвращает версию данной библиотеки
 CD_API(schar *) GetCDLibVersionEx ();
+
+// Функция устанавливает количество значений FFT, которое будет использоваться в гистограммах
+CD_API(void) SetHistogramFFTValuesCountEx (uint Count);
 
 #ifdef BASSTEST
 	// Тестовая функция для библиотеки BASS

@@ -20,10 +20,18 @@ Version 1.4:
 • Added 'Acid' palette with high contrast on high amplitudes;
 • Added 'Butterfly' histogram mode;
 • Generic code improvements;
-• Fixed incorrect behaviour of main window when it's always on top and user
+• Fixed incorrect behavior of main window when it's always on top and user
   calls settings interface;
 • Fixed logo redraw and placement in different modes
 
 Version 1.4.1:
 • Added versions checker: now application will launch only with compatible
   libraries
+
+Version 1.5:
+• Settings interface improvements applied;
+• Added support for adjustable quantity of FFT values for histograms building;
+• Beats detector's behavior updated;
+• Fixed behavior of Cancel button at first start of application;
+• Code improvements applied;
+• Added user manual at first launch and on '?' button

@@ -38,6 +38,10 @@ namespace ESHQSetupStub
 		private Pen p;											// Карандаш для линий гистограммы
 		private int[] histoX = new int[4],
 			histoY = new int[4];								// Координаты линий гистограммы
+		private const double histoDensity = 4.0;				// Плотность гистограммы-бабочки
+
+		private byte peak;										// Пиковое значение для расчёта битовых порогов
+		private int rad, amp;									// Вспомогательные переменные
 
 		// Аудио
 #if AUDIO
@@ -373,7 +377,8 @@ namespace ESHQSetupStub
 		// Отрисовка фрагментов лого
 		private void DrawingVisualization ()
 			{
-			byte peak = ConcurrentDrawLib.CurrentPeak;
+			// Запрос пикового значения
+			peak = ConcurrentDrawLib.CurrentPeak;
 
 			// Отрисовка гистограммы-бабочки при необходимости (исключает спектрограмму)
 			if (cdp.VisualizationMode == VisualizationModes.ButterflyHistogram)
@@ -386,7 +391,7 @@ namespace ESHQSetupStub
 				for (int i = 0; i < 256; i++)
 					{
 					// Получаем амплитуду
-					int amp = ConcurrentDrawLib.GetScaledAmplitude ((byte)(i));
+					amp = ConcurrentDrawLib.GetScaledAmplitude ((uint)(cdp.HistogramFFTValuesCount * i / 256));
 
 					// Получаем цвет
 					if (p != null)
@@ -394,15 +399,15 @@ namespace ESHQSetupStub
 					p = new Pen (ConcurrentDrawLib.GetColorFromPalette ((byte)amp));
 
 					// Определяем координаты линий
-					int r = (logo1b.Width) / 2 + amp;
-					histoX[0] = this.Width / 2 + (int)(r * Math.Cos (ArcToRad (i / 4.0)));
-					histoX[1] = this.Width / 2 + (int)(r * Math.Cos (ArcToRad (180.0 + i / 4.0)));
-					histoY[0] = this.Height / 2 + (int)(r * Math.Sin (ArcToRad (i / 4.0)));
-					histoY[1] = this.Height / 2 + (int)(r * Math.Sin (ArcToRad (180.0 + i / 4.0)));
-					histoX[2] = this.Width / 2 + (int)(r * Math.Cos (ArcToRad (-i / 4.0)));
-					histoX[3] = this.Width / 2 + (int)(r * Math.Cos (ArcToRad (180.0 - i / 4.0)));
-					histoY[2] = this.Height / 2 + (int)(r * Math.Sin (ArcToRad (-i / 4.0)));
-					histoY[3] = this.Height / 2 + (int)(r * Math.Sin (ArcToRad (180.0 - i / 4.0)));
+					rad = (logo1b.Width) / 2 + amp;
+					histoX[0] = histoX[2] = this.Width / 2 + (int)(rad * Math.Cos (ArcToRad (i / histoDensity)));
+					histoX[1] = histoX[3] = this.Width / 2 + (int)(rad * Math.Cos (ArcToRad (180.0 + i / histoDensity)));
+					histoY[0] = histoY[3] = this.Height / 2 + (int)(rad * Math.Sin (ArcToRad (i / histoDensity)));
+					histoY[1] = histoY[2] = this.Height / 2 + (int)(rad * Math.Sin (ArcToRad (180.0 + i / histoDensity)));
+					/*histoX[2] = this.Width / 2 + (int)(rad * Math.Cos (ArcToRad (-i / histoDensity)));
+					histoX[3] = this.Width / 2 + (int)(rad * Math.Cos (ArcToRad (180.0 - i / histoDensity)));
+					histoY[2] = this.Height / 2 + (int)(rad * Math.Sin (ArcToRad (-i / histoDensity)));
+					histoY[3] = this.Height / 2 + (int)(rad * Math.Sin (ArcToRad (180.0 - i / histoDensity)));*/
 
 					// Рисуем
 					mainLayer.Descriptor.DrawLine (p, histoX[0], histoY[0], histoX[1], histoY[1]);
@@ -419,11 +424,12 @@ namespace ESHQSetupStub
 
 				br = new SolidBrush (ConcurrentDrawLib.GetMasterPaletteColor (peak));
 
-				mainLayer.Descriptor.FillEllipse (br, (this.Width - logo1b.Width / 3) / 2,
+				rad = 650 * logo1b.Height / (1950 - peak);
+				mainLayer.Descriptor.FillEllipse (br, (this.Width - rad) / 2,
 					(
 					((VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) !=
 					ConcurrentDrawLib.SpectrogramModes.NoSpectrogram) ? logo1b.Height : this.Height)
-					- logo1b.Height / 3) / 2, logo1b.Width / 3, logo1b.Height / 3);
+					- rad) / 2, rad, rad);
 
 				br.Dispose ();
 				}

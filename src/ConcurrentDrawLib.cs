@@ -530,5 +530,23 @@ namespace ESHQSetupStub
 			{
 			return (ProgramDescription.AssemblyVersion == GetCDLibVersionEx ());
 			}
+
+		/// <summary>
+		/// Функция устанавливает количество значений FFT, 
+		/// которое будет использоваться в гистограммах
+		/// </summary>
+		/// <param name="Count">Количество значений (от 64 до 1024)</param>
+		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
+		private static extern void SetHistogramFFTValuesCountEx (UInt16 Count);
+
+		/// <summary>
+		/// Метод устанавливает количество значений FFT, 
+		/// которое будет использоваться в гистограммах
+		/// </summary>
+		/// <param name="Count">Количество значений (от 64 до 1024)</param>
+		public static void SetHistogramFFTValuesCount (uint Count)
+			{
+			SetHistogramFFTValuesCountEx ((UInt16)Count);
+			}
 		}
 	}

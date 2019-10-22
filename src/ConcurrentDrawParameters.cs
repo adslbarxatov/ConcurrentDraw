@@ -33,44 +33,60 @@ namespace ESHQSetupStub
 				}
 			catch
 				{
+				BHelp_Click (null, null);	// Справка на случай первого запуска
 				}
 			bool requestRequired = (settings == "");
 
 			// Настройка контролов
+
+			// Устройства
 			DevicesCombo.Items.AddRange (ConcurrentDrawLib.AvailableDevices);
 			if (DevicesCombo.Items.Count < 1)
 				{
 				DevicesCombo.Items.Add ("(no devices)");
 				DevicesCombo.Enabled = DevicesLabel.Enabled = false;
 				}
-			DevicesCombo.SelectedIndex = 0;
+			DevicesCombo.SelectedIndex = 0;			// По умолчанию - первое
 
+			// Палитра
 			SDPaletteCombo.Items.AddRange (ConcurrentDrawLib.AvailablePalettesNames);
-			SDPaletteCombo.SelectedIndex = 0;
+			SDPaletteCombo.SelectedIndex = 0;		// По умолчанию - первая
 
+			// Режим
 			for (int i = 0; i < VisualizationModesChecker.VisualizationModesCount; i++)
 				VisualizationCombo.Items.Add (((VisualizationModes)i).ToString ());
-			VisualizationCombo.SelectedIndex = 0;
+			VisualizationCombo.SelectedIndex = 7;	// По умолчанию - бабочка
 
+			// Высота спектрограммы
 			SDHeight.Minimum = VisHeight.Minimum = ConcurrentDrawLib.MinSpectrogramFrameHeight;
 			SDHeight.Maximum = ConcurrentDrawLib.MaxSpectrogramFrameHeight;
+			SDHeight.Value = 220;					// По умолчанию - 220 px
 
+			// Размеры визуализации 
 			VisWidth.Minimum = ConcurrentDrawLib.MinSpectrogramFrameWidth;
 			VisWidth.Maximum = Math.Min (ScreenWidth, ConcurrentDrawLib.MaxSpectrogramFrameWidth);
 			VisHeight.Maximum = Math.Min (ScreenHeight, 1024);
 
-			VisWidth.Value = VisWidth.Maximum;
-			VisHeight.Value = VisHeight.Maximum;
+			VisWidth.Value = 9 * VisWidth.Maximum / 16;
+			VisHeight.Value = 9 * VisHeight.Maximum / 16;	// По умолчанию - (9 / 16) размера экрана
 
+			// Позиция визуализации
 			VisLeft.Maximum = ScreenWidth;
+			VisLeft.Value = ScreenWidth - VisWidth.Value;	// По умолчанию - верхний правый угол
 			VisTop.Maximum = ScreenHeight;
 
+			// Параметры детектора битов (получаются из DLL)
 			BDLowEdge.Value = ConcurrentDrawLib.DefaultPeakEvaluationLowEdge;
 			BDHighEdge.Value = ConcurrentDrawLib.DefaultPeakEvaluationHighEdge;
 			BDLowLevel.Value = ConcurrentDrawLib.DefaultPeakEvaluationLowLevel;
 			BDFFTScaleMultiplier.Value = ConcurrentDrawLib.DefaultFFTScaleMultiplier;
 
-			// Разбор настроек
+			// Плотность гистограммы
+			for (int i = 1; i <= 16; i *= 2)
+				HistogramRangeCombo.Items.Add ("0 – " + (i * 22050.0 / 16.0).ToString () + " Hz");
+			HistogramRangeCombo.SelectedIndex = 1;			// По умолчанию - до 2,7 кГц
+
+			// Разбор сохранённых настроек
 			if (!requestRequired)
 				{
 				string[] values = settings.Split (splitter, System.StringSplitOptions.RemoveEmptyEntries);
@@ -93,6 +109,7 @@ namespace ESHQSetupStub
 					BDFFTScaleMultiplier.Value = (int)((bdSettings >> 24) & 0xFF);
 
 					AlwaysOnTopFlag.Checked = (values[9] != "0");
+					HistogramRangeCombo.SelectedIndex = int.Parse (values[10]);
 					}
 				catch
 					{
@@ -103,6 +120,8 @@ namespace ESHQSetupStub
 			// Завершение
 			ConcurrentDrawLib.SetPeakEvaluationParameters ((byte)BDLowEdge.Value, (byte)BDHighEdge.Value,
 				(byte)BDLowLevel.Value, (byte)BDFFTScaleMultiplier.Value);
+			ConcurrentDrawLib.SetHistogramFFTValuesCount (this.HistogramFFTValuesCount);
+
 			BCancel.Enabled = !requestRequired;
 			if (requestRequired)
 				this.ShowDialog ();
@@ -111,12 +130,16 @@ namespace ESHQSetupStub
 		// Контроль наличия доступных устройств
 		private void ConcurrentDrawParameters_Load (object sender, System.EventArgs e)
 			{
+			// Контроль возможности запуска
 			if (!DevicesCombo.Enabled)
 				{
 				MessageBox.Show ("No compatible audio output devices found", ProgramDescription.AssemblyTitle,
 					MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				this.Close ();
 				}
+
+			// Отмена реинициализации, которая выставляется при загрузке
+			LogoResetFlag.Checked = false;
 			}
 
 		/// <summary>
@@ -190,10 +213,8 @@ namespace ESHQSetupStub
 				(((BDFFTScaleMultiplier.Value & 0xFF) << 24) | ((BDLowLevel.Value & 0xFF) << 16) |
 				((BDHighEdge.Value & 0xFF) << 8) | (BDLowEdge.Value & 0xFF)).ToString () + splitter[0].ToString () +
 
-				(AlwaysOnTopFlag.Checked ? "1" : "0");
-
-			ConcurrentDrawLib.SetPeakEvaluationParameters ((byte)BDLowEdge.Value, (byte)BDHighEdge.Value,
-				(byte)BDLowLevel.Value, (byte)BDFFTScaleMultiplier.Value);
+				(AlwaysOnTopFlag.Checked ? "1" : "0") + splitter[0].ToString () +
+				HistogramRangeCombo.SelectedIndex.ToString ();
 
 			try
 				{
@@ -203,13 +224,20 @@ namespace ESHQSetupStub
 				{
 				}
 
+			// Установка параметров
+			ConcurrentDrawLib.SetPeakEvaluationParameters ((byte)BDLowEdge.Value, (byte)BDHighEdge.Value,
+				(byte)BDLowLevel.Value, (byte)BDFFTScaleMultiplier.Value);
+			ConcurrentDrawLib.SetHistogramFFTValuesCount (this.HistogramFFTValuesCount);
+
 			// Завершение
+			BCancel.Enabled = true;
 			this.Close ();
 			}
 
 		// Отмена настройки
 		private void BCancel_Click (object sender, System.EventArgs e)
 			{
+			LogoResetFlag.Checked = false;	// Перерисовка при отмене бессмысленна
 			this.Close ();
 			}
 
@@ -311,6 +339,41 @@ namespace ESHQSetupStub
 				{
 				return LogoResetFlag.Checked;
 				}
+			}
+
+		// Установка реинициализации лого при изменении параметров, от которых зависит его вид
+		private void SDPaletteCombo_SelectedIndexChanged (object sender, EventArgs e)
+			{
+			LogoResetFlag.Checked = true;
+			}
+
+		/// <summary>
+		/// Возвращает количество значений FFT, которые используются при формировании гистограммы
+		/// </summary>
+		public uint HistogramFFTValuesCount
+			{
+			get
+				{
+				return 64u << HistogramRangeCombo.SelectedIndex;
+				}
+			}
+
+		// Метод отображает быструю справку по использованию
+		private void BHelp_Click (object sender, EventArgs e)
+			{
+			MessageBox.Show ("Quick user manual\n\n" +
+				"Press right mouse button to get to settings window later, ESC key to close the application\n\n" +
+				"At first application will start with recommended settings. But you can change:\n" +
+				"• Output device for audio data getting (stereo mixer or speakers required);\n" +
+				"• Visualization mode (spectrogram, histogram or 'butterfly' histogram for now);\n" +
+				"• Window size and placement (not less than 128 x 128 px and not more than 2048 x 1024 px);\n" +
+				"• Spectrogram and histogram height (between 128 and 256 px; may load CPU);\n" +
+				"• Histogram density (how many frequencies will be shown);\n" +
+				"• Frequencies range and amplitude (loudness) threshold for beats detector;\n" +
+				"• FFT scale multiplier (contrast) for spectrogram and histogram;\n" +
+				"• 'Always on top' window state (turns off when settings window is active).\n" +
+				"Settings will be saved by pressing OK button. They can be changed anytime you need"
+				, ProgramDescription.AssemblyTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
 		}
 	}

@@ -13,14 +13,16 @@ uint sdFrameWidth, sdFrameHeight,	// Размеры изображения сп�
 uchar sdSpectrogramMode = 0;		// Режим спектрограммы (0 - выключена, 1 - с курсором, 
 									// 2 - движущаяся, 3 - гистограмма)
 
-float cdFFTScale = (float)CD_DEFAULT_FFT_SCALE_MULT * 
-	25.5f;												// Масштаб значений FFT
+float cdFFTScale =
+	(float)CD_DEFAULT_FFT_SCALE_MULT * 25.5f;			// Масштаб значений FFT
+uint cdHistogramFFTValuesCount = DEFAULT_FFT_VALUES_COUNT;					// Количество значений FFT, используемых для гистограмм
 uchar cdFFTPeak = 0,									// Текущее пиковое значение
 	cdFFTPeakEvLowEdge = PEAK_EVALUATION_LOW_EDGE,		// Нижняя граница диапазона определения пика
 	cdFFTPeakEvHighEdge = PEAK_EVALUATION_HIGH_EDGE,	// Верхняя граница диапазона определения пика
 	cdFFTPeakEvLowLevel = PEAK_EVALUATION_LOW_LEVEL;	// Наименьшая амплитуда, на которой определяется пик
 
-union CD_BITMAPINFO cdBMPInfo;		// Данные для инициализации спектрограммы
+union CD_BITMAPINFO cdBMPInfo,		// Данные для инициализации спектрограммы
+	cdDummyInfo;					// Вспомогательная палитра для бит-детектора
 uchar cdCurrentPalette = 0;			// Номер текущей палитры
 
 // Функция получает имена устройств вывода звука (массив символов по 128 на имя)
@@ -224,7 +226,7 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 			for (x = 0; x < sdFrameWidth; x++)
 				{
 				// Получение значения
-				v = GetScaledAmplitudeEx (HISTOGRAM_FFT_VALUES_COUNT * (ulong)x / sdFrameWidth);
+				v = GetScaledAmplitudeEx (cdHistogramFFTValuesCount * (ulong)x / sdFrameWidth);
 
 				// Отрисовка
 				v = sdFrameHeight * (ulong)v / CD_BMPINFO_COLORS_COUNT;	// Перемасштабирование
@@ -348,6 +350,7 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 		// Стандартная
 		default:
 		case 0:
+			// Основная палитра
 			for (i = 0; i < qSize; i++) 
 				{
 				cdBMPInfo.cd_bmpinfo.colors[i].rgbRed = 
@@ -366,6 +369,15 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 				cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbGreen = 255;
 				cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbBlue = 4 * i;
 				}
+
+			// Палитра бит-детектора
+			for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
+				{
+				cdDummyInfo.cd_bmpinfo.colors[i].rgbRed = i / 2; 
+				cdDummyInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
+				cdDummyInfo.cd_bmpinfo.colors[i].rgbBlue = i;
+				}
+
 			cdCurrentPalette = 0;
 			break;
 
@@ -389,6 +401,14 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 				cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbGreen =
 					cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbBlue = 255;
 				}
+
+			for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
+				{
+				cdDummyInfo.cd_bmpinfo.colors[i].rgbRed = 
+					cdDummyInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
+				cdDummyInfo.cd_bmpinfo.colors[i].rgbBlue = i;
+				}
+
 			cdCurrentPalette = PaletteNumber;
 			break;
 
@@ -412,6 +432,14 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 					cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbGreen = 255;
 				cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbBlue = 4 * i;
 				}
+
+			for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
+				{
+				cdDummyInfo.cd_bmpinfo.colors[i].rgbRed = i; 
+				cdDummyInfo.cd_bmpinfo.colors[i].rgbGreen = i / 4;
+				cdDummyInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
+				}
+
 			cdCurrentPalette = PaletteNumber;
 			break;
 
@@ -422,6 +450,14 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 				cdBMPInfo.cd_bmpinfo.colors[i].rgbRed = cdBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 
 					cdBMPInfo.cd_bmpinfo.colors[i].rgbBlue = i;
 				}
+
+			for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
+				{
+				cdDummyInfo.cd_bmpinfo.colors[i].rgbRed =  
+					cdDummyInfo.cd_bmpinfo.colors[i].rgbGreen =
+					cdDummyInfo.cd_bmpinfo.colors[i].rgbBlue = 4 * i / 5;
+				}
+
 			cdCurrentPalette = PaletteNumber;
 			break;
 
@@ -445,6 +481,14 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 				cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbGreen = 2 * (qSize + i);
 				cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbBlue = 4 * i;
 				}
+
+			for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
+				{
+				cdDummyInfo.cd_bmpinfo.colors[i].rgbRed = 0; 
+				cdDummyInfo.cd_bmpinfo.colors[i].rgbGreen =
+					cdDummyInfo.cd_bmpinfo.colors[i].rgbBlue = i;
+				}
+
 			cdCurrentPalette = PaletteNumber;
 			break;
 
@@ -468,6 +512,14 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 					cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbBlue = 4 *  i;
 				cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbGreen = 255;
 				}
+
+			for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
+				{
+				cdDummyInfo.cd_bmpinfo.colors[i].rgbGreen = i;
+				cdDummyInfo.cd_bmpinfo.colors[i].rgbRed =
+					cdDummyInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
+				}
+
 			cdCurrentPalette = PaletteNumber;
 			break;
 		}
@@ -483,30 +535,9 @@ CD_API(ulong) GetColorFromPaletteEx (uchar ColorNumber)
 // Функция возвращает основной цвет текущей палитры с указанной яркостью
 CD_API(ulong) GetMasterPaletteColorEx (uchar Brightness)
 	{
-	uint v;
-
-	switch (cdCurrentPalette)
-		{
-		default:
-		case 0:
-			return 0xFF000000 | ((Brightness / 2) << 16) | Brightness;
-
-		case 1:
-			return 0xFF000000 | Brightness;
-
-		case 2:
-			return 0xFF000000 | (Brightness << 16) | ((Brightness / 4) << 8);
-
-		case 3:
-			v = (9 * Brightness / 10) & 0xFF;
-			return 0xFF000000 | (v << 16) | (v << 8) | v;
-
-		case 4:
-			return 0xFF000000 | (Brightness << 8) | Brightness;
-
-		case 5:
-			return 0xFF000000 | (Brightness << 8);
-		}
+	return 0xFF000000 | (cdDummyInfo.cd_bmpinfo.colors[Brightness].rgbRed << 16) |
+		(cdDummyInfo.cd_bmpinfo.colors[Brightness].rgbGreen << 8) | 
+		cdDummyInfo.cd_bmpinfo.colors[Brightness].rgbBlue;
 	}
 
 // Функция возвращает названия доступных палитр
@@ -540,4 +571,13 @@ CD_API(ulong) GetDefaultPeakEvaluationParametersEx ()
 CD_API(schar *) GetCDLibVersionEx ()
 	{
 	return CD_VERSION_S;
+	}
+
+// Функция устанавливает количество значений FFT, которое будет использоваться в гистограммах
+CD_API(void) SetHistogramFFTValuesCountEx (uint Count)
+	{
+	cdHistogramFFTValuesCount = Count;
+
+	if ((Count < 64) || (Count > FFT_VALUES_COUNT))
+		cdHistogramFFTValuesCount = DEFAULT_FFT_VALUES_COUNT;
 	}
