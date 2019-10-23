@@ -6,34 +6,34 @@
 	public enum VisualizationModes
 		{
 		/// <summary>
-		/// Только логотип с реакцией на частотные маркеры
-		/// </summary>
-		LogoOnly = 0,
-
-		/// <summary>
 		/// Статическая спектрограмма с курсором, с лого
 		/// </summary>
-		StaticSpectrogramAndLogo = 1,
+		Static_spectrogram_with_logo = 0,
 
 		/// <summary>
 		/// Движущаяся спектрограмма с курсором, с лого
 		/// </summary>
-		MovingSpectrogramAndLogo = 2,
-
-		/// <summary>
-		/// Статическая спектрограмма с курсором, без лого
-		/// </summary>
-		StaticSpectrogram = 3,
-
-		/// <summary>
-		/// Движущаяся спектрограмма с курсором, без лого
-		/// </summary>
-		MovingSpectrogram = 4,
+		Moving_spectrogram_with_logo = 1,
 
 		/// <summary>
 		/// Гистограмма, с лого
 		/// </summary>
-		HistogramAndLogo = 5,
+		Histogram_with_logo = 2,
+
+		/// <summary>
+		/// Гистограмма «бабочка» со встроенным лого
+		/// </summary>
+		Butterfly_histogram_with_logo = 3,
+
+		/// <summary>
+		/// Статическая спектрограмма с курсором, без лого
+		/// </summary>
+		Static_spectrogram = 4,
+
+		/// <summary>
+		/// Движущаяся спектрограмма с курсором, без лого
+		/// </summary>
+		Moving_spectrogram = 5,
 
 		/// <summary>
 		/// Гистограмма, без лого
@@ -41,9 +41,9 @@
 		Histogram = 6,
 
 		/// <summary>
-		/// Гистограмма «бабочка» со встроенным лого
+		/// Только логотип с реакцией на частотные маркеры
 		/// </summary>
-		ButterflyHistogram = 7
+		Logo_only = 7,
 		}
 
 	/// <summary>
@@ -54,7 +54,7 @@
 		/// <summary>
 		/// Количество доступных режимов визуализации
 		/// </summary>
-		public const uint VisualizationModesCount = 8;
+		public const uint VisualizationModesCount = 4;
 
 		/// <summary>
 		/// Метод проверяет, требует ли указанный режим отрисовки лого
@@ -63,11 +63,11 @@
 		/// <returns>Возвращает true в случае, если лого необходимо</returns>
 		public static bool ContainsLogo (VisualizationModes Mode)
 			{
-			return (Mode == VisualizationModes.LogoOnly) ||
-				(Mode == VisualizationModes.MovingSpectrogramAndLogo) ||
-				(Mode == VisualizationModes.StaticSpectrogramAndLogo) ||
-				(Mode == VisualizationModes.HistogramAndLogo) ||
-				(Mode == VisualizationModes.ButterflyHistogram);
+			return (Mode == VisualizationModes.Logo_only) ||
+				(Mode == VisualizationModes.Moving_spectrogram_with_logo) ||
+				(Mode == VisualizationModes.Static_spectrogram_with_logo) ||
+				(Mode == VisualizationModes.Histogram_with_logo) ||
+				(Mode == VisualizationModes.Butterfly_histogram_with_logo);
 			}
 
 		/// <summary>
@@ -75,26 +75,24 @@
 		/// </summary>
 		/// <param name="Mode">Режим для преобразования</param>
 		/// <returns>Возвращает режим спектрограммы</returns>
-		public static ConcurrentDrawLib.SpectrogramModes VisualizationModeToSpectrogramMode (VisualizationModes Mode)
+		public static SpectrogramModes VisualizationModeToSpectrogramMode (VisualizationModes Mode)
 			{
 			switch (Mode)
 				{
 				case VisualizationModes.Histogram:
-				case VisualizationModes.HistogramAndLogo:
-					return ConcurrentDrawLib.SpectrogramModes.Histogram;
+				case VisualizationModes.Histogram_with_logo:
+					return SpectrogramModes.Histogram;
 
 				default:
-					// case VisualizationModes.LogoOnly:
-					// case VisualizationModes.ButterflyHistogram:
-					return ConcurrentDrawLib.SpectrogramModes.NoSpectrogram;
+					return SpectrogramModes.NoSpectrogram;
 
-				case VisualizationModes.MovingSpectrogram:
-				case VisualizationModes.MovingSpectrogramAndLogo:
-					return ConcurrentDrawLib.SpectrogramModes.MovingSpectrogram;
+				case VisualizationModes.Moving_spectrogram:
+				case VisualizationModes.Moving_spectrogram_with_logo:
+					return SpectrogramModes.MovingSpectrogram;
 
-				case VisualizationModes.StaticSpectrogram:
-				case VisualizationModes.StaticSpectrogramAndLogo:
-					return ConcurrentDrawLib.SpectrogramModes.StaticSpectrogram;
+				case VisualizationModes.Static_spectrogram:
+				case VisualizationModes.Static_spectrogram_with_logo:
+					return SpectrogramModes.StaticSpectrogram;
 				}
 			}
 		}

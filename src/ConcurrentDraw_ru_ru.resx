@@ -1,0 +1,221 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AlreadyStarted" xml:space="preserve">
+    <value>Программа {0:S} уже запущена</value>
+  </data>
+  <data name="BASS_ERROR_BUSY" xml:space="preserve">
+    <value>Запрошенное устройство занято или используется другим приложением</value>
+  </data>
+  <data name="BASS_ERROR_DEVICE" xml:space="preserve">
+    <value>Запрошенное устройство не существует или не поддерживается</value>
+  </data>
+  <data name="BASS_ERROR_DRIVER" xml:space="preserve">
+    <value>Не найден подходящий драйвер для запрошенного устройства</value>
+  </data>
+  <data name="BASS_ERROR_DX" xml:space="preserve">
+    <value>В системе отсутствует подходящая версия DirectX</value>
+  </data>
+  <data name="BASS_ERROR_FORMAT" xml:space="preserve">
+    <value>Запрошенное устройство не поддерживает требуемый аудиорежим</value>
+  </data>
+  <data name="BASS_ERROR_MEM" xml:space="preserve">
+    <value>Недостаточно оперативной памяти</value>
+  </data>
+  <data name="BASS_ERROR_NOTAVAIL" xml:space="preserve">
+    <value>Запрошенное устройство недоступно</value>
+  </data>
+  <data name="CDPName" xml:space="preserve">
+    <value>параметры</value>
+  </data>
+  <data name="CDP_AlwaysOnTopFlag" xml:space="preserve">
+    <value>Поверх всех окон</value>
+  </data>
+  <data name="CDP_BDSettingsText" xml:space="preserve">
+    <value>Диапазон: {0:D} – {1:D} Гц; порог амплитуды: {2:D} из 255; множитель значений БПФ: {3:D}</value>
+  </data>
+  <data name="CDP_BeatsGroup" xml:space="preserve">
+    <value>Настройки детектора битов</value>
+  </data>
+  <data name="CDP_Cancel" xml:space="preserve">
+    <value>От&amp;мена</value>
+  </data>
+  <data name="CDP_DevicesLabel" xml:space="preserve">
+    <value>Устройство:</value>
+  </data>
+  <data name="CDP_HGRangeLabel" xml:space="preserve">
+    <value>Диапазон гистограммы:</value>
+  </data>
+  <data name="CDP_Hz" xml:space="preserve">
+    <value>Гц</value>
+  </data>
+  <data name="CDP_LanguageLabel" xml:space="preserve">
+    <value>Язык:</value>
+  </data>
+  <data name="CDP_LogoResetFlag" xml:space="preserve">
+    <value>Пересоздать лого</value>
+  </data>
+  <data name="CDP_NoDevices" xml:space="preserve">
+    <value>(нет подходящих устройств)</value>
+  </data>
+  <data name="CDP_OK" xml:space="preserve">
+    <value>&amp;ОК</value>
+  </data>
+  <data name="CDP_PaletteLabel" xml:space="preserve">
+    <value>Палитра:</value>
+  </data>
+  <data name="CDP_SGHGHeightLabel" xml:space="preserve">
+    <value>Высота спектро-/гистограммы:</value>
+  </data>
+  <data name="CDP_VisLeftTopLabel" xml:space="preserve">
+    <value>Позиция окна:</value>
+  </data>
+  <data name="CDP_VisSizeLabel" xml:space="preserve">
+    <value>Размер окна:</value>
+  </data>
+  <data name="CDP_VisTypeLabel" xml:space="preserve">
+    <value>Тип визуализации:</value>
+  </data>
+  <data name="HelpText" xml:space="preserve">
+    <value>Краткое руководство пользователя
+
+Нажмите правую кнопку мыши, чтобы перейти к окну настроек позже; нажмите клавишу ESC, чтобы закрыть приложение.
+
+Сначала приложение запустится с рекомендуемыми настройками. Но вы можете изменить:
+• Устройство вывода для получения аудиоданных (требуется стереомикшер или динамики);
+• Режим визуализации (пока доступна спектрограмма, гистограмма и гистограмма «бабочка»);
+• Размер и размещение окна (не менее 128 x 128 пикселей и не более 2048 x 1024 пикселей);
+• Высота спектрограммы и гистограммы (от 128 до 256 пикселей; может нагружать процессор);
+• Плотность гистограммы (сколько частот будет показано);
+• Диапазон частот и порог амплитуды (громкости) для детектора битов;
+• Множитель значений БПФ (контраст) для спектрограммы и гистограммы;
+• Состояние «поверх других окон» (отключается, когда окно настроек активно).
+
+Настройки будут сохранены нажатием кнопки ОК. Они могут быть изменены в любое время</value>
+  </data>
+  <data name="LibraryIsIncompatible" xml:space="preserve">
+    <value>Эта версия библиотеки {0:S} несовместима с текущей версией приложения</value>
+  </data>
+  <data name="LibraryNotFound" xml:space="preserve">
+    <value>Библиотека {0:S} не найдена или недоступна</value>
+  </data>
+  <data name="NoCompatibleDevices" xml:space="preserve">
+    <value>В системе отсутствуют совместимые устройства аудиовывода</value>
+  </data>
+</root>

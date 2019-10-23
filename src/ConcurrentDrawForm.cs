@@ -20,13 +20,13 @@ namespace ESHQSetupStub
 		private uint steps = 0;									// Счётчик шагов отрисовки
 
 		private ConcurrentDrawParameters cdp;					// Параметры работы программы
+		private SupportedLanguages al = Localization.CurrentLanguage;	// Язык интерфейса приложения
 
 		// Графика
 		private LogoDrawerLayer mainLayer;						// Базовый слой изображения
 
 		private Graphics gr, gl;								// Объекты-отрисовщики
 		private List<SolidBrush> brushes = new List<SolidBrush> ();
-		private List<Font> fonts = new List<Font> ();
 		private Bitmap logo1a, logo1b, b;
 		private SolidBrush br;
 
@@ -58,13 +58,6 @@ namespace ESHQSetupStub
 			}
 #endif
 
-		// Видео
-#if VIDEO
-		private const float fps = 30.0f;						// Частота кадров видео
-		private VideoManager vm = new VideoManager ();			// Видеофайл (балластная инициализация)
-		private uint savingLayersCounter = 0;					// Счётчик сохранений
-#endif
-
 		// Фазы отрисовки
 		private enum Phases
 			{
@@ -92,7 +85,7 @@ namespace ESHQSetupStub
 			InitializeComponent ();
 			}
 
-		private void CSDrawer_Shown (object sender, EventArgs e)
+		private void ConcurrentDrawForm_Shown (object sender, EventArgs e)
 			{
 			// Если запрос границ экрана завершается ошибкой, отменяем отображение
 			try
@@ -131,38 +124,13 @@ namespace ESHQSetupStub
 			gr = Graphics.FromHwnd (this.Handle);
 			logoHeight = (uint)(Math.Min (this.Width, this.Height) * 7) / 12;
 
-			// Настройка диалогов
-			SFVideo.Title = "Select placement of new video";
-			SFVideo.Filter = "Audio-Video Interchange video format (*.avi)|(*.avi)";
-
 			// Формирование шрифтов и кистей
 			brushes.Add (new SolidBrush (Color.FromArgb (0, 0, 0)));
 			brushes.Add (new SolidBrush (ConcurrentDrawLib.GetMasterPaletteColor ()));
 			brushes.Add (new SolidBrush (Color.FromArgb (20, brushes[0].Color)));
 
-			fonts.Add (new Font ("Consolas", 22, FontStyle.Regular));
-
-			// Подготовка к записи в видеопоток
+			// Подготовка к отрисовке
 			mainLayer = new LogoDrawerLayer (0, 0, (uint)this.Width, (uint)this.Height);
-
-			// Инициализация видеопотока
-#if VIDEO
-			SFVideo.FileName = "NewVideo.avi";
-			if ((MessageBox.Show ("Write frames to AVI?", ProgramDescription.AssemblyTitle, MessageBoxButtons.YesNo,
-				MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes) &&
-				(SFVideo.ShowDialog () == DialogResult.OK))
-				{
-				vm = new VideoManager (SFVideo.FileName, fps, mainLayer.Layer, true);
-
-				if (!vm.IsInited)
-					{
-					MessageBox.Show ("Failed to initialize AVI stream", ProgramDescription.AssemblyTitle,
-						 MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-					this.Close ();
-					return;
-					}
-				}
-#endif
 
 			// Запуск
 			ExtendedTimer.Enabled = true;
@@ -175,43 +143,46 @@ namespace ESHQSetupStub
 			string err = "";
 			switch (ConcurrentDrawLib.InitializeSoundStream (cdp.DeviceNumber))
 				{
-				case ConcurrentDrawLib.SoundStreamInitializationErrors.BASS_ERROR_ALREADY:
-				case ConcurrentDrawLib.SoundStreamInitializationErrors.BASS_ERROR_BUSY:
-				case ConcurrentDrawLib.SoundStreamInitializationErrors.BASS_ERROR_NOTAVAIL:
-					err = "Requested device is unavailable, busy or in use by another application";
+				case SoundStreamInitializationErrors.BASS_ERROR_ALREADY:
+				case SoundStreamInitializationErrors.BASS_ERROR_BUSY:
+					err = Localization.GetText ("BASS_ERROR_BUSY", al);
 					break;
 
-				case ConcurrentDrawLib.SoundStreamInitializationErrors.BASS_ERROR_DEVICE:
-					err = "Requested device is invalid or incompatible";
+				case SoundStreamInitializationErrors.BASS_ERROR_NOTAVAIL:
+					err = Localization.GetText ("BASS_ERROR_NOTAVAIL", al);
 					break;
 
-				case ConcurrentDrawLib.SoundStreamInitializationErrors.BASS_ERROR_DRIVER:
-					err = "No compatible driver found for requested device";
+				case SoundStreamInitializationErrors.BASS_ERROR_DEVICE:
+					err = Localization.GetText ("BASS_ERROR_DEVICE", al);
 					break;
 
-				case ConcurrentDrawLib.SoundStreamInitializationErrors.BASS_ERROR_DX:
-					err = "A sufficient version of DirectX is not installed";
+				case SoundStreamInitializationErrors.BASS_ERROR_DRIVER:
+					err = Localization.GetText ("BASS_ERROR_DRIVER", al);
 					break;
 
-				case ConcurrentDrawLib.SoundStreamInitializationErrors.BASS_ERROR_FORMAT:
-					err = "Specified device doesn't support required audio mode";
+				case SoundStreamInitializationErrors.BASS_ERROR_DX:
+					err = Localization.GetText ("BASS_ERROR_DX", al);
 					break;
 
-				case ConcurrentDrawLib.SoundStreamInitializationErrors.BASS_ERROR_MEM:
-					err = "No enough memory. Restart required";
+				case SoundStreamInitializationErrors.BASS_ERROR_FORMAT:
+					err = Localization.GetText ("BASS_ERROR_FORMAT", al);
+					break;
+
+				case SoundStreamInitializationErrors.BASS_ERROR_MEM:
+					err = Localization.GetText ("BASS_ERROR_MEM", al);
 					break;
 
 				default:
-				case ConcurrentDrawLib.SoundStreamInitializationErrors.BASS_ERROR_INIT:
-				case ConcurrentDrawLib.SoundStreamInitializationErrors.BASS_ERROR_UNKNOWN:
+				case SoundStreamInitializationErrors.BASS_ERROR_INIT:
+				case SoundStreamInitializationErrors.BASS_ERROR_UNKNOWN:
 					throw new Exception ("Application failure. Debug required at point 1");
 
-				case ConcurrentDrawLib.SoundStreamInitializationErrors.BASS_InvalidDLLVersion:
-					err = "Version of " + ProgramDescription.AssemblyRequirements[1] + " is incompatible " +
-						"with this application";
+				case SoundStreamInitializationErrors.BASS_InvalidDLLVersion:
+					err = string.Format (Localization.GetText ("LibraryIsIncompatible", al),
+						ProgramDescription.AssemblyRequirements[1]);
 					break;
 
-				case ConcurrentDrawLib.SoundStreamInitializationErrors.BASS_OK:
+				case SoundStreamInitializationErrors.BASS_OK:
 					break;
 				}
 
@@ -223,7 +194,7 @@ namespace ESHQSetupStub
 
 			// Отмена инициализации спектрограммы, если она не требуется
 			if (VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) ==
-				ConcurrentDrawLib.SpectrogramModes.NoSpectrogram)
+				SpectrogramModes.NoSpectrogram)
 				{
 				// Ручное заполнение палитры и выход
 				ConcurrentDrawLib.FillPalette (cdp.PaletteNumber);
@@ -234,20 +205,17 @@ namespace ESHQSetupStub
 			switch (ConcurrentDrawLib.InitializeSpectrogram ((uint)this.Width, cdp.SpectrogramHeight,
 				cdp.PaletteNumber, VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode)))
 				{
-				case ConcurrentDrawLib.SpectrogramInitializationErrors.InitOK:
+				case SpectrogramInitializationErrors.InitOK:
 					break;
 
-				case ConcurrentDrawLib.SpectrogramInitializationErrors.InvalidFrameSize:
-					err = "Incorrect spectrogram image size";
-					break;
-
-				case ConcurrentDrawLib.SpectrogramInitializationErrors.NotEnoughMemory:
-					err = "Not enough memory";
+				case SpectrogramInitializationErrors.NotEnoughMemory:
+					err = Localization.GetText ("BASS_ERROR_MEM", al);
 					break;
 
 				default:
-				case ConcurrentDrawLib.SpectrogramInitializationErrors.SoundStreamNotInitialized:
-				case ConcurrentDrawLib.SpectrogramInitializationErrors.SpectrogramAlreadyInitialized:
+				case SpectrogramInitializationErrors.InvalidFrameSize:
+				case SpectrogramInitializationErrors.SoundStreamNotInitialized:
+				case SpectrogramInitializationErrors.SpectrogramAlreadyInitialized:
 					throw new Exception ("Application failure. Debug required at point 2");
 				}
 
@@ -290,7 +258,7 @@ namespace ESHQSetupStub
 					RotateAndDrawLogo (true);
 
 					if ((VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) !=
-						ConcurrentDrawLib.SpectrogramModes.NoSpectrogram))
+						SpectrogramModes.NoSpectrogram))
 						{
 						mainLayer.Descriptor.FillRectangle (brushes[0], 0, this.Height - (cdp.SpectrogramHeight * steps / 100),
 							this.Width, cdp.SpectrogramHeight * steps / 100);
@@ -312,8 +280,8 @@ namespace ESHQSetupStub
 					break;
 				}
 
-			// Отрисовка слоёв
-			DrawLayers ();
+			// Отрисовка изображения
+			gr.DrawImage (mainLayer.Layer, mainLayer.Left, mainLayer.Top);
 			}
 
 		// Поворачивает и отрисовывает лого
@@ -328,7 +296,7 @@ namespace ESHQSetupStub
 			gl.DrawImage (logo1a, -(int)(logoHeight * 0.6), -(int)(logoHeight * 0.6));
 			mainLayer.Descriptor.DrawImage (logo1b, (this.Width - logo1b.Width) / 2,
 				((VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) !=
-					ConcurrentDrawLib.SpectrogramModes.NoSpectrogram) ? 0 : (this.Height - logo1b.Height) / 2));
+					SpectrogramModes.NoSpectrogram) ? 0 : (this.Height - logo1b.Height) / 2));
 			}
 
 		// Первичное вращение лого
@@ -359,7 +327,7 @@ namespace ESHQSetupStub
 			// Отрисовка
 			mainLayer.Descriptor.DrawImage (logo1a, (this.Width - logo1a.Width) / 2,
 				((VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) !=
-				ConcurrentDrawLib.SpectrogramModes.NoSpectrogram) ? 0 : (this.Height - logo1a.Height) / 2));
+				SpectrogramModes.NoSpectrogram) ? 0 : (this.Height - logo1a.Height) / 2));
 
 			steps++;
 			if (steps >= 0.05 * logoHeight)
@@ -381,7 +349,7 @@ namespace ESHQSetupStub
 			peak = ConcurrentDrawLib.CurrentPeak;
 
 			// Отрисовка гистограммы-бабочки при необходимости (исключает спектрограмму)
-			if (cdp.VisualizationMode == VisualizationModes.ButterflyHistogram)
+			if (cdp.VisualizationMode == VisualizationModes.Butterfly_histogram_with_logo)
 				{
 				// Сброс изображения
 				mainLayer.Descriptor.FillEllipse (brushes[2], (this.Width - logo1b.Width) / 2 - 256,
@@ -404,10 +372,6 @@ namespace ESHQSetupStub
 					histoX[1] = histoX[3] = this.Width / 2 + (int)(rad * Math.Cos (ArcToRad (180.0 + i / histoDensity)));
 					histoY[0] = histoY[3] = this.Height / 2 + (int)(rad * Math.Sin (ArcToRad (i / histoDensity)));
 					histoY[1] = histoY[2] = this.Height / 2 + (int)(rad * Math.Sin (ArcToRad (180.0 + i / histoDensity)));
-					/*histoX[2] = this.Width / 2 + (int)(rad * Math.Cos (ArcToRad (-i / histoDensity)));
-					histoX[3] = this.Width / 2 + (int)(rad * Math.Cos (ArcToRad (180.0 - i / histoDensity)));
-					histoY[2] = this.Height / 2 + (int)(rad * Math.Sin (ArcToRad (-i / histoDensity)));
-					histoY[3] = this.Height / 2 + (int)(rad * Math.Sin (ArcToRad (180.0 - i / histoDensity)));*/
 
 					// Рисуем
 					mainLayer.Descriptor.DrawLine (p, histoX[0], histoY[0], histoX[1], histoY[1]);
@@ -428,7 +392,7 @@ namespace ESHQSetupStub
 				mainLayer.Descriptor.FillEllipse (br, (this.Width - rad) / 2,
 					(
 					((VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) !=
-					ConcurrentDrawLib.SpectrogramModes.NoSpectrogram) ? logo1b.Height : this.Height)
+					SpectrogramModes.NoSpectrogram) ? logo1b.Height : this.Height)
 					- rad) / 2, rad, rad);
 
 				br.Dispose ();
@@ -436,7 +400,7 @@ namespace ESHQSetupStub
 
 			// Отрисовка спектрограммы при необходимости
 			if (VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) !=
-				ConcurrentDrawLib.SpectrogramModes.NoSpectrogram)
+				SpectrogramModes.NoSpectrogram)
 				{
 				b = ConcurrentDrawLib.CurrentSpectrogramFrame;
 				mainLayer.Descriptor.DrawImage (b, 0, this.Height - b.Height);
@@ -455,7 +419,7 @@ namespace ESHQSetupStub
 			{
 			// Подготовка слоёв
 			this.BackColor = brushes[0].Color;
-			mainLayer.Descriptor.FillRectangle (brushes[0], 0, 0, mainLayer.Layer.Width, mainLayer.Layer.Height);
+			mainLayer.Descriptor.FillRectangle (brushes[0], 0, 0, this.Width, this.Height);
 
 			// Инициализация лого
 			logo1a = new Bitmap ((int)(logoHeight * 1.2), (int)(logoHeight * 1.2));
@@ -464,31 +428,6 @@ namespace ESHQSetupStub
 			// Переход к следующему обработчику
 			steps = 0;
 			currentPhase++;
-			}
-
-		// Отрисовка слоёв
-		private void DrawLayers ()
-			{
-			// Отрисовка
-#if VIDEO
-			if (vm.IsInited)
-				{
-				b = (Bitmap)mainLayer.Layer.Clone ();
-				vm.AddFrame (b);
-				b.Dispose ();
-				savingLayersCounter++;
-
-				string s = "- Rendering -\nPhase: " + currentPhase.ToString () + "\nFrames: " + savingLayersCounter.ToString ();
-				gr.DrawString ("- Rendering -\nPhase: ████████████████\nFrames: █████", fonts[0], brushes[0], 0, 0);
-				gr.DrawString (s, fonts[0], brushes[1], 0, 0);
-				}
-			else
-				{
-#endif
-			gr.DrawImage (mainLayer.Layer, mainLayer.Left, mainLayer.Top);
-#if VIDEO
-				}
-#endif
 			}
 
 		// Закрытие окна
@@ -509,12 +448,6 @@ namespace ESHQSetupStub
 				}
 			brushes.Clear ();
 
-			for (int i = 0; i < fonts.Count; i++)
-				{
-				fonts[i].Dispose ();
-				}
-			fonts.Clear ();
-
 			if (gr != null)
 				gr.Dispose ();
 			if (gl != null)
@@ -525,10 +458,8 @@ namespace ESHQSetupStub
 				logo1b.Dispose ();
 			if (mainLayer != null)
 				mainLayer.Dispose ();
-
-#if VIDEO
-			vm.Dispose ();
-#endif
+			if (cdp != null)
+				cdp.Dispose ();
 			}
 
 		// Принудительный выход (по любой клавише)
@@ -569,7 +500,7 @@ namespace ESHQSetupStub
 				// Пересоздание кисти лого и сброс поля отрисовки
 				brushes[1].Color = ConcurrentDrawLib.GetMasterPaletteColor ();
 				mainLayer = new LogoDrawerLayer (0, 0, (uint)this.Width, (uint)this.Height);
-				mainLayer.Descriptor.FillRectangle (brushes[0], 0, 0, mainLayer.Layer.Width, mainLayer.Layer.Height);
+				mainLayer.Descriptor.FillRectangle (brushes[0], 0, 0, this.Width, this.Height);
 				gr = Graphics.FromHwnd (this.Handle);
 
 				// Реинициализация лого (при необходимости)

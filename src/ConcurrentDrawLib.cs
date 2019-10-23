@@ -5,6 +5,138 @@ using System.Runtime.InteropServices;
 namespace ESHQSetupStub
 	{
 	/// <summary>
+	/// Возможные ошибки инициализации звукового потока
+	/// </summary>
+	public enum SoundStreamInitializationErrors
+		{
+		// Общие ошибки приложения
+
+		/// <summary>
+		/// Неподдерживаемая версия библиотеки BASS
+		/// </summary>
+		BASS_InvalidDLLVersion = -10,
+
+		/// <summary>
+		/// Инициализация выполнена успешно
+		/// </summary>
+		BASS_OK = 0,
+
+		// Ошибки функции BASS_RecordInit
+
+		/// <summary>
+		/// A sufficient version of DirectX (or ALSA) is not installed
+		/// </summary>
+		BASS_ERROR_DX = 39,
+
+		/// <summary>
+		/// Device is invalid
+		/// </summary>
+		BASS_ERROR_DEVICE = 23,
+
+		/// <summary>
+		/// The device has already been initialized
+		/// </summary>
+		BASS_ERROR_ALREADY = 14,
+
+		/// <summary>
+		/// There is no available device driver
+		/// </summary>
+		BASS_ERROR_DRIVER = 3,
+
+		// Ошибки функции BASS_RecordStart
+
+		/// <summary>
+		/// BASS_RecordInit has not been successfully called
+		/// </summary>
+		BASS_ERROR_INIT = 8,
+
+		/// <summary>
+		/// The device is busy. An existing recording may need to be stopped before starting another one
+		/// </summary>
+		BASS_ERROR_BUSY = 46,
+
+		/// <summary>
+		/// The recording device is not available. 
+		/// Another application may already be recording with it, or it could be a half-duplex device 
+		/// that is currently being used for playback
+		/// </summary>
+		BASS_ERROR_NOTAVAIL = 37,
+
+		/// <summary>
+		/// The requested format is not supported. 
+		/// If using the BASS_SAMPLE_FLOAT flag, it could be that floating-point recording is not supported
+		/// </summary>
+		BASS_ERROR_FORMAT = 6,
+
+		/// <summary>
+		/// There is insufficient memory
+		/// </summary>
+		BASS_ERROR_MEM = 1,
+
+		/// <summary>
+		/// Some other mystery problem of BASS
+		/// </summary>
+		BASS_ERROR_UNKNOWN = -1
+		}
+
+	/// <summary>
+	/// Возможные ошибки инициализации спектрограммы
+	/// </summary>
+	public enum SpectrogramInitializationErrors
+		{
+		/// <summary>
+		/// Спектрограмма успешно инициализирована
+		/// </summary>
+		InitOK = 0,
+
+		/// <summary>
+		/// Звуковой поток не инициализирован
+		/// </summary>
+		SoundStreamNotInitialized = -1,
+
+		/// <summary>
+		/// Спектрограмма уже инициализирована
+		/// </summary>
+		SpectrogramAlreadyInitialized = -2,
+
+		/// <summary>
+		/// Ширина или высота изображения находятся вне допустимого диапазона
+		/// </summary>
+		InvalidFrameSize = -3,
+
+		/// <summary>
+		/// Недостаточно памяти для работы со спектрограммой
+		/// </summary>
+		NotEnoughMemory = -4
+		}
+
+	/// <summary>
+	/// Возможные режимы спектрограммы
+	/// </summary>
+	public enum SpectrogramModes
+		{
+		/// <summary>
+		/// Без спектрограммы
+		/// </summary>
+		NoSpectrogram = 0,
+
+		/// <summary>
+		/// Статическая с курсором
+		/// </summary>
+		StaticSpectrogram = 1,
+
+		/// <summary>
+		/// Движущаяся
+		/// </summary>
+		MovingSpectrogram = 2,
+
+		/// <summary>
+		/// Гистограмма
+		/// </summary>
+		Histogram = 3
+		}
+
+	/// <summary>
 	/// Класс обеспечивает доступ к функционалу библиотеки ConcurrentDrawLib
 	/// </summary>
 	public class ConcurrentDrawLib
@@ -56,81 +188,6 @@ namespace ESHQSetupStub
 		private static extern Int16 InitializeSoundStreamEx (Byte DeviceNumber);
 
 		/// <summary>
-		/// Возможные ошибки инициализации звукового потока
-		/// </summary>
-		public enum SoundStreamInitializationErrors
-			{
-			// Общие ошибки приложения
-
-			/// <summary>
-			/// Неподдерживаемая версия библиотеки BASS
-			/// </summary>
-			BASS_InvalidDLLVersion = -10,
-
-			/// <summary>
-			/// Инициализация выполнена успешно
-			/// </summary>
-			BASS_OK = 0,
-
-			// Ошибки функции BASS_RecordInit
-
-			/// <summary>
-			/// A sufficient version of DirectX (or ALSA) is not installed
-			/// </summary>
-			BASS_ERROR_DX = 39,
-
-			/// <summary>
-			/// Device is invalid
-			/// </summary>
-			BASS_ERROR_DEVICE = 23,
-
-			/// <summary>
-			/// The device has already been initialized
-			/// </summary>
-			BASS_ERROR_ALREADY = 14,
-
-			/// <summary>
-			/// There is no available device driver
-			/// </summary>
-			BASS_ERROR_DRIVER = 3,
-
-			// Ошибки функции BASS_RecordStart
-
-			/// <summary>
-			/// BASS_RecordInit has not been successfully called
-			/// </summary>
-			BASS_ERROR_INIT = 8,
-
-			/// <summary>
-			/// The device is busy. An existing recording may need to be stopped before starting another one
-			/// </summary>
-			BASS_ERROR_BUSY = 46,
-
-			/// <summary>
-			/// The recording device is not available. 
-			/// Another application may already be recording with it, or it could be a half-duplex device 
-			/// that is currently being used for playback
-			/// </summary>
-			BASS_ERROR_NOTAVAIL = 37,
-
-			/// <summary>
-			/// The requested format is not supported. 
-			/// If using the BASS_SAMPLE_FLOAT flag, it could be that floating-point recording is not supported
-			/// </summary>
-			BASS_ERROR_FORMAT = 6,
-
-			/// <summary>
-			/// There is insufficient memory
-			/// </summary>
-			BASS_ERROR_MEM = 1,
-
-			/// <summary>
-			/// Some other mystery problem of BASS
-			/// </summary>
-			BASS_ERROR_UNKNOWN = -1
-			}
-
-		/// <summary>
 		/// Метод инициализирует звуковой поток из устройства
 		/// </summary>
 		/// <param name="DeviceNumber">Номер устройства – звукового выхода</param>
@@ -165,63 +222,6 @@ namespace ESHQSetupStub
 		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
 		private static extern Int16 InitializeSpectrogramEx (UInt16 FrameWidth, UInt16 FrameHeight,
 			Byte PaletteNumber, Byte SpectrogramMode);
-
-		/// <summary>
-		/// Возможные ошибки инициализации спектрограммы
-		/// </summary>
-		public enum SpectrogramInitializationErrors
-			{
-			/// <summary>
-			/// Спектрограмма успешно инициализирована
-			/// </summary>
-			InitOK = 0,
-
-			/// <summary>
-			/// Звуковой поток не инициализирован
-			/// </summary>
-			SoundStreamNotInitialized = -1,
-
-			/// <summary>
-			/// Спектрограмма уже инициализирована
-			/// </summary>
-			SpectrogramAlreadyInitialized = -2,
-
-			/// <summary>
-			/// Ширина или высота изображения находятся вне допустимого диапазона
-			/// </summary>
-			InvalidFrameSize = -3,
-
-			/// <summary>
-			/// Недостаточно памяти для работы со спектрограммой
-			/// </summary>
-			NotEnoughMemory = -4
-			}
-
-		/// <summary>
-		/// Возможные режимы спектрограммы
-		/// </summary>
-		public enum SpectrogramModes
-			{
-			/// <summary>
-			/// Без спектрограммы
-			/// </summary>
-			NoSpectrogram = 0,
-
-			/// <summary>
-			/// Статическая с курсором
-			/// </summary>
-			StaticSpectrogram = 1,
-
-			/// <summary>
-			/// Движущаяся
-			/// </summary>
-			MovingSpectrogram = 2,
-
-			/// <summary>
-			/// Гистограмма
-			/// </summary>
-			Histogram = 3
-			}
 
 		/// <summary>
 		/// Метод инициализирует спектрограмму

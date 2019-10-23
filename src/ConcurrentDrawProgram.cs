@@ -17,12 +17,15 @@ namespace ESHQSetupStub
 		[STAThread]
 		public static void Main (string[] args)
 			{
+			// Запрос языка приложения
+			SupportedLanguages al = Localization.CurrentLanguage;
+
 			// Проверка запуска единственной копии
 			bool result;
 			Mutex instance = new Mutex (true, ProgramDescription.AssemblyTitle, out result);
 			if (!result)
 				{
-				MessageBox.Show (ProgramDescription.AssemblyTitle + " already started",
+				MessageBox.Show (string.Format (Localization.GetText ("AlreadyStarted", al), ProgramDescription.AssemblyTitle),
 					ProgramDescription.AssemblyTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				return;
 				}
@@ -32,7 +35,8 @@ namespace ESHQSetupStub
 				{
 				if (!File.Exists (Application.StartupPath + "\\" + ProgramDescription.AssemblyRequirements[i]))
 					{
-					MessageBox.Show (ProgramDescription.AssemblyRequirements[i] + " not found or unavailable",
+					MessageBox.Show (string.Format (Localization.GetText ("LibraryNotFound", al),
+						ProgramDescription.AssemblyRequirements[i]),
 						ProgramDescription.AssemblyTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
 					return;
 					}
@@ -41,8 +45,8 @@ namespace ESHQSetupStub
 			// Проверка корреткности версии библиотеки CDLib.dll (BASS проверяется позже)
 			if (!ConcurrentDrawLib.CheckCDLibVersion ())
 				{
-				MessageBox.Show ("This version of " + ProgramDescription.AssemblyRequirements[0] +
-					" is incompatible with current version of application", ProgramDescription.AssemblyTitle,
+				MessageBox.Show (string.Format (Localization.GetText ("LibraryIsIncompatible", al),
+						ProgramDescription.AssemblyRequirements[0]), ProgramDescription.AssemblyTitle,
 					MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return;
 				}

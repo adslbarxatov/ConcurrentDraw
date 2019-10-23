@@ -32,6 +32,12 @@ Version 1.5:
 • Settings interface improvements applied;
 • Added support for adjustable quantity of FFT values for histograms building;
 • Beats detector's behavior updated;
-• Fixed behavior of Cancel button at first start of application;
+• Fixed behavior of 'Cancel' button at first start of application;
 • Code improvements applied;
 • Added user manual at first launch and on '?' button
+
+Version 1.6:
+• Code optimizations applied; old unused code removed;
+• Added russian language and localization support for user interface;
+• Settings are now reset to previously saved when you click 'Cancel' button;
+• Logo, 'about' info and quick user manual added to the 'first start' event

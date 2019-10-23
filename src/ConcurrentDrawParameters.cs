@@ -10,8 +10,16 @@ namespace ESHQSetupStub
 	public partial class ConcurrentDrawParameters:Form
 		{
 		// Константы и переменные
-		private const string settingsKey = "HKEY_LOCAL_MACHINE\\SOFTWARE\\" + ProgramDescription.AssemblyMainName;
 		private char[] splitter = new char[] { ';' };
+		private SupportedLanguages al = Localization.CurrentLanguage;
+
+		/// <summary>
+		/// Возвращает ключ реестра, в котором хранятся настройки приложения
+		/// </summary>
+		public const string SettingsKey = "HKEY_LOCAL_MACHINE\\SOFTWARE\\" + ProgramDescription.AssemblyMainName;
+
+		// Название параметра с настройками
+		private const string SettingsValueName = "";
 
 		/// <summary>
 		/// Конструктор. Позволяет запросить параметры из реестра.
@@ -23,19 +31,6 @@ namespace ESHQSetupStub
 			{
 			// Инициализация
 			InitializeComponent ();
-			this.Text = ProgramDescription.AssemblyMainName + " parameters";
-
-			// Запрос настроек
-			string settings = "";
-			try
-				{
-				settings = Registry.GetValue (settingsKey, "", "").ToString ();	// Вызовет исключение при отсутствии ключа
-				}
-			catch
-				{
-				BHelp_Click (null, null);	// Справка на случай первого запуска
-				}
-			bool requestRequired = (settings == "");
 
 			// Настройка контролов
 
@@ -43,7 +38,7 @@ namespace ESHQSetupStub
 			DevicesCombo.Items.AddRange (ConcurrentDrawLib.AvailableDevices);
 			if (DevicesCombo.Items.Count < 1)
 				{
-				DevicesCombo.Items.Add ("(no devices)");
+				DevicesCombo.Items.Add (Localization.GetText ("CDP_NoDevices", al));
 				DevicesCombo.Enabled = DevicesLabel.Enabled = false;
 				}
 			DevicesCombo.SelectedIndex = 0;			// По умолчанию - первое
@@ -54,8 +49,10 @@ namespace ESHQSetupStub
 
 			// Режим
 			for (int i = 0; i < VisualizationModesChecker.VisualizationModesCount; i++)
-				VisualizationCombo.Items.Add (((VisualizationModes)i).ToString ());
-			VisualizationCombo.SelectedIndex = 7;	// По умолчанию - бабочка
+				{
+				VisualizationCombo.Items.Add (((VisualizationModes)i).ToString ().Replace ('_', ' '));
+				}
+			VisualizationCombo.SelectedIndex = (int)VisualizationModesChecker.VisualizationModesCount - 1;	// По умолчанию - бабочка
 
 			// Высота спектрограммы
 			SDHeight.Minimum = VisHeight.Minimum = ConcurrentDrawLib.MinSpectrogramFrameHeight;
@@ -83,48 +80,108 @@ namespace ESHQSetupStub
 
 			// Плотность гистограммы
 			for (int i = 1; i <= 16; i *= 2)
-				HistogramRangeCombo.Items.Add ("0 – " + (i * 22050.0 / 16.0).ToString () + " Hz");
+				{
+				HistogramRangeCombo.Items.Add ("0 – " + (i * 22050.0 / 16.0).ToString () +
+					" " + Localization.GetText ("CDP_Hz", al));
+				}
 			HistogramRangeCombo.SelectedIndex = 1;			// По умолчанию - до 2,7 кГц
 
-			// Разбор сохранённых настроек
-			if (!requestRequired)
+			// Язык интерфейса
+			for (int i = 0; i < Localization.AvailableLanguages; i++)
 				{
-				string[] values = settings.Split (splitter, System.StringSplitOptions.RemoveEmptyEntries);
-
-				try
-					{
-					DevicesCombo.SelectedIndex = int.Parse (values[0]);
-					SDPaletteCombo.SelectedIndex = int.Parse (values[1]);
-					VisualizationCombo.SelectedIndex = int.Parse (values[2]);
-					SDHeight.Value = decimal.Parse (values[3]);
-					VisWidth.Value = decimal.Parse (values[4]);
-					VisHeight.Value = decimal.Parse (values[5]);
-					VisLeft.Value = decimal.Parse (values[6]);
-					VisTop.Value = decimal.Parse (values[7]);
-
-					uint bdSettings = uint.Parse (values[8]);
-					BDLowEdge.Value = (int)(bdSettings & 0xFF);
-					BDHighEdge.Value = (int)((bdSettings >> 8) & 0xFF);
-					BDLowLevel.Value = (int)((bdSettings >> 16) & 0xFF);
-					BDFFTScaleMultiplier.Value = (int)((bdSettings >> 24) & 0xFF);
-
-					AlwaysOnTopFlag.Checked = (values[9] != "0");
-					HistogramRangeCombo.SelectedIndex = int.Parse (values[10]);
-					}
-				catch
-					{
-					requestRequired = true;
-					}
+				LanguageCombo.Items.Add (((SupportedLanguages)i).ToString ());
 				}
+			LanguageCombo.SelectedIndex = (int)al;			// По умолчанию - английский
 
-			// Завершение
+			// Запрос настроек
+			bool requestRequired = GetSavedSettings ();
+
+			// Установка настроек
 			ConcurrentDrawLib.SetPeakEvaluationParameters ((byte)BDLowEdge.Value, (byte)BDHighEdge.Value,
 				(byte)BDLowLevel.Value, (byte)BDFFTScaleMultiplier.Value);
 			ConcurrentDrawLib.SetHistogramFFTValuesCount (this.HistogramFFTValuesCount);
 
+			// Запуск окна немедленно, ести требуется
 			BCancel.Enabled = !requestRequired;
 			if (requestRequired)
 				this.ShowDialog ();
+			}
+
+		// Метод получает настройки из реестра; возвращает true, если настройки требуется ввести вручную
+		private bool GetSavedSettings ()
+			{
+			string settings = "";
+			try
+				{
+				settings = Registry.GetValue (SettingsKey,
+					SettingsValueName, "").ToString ();
+				}
+			catch
+				{
+				}
+			if (settings == "")
+				{
+				BHelp_Click (null, null);	// Справка на случай первого запуска
+				return true;
+				}
+
+			// Разбор сохранённых настроек
+			string[] values = settings.Split (splitter, System.StringSplitOptions.RemoveEmptyEntries);
+
+			try
+				{
+				DevicesCombo.SelectedIndex = int.Parse (values[0]);
+				SDPaletteCombo.SelectedIndex = int.Parse (values[1]);
+				VisualizationCombo.SelectedIndex = int.Parse (values[2]);
+				SDHeight.Value = decimal.Parse (values[3]);
+				VisWidth.Value = decimal.Parse (values[4]);
+				VisHeight.Value = decimal.Parse (values[5]);
+				VisLeft.Value = decimal.Parse (values[6]);
+				VisTop.Value = decimal.Parse (values[7]);
+
+				uint bdSettings = uint.Parse (values[8]);
+				BDLowEdge.Value = (int)(bdSettings & 0xFF);
+				BDHighEdge.Value = (int)((bdSettings >> 8) & 0xFF);
+				BDLowLevel.Value = (int)((bdSettings >> 16) & 0xFF);
+				BDFFTScaleMultiplier.Value = (int)((bdSettings >> 24) & 0xFF);
+
+				AlwaysOnTopFlag.Checked = (values[9] != "0");
+				HistogramRangeCombo.SelectedIndex = int.Parse (values[10]);
+				}
+			catch
+				{
+				return true;
+				}
+
+			// Успешно
+			return false;
+			}
+
+		// Применение языковой настройки к окну
+		private void LocalizeForm ()
+			{
+			this.Text = ProgramDescription.AssemblyMainName + " – " + Localization.GetText ("CDPName", al);
+
+			DevicesLabel.Text = Localization.GetText ("CDP_DevicesLabel", al);
+
+			VisTypeLabel.Text = Localization.GetText ("CDP_VisTypeLabel", al);
+			VisSizeLabel.Text = Localization.GetText ("CDP_VisSizeLabel", al);
+			VisLeftTopLabel.Text = Localization.GetText ("CDP_VisLeftTopLabel", al);
+
+			PaletteLabel.Text = Localization.GetText ("CDP_PaletteLabel", al);
+			SGHGHeightLabel.Text = Localization.GetText ("CDP_SGHGHeightLabel", al);
+			HGRangeLabel.Text = Localization.GetText ("CDP_HGRangeLabel", al);
+
+			AlwaysOnTopFlag.Text = Localization.GetText ("CDP_AlwaysOnTopFlag", al);
+			LogoResetFlag.Text = Localization.GetText ("CDP_LogoResetFlag", al);
+
+			BeatsGroup.Text = Localization.GetText ("CDP_BeatsGroup", al);
+
+			BOK.Text = Localization.GetText ("CDP_OK", al);
+			BCancel.Text = Localization.GetText ("CDP_Cancel", al);
+			LanguageLabel.Text = Localization.GetText ("CDP_LanguageLabel", al);
+
+			BDLowEdge_ValueChanged (BDLowEdge, null);
 			}
 
 		// Контроль наличия доступных устройств
@@ -133,10 +190,15 @@ namespace ESHQSetupStub
 			// Контроль возможности запуска
 			if (!DevicesCombo.Enabled)
 				{
-				MessageBox.Show ("No compatible audio output devices found", ProgramDescription.AssemblyTitle,
+				MessageBox.Show (Localization.GetText ("NoCompatibleDevices", al), ProgramDescription.AssemblyTitle,
 					MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				this.Close ();
+				return;
 				}
+
+			// Перезапрос настроек (если предыдущие были отменены)
+			if (BCancel.Enabled)
+				GetSavedSettings ();
 
 			// Отмена реинициализации, которая выставляется при загрузке
 			LogoResetFlag.Checked = false;
@@ -218,7 +280,8 @@ namespace ESHQSetupStub
 
 			try
 				{
-				Registry.SetValue (settingsKey, "", settings);	// Вызовет исключение, если раздел не удалось создать
+				Registry.SetValue (SettingsKey,
+					SettingsValueName, settings);	// Вызовет исключение, если раздел не удалось создать
 				}
 			catch
 				{
@@ -304,9 +367,10 @@ namespace ESHQSetupStub
 			if ((((TrackBar)sender).Name == "BDLowEdge") && (BDHighEdge.Value < BDLowEdge.Value))
 				BDHighEdge.Value = BDLowEdge.Value;
 
-			BDSettings.Text = "Range: " + (44100 * BDLowEdge.Value / 2048).ToString () + " – " +
-				(44100 * BDHighEdge.Value / 2048).ToString () + " Hz; amplitude threshold: " +
-				BDLowLevel.Value.ToString () + " of 255; FFT scale multiplier: " + BDFFTScaleMultiplier.Value.ToString ();
+			BDSettings.Text = string.Format (Localization.GetText ("CDP_BDSettingsText", al),
+				(44100 * BDLowEdge.Value / 2048).ToString (),
+				(44100 * BDHighEdge.Value / 2048).ToString (),
+				BDLowLevel.Value.ToString (), BDFFTScaleMultiplier.Value.ToString ());
 			}
 
 		// Выравнивание окна по экрану
@@ -361,19 +425,18 @@ namespace ESHQSetupStub
 		// Метод отображает быструю справку по использованию
 		private void BHelp_Click (object sender, EventArgs e)
 			{
-			MessageBox.Show ("Quick user manual\n\n" +
-				"Press right mouse button to get to settings window later, ESC key to close the application\n\n" +
-				"At first application will start with recommended settings. But you can change:\n" +
-				"• Output device for audio data getting (stereo mixer or speakers required);\n" +
-				"• Visualization mode (spectrogram, histogram or 'butterfly' histogram for now);\n" +
-				"• Window size and placement (not less than 128 x 128 px and not more than 2048 x 1024 px);\n" +
-				"• Spectrogram and histogram height (between 128 and 256 px; may load CPU);\n" +
-				"• Histogram density (how many frequencies will be shown);\n" +
-				"• Frequencies range and amplitude (loudness) threshold for beats detector;\n" +
-				"• FFT scale multiplier (contrast) for spectrogram and histogram;\n" +
-				"• 'Always on top' window state (turns off when settings window is active).\n" +
-				"Settings will be saved by pressing OK button. They can be changed anytime you need"
-				, ProgramDescription.AssemblyTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
+			ConcurrentDrawLogo cdl = new ConcurrentDrawLogo ();
+			cdl.Dispose ();
+
+			MessageBox.Show (Localization.GetText ("HelpText", al), ProgramDescription.AssemblyTitle,
+				MessageBoxButtons.OK, MessageBoxIcon.Information);
+			}
+
+		// Изменение языка интерфейса
+		private void LanguageCombo_SelectedIndexChanged (object sender, EventArgs e)
+			{
+			Localization.CurrentLanguage = al = (SupportedLanguages)LanguageCombo.SelectedIndex;
+			LocalizeForm ();
 			}
 		}
 	}
