@@ -123,6 +123,9 @@
   <data name="BASS_ERROR_BUSY" xml:space="preserve">
     <value>Requested device is busy or in use by another application</value>
   </data>
+  <data name="BASS_ERROR_CODEC" xml:space="preserve">
+    <value>File {0:S} is unsupported</value>
+  </data>
   <data name="BASS_ERROR_DEVICE" xml:space="preserve">
     <value>Requested device is invalid or incompatible</value>
   </data>
@@ -131,6 +134,9 @@
   </data>
   <data name="BASS_ERROR_DX" xml:space="preserve">
     <value>A sufficient version of DirectX is not installed</value>
+  </data>
+  <data name="BASS_ERROR_FILEOPEN" xml:space="preserve">
+    <value>File {0:S} is unavailable</value>
   </data>
   <data name="BASS_ERROR_FORMAT" xml:space="preserve">
     <value>Specified device doesn't support required audio mode</value>

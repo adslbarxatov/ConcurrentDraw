@@ -2,7 +2,8 @@
 #include "ConcurrentDrawLib.h"
 
 // Общие переменные
-HRECORD cdChannel = NULL;			// Дескриптор записи
+HRECORD cdChannel = NULL;			// Дескриптор чтения
+uint channelLength = 0;				// Длина потока (при инициализации из файла будет ненулевой)
 float cdFFT[FFT_VALUES_COUNT];		// Массив значений, получаемый из канала
 MMRESULT cdFFTTimer = NULL;			// Дескриптор таймера запроса данных из буфера
 
@@ -15,7 +16,8 @@ uchar sdSpectrogramMode = 0;		// Режим спектрограммы (0 - вы
 
 float cdFFTScale =
 	(float)CD_DEFAULT_FFT_SCALE_MULT * 25.5f;			// Масштаб значений FFT
-uint cdHistogramFFTValuesCount = DEFAULT_FFT_VALUES_COUNT;					// Количество значений FFT, используемых для гистограмм
+uint cdHistogramFFTValuesCount = 
+	DEFAULT_FFT_VALUES_COUNT;							// Количество значений FFT, используемых для гистограмм
 uchar cdFFTPeak = 0,									// Текущее пиковое значение
 	cdFFTPeakEvLowEdge = PEAK_EVALUATION_LOW_EDGE,		// Нижняя граница диапазона определения пика
 	cdFFTPeakEvHighEdge = PEAK_EVALUATION_HIGH_EDGE,	// Верхняя граница диапазона определения пика
@@ -72,6 +74,10 @@ CD_API(uchar) GetDevicesEx (schar **Devices)
 // Функция запускает процесс считывания данных со звукового вывода
 CD_API(sint) InitializeSoundStreamEx (uchar DeviceNumber)
 	{
+	// Контроль
+	if (cdChannel)
+		return -11;
+
 	// Получение доступа к библиотеке
 	if (BASS_GetVersion () != BASS_VERSION)
 		return -10;
@@ -80,11 +86,42 @@ CD_API(sint) InitializeSoundStreamEx (uchar DeviceNumber)
 	if (!BASS_RecordInit (DeviceNumber))
 		return BASS_ErrorGetCode ();
 
-	if (!(cdChannel = BASS_RecordStart (44100, 2, 0x00, NULL, 0)))
+	if (!(cdChannel = BASS_RecordStart (44100, 2, 0x00, NULL, NULL)))
 		return BASS_ErrorGetCode ();
 
 	// Запуск таймера запроса данных
-	cdFFTTimer = timeSetEvent (25, 25, (LPTIMECALLBACK)&UpdateFFT, 0, TIME_PERIODIC);
+	cdFFTTimer = timeSetEvent (25, 25, (LPTIMECALLBACK)&UpdateFFT, NULL, TIME_PERIODIC);
+
+	// Успешно
+	channelLength = 0;
+	return 0;
+	}
+
+// Функция запускает процесс считывания данных из звукового файла
+CD_API(sint) InitializeFileStreamEx (schar *FileName)
+	{
+	BASS_CHANNELINFO info;
+	ulong streamLength = 0;
+
+	// Контроль
+	if (cdChannel)
+		return -11;
+
+	// Получение доступа к библиотеке
+	if (BASS_GetVersion () != BASS_VERSION)
+		return -10;
+
+	// Инициализация
+	if (!BASS_Init (-1, 44100, BASS_DEVICE_STEREO, NULL, NULL))
+		return BASS_ErrorGetCode ();
+
+	if (!(cdChannel = BASS_StreamCreateFile (FALSE, FileName, 0, 0, BASS_STREAM_DECODE)))
+		return BASS_ErrorGetCode ();
+
+	// Получение длины потока (в миллисекундах)
+	BASS_ChannelGetInfo (cdChannel, &info);
+	streamLength = BASS_ChannelGetLength (cdChannel, BASS_POS_BYTE);
+	channelLength = 8 * streamLength / (info.chans * info.freq * info.origres);
 
 	// Успешно
 	return 0;
@@ -108,7 +145,10 @@ CD_API(void) DestroySoundStreamEx ()
 		}
 
 	// Остановка
-	BASS_RecordFree ();
+	if (channelLength)
+		BASS_Free ();
+	else
+		BASS_RecordFree ();
 	cdChannel = NULL;
 	}
 
@@ -121,10 +161,10 @@ float *GetDataFromStreamEx ()
 		return NULL;
 
 	// Получение
-	if ((v = BASS_ChannelGetData (cdChannel, &cdFFT, BASS_DATA_AVAILABLE)) < FFT_VALUES_COUNT)
+	if (BASS_ChannelGetData (cdChannel, &cdFFT, BASS_DATA_AVAILABLE) < FFT_VALUES_COUNT)
 		return NULL;
 
-	if (BASS_ChannelGetData (cdChannel, &cdFFT, FFT_MODE ) < 0)
+	if (BASS_ChannelGetData (cdChannel, &cdFFT, FFT_MODE) < 0)
 		return NULL;
 
 	return cdFFT;
@@ -237,6 +277,12 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 				}
 			break;
 		}
+	}
+
+// Функция выполняет ручное обновление данных FFT вместо встроенного таймера
+CD_API(void) UpdateFFTDataEx ()
+	{
+	UpdateFFT (0, 0, NULL, 0, 0);
 	}
 
 // Функция инициализирует спектрограмму
@@ -580,4 +626,13 @@ CD_API(void) SetHistogramFFTValuesCountEx (uint Count)
 
 	if ((Count < 64) || (Count > FFT_VALUES_COUNT))
 		cdHistogramFFTValuesCount = DEFAULT_FFT_VALUES_COUNT;
+	}
+
+// Функция возвращает длину текущего файлового потока в миллисекундах (для аудиовыхода всегда 0)
+CD_API(uint) GetChannelLengthEx ()
+	{
+	if (!cdChannel)
+		return 0;
+
+	return channelLength;
 	}

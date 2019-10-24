@@ -123,6 +123,9 @@
   <data name="BASS_ERROR_BUSY" xml:space="preserve">
     <value>Запрошенное устройство занято или используется другим приложением</value>
   </data>
+  <data name="BASS_ERROR_CODEC" xml:space="preserve">
+    <value>Формат файла {0:S} не поддерживается</value>
+  </data>
   <data name="BASS_ERROR_DEVICE" xml:space="preserve">
     <value>Запрошенное устройство не существует или не поддерживается</value>
   </data>
@@ -131,6 +134,9 @@
   </data>
   <data name="BASS_ERROR_DX" xml:space="preserve">
     <value>В системе отсутствует подходящая версия DirectX</value>
+  </data>
+  <data name="BASS_ERROR_FILEOPEN" xml:space="preserve">
+    <value>Файл {0:S} не найден или недоступен</value>
   </data>
   <data name="BASS_ERROR_FORMAT" xml:space="preserve">
     <value>Запрошенное устройство не поддерживает требуемый аудиорежим</value>

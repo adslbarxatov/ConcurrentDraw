@@ -41,3 +41,9 @@ Version 1.6:
 • Added russian language and localization support for user interface;
 • Settings are now reset to previously saved when you click 'Cancel' button;
 • Logo, 'about' info and quick user manual added to the 'first start' event
+
+Version 1.7:
+• Math optimizations applied;
+• Logo placement algorithm optimized for 16:9 window mode;
+• Added support for file streaming (test mode; not available for users for now);
+• Generic code review performed

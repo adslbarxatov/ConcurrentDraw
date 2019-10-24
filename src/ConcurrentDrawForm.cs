@@ -6,6 +6,9 @@ using System.Windows.Forms;
 #if AUDIO
 using System.Runtime.InteropServices;
 #endif
+#if VIDEO
+using System.ComponentModel;
+#endif
 
 // Классы
 namespace ESHQSetupStub
@@ -20,32 +23,35 @@ namespace ESHQSetupStub
 		private uint steps = 0;									// Счётчик шагов отрисовки
 
 		private ConcurrentDrawParameters cdp;					// Параметры работы программы
-		private SupportedLanguages al = Localization.CurrentLanguage;	// Язык интерфейса приложения
+		private SupportedLanguages al =
+			Localization.CurrentLanguage;						// Язык интерфейса приложения
 
 		// Графика
 		private LogoDrawerLayer mainLayer;						// Базовый слой изображения
 
 		private Graphics gr, gl;								// Объекты-отрисовщики
 		private List<SolidBrush> brushes = new List<SolidBrush> ();
-		private Bitmap logo1a, logo1b, b;
-		private SolidBrush br;
+		private Bitmap logo1a, logo1b;
 
 		private const int logoIdleSpeed = 2;					// Наименьшая скорость вращения лого
-		private const int logoSpeedImpulse = 50;				// Импульс скорости
-		private int currentArc = 0;								// Текущий угол приращения поворота лого
+		private int logoSpeedImpulse = 50,						// Импульс скорости
+			currentArc = 0;										// Текущий угол приращения поворота лого
 		private uint logoHeight;								// Диаметр лого
 
-		private Pen p;											// Карандаш для линий гистограммы
+		private byte peak;										// Пиковое значение для расчёта битовых порогов
+
 		private int[] histoX = new int[4],
 			histoY = new int[4];								// Координаты линий гистограммы
 		private const double histoDensity = 4.0;				// Плотность гистограммы-бабочки
 
-		private byte peak;										// Пиковое значение для расчёта битовых порогов
 		private int rad, amp;									// Вспомогательные переменные
+		private SolidBrush br;
+		private Bitmap b;
+		private Pen p;
 
 		// Аудио
 #if AUDIO
-		AudioManager am = new AudioManager (Application.StartupPath + "\\4.wav", false);
+		AudioManager am = new AudioManager (predefinedAudio, false);
 
 		// Эта конструкция имитирует нажатие клавиши, запускающей и останавливающей запись
 		[DllImport ("user32.dll")]
@@ -56,6 +62,13 @@ namespace ESHQSetupStub
 			keybd_event ((byte)Keys.Add, 0, 0, 0);
 			keybd_event ((byte)Keys.Add, 0, 2, 0);
 			}
+#endif
+
+		// Видео
+#if VIDEO
+		private const double fps = 23.4375;						// Частота кадров видео
+		private VideoManager vm = new VideoManager ();			// Видеофайл (балластная инициализация)
+		private uint savingLayersCounter = 0;					// Счётчик сохранений
 #endif
 
 		// Фазы отрисовки
@@ -113,6 +126,34 @@ namespace ESHQSetupStub
 			this.Top = (int)cdp.VisualizationTop;
 			this.TopMost = cdp.AlwaysOnTop;
 
+			// Подготовка к отрисовке
+			mainLayer = new LogoDrawerLayer (0, 0, (uint)this.Width, (uint)this.Height);
+
+			// Инициализация видеопотока
+#if VIDEO
+			SFVideo.Title = "Select placement of new video file";
+			SFVideo.Filter = "Audio-Video Interchange video format (*.avi)|*.avi";
+			SFVideo.FileName = "NewVideo.avi";
+
+			OFAudio.Title = "Select audio file for rendering";
+			OFAudio.Filter = "Windows PCM audio files (*.wav)|*.wav";
+
+			if ((MessageBox.Show ("Write frames to AVI?", ProgramDescription.AssemblyTitle, MessageBoxButtons.YesNo,
+				MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes) &&
+				(SFVideo.ShowDialog () == DialogResult.OK) && (OFAudio.ShowDialog () == DialogResult.OK))
+				{
+				vm = new VideoManager (SFVideo.FileName, fps, mainLayer.Layer, true);
+
+				if (!vm.IsInited)
+					{
+					MessageBox.Show ("Failed to initialize AVI stream", ProgramDescription.AssemblyTitle,
+						 MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					this.Close ();
+					return;
+					}
+				}
+#endif
+
 			// Запуск аудиоканала
 			if (!InitializeAudioStream ())
 				{
@@ -122,26 +163,46 @@ namespace ESHQSetupStub
 
 			// Настройка окна
 			gr = Graphics.FromHwnd (this.Handle);
-			logoHeight = (uint)(Math.Min (this.Width, this.Height) * 7) / 12;
+			ResetLogo ();
 
-			// Формирование шрифтов и кистей
-			brushes.Add (new SolidBrush (Color.FromArgb (0, 0, 0)));
-			brushes.Add (new SolidBrush (ConcurrentDrawLib.GetMasterPaletteColor ()));
-			brushes.Add (new SolidBrush (Color.FromArgb (20, brushes[0].Color)));
+			// Формирование кистей
+			brushes.Add (new SolidBrush (Color.FromArgb (0, 0, 0)));					// Фон
+			brushes.Add (new SolidBrush (ConcurrentDrawLib.GetMasterPaletteColor ()));	// Лого и beat-детектор
+			brushes.Add (new SolidBrush (Color.FromArgb (20, brushes[0].Color)));		// Fade out
 
-			// Подготовка к отрисовке
-			mainLayer = new LogoDrawerLayer (0, 0, (uint)this.Width, (uint)this.Height);
-
-			// Запуск
-			ExtendedTimer.Enabled = true;
-			this.Activate ();
+#if VIDEO
+			// Запуск рендеринга
+			if (vm.IsInited)
+				{
+				this.TopMost = false;
+				logoSpeedImpulse += 10;	// Из-за низкого FPS приходится ускорять
+				HardWorkExecutor hwe = new HardWorkExecutor (RenderVideo, "Total count of frames", "Rendering...");
+				
+				// Без выхода в основной режим
+				this.Close ();
+				return;
+				}
+			else
+#endif
+			// Запуск таймера
+				{
+				ExtendedTimer.Enabled = true;
+				}
+				this.Activate ();
 			}
 
 		// Метод инициализирует аудиоканал
 		private bool InitializeAudioStream ()
 			{
 			string err = "";
-			switch (ConcurrentDrawLib.InitializeSoundStream (cdp.DeviceNumber))
+			SoundStreamInitializationErrors ssie;
+#if VIDEO
+			if (vm.IsInited)
+				ssie = ConcurrentDrawLib.InitializeSoundStream (OFAudio.FileName);
+			else
+#endif
+			ssie = ConcurrentDrawLib.InitializeSoundStream (cdp.DeviceNumber);
+			switch (ssie)
 				{
 				case SoundStreamInitializationErrors.BASS_ERROR_ALREADY:
 				case SoundStreamInitializationErrors.BASS_ERROR_BUSY:
@@ -175,11 +236,26 @@ namespace ESHQSetupStub
 				default:
 				case SoundStreamInitializationErrors.BASS_ERROR_INIT:
 				case SoundStreamInitializationErrors.BASS_ERROR_UNKNOWN:
+				case SoundStreamInitializationErrors.BASS_RecordAlreadyRunning:
+				case SoundStreamInitializationErrors.BASS_ERROR_NO3D:
 					throw new Exception ("Application failure. Debug required at point 1");
+
+				case SoundStreamInitializationErrors.BASS_ERROR_ILLPARAM:
+				case SoundStreamInitializationErrors.BASS_ERROR_SPEAKER:
+					throw new Exception ("Application failure. Debug required at point 2");
 
 				case SoundStreamInitializationErrors.BASS_InvalidDLLVersion:
 					err = string.Format (Localization.GetText ("LibraryIsIncompatible", al),
 						ProgramDescription.AssemblyRequirements[1]);
+					break;
+
+				case SoundStreamInitializationErrors.BASS_ERROR_FILEOPEN:
+					err = string.Format (Localization.GetText ("BASS_ERROR_FILEOPEN", al), OFAudio.FileName);
+					break;
+
+				case SoundStreamInitializationErrors.BASS_ERROR_FILEFORM:
+				case SoundStreamInitializationErrors.BASS_ERROR_CODEC:
+					err = string.Format (Localization.GetText ("BASS_ERROR_CODEC", al), OFAudio.FileName);
 					break;
 
 				case SoundStreamInitializationErrors.BASS_OK:
@@ -216,7 +292,7 @@ namespace ESHQSetupStub
 				case SpectrogramInitializationErrors.InvalidFrameSize:
 				case SpectrogramInitializationErrors.SoundStreamNotInitialized:
 				case SpectrogramInitializationErrors.SpectrogramAlreadyInitialized:
-					throw new Exception ("Application failure. Debug required at point 2");
+					throw new Exception ("Application failure. Debug required at point 3");
 				}
 
 			if (err != "")
@@ -281,7 +357,48 @@ namespace ESHQSetupStub
 				}
 
 			// Отрисовка изображения
-			gr.DrawImage (mainLayer.Layer, mainLayer.Left, mainLayer.Top);
+			DrawFrame ();
+			}
+
+#if VIDEO
+		// Метод рендеринга видеофайла
+		private void RenderVideo (object sender, DoWorkEventArgs e)
+			{
+			// Запрос длины потока
+			uint length = (uint)(ConcurrentDrawLib.ChannelLength * fps + 200);
+
+			// Собственно, выполняемый процесс
+			for (int i = 0; i < length; i++)
+				{
+				ExtendedTimer_Tick (null, null);
+
+				((BackgroundWorker)sender).ReportProgress (i, "Rendered: " + i.ToString () + " out of " + length.ToString ());
+				// Возврат прогресса
+				// Отмена запрещена
+				}
+
+			// Завершено
+			e.Result = 0;
+			}
+#endif
+
+		// Метод отрисовывает сформированный кадр
+		private void DrawFrame ()
+			{
+			// Отрисовка
+#if VIDEO
+			if (vm.IsInited)
+				{
+				b = (Bitmap)mainLayer.Layer.Clone ();
+				vm.AddFrame (b);
+				b.Dispose ();
+				savingLayersCounter++;
+				}
+			else
+#endif
+				{
+				gr.DrawImage (mainLayer.Layer, mainLayer.Left, mainLayer.Top);
+				}
 			}
 
 		// Поворачивает и отрисовывает лого
@@ -293,10 +410,10 @@ namespace ESHQSetupStub
 
 			// Отрисовка
 			gl.RotateTransform (currentArc);
-			gl.DrawImage (logo1a, -(int)(logoHeight * 0.6), -(int)(logoHeight * 0.6));
+			gl.DrawImage (logo1a, -3 * logoHeight / 5, -3 * logoHeight / 5);
 			mainLayer.Descriptor.DrawImage (logo1b, (this.Width - logo1b.Width) / 2,
 				((VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) !=
-					SpectrogramModes.NoSpectrogram) ? 0 : (this.Height - logo1b.Height) / 2));
+				SpectrogramModes.NoSpectrogram) ? 0 : (this.Height - logo1b.Height) / 2));
 			}
 
 		// Первичное вращение лого
@@ -318,10 +435,10 @@ namespace ESHQSetupStub
 		private void DrawingLogo ()
 			{
 			// Задний круг
-			gl.FillEllipse (brushes[1], (int)(logoHeight * 0.1), (int)(logoHeight * 0.1), logoHeight, logoHeight);
+			gl.FillEllipse (brushes[1], logoHeight / 10, logoHeight / 10, logoHeight, logoHeight);
 
 			// Передний круг
-			gl.FillEllipse (brushes[0], (int)(logoHeight * 0.1) + steps, (int)(logoHeight * 0.1) - steps,
+			gl.FillEllipse (brushes[0], logoHeight / 10 + steps, logoHeight / 10 - steps,
 				logoHeight - 2 * steps, logoHeight + 2 * steps);
 
 			// Отрисовка
@@ -330,13 +447,13 @@ namespace ESHQSetupStub
 				SpectrogramModes.NoSpectrogram) ? 0 : (this.Height - logo1a.Height) / 2));
 
 			steps++;
-			if (steps >= 0.05 * logoHeight)
+			if (steps >= logoHeight / 20)
 				{
 				gl.Dispose ();
-				logo1b = new Bitmap ((int)(logoHeight * 1.2), (int)(logoHeight * 1.2));
+				logo1b = new Bitmap (6 * (int)logoHeight / 5, 6 * (int)logoHeight / 5);
 				gl = Graphics.FromImage (logo1b);
 
-				gl.TranslateTransform ((int)(logoHeight * 0.6), (int)(logoHeight * 0.6));
+				gl.TranslateTransform (3 * logoHeight / 5, 3 * logoHeight / 5);
 				steps = 0;
 				currentPhase++;
 				}
@@ -345,6 +462,12 @@ namespace ESHQSetupStub
 		// Отрисовка фрагментов лого
 		private void DrawingVisualization ()
 			{
+#if VIDEO
+			// Ручное обновление кадра при записи
+			if (vm.IsInited)
+				ConcurrentDrawLib.UpdateFFTData ();
+#endif
+
 			// Запрос пикового значения
 			peak = ConcurrentDrawLib.CurrentPeak;
 
@@ -352,14 +475,14 @@ namespace ESHQSetupStub
 			if (cdp.VisualizationMode == VisualizationModes.Butterfly_histogram_with_logo)
 				{
 				// Сброс изображения
-				mainLayer.Descriptor.FillEllipse (brushes[2], (this.Width - logo1b.Width) / 2 - 256,
-					(this.Height - logo1b.Height) / 2 - 256, logo1b.Width + 512, logo1b.Height + 512);
+				mainLayer.Descriptor.FillEllipse (brushes[2], (this.Width - 3 * logo1b.Width) / 2,
+					(this.Height - 3 * logo1b.Height) / 2, 3 * logo1b.Width, 3 * logo1b.Height);
 
 				// Отрисовка
 				for (int i = 0; i < 256; i++)
 					{
 					// Получаем амплитуду
-					amp = ConcurrentDrawLib.GetScaledAmplitude ((uint)(cdp.HistogramFFTValuesCount * i / 256));
+					amp = ConcurrentDrawLib.GetScaledAmplitude ((uint)(cdp.HistogramFFTValuesCount * i) >> 8);	// Вместо /256
 
 					// Получаем цвет
 					if (p != null)
@@ -367,11 +490,15 @@ namespace ESHQSetupStub
 					p = new Pen (ConcurrentDrawLib.GetColorFromPalette ((byte)amp));
 
 					// Определяем координаты линий
-					rad = (logo1b.Width) / 2 + amp;
+					rad = logo1b.Width / 2 + (int)((uint)(logo1b.Width * amp) >> 8);	// Вместо /256
+
 					histoX[0] = histoX[2] = this.Width / 2 + (int)(rad * Math.Cos (ArcToRad (i / histoDensity)));
-					histoX[1] = histoX[3] = this.Width / 2 + (int)(rad * Math.Cos (ArcToRad (180.0 + i / histoDensity)));
+					//histoX[1] = histoX[3] = this.Width / 2 + (int)(rad * Math.Cos (ArcToRad (180.0 + i / histoDensity)));
+					histoX[1] = histoX[3] = this.Width - histoX[0];
+
 					histoY[0] = histoY[3] = this.Height / 2 + (int)(rad * Math.Sin (ArcToRad (i / histoDensity)));
-					histoY[1] = histoY[2] = this.Height / 2 + (int)(rad * Math.Sin (ArcToRad (180.0 + i / histoDensity)));
+					//histoY[1] = histoY[2] = this.Height / 2 + (int)(rad * Math.Sin (ArcToRad (180.0 + i / histoDensity)));
+					histoY[1] = histoY[2] = this.Height - histoY[0];
 
 					// Рисуем
 					mainLayer.Descriptor.DrawLine (p, histoX[0], histoY[0], histoX[1], histoY[1]);
@@ -390,10 +517,8 @@ namespace ESHQSetupStub
 
 				rad = 650 * logo1b.Height / (1950 - peak);
 				mainLayer.Descriptor.FillEllipse (br, (this.Width - rad) / 2,
-					(
-					((VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) !=
-					SpectrogramModes.NoSpectrogram) ? logo1b.Height : this.Height)
-					- rad) / 2, rad, rad);
+					(((VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) !=
+					SpectrogramModes.NoSpectrogram) ? logo1b.Height : this.Height) - rad) / 2, rad, rad);
 
 				br.Dispose ();
 				}
@@ -422,7 +547,7 @@ namespace ESHQSetupStub
 			mainLayer.Descriptor.FillRectangle (brushes[0], 0, 0, this.Width, this.Height);
 
 			// Инициализация лого
-			logo1a = new Bitmap ((int)(logoHeight * 1.2), (int)(logoHeight * 1.2));
+			logo1a = new Bitmap (6 * (int)logoHeight / 5, 6 * (int)logoHeight / 5);
 			gl = Graphics.FromImage (logo1a);
 
 			// Переход к следующему обработчику
@@ -443,9 +568,7 @@ namespace ESHQSetupStub
 
 			// Сброс ресурсов
 			for (int i = 0; i < brushes.Count; i++)
-				{
 				brushes[i].Dispose ();
-				}
 			brushes.Clear ();
 
 			if (gr != null)
@@ -460,6 +583,10 @@ namespace ESHQSetupStub
 				mainLayer.Dispose ();
 			if (cdp != null)
 				cdp.Dispose ();
+
+#if VIDEO
+			vm.Dispose ();
+#endif
 			}
 
 		// Принудительный выход (по любой клавише)
@@ -473,52 +600,62 @@ namespace ESHQSetupStub
 		private void ConcurrentDrawForm_MouseClick (object sender, MouseEventArgs e)
 			{
 			// Реинициализация
-			if (e.Button == MouseButtons.Right)
+			if (e.Button != MouseButtons.Right)
+				return;
+
+			do
 				{
-				do
-					{
-					// Остановка отрисовки и сброс слоя
-					ExtendedTimer.Enabled = false;
-					ConcurrentDrawLib.DestroySoundStream ();	// Объединяет функционал
-					if (mainLayer != null)
-						mainLayer.Dispose ();
-					if (gr != null)
-						gr.Dispose ();
-					this.TopMost = false;	// Разрешает отображение окна параметров
+				// Остановка отрисовки и сброс слоя
+				ExtendedTimer.Enabled = false;
+				ConcurrentDrawLib.DestroySoundStream ();	// Объединяет функционал
 
-					// Перезапрос параметров
-					cdp.ShowDialog ();
+				if (mainLayer != null)
+					mainLayer.Dispose ();
+				if (gr != null)
+					gr.Dispose ();
+				this.TopMost = false;						// Разрешает отображение окна параметров
 
-					// Переопределение размера окна
-					this.Width = (int)cdp.VisualizationWidth;
-					this.Height = (int)cdp.VisualizationHeight;
-					this.Left = (int)cdp.VisualizationLeft;
-					this.Top = (int)cdp.VisualizationTop;
-					this.TopMost = cdp.AlwaysOnTop;
-					} while (!InitializeAudioStream ());
+				// Перезапрос параметров
+				cdp.ShowDialog ();
 
-				// Пересоздание кисти лого и сброс поля отрисовки
-				brushes[1].Color = ConcurrentDrawLib.GetMasterPaletteColor ();
-				mainLayer = new LogoDrawerLayer (0, 0, (uint)this.Width, (uint)this.Height);
-				mainLayer.Descriptor.FillRectangle (brushes[0], 0, 0, this.Width, this.Height);
-				gr = Graphics.FromHwnd (this.Handle);
+				// Переопределение размера окна
+				this.Width = (int)cdp.VisualizationWidth;
+				this.Height = (int)cdp.VisualizationHeight;
+				this.Left = (int)cdp.VisualizationLeft;
+				this.Top = (int)cdp.VisualizationTop;
+				this.TopMost = cdp.AlwaysOnTop;
+				} while (!InitializeAudioStream ());
 
-				// Реинициализация лого (при необходимости)
-				if (cdp.ReselLogo)
-					{
-					if (gl != null)
-						gl.Dispose ();
-					if (logo1a != null)
-						logo1a.Dispose ();
-					if (logo1b != null)
-						logo1b.Dispose ();
-					logoHeight = (uint)(Math.Min (this.Width, this.Height) * 7) / 12;
-					currentPhase = Phases.LayersPrecache;
-					}
+			// Пересоздание кисти лого и поля отрисовки
+			brushes[1].Color = ConcurrentDrawLib.GetMasterPaletteColor ();
+			mainLayer = new LogoDrawerLayer (0, 0, (uint)this.Width, (uint)this.Height);
+			mainLayer.Descriptor.FillRectangle (brushes[0], 0, 0, this.Width, this.Height);
+			gr = Graphics.FromHwnd (this.Handle);
 
-				// Перезапуск
-				ExtendedTimer.Enabled = true;
-				}
+			// Реинициализация лого (при необходимости)
+			if (cdp.ReselLogo)
+				ResetLogo ();
+
+			// Перезапуск
+			ExtendedTimer.Enabled = true;
+			}
+
+		// Метод реинициализирует лого, вызывая его повторную отрисовку
+		private void ResetLogo ()
+			{
+			// Сброс дескрипторов
+			if (gl != null)
+				gl.Dispose ();
+			if (logo1a != null)
+				logo1a.Dispose ();
+			if (logo1b != null)
+				logo1b.Dispose ();
+
+			// Установка главного расчётного размера
+			logoHeight = (uint)(Math.Min (this.Width, this.Height) * 5) / 12;
+
+			// Перезапуск алгоритма таймера
+			currentPhase = Phases.LayersPrecache;
 			}
 		}
 	}

@@ -17,6 +17,11 @@ namespace ESHQSetupStub
 		BASS_InvalidDLLVersion = -10,
 
 		/// <summary>
+		/// Дескриптор записи уже занят другой функцией
+		/// </summary>
+		BASS_RecordAlreadyRunning = -11,
+
+		/// <summary>
 		/// Инициализация выполнена успешно
 		/// </summary>
 		BASS_OK = 0,
@@ -76,7 +81,42 @@ namespace ESHQSetupStub
 		/// <summary>
 		/// Some other mystery problem of BASS
 		/// </summary>
-		BASS_ERROR_UNKNOWN = -1
+		BASS_ERROR_UNKNOWN = -1,
+
+		/// <summary>
+		/// Could not initialize 3D support
+		/// </summary>
+		BASS_ERROR_NO3D = 21,
+
+		/// <summary>
+		/// Incorrect function call.
+		/// The length must be specified when streaming from memory
+		/// </summary>
+		BASS_ERROR_ILLPARAM = 20,
+
+		/// <summary>
+		/// The file could not be opened
+		/// </summary>
+		BASS_ERROR_FILEOPEN = 2,
+
+		/// <summary>
+		/// The file's format is not recognised/supported
+		/// </summary>
+		BASS_ERROR_FILEFORM = 41,
+
+		/// <summary>
+		/// The file uses a codec that is not available/supported. 
+		/// This can apply to WAV and AIFF files, and also MP3 files 
+		/// when using the "MP3-free" BASS version
+		/// </summary>
+		BASS_ERROR_CODEC = 44,
+
+		/// <summary>
+		/// The specified SPEAKER flags are invalid. 
+		/// The device/drivers do not support them, they are attempting to assign
+		/// a stereo stream to a mono speaker or 3D functionality is enabled
+		/// </summary>
+		BASS_ERROR_SPEAKER = 42
 		}
 
 	/// <summary>
@@ -188,6 +228,14 @@ namespace ESHQSetupStub
 		private static extern Int16 InitializeSoundStreamEx (Byte DeviceNumber);
 
 		/// <summary>
+		/// Функция запускает процесс считывания данных из звукового файла
+		/// </summary>
+		/// <param name="FileName"></param>
+		/// <returns></returns>
+		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
+		private static extern Int16 InitializeFileStreamEx (string FileName);
+
+		/// <summary>
 		/// Метод инициализирует звуковой поток из устройства
 		/// </summary>
 		/// <param name="DeviceNumber">Номер устройства – звукового выхода</param>
@@ -195,6 +243,16 @@ namespace ESHQSetupStub
 		public static SoundStreamInitializationErrors InitializeSoundStream (uint DeviceNumber)
 			{
 			return (SoundStreamInitializationErrors)InitializeSoundStreamEx ((Byte)DeviceNumber);
+			}
+
+		/// <summary>
+		/// Метод инициализирует звуковой поток из файла
+		/// </summary>
+		/// <param name="FileName">Имя файла</param>
+		/// <returns>Возвращает состояния инициализации</returns>
+		public static SoundStreamInitializationErrors InitializeSoundStream (string FileName)
+			{
+			return (SoundStreamInitializationErrors)InitializeFileStreamEx (FileName);
 			}
 
 		/// <summary>
@@ -209,6 +267,20 @@ namespace ESHQSetupStub
 		public static void DestroySoundStream ()
 			{
 			DestroySoundStreamEx ();
+			}
+
+		/// <summary>
+		/// Функция выполняет ручное обновление данных FFT вместо встроенного таймера
+		/// </summary>
+		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
+		private static extern void UpdateFFTDataEx ();
+
+		/// <summary>
+		/// Метод выполняет ручное обновление данных FFT вместо встроенного таймера
+		/// </summary>
+		public static void UpdateFFTData ()
+			{
+			UpdateFFTDataEx ();
 			}
 
 		/// <summary>
@@ -547,6 +619,23 @@ namespace ESHQSetupStub
 		public static void SetHistogramFFTValuesCount (uint Count)
 			{
 			SetHistogramFFTValuesCountEx ((UInt16)Count);
+			}
+
+		/// <summary>
+		/// Функция возвращает длину текущего файлового потока (для аудиовыхода всегда 0)
+		/// </summary>
+		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
+		private static extern UInt16 GetChannelLengthEx ();
+
+		/// <summary>
+		/// Возвращает длину текущего файлового потока (для аудиовыхода всегда 0)
+		/// </summary>
+		public static uint ChannelLength
+			{
+			get
+				{
+				return GetChannelLengthEx ();
+				}
 			}
 		}
 	}

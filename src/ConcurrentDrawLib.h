@@ -33,8 +33,8 @@
 /////////////////////////////////////////////////////
 // Константы
 #define BASS_VERSION				0x02040E00
-#define CD_VERSION					1,6,0,0
-#define CD_VERSION_S				"1.6.0.0"
+#define CD_VERSION					1,7,0,0
+#define CD_VERSION_S				"1.7.0.0"
 #define CD_PRODUCT					"ConcurrentDraw visualization tool's BASS adapter"
 #define CD_COMPANY					"RD AAOW"
 
@@ -94,11 +94,17 @@ CD_API(uchar) GetDevicesEx (schar **Devices);
 
 // Функция запускает процесс считывания данных со звукового вывода
 CD_API(sint) InitializeSoundStreamEx (uchar DeviceNumber);
-// -10 - недопустимая версия библиотеки
+// -10 - недопустимая версия библиотеки, -11 - дескриптор уже занят
 // Положительные коды ошибок и ошибка -1 (UnknownError) - ошибки BASS
+
+// Функция запускает процесс считывания данных из звукового файла
+CD_API(sint) InitializeFileStreamEx (schar *FileName);
 
 // Функция завершает процесс считывания
 CD_API(void) DestroySoundStreamEx ();
+
+// Функция выполняет ручное обновление данных FFT вместо встроенного таймера
+CD_API(void) UpdateFFTDataEx ();
 
 // Функция инициализирует спектрограмму
 CD_API(sint) InitializeSpectrogramEx (uint FrameWidth, uint FrameHeight, 
@@ -143,6 +149,9 @@ CD_API(schar *) GetCDLibVersionEx ();
 
 // Функция устанавливает количество значений FFT, которое будет использоваться в гистограммах
 CD_API(void) SetHistogramFFTValuesCountEx (uint Count);
+
+// Функция возвращает длину текущего файлового потока (для аудиовыхода всегда 0)
+CD_API(uint) GetChannelLengthEx ();
 
 #ifdef BASSTEST
 	// Тестовая функция для библиотеки BASS
