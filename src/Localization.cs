@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using System.Globalization;
 
 namespace ESHQSetupStub
 	{
@@ -48,6 +49,18 @@ namespace ESHQSetupStub
 					}
 				catch
 					{
+					}
+
+				// При пустом значении пробуем получить язык от системы
+				if (lang == "")
+					{
+					CultureInfo ci = CultureInfo.CurrentCulture;
+
+					switch (ci.ToString ().ToLower ())
+						{
+						case "ru-ru":
+							return SupportedLanguages.ru_ru;
+						}
 					}
 
 				// Определение

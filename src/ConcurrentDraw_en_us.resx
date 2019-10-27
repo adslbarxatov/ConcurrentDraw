@@ -198,6 +198,9 @@
   <data name="CDP_VisTypeLabel" xml:space="preserve">
     <value>Visualization type:</value>
   </data>
+  <data name="DeviceBehaviorIsInvalid" xml:space="preserve">
+    <value>Requested device cannot be initialized. Try to set another one</value>
+  </data>
   <data name="HelpText" xml:space="preserve">
     <value>Quick user manual
 

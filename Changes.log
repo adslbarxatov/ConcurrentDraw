@@ -47,3 +47,18 @@ Version 1.7:
 • Logo placement algorithm optimized for 16:9 window mode;
 • Added support for file streaming (test mode; not available for users for now);
 • Generic code review performed
+
+Version 1.7.2:
+• Added OS language autodetection at first launch;
+• Added '7MissedCalls' and 'Sail' palettes;
+• Generic optimizations for file streaming support applied (test mode; still not
+  available for users);
+
+Version 1.8:
+• Added ability to set visualization position and size using mouse;
+• Fixed invalid behavior of parameters window in case of changing values without
+  saving them;
+• Added palettes preview;
+• Fixed infinite restart when system stereo mixer on Windows 7 conflicts with
+  hardware microphone;
+• Some fixes applied to existent palettes

@@ -530,9 +530,9 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 
 			for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
 				{
-				cdDummyInfo.cd_bmpinfo.colors[i].rgbRed = 0; 
-				cdDummyInfo.cd_bmpinfo.colors[i].rgbGreen =
-					cdDummyInfo.cd_bmpinfo.colors[i].rgbBlue = i;
+				cdDummyInfo.cd_bmpinfo.colors[i].rgbRed = 
+					cdDummyInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
+				cdDummyInfo.cd_bmpinfo.colors[i].rgbGreen = 3 * i / 4;
 				}
 
 			cdCurrentPalette = PaletteNumber;
@@ -568,6 +568,64 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 
 			cdCurrentPalette = PaletteNumber;
 			break;
+
+		// 7 пропущенных
+		case 6:
+			for (i = 0; i < qSize; i++) 
+				{
+				cdBMPInfo.cd_bmpinfo.colors[i].rgbRed = 3 * i;
+				cdBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
+				cdBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 2 * i;
+
+				cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbRed = 3 * (qSize - i);
+				cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbGreen = 3 * i / 2;
+				cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbBlue = 2 * qSize + i;
+
+				cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbRed = 2 * i;
+				cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbGreen = (3 * qSize + 5 * i) / 2;
+				cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbBlue = 3 * qSize - i;
+
+				cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbRed = 2 * (qSize + i);
+				cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbGreen = 255;
+				cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbBlue = 2 * (qSize + i);
+				}
+
+			for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
+				{
+				cdDummyInfo.cd_bmpinfo.colors[i].rgbRed = 3 * i / 4;
+				cdDummyInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
+				cdDummyInfo.cd_bmpinfo.colors[i].rgbBlue = i / 2;
+				}
+			break;
+
+		// Парус
+		case 7:
+			for (i = 0; i < qSize; i++) 
+				{
+				cdBMPInfo.cd_bmpinfo.colors[i].rgbRed = 
+					cdBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
+				cdBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 4 * i;
+
+				cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbRed = 2 * i;
+				cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbGreen = 0;
+				cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbBlue = 255;
+
+				cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbRed = 2 * (qSize + i);
+				cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbGreen = 0;
+				cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbBlue = 4 * (qSize - 1 - i);
+
+				cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbRed = 255;
+				cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbGreen = 
+					cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbBlue = 4 * i;
+				}
+
+			for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
+				{
+				cdDummyInfo.cd_bmpinfo.colors[i].rgbRed = i;
+				cdDummyInfo.cd_bmpinfo.colors[i].rgbGreen =
+					cdDummyInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
+				}
+			break;
 		}
 	}
 
@@ -589,12 +647,14 @@ CD_API(ulong) GetMasterPaletteColorEx (uchar Brightness)
 // Функция возвращает названия доступных палитр
 CD_API(schar *) GetPalettesNamesEx ()
 	{
-	#define PALETTES_NAMES	("Default (blue-magenta-yellow-white)" NAMES_DELIMITER_S \
-		"Sea (blue-cyan-white)" NAMES_DELIMITER_S \
-		"Fire (red-orange-yellow-white)" NAMES_DELIMITER_S \
+	#define PALETTES_NAMES	("Default (Adobe Audition)" NAMES_DELIMITER_S \
+		"Sea" NAMES_DELIMITER_S \
+		"Fire" NAMES_DELIMITER_S \
 		"Grey" NAMES_DELIMITER_S \
-		"Sunshine (blue-green-orange-white)" NAMES_DELIMITER_S \
-		"Acid (green-lime-white)")
+		"Sunrise" NAMES_DELIMITER_S \
+		"Acid" NAMES_DELIMITER_S \
+		"7 missed calls" NAMES_DELIMITER_S \
+		"Sail on the sea")
 
 	return PALETTES_NAMES;
 	}

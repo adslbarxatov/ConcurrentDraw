@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Windows.Forms;
+using System.Drawing;
 
 namespace ESHQSetupStub
 	{
@@ -42,10 +43,12 @@ namespace ESHQSetupStub
 				DevicesCombo.Enabled = DevicesLabel.Enabled = false;
 				}
 			DevicesCombo.SelectedIndex = 0;			// По умолчанию - первое
+			deviceNumber = 0;
 
 			// Палитра
 			SDPaletteCombo.Items.AddRange (ConcurrentDrawLib.AvailablePalettesNames);
 			SDPaletteCombo.SelectedIndex = 0;		// По умолчанию - первая
+			paletteNumber = 0;
 
 			// Режим
 			for (int i = 0; i < VisualizationModesChecker.VisualizationModesCount; i++)
@@ -53,11 +56,13 @@ namespace ESHQSetupStub
 				VisualizationCombo.Items.Add (((VisualizationModes)i).ToString ().Replace ('_', ' '));
 				}
 			VisualizationCombo.SelectedIndex = (int)VisualizationModesChecker.VisualizationModesCount - 1;	// По умолчанию - бабочка
+			visualizationMode = VisualizationModes.Butterfly_histogram_with_logo;
 
 			// Высота спектрограммы
 			SDHeight.Minimum = VisHeight.Minimum = ConcurrentDrawLib.MinSpectrogramFrameHeight;
 			SDHeight.Maximum = ConcurrentDrawLib.MaxSpectrogramFrameHeight;
 			SDHeight.Value = 220;					// По умолчанию - 220 px
+			sdHeight = 220;
 
 			// Размеры визуализации 
 			VisWidth.Minimum = ConcurrentDrawLib.MinSpectrogramFrameWidth;
@@ -67,10 +72,16 @@ namespace ESHQSetupStub
 			VisWidth.Value = 9 * VisWidth.Maximum / 16;
 			VisHeight.Value = 9 * VisHeight.Maximum / 16;	// По умолчанию - (9 / 16) размера экрана
 
+			visualizationWidth = (uint)VisWidth.Value;
+			visualizationHeight = (uint)VisHeight.Value;
+
 			// Позиция визуализации
 			VisLeft.Maximum = ScreenWidth;
 			VisLeft.Value = ScreenWidth - VisWidth.Value;	// По умолчанию - верхний правый угол
 			VisTop.Maximum = ScreenHeight;
+
+			visualizationLeft = (uint)VisLeft.Value;
+			visualizationTop = (uint)VisTop.Value;
 
 			// Параметры детектора битов (получаются из DLL)
 			BDLowEdge.Value = ConcurrentDrawLib.DefaultPeakEvaluationLowEdge;
@@ -84,7 +95,7 @@ namespace ESHQSetupStub
 				HistogramRangeCombo.Items.Add ("0 – " + (i * 22050.0 / 16.0).ToString () +
 					" " + Localization.GetText ("CDP_Hz", al));
 				}
-			HistogramRangeCombo.SelectedIndex = 1;			// По умолчанию - до 2,7 кГц
+			histogramFFTValuesCountShift = HistogramRangeCombo.SelectedIndex = 1;			// По умолчанию - до 2,7 кГц
 
 			// Язык интерфейса
 			for (int i = 0; i < Localization.AvailableLanguages; i++)
@@ -131,13 +142,28 @@ namespace ESHQSetupStub
 			try
 				{
 				DevicesCombo.SelectedIndex = int.Parse (values[0]);
+				deviceNumber = (uint)DevicesCombo.SelectedIndex;
+
 				SDPaletteCombo.SelectedIndex = int.Parse (values[1]);
+				paletteNumber = (byte)SDPaletteCombo.SelectedIndex;
+
 				VisualizationCombo.SelectedIndex = int.Parse (values[2]);
+				visualizationMode = (VisualizationModes)VisualizationCombo.SelectedIndex;
+
 				SDHeight.Value = decimal.Parse (values[3]);
+				sdHeight = (uint)SDHeight.Value;
+
 				VisWidth.Value = decimal.Parse (values[4]);
+				visualizationWidth = (uint)VisWidth.Value;
+
 				VisHeight.Value = decimal.Parse (values[5]);
+				visualizationHeight = (uint)VisHeight.Value;
+
 				VisLeft.Value = decimal.Parse (values[6]);
+				visualizationLeft = (uint)VisLeft.Value;
+
 				VisTop.Value = decimal.Parse (values[7]);
+				visualizationTop = (uint)VisTop.Value;
 
 				uint bdSettings = uint.Parse (values[8]);
 				BDLowEdge.Value = (int)(bdSettings & 0xFF);
@@ -145,8 +171,8 @@ namespace ESHQSetupStub
 				BDLowLevel.Value = (int)((bdSettings >> 16) & 0xFF);
 				BDFFTScaleMultiplier.Value = (int)((bdSettings >> 24) & 0xFF);
 
-				AlwaysOnTopFlag.Checked = (values[9] != "0");
-				HistogramRangeCombo.SelectedIndex = int.Parse (values[10]);
+				alwaysOnTop = AlwaysOnTopFlag.Checked = (values[9] != "0");
+				histogramFFTValuesCountShift = HistogramRangeCombo.SelectedIndex = int.Parse (values[10]);
 				}
 			catch
 				{
@@ -222,9 +248,10 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return (uint)DevicesCombo.SelectedIndex;
+				return deviceNumber;
 				}
 			}
+		private uint deviceNumber;
 
 		/// <summary>
 		/// Номер выбранной палитры
@@ -233,9 +260,10 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return (byte)SDPaletteCombo.SelectedIndex;
+				return paletteNumber;
 				}
 			}
+		private byte paletteNumber;
 
 		/// <summary>
 		/// Возвращает флаг, указывающий вариант спектрограммы
@@ -244,9 +272,10 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return (VisualizationModes)VisualizationCombo.SelectedIndex;
+				return visualizationMode;
 				}
 			}
+		private VisualizationModes visualizationMode;
 
 		/// <summary>
 		/// Возвращает выбранную высоту изображения диаграммы
@@ -255,33 +284,47 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return (uint)SDHeight.Value;
+				return sdHeight;
 				}
 			}
+		private uint sdHeight;
 
 		// Сохранение настроек
 		private void BOK_Click (object sender, System.EventArgs e)
 			{
+			// Закрепление настроек
+			deviceNumber = (uint)DevicesCombo.SelectedIndex;
+			paletteNumber = (byte)SDPaletteCombo.SelectedIndex;
+			visualizationMode = (VisualizationModes)VisualizationCombo.SelectedIndex;
+			sdHeight = (uint)SDHeight.Value;
+
+			visualizationWidth = (uint)VisWidth.Value;
+			visualizationHeight = (uint)VisHeight.Value;
+			visualizationLeft = (uint)VisLeft.Value;
+			visualizationTop = (uint)VisTop.Value;
+
+			alwaysOnTop = AlwaysOnTopFlag.Checked;
+			histogramFFTValuesCountShift = HistogramRangeCombo.SelectedIndex;
+
 			// Сохранение
-			string settings = DevicesCombo.SelectedIndex.ToString () + splitter[0].ToString () +
-				SDPaletteCombo.SelectedIndex.ToString () + splitter[0].ToString () +
-				VisualizationCombo.SelectedIndex.ToString () + splitter[0].ToString () +
-				SDHeight.Value.ToString () + splitter[0].ToString () +
-				VisWidth.Value.ToString () + splitter[0].ToString () +
-				VisHeight.Value.ToString () + splitter[0].ToString () +
-				VisLeft.Value.ToString () + splitter[0].ToString () +
-				VisTop.Value.ToString () + splitter[0].ToString () +
+			string settings = deviceNumber.ToString () + splitter[0].ToString () +
+				paletteNumber.ToString () + splitter[0].ToString () +
+				((uint)visualizationMode).ToString () + splitter[0].ToString () +
+				sdHeight.ToString () + splitter[0].ToString () +
+				visualizationWidth.ToString () + splitter[0].ToString () +
+				visualizationHeight.ToString () + splitter[0].ToString () +
+				visualizationLeft.ToString () + splitter[0].ToString () +
+				visualizationTop.ToString () + splitter[0].ToString () +
 
 				(((BDFFTScaleMultiplier.Value & 0xFF) << 24) | ((BDLowLevel.Value & 0xFF) << 16) |
 				((BDHighEdge.Value & 0xFF) << 8) | (BDLowEdge.Value & 0xFF)).ToString () + splitter[0].ToString () +
 
-				(AlwaysOnTopFlag.Checked ? "1" : "0") + splitter[0].ToString () +
-				HistogramRangeCombo.SelectedIndex.ToString ();
+				(alwaysOnTop ? "1" : "0") + splitter[0].ToString () +
+				histogramFFTValuesCountShift.ToString ();
 
 			try
 				{
-				Registry.SetValue (SettingsKey,
-					SettingsValueName, settings);	// Вызовет исключение, если раздел не удалось создать
+				Registry.SetValue (SettingsKey, SettingsValueName, settings);
 				}
 			catch
 				{
@@ -311,9 +354,10 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return (uint)VisWidth.Value;
+				return visualizationWidth;
 				}
 			}
+		private uint visualizationWidth;
 
 		/// <summary>
 		/// Возвращает высоту окна визуализации
@@ -322,9 +366,10 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return (uint)VisHeight.Value;
+				return visualizationHeight;
 				}
 			}
+		private uint visualizationHeight;
 
 		/// <summary>
 		/// Возвращает левый отступ окна визуализации
@@ -333,9 +378,10 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return (uint)VisLeft.Value;
+				return visualizationLeft;
 				}
 			}
+		private uint visualizationLeft;
 
 		/// <summary>
 		/// Возвращает верхний отступ окна визуализации
@@ -344,9 +390,10 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return (uint)VisTop.Value;
+				return visualizationTop;
 				}
 			}
+		private uint visualizationTop;
 
 		/// <summary>
 		/// Возвращает флаг, требующий расположения окна поверх остальных
@@ -355,9 +402,10 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return AlwaysOnTopFlag.Checked;
+				return alwaysOnTop;
 				}
 			}
+		private bool alwaysOnTop = false;
 
 		// Изменение настроек детекции бита
 		private void BDLowEdge_ValueChanged (object sender, EventArgs e)
@@ -406,7 +454,7 @@ namespace ESHQSetupStub
 			}
 
 		// Установка реинициализации лого при изменении параметров, от которых зависит его вид
-		private void SDPaletteCombo_SelectedIndexChanged (object sender, EventArgs e)
+		private void SDWindowsSize_Changed (object sender, EventArgs e)
 			{
 			LogoResetFlag.Checked = true;
 			}
@@ -418,9 +466,10 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return 64u << HistogramRangeCombo.SelectedIndex;
+				return 64u << histogramFFTValuesCountShift;
 				}
 			}
+		private int histogramFFTValuesCountShift;
 
 		// Метод отображает быструю справку по использованию
 		private void BHelp_Click (object sender, EventArgs e)
@@ -437,6 +486,54 @@ namespace ESHQSetupStub
 			{
 			Localization.CurrentLanguage = al = (SupportedLanguages)LanguageCombo.SelectedIndex;
 			LocalizeForm ();
+			}
+
+		// Задание размера и позиции окна визуализации мышью
+		private void SelectWindowPosition_Click (object sender, EventArgs e)
+			{
+			// Запрос размеров и позиции
+			ScreenShooterForm ssf = new ScreenShooterForm ((uint)VisWidth.Minimum, (uint)VisWidth.Maximum,
+				(uint)VisHeight.Minimum, (uint)VisHeight.Maximum);
+
+			// Перенос
+			if (ssf.Selected)
+				{
+				VisWidth.Value = ssf.WindowSize.Width;
+				VisHeight.Value = ssf.WindowSize.Height;
+				VisLeft.Value = ssf.LeftTopPoint.X;
+				VisTop.Value = ssf.LeftTopPoint.Y;
+				}
+			}
+
+		// Выбор палитры
+		private void SDPaletteCombo_SelectedIndexChanged (object sender, EventArgs e)
+			{
+			// Предложение реинициализации
+			LogoResetFlag.Checked = true;
+
+			// Сборка палитры
+			ConcurrentDrawLib.FillPalette ((byte)SDPaletteCombo.SelectedIndex);
+
+			Bitmap b = new Bitmap (PaletteImageBox.Width, PaletteImageBox.Height);
+			Graphics g = Graphics.FromImage (b);
+
+			for (int i = 0; i < b.Width; i++)
+				{
+				Pen p = new Pen (ConcurrentDrawLib.GetColorFromPalette ((byte)(256 * i / b.Width)));
+				g.DrawLine (p, i, 0, i, PaletteImageBox.Height / 2 - 1);
+				p.Dispose ();
+
+				p = new Pen (ConcurrentDrawLib.GetMasterPaletteColor ((byte)(256 * i / b.Width)));
+				g.DrawLine (p, i, PaletteImageBox.Height / 2, i, PaletteImageBox.Height - 1);
+				p.Dispose ();
+				}
+
+			g.Dispose ();
+
+			// Отображение палитры
+			if (PaletteImageBox.BackgroundImage != null)
+				PaletteImageBox.BackgroundImage.Dispose ();
+			PaletteImageBox.BackgroundImage = b;
 			}
 		}
 	}

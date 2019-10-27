@@ -51,10 +51,6 @@ namespace ESHQSetupStub
 				return;
 				}
 
-#if BASSTEST
-			ConcurrentDrawLib.BASSTest ();
-#endif
-
 			// Начальная обработка и отображение лого
 			Application.EnableVisualStyles ();
 			Application.SetCompatibleTextRenderingDefault (false);

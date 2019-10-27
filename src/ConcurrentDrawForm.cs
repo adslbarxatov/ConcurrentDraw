@@ -51,7 +51,7 @@ namespace ESHQSetupStub
 
 		// Аудио
 #if AUDIO
-		AudioManager am = new AudioManager (predefinedAudio, false);
+		AudioManager am = new AudioManager (Application .StartupPath + "\\5.wav", false);
 
 		// Эта конструкция имитирует нажатие клавиши, запускающей и останавливающей запись
 		[DllImport ("user32.dll")]
@@ -66,9 +66,16 @@ namespace ESHQSetupStub
 
 		// Видео
 #if VIDEO
-		private const double fps = 23.4375;						// Частота кадров видео
+		private const double fps = 23.4375;						// Частота кадров видео 
+		// определена по аудио как 48000 Hz * 2 ch * 16 bps / 
+		// (8 * sizeof (float) * 2048 fftv)
+
 		private VideoManager vm = new VideoManager ();			// Видеофайл (балластная инициализация)
 		private uint savingLayersCounter = 0;					// Счётчик сохранений
+
+		private Font demoFont;									// Объекты поддержки текстовых подписей на рендере
+		private string[] demoNames = new string[] { "SERAPHIM PROJECT", "ПАРУС" };
+		private SizeF[] demoSizes = new SizeF[2];
 #endif
 
 		// Фазы отрисовки
@@ -86,8 +93,11 @@ namespace ESHQSetupStub
 			// Пауза после лого
 			LogoIntermission = 4,
 
-			// Затенение лого
-			Visualization = 5
+			// Спецкоманды перед визуализацией
+			PreVisualization = 5,
+
+			// Визуализация
+			Visualization = 6
 			}
 
 		/// <summary>
@@ -138,27 +148,42 @@ namespace ESHQSetupStub
 			OFAudio.Title = "Select audio file for rendering";
 			OFAudio.Filter = "Windows PCM audio files (*.wav)|*.wav";
 
-			if ((MessageBox.Show ("Write frames to AVI?", ProgramDescription.AssemblyTitle, MessageBoxButtons.YesNo,
-				MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes) &&
-				(SFVideo.ShowDialog () == DialogResult.OK) && (OFAudio.ShowDialog () == DialogResult.OK))
+			switch (MessageBox.Show ("Write frames to AVI ('No' opens audio only)?", ProgramDescription.AssemblyTitle,
+				MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button3))
 				{
-				vm = new VideoManager (SFVideo.FileName, fps, mainLayer.Layer, true);
+				case DialogResult.Yes:
+					if ((SFVideo.ShowDialog () == DialogResult.OK) && (OFAudio.ShowDialog () == DialogResult.OK))
+						{
+						vm = new VideoManager (SFVideo.FileName, fps, mainLayer.Layer, true);
 
-				if (!vm.IsInited)
-					{
-					MessageBox.Show ("Failed to initialize AVI stream", ProgramDescription.AssemblyTitle,
-						 MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-					this.Close ();
-					return;
-					}
+						if (!vm.IsInited)
+							{
+							MessageBox.Show ("Failed to initialize AVI stream", ProgramDescription.AssemblyTitle,
+								 MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+							this.Close ();
+							return;
+							}
+						}
+					break;
+
+				case DialogResult.No:
+					if (OFAudio.ShowDialog () != DialogResult.OK)
+						OFAudio.FileName = "";
+					break;
 				}
 #endif
 
 			// Запуск аудиоканала
-			if (!InitializeAudioStream ())
+			switch (InitializeAudioStream ())
 				{
-				this.Close ();
-				return;
+				case 1:
+					cdp.ShowDialog ();
+					this.Close ();
+					return;
+
+				case -1:
+					this.Close ();
+					return;
 				}
 
 			// Настройка окна
@@ -171,13 +196,20 @@ namespace ESHQSetupStub
 			brushes.Add (new SolidBrush (Color.FromArgb (20, brushes[0].Color)));		// Fade out
 
 #if VIDEO
+			// Подготовка параметров
+			demoFont = new Font ("a_GroticNr" /*"Hair ‱"*/, this.Width / 56);
+			for (int i = 0; i < demoNames.Length; i++)
+				{
+				demoSizes[i] = gr.MeasureString (demoNames[i], demoFont);
+				}
+
 			// Запуск рендеринга
 			if (vm.IsInited)
 				{
 				this.TopMost = false;
 				logoSpeedImpulse += 10;	// Из-за низкого FPS приходится ускорять
 				HardWorkExecutor hwe = new HardWorkExecutor (RenderVideo, "Total count of frames", "Rendering...");
-				
+
 				// Без выхода в основной режим
 				this.Close ();
 				return;
@@ -192,12 +224,13 @@ namespace ESHQSetupStub
 			}
 
 		// Метод инициализирует аудиоканал
-		private bool InitializeAudioStream ()
+		private int InitializeAudioStream ()
 			{
 			string err = "";
+			int result = -1;
 			SoundStreamInitializationErrors ssie;
 #if VIDEO
-			if (vm.IsInited)
+			if (vm.IsInited || (OFAudio.FileName != ""))
 				ssie = ConcurrentDrawLib.InitializeSoundStream (OFAudio.FileName);
 			else
 #endif
@@ -235,10 +268,15 @@ namespace ESHQSetupStub
 
 				default:
 				case SoundStreamInitializationErrors.BASS_ERROR_INIT:
-				case SoundStreamInitializationErrors.BASS_ERROR_UNKNOWN:
 				case SoundStreamInitializationErrors.BASS_RecordAlreadyRunning:
-				case SoundStreamInitializationErrors.BASS_ERROR_NO3D:
 					throw new Exception ("Application failure. Debug required at point 1");
+
+				case SoundStreamInitializationErrors.BASS_ERROR_NO3D:
+				case SoundStreamInitializationErrors.BASS_ERROR_UNKNOWN:
+					// Возникает при выборе стереомикшера при включённом микрофоне (почему-то)
+					err = Localization.GetText ("DeviceBehaviorIsInvalid", al);
+					result = 1;		// Запросить настройку приложения
+					break;
 
 				case SoundStreamInitializationErrors.BASS_ERROR_ILLPARAM:
 				case SoundStreamInitializationErrors.BASS_ERROR_SPEAKER:
@@ -265,7 +303,7 @@ namespace ESHQSetupStub
 			if (err != "")
 				{
 				MessageBox.Show (err, ProgramDescription.AssemblyTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-				return false;
+				return result;
 				}
 
 			// Отмена инициализации спектрограммы, если она не требуется
@@ -274,7 +312,7 @@ namespace ESHQSetupStub
 				{
 				// Ручное заполнение палитры и выход
 				ConcurrentDrawLib.FillPalette (cdp.PaletteNumber);
-				return true;
+				return 0;
 				}
 
 			// Запуск спектрограммы, если требуется
@@ -298,11 +336,11 @@ namespace ESHQSetupStub
 			if (err != "")
 				{
 				MessageBox.Show (err, ProgramDescription.AssemblyTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-				return false;
+				return result;
 				}
 
 			// Успешно
-			return true;
+			return 0;
 			}
 
 		// Таймер расширенного режима отображения
@@ -314,7 +352,6 @@ namespace ESHQSetupStub
 				case Phases.LayersPrecache:
 #if AUDIO
 					TriggerRecord ();
-					am.PlayAudio ();
 #endif
 					PrepareLayers ();
 					break;
@@ -351,6 +388,15 @@ namespace ESHQSetupStub
 						}
 					break;
 
+				// Спецкоманды
+				case Phases.PreVisualization:
+#if AUDIO
+					am.PlayAudio ();
+#endif
+					currentPhase++;
+					break;
+
+				// Основной режим
 				case Phases.Visualization:
 					DrawingVisualization ();
 					break;
@@ -365,14 +411,15 @@ namespace ESHQSetupStub
 		private void RenderVideo (object sender, DoWorkEventArgs e)
 			{
 			// Запрос длины потока
-			uint length = (uint)(ConcurrentDrawLib.ChannelLength * fps + 200);
+			uint length = (uint)(ConcurrentDrawLib.ChannelLength * fps + 250);
 
 			// Собственно, выполняемый процесс
 			for (int i = 0; i < length; i++)
 				{
 				ExtendedTimer_Tick (null, null);
 
-				((BackgroundWorker)sender).ReportProgress (i, "Rendered: " + i.ToString () + " out of " + length.ToString ());
+				((BackgroundWorker)sender).ReportProgress (100 * i / (int)length ,
+					"Rendered frames: " + i.ToString () + " out of " + length.ToString ());
 				// Возврат прогресса
 				// Отмена запрещена
 				}
@@ -464,7 +511,7 @@ namespace ESHQSetupStub
 			{
 #if VIDEO
 			// Ручное обновление кадра при записи
-			if (vm.IsInited)
+			if (vm.IsInited || (OFAudio.FileName != ""))
 				ConcurrentDrawLib.UpdateFFTData ();
 #endif
 
@@ -487,17 +534,17 @@ namespace ESHQSetupStub
 					// Получаем цвет
 					if (p != null)
 						p.Dispose ();
-					p = new Pen (ConcurrentDrawLib.GetColorFromPalette ((byte)amp));
+					p = new Pen (ConcurrentDrawLib.GetColorFromPalette ((byte)amp)
+#if VIDEO
+, 2
+#endif
+);
 
 					// Определяем координаты линий
 					rad = logo1b.Width / 2 + (int)((uint)(logo1b.Width * amp) >> 8);	// Вместо /256
-
 					histoX[0] = histoX[2] = this.Width / 2 + (int)(rad * Math.Cos (ArcToRad (i / histoDensity)));
-					//histoX[1] = histoX[3] = this.Width / 2 + (int)(rad * Math.Cos (ArcToRad (180.0 + i / histoDensity)));
 					histoX[1] = histoX[3] = this.Width - histoX[0];
-
 					histoY[0] = histoY[3] = this.Height / 2 + (int)(rad * Math.Sin (ArcToRad (i / histoDensity)));
-					//histoY[1] = histoY[2] = this.Height / 2 + (int)(rad * Math.Sin (ArcToRad (180.0 + i / histoDensity)));
 					histoY[1] = histoY[2] = this.Height - histoY[0];
 
 					// Рисуем
@@ -509,16 +556,24 @@ namespace ESHQSetupStub
 			// Отрисовка лого при необходимости
 			if (VisualizationModesChecker.ContainsLogo (cdp.VisualizationMode))
 				{
+				// Лого
 				RotateAndDrawLogo (true);
 				if (peak > 0xF0)
 					currentArc = -logoSpeedImpulse;
 
+				// Бит-детектор
 				br = new SolidBrush (ConcurrentDrawLib.GetMasterPaletteColor (peak));
-
 				rad = 650 * logo1b.Height / (1950 - peak);
+
 				mainLayer.Descriptor.FillEllipse (br, (this.Width - rad) / 2,
 					(((VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) !=
 					SpectrogramModes.NoSpectrogram) ? logo1b.Height : this.Height) - rad) / 2, rad, rad);
+
+#if VIDEO
+				mainLayer.Descriptor.DrawString (demoNames[0], demoFont, br, (this.Width - demoSizes[0].Width) / 2, 20);
+				mainLayer.Descriptor.DrawString (demoNames[1], demoFont, br, (this.Width - demoSizes[1].Width) / 2,
+					this.Height - demoSizes[1].Height - 20);
+#endif
 
 				br.Dispose ();
 				}
@@ -624,7 +679,7 @@ namespace ESHQSetupStub
 				this.Left = (int)cdp.VisualizationLeft;
 				this.Top = (int)cdp.VisualizationTop;
 				this.TopMost = cdp.AlwaysOnTop;
-				} while (!InitializeAudioStream ());
+				} while (InitializeAudioStream () != 0);
 
 			// Пересоздание кисти лого и поля отрисовки
 			brushes[1].Color = ConcurrentDrawLib.GetMasterPaletteColor ();
@@ -652,7 +707,7 @@ namespace ESHQSetupStub
 				logo1b.Dispose ();
 
 			// Установка главного расчётного размера
-			logoHeight = (uint)(Math.Min (this.Width, this.Height) * 5) / 12;
+			logoHeight = (uint)(Math.Min (this.Width, this.Height) * 6) / 12;
 
 			// Перезапуск алгоритма таймера
 			currentPhase = Phases.LayersPrecache;

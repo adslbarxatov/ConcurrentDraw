@@ -198,6 +198,9 @@
   <data name="CDP_VisTypeLabel" xml:space="preserve">
     <value>Тип визуализации:</value>
   </data>
+  <data name="DeviceBehaviorIsInvalid" xml:space="preserve">
+    <value>Запрошенное устройство в настоящий момент не может быть использовано. Попробуйте выбрать другое устройство</value>
+  </data>
   <data name="HelpText" xml:space="preserve">
     <value>Краткое руководство пользователя
 
