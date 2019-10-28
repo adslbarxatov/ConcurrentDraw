@@ -40,7 +40,7 @@ namespace ESHQSetupStub
 
 		private byte peak;										// Пиковое значение для расчёта битовых порогов
 		private const byte peakTrigger = 0xF0;					// Значение пика, достижение которого является триггером
-		private uint cumulativeCounter = 20;					// Накопитель, обеспечивающий изменение фона
+		private uint cumulativeCounter;							// Накопитель, обеспечивающий изменение фона
 		private const uint cumulationDivisor = 100;				// Границы накопителя
 		private const uint cumulationLimit = 255 * cumulationDivisor;
 
@@ -139,6 +139,7 @@ namespace ESHQSetupStub
 			this.Left = (int)cdp.VisualizationLeft;
 			this.Top = (int)cdp.VisualizationTop;
 			this.TopMost = cdp.AlwaysOnTop;
+			cumulativeCounter = cdp.CumulationSpeed;
 
 			// Подготовка к отрисовке
 			mainLayer = new LogoDrawerLayer (0, 0, (uint)this.Width, (uint)this.Height);

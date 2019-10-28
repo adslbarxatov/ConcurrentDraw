@@ -593,7 +593,8 @@ namespace ESHQSetupStub
 			else
 				{
 				CESettings.Text = string.Format (Localization.GetText ("CDP_CESettingsText", al),
-					CECumulationSpeed.Value.ToString (), (CEDecumulationMultiplier.Value / 10.0).ToString ());
+					CECumulationSpeed.Value.ToString (), (CEDecumulationMultiplier.Value /
+					(double)CEDecumulationMultiplier.Maximum).ToString ());
 				}
 			}
 		}
