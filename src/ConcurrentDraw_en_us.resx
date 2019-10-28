@@ -162,6 +162,17 @@
   <data name="CDP_Cancel" xml:space="preserve">
     <value>&amp;Cancel</value>
   </data>
+  <data name="CDP_CENo" xml:space="preserve">
+    <value>No cumulative effect</value>
+  </data>
+  <data name="CDP_CESettingsText" xml:space="preserve">
+    <value>Cumulation speed: {0:S}
+Fade out speed multiplier: {1:S}
+(0 = no cumulative effect)</value>
+  </data>
+  <data name="CDP_CumulationGroup" xml:space="preserve">
+    <value>Cumulative effect settings</value>
+  </data>
   <data name="CDP_DevicesLabel" xml:space="preserve">
     <value>Output device:</value>
   </data>

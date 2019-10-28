@@ -39,6 +39,10 @@ namespace ESHQSetupStub
 		private uint logoHeight;								// Диаметр лого
 
 		private byte peak;										// Пиковое значение для расчёта битовых порогов
+		private const byte peakTrigger = 0xF0;					// Значение пика, достижение которого является триггером
+		private uint cumulativeCounter = 20;					// Накопитель, обеспечивающий изменение фона
+		private const uint cumulationDivisor = 100;				// Границы накопителя
+		private const uint cumulationLimit = 255 * cumulationDivisor;
 
 		private int[] histoX = new int[4],
 			histoY = new int[4];								// Координаты линий гистограммы
@@ -74,7 +78,7 @@ namespace ESHQSetupStub
 		private uint savingLayersCounter = 0;					// Счётчик сохранений
 
 		private Font demoFont;									// Объекты поддержки текстовых подписей на рендере
-		private string[] demoNames = new string[] { "SERAPHIM PROJECT", "ПАРУС" };
+		private string[] demoNames = new string[] { "SERAPHIM PROJECT", "В ОТРАЖЕНИИ КРИВЫХ ЗЕРКАЛ" };
 		private SizeF[] demoSizes = new SizeF[2];
 #endif
 
@@ -197,7 +201,7 @@ namespace ESHQSetupStub
 
 #if VIDEO
 			// Подготовка параметров
-			demoFont = new Font ("a_GroticNr" /*"Hair ‱"*/, this.Width / 56);
+			demoFont = new Font ("a_GroticNr" /*"Hair ‱"*/, this.Width / 90);
 			for (int i = 0; i < demoNames.Length; i++)
 				{
 				demoSizes[i] = gr.MeasureString (demoNames[i], demoFont);
@@ -418,7 +422,7 @@ namespace ESHQSetupStub
 				{
 				ExtendedTimer_Tick (null, null);
 
-				((BackgroundWorker)sender).ReportProgress (100 * i / (int)length ,
+				((BackgroundWorker)sender).ReportProgress (100 * i / (int)length,
 					"Rendered frames: " + i.ToString () + " out of " + length.ToString ());
 				// Возврат прогресса
 				// Отмена запрещена
@@ -484,7 +488,7 @@ namespace ESHQSetupStub
 			// Задний круг
 			gl.FillEllipse (brushes[1], logoHeight / 10, logoHeight / 10, logoHeight, logoHeight);
 
-			// Передний круг
+			// Передний эллипс
 			gl.FillEllipse (brushes[0], logoHeight / 10 + steps, logoHeight / 10 - steps,
 				logoHeight - 2 * steps, logoHeight + 2 * steps);
 
@@ -521,6 +525,16 @@ namespace ESHQSetupStub
 			// Отрисовка гистограммы-бабочки при необходимости (исключает спектрограмму)
 			if (cdp.VisualizationMode == VisualizationModes.Butterfly_histogram_with_logo)
 				{
+				// Обработка кумулятивного значения
+				uint oldCC = cumulativeCounter;
+				if (cumulativeCounter > cdp.DecumulationSpeed)
+					cumulativeCounter -= cdp.DecumulationSpeed;
+				if ((peak > peakTrigger) && (cumulativeCounter < cumulationLimit))
+					cumulativeCounter += cdp.CumulationSpeed;
+				if ((cumulativeCounter / cumulationDivisor) != (oldCC / cumulationDivisor))
+					brushes[2].Color = Color.FromArgb (20,
+						ConcurrentDrawLib.GetMasterPaletteColor ((byte)(cumulativeCounter / cumulationDivisor)));
+
 				// Сброс изображения
 				mainLayer.Descriptor.FillEllipse (brushes[2], (this.Width - 3 * logo1b.Width) / 2,
 					(this.Height - 3 * logo1b.Height) / 2, 3 * logo1b.Width, 3 * logo1b.Height);
@@ -558,7 +572,7 @@ namespace ESHQSetupStub
 				{
 				// Лого
 				RotateAndDrawLogo (true);
-				if (peak > 0xF0)
+				if (peak > peakTrigger)
 					currentArc = -logoSpeedImpulse;
 
 				// Бит-детектор

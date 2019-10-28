@@ -62,3 +62,11 @@ Version 1.8:
 • Fixed infinite restart when system stereo mixer on Windows 7 conflicts with
   hardware microphone;
 • Some fixes applied to existent palettes
+
+Version 1.8.1:
+• Added 'Mirror' palette
+
+Version 1.9:
+• Added cumulative effect: in case of intensive and dense beats (or other 
+  frequencies that are under detector) visualization background will change its
+  color according to selected palette

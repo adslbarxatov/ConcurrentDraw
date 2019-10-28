@@ -62,7 +62,7 @@ namespace ESHQSetupStub
 			SDHeight.Minimum = VisHeight.Minimum = ConcurrentDrawLib.MinSpectrogramFrameHeight;
 			SDHeight.Maximum = ConcurrentDrawLib.MaxSpectrogramFrameHeight;
 			SDHeight.Value = 220;					// По умолчанию - 220 px
-			sdHeight = 220;
+			sdHeight = (uint)SDHeight.Value;
 
 			// Размеры визуализации 
 			VisWidth.Minimum = ConcurrentDrawLib.MinSpectrogramFrameWidth;
@@ -96,6 +96,12 @@ namespace ESHQSetupStub
 					" " + Localization.GetText ("CDP_Hz", al));
 				}
 			histogramFFTValuesCountShift = HistogramRangeCombo.SelectedIndex = 1;			// По умолчанию - до 2,7 кГц
+
+			// Кумулятивный эффект
+			CEDecumulationMultiplier.Value = 8;
+			decumulationMultiplier = (uint)CEDecumulationMultiplier.Value;
+			CECumulationSpeed.Value = 25;
+			cumulationSpeed = (uint)CECumulationSpeed.Value;
 
 			// Язык интерфейса
 			for (int i = 0; i < Localization.AvailableLanguages; i++)
@@ -173,6 +179,11 @@ namespace ESHQSetupStub
 
 				alwaysOnTop = AlwaysOnTopFlag.Checked = (values[9] != "0");
 				histogramFFTValuesCountShift = HistogramRangeCombo.SelectedIndex = int.Parse (values[10]);
+
+				CEDecumulationMultiplier.Value = int.Parse (values[11]);
+				decumulationMultiplier = (uint)CEDecumulationMultiplier.Value;
+				CECumulationSpeed.Value = int.Parse (values[12]);
+				cumulationSpeed = (uint)CECumulationSpeed.Value;
 				}
 			catch
 				{
@@ -208,6 +219,10 @@ namespace ESHQSetupStub
 			LanguageLabel.Text = Localization.GetText ("CDP_LanguageLabel", al);
 
 			BDLowEdge_ValueChanged (BDLowEdge, null);
+
+			CumulationGroup.Text = Localization.GetText ("CDP_CumulationGroup", al);
+
+			CESpeed_ValueChanged (null, null);
 			}
 
 		// Контроль наличия доступных устройств
@@ -306,6 +321,9 @@ namespace ESHQSetupStub
 			alwaysOnTop = AlwaysOnTopFlag.Checked;
 			histogramFFTValuesCountShift = HistogramRangeCombo.SelectedIndex;
 
+			decumulationMultiplier = (uint)CEDecumulationMultiplier.Value;
+			cumulationSpeed = (uint)CECumulationSpeed.Value;
+
 			// Сохранение
 			string settings = deviceNumber.ToString () + splitter[0].ToString () +
 				paletteNumber.ToString () + splitter[0].ToString () +
@@ -320,7 +338,9 @@ namespace ESHQSetupStub
 				((BDHighEdge.Value & 0xFF) << 8) | (BDLowEdge.Value & 0xFF)).ToString () + splitter[0].ToString () +
 
 				(alwaysOnTop ? "1" : "0") + splitter[0].ToString () +
-				histogramFFTValuesCountShift.ToString ();
+				histogramFFTValuesCountShift.ToString () + splitter[0].ToString () +
+				decumulationMultiplier.ToString () + splitter[0].ToString () +
+				cumulationSpeed.ToString ();
 
 			try
 				{
@@ -422,24 +442,27 @@ namespace ESHQSetupStub
 			}
 
 		// Выравнивание окна по экрану
-		private void AlignToTop_Click (object sender, EventArgs e)
+		private void AlignTo_Click (object sender, EventArgs e)
 			{
-			VisTop.Value = 0;
-			}
+			switch (((Button)sender).Name)
+				{
+				case "AlignToTop":
+					VisTop.Value = 0;
+					break;
 
-		private void AlignToBottom_Click (object sender, EventArgs e)
-			{
-			VisTop.Value = VisHeight.Maximum - VisHeight.Value;
-			}
+				case "AlignToBottom":
+					VisTop.Value = VisHeight.Maximum - VisHeight.Value;
+					break;
 
-		private void AlignToLeft_Click (object sender, EventArgs e)
-			{
-			VisLeft.Value = 0;
-			}
+				case "AlignToLeft":
+					VisLeft.Value = 0;
+					break;
 
-		private void AlignToRight_Click (object sender, EventArgs e)
-			{
-			VisLeft.Value = VisWidth.Maximum - VisWidth.Value;
+				case "AlignToRight":
+					VisLeft.Value = VisWidth.Maximum - VisWidth.Value;
+					break;
+				}
+
 			}
 
 		/// <summary>
@@ -534,6 +557,44 @@ namespace ESHQSetupStub
 			if (PaletteImageBox.BackgroundImage != null)
 				PaletteImageBox.BackgroundImage.Dispose ();
 			PaletteImageBox.BackgroundImage = b;
+			}
+
+		/// <summary>
+		/// Скорость ослабления кумулятивного эффекта
+		/// </summary>
+		public uint DecumulationSpeed
+			{
+			get
+				{
+				return decumulationMultiplier * cumulationSpeed / (uint)CEDecumulationMultiplier.Maximum;
+				}
+			}
+		private uint decumulationMultiplier;
+
+		/// <summary>
+		/// Скорость накопления кумулятивного эффекта
+		/// </summary>
+		public uint CumulationSpeed
+			{
+			get
+				{
+				return cumulationSpeed;
+				}
+			}
+		private uint cumulationSpeed;
+
+		// Изменение настроек детекции бита
+		private void CESpeed_ValueChanged (object sender, EventArgs e)
+			{
+			if (CEDecumulationMultiplier.Value == 0)
+				{
+				CESettings.Text = Localization.GetText ("CDP_CENo", al);
+				}
+			else
+				{
+				CESettings.Text = string.Format (Localization.GetText ("CDP_CESettingsText", al),
+					CECumulationSpeed.Value.ToString (), (CEDecumulationMultiplier.Value / 10.0).ToString ());
+				}
 			}
 		}
 	}

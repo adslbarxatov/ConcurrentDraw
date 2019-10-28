@@ -626,6 +626,35 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 					cdDummyInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
 				}
 			break;
+
+		// Зеркало
+		case 8:
+			for (i = 0; i < qSize; i++) 
+				{
+				cdBMPInfo.cd_bmpinfo.colors[i].rgbRed = 
+					cdBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 
+					cdBMPInfo.cd_bmpinfo.colors[i].rgbBlue = i;
+
+				cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbRed = 
+					cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbGreen =
+					cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbBlue = qSize + i;
+
+				cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbRed =
+					cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbGreen = 2 * (qSize + i);
+				cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbBlue = 2 * (qSize - i);
+
+				cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbRed = 
+					cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbGreen = 255;
+				cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbBlue = 4 * i;
+				}
+
+			for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
+				{
+				cdDummyInfo.cd_bmpinfo.colors[i].rgbRed =
+					cdDummyInfo.cd_bmpinfo.colors[i].rgbGreen =
+					cdDummyInfo.cd_bmpinfo.colors[i].rgbBlue = 3 * i / 4;
+				}
+			break;
 		}
 	}
 
@@ -654,7 +683,8 @@ CD_API(schar *) GetPalettesNamesEx ()
 		"Sunrise" NAMES_DELIMITER_S \
 		"Acid" NAMES_DELIMITER_S \
 		"7 missed calls" NAMES_DELIMITER_S \
-		"Sail on the sea")
+		"Sail on the sea" NAMES_DELIMITER_S \
+		"Mirror")
 
 	return PALETTES_NAMES;
 	}
