@@ -401,11 +401,11 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 				{
 				cdBMPInfo.cd_bmpinfo.colors[i].rgbRed = 
 					cdBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
-				cdBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 4 * i;
+				cdBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 2 * i;
 
 				cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbRed = 4 * i;
 				cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbGreen = 0;
-				cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbBlue = 255;
+				cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbBlue = 2 * (qSize + i);
 
 				cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbRed = 255;
 				cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbGreen = 4 * i;
@@ -491,10 +491,16 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 
 		// Серая
 		case 3:
-			for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++) 
+			for (i = 0; i < qSize; i++) 
 				{
 				cdBMPInfo.cd_bmpinfo.colors[i].rgbRed = cdBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 
-					cdBMPInfo.cd_bmpinfo.colors[i].rgbBlue = i;
+					cdBMPInfo.cd_bmpinfo.colors[i].rgbBlue = i / 2;
+				cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbRed = cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbGreen = 
+					cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbBlue = (qSize + i) / 2;
+				cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbRed = cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbGreen = 
+					cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbBlue = qSize + i;
+				cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbRed = cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbGreen = 
+					cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbBlue = 2 * (qSize + i);
 				}
 
 			for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)

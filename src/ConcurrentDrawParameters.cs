@@ -102,6 +102,8 @@ namespace ESHQSetupStub
 			decumulationMultiplier = (uint)CEDecumulationMultiplier.Value;
 			CECumulationSpeed.Value = 25;
 			cumulationSpeed = (uint)CECumulationSpeed.Value;
+			LogoHeightPercentage.Value = 50;
+			logoHeight = (uint)LogoHeightPercentage.Value;
 
 			// Язык интерфейса
 			for (int i = 0; i < Localization.AvailableLanguages; i++)
@@ -184,6 +186,8 @@ namespace ESHQSetupStub
 				decumulationMultiplier = (uint)CEDecumulationMultiplier.Value;
 				CECumulationSpeed.Value = int.Parse (values[12]);
 				cumulationSpeed = (uint)CECumulationSpeed.Value;
+				LogoHeightPercentage.Value = int.Parse (values[13]);
+				logoHeight = (uint)LogoHeightPercentage.Value;
 				}
 			catch
 				{
@@ -208,6 +212,7 @@ namespace ESHQSetupStub
 			PaletteLabel.Text = Localization.GetText ("CDP_PaletteLabel", al);
 			SGHGHeightLabel.Text = Localization.GetText ("CDP_SGHGHeightLabel", al);
 			HGRangeLabel.Text = Localization.GetText ("CDP_HGRangeLabel", al);
+			LogoHeightLabel.Text = Localization.GetText ("CDP_LogoHeightLabel", al);
 
 			AlwaysOnTopFlag.Text = Localization.GetText ("CDP_AlwaysOnTopFlag", al);
 			LogoResetFlag.Text = Localization.GetText ("CDP_LogoResetFlag", al);
@@ -323,6 +328,7 @@ namespace ESHQSetupStub
 
 			decumulationMultiplier = (uint)CEDecumulationMultiplier.Value;
 			cumulationSpeed = (uint)CECumulationSpeed.Value;
+			logoHeight = (uint)LogoHeightPercentage.Value;
 
 			// Сохранение
 			string settings = deviceNumber.ToString () + splitter[0].ToString () +
@@ -340,7 +346,8 @@ namespace ESHQSetupStub
 				(alwaysOnTop ? "1" : "0") + splitter[0].ToString () +
 				histogramFFTValuesCountShift.ToString () + splitter[0].ToString () +
 				decumulationMultiplier.ToString () + splitter[0].ToString () +
-				cumulationSpeed.ToString ();
+				cumulationSpeed.ToString () + splitter[0].ToString () +
+				logoHeight.ToString ();
 
 			try
 				{
@@ -597,5 +604,25 @@ namespace ESHQSetupStub
 					(double)CEDecumulationMultiplier.Maximum).ToString ());
 				}
 			}
+
+		// Изменение режима отображения
+		private void VisualizationCombo_SelectedIndexChanged (object sender, EventArgs e)
+			{
+			SGHGHeightLabel.Enabled = SDHeight.Enabled = (VisualizationCombo.SelectedIndex != 3);
+			CumulationGroup.Enabled = (VisualizationCombo.SelectedIndex == 3);
+			HGRangeLabel.Enabled = HistogramRangeCombo.Enabled = (VisualizationCombo.SelectedIndex >= 2);
+			}
+
+		/// <summary>
+		/// Высота лого в процентах от высоты окна
+		/// </summary>
+		public double LogoHeight
+			{
+			get
+				{
+				return logoHeight / 100.0;
+				}
+			}
+		private uint logoHeight;
 		}
 	}

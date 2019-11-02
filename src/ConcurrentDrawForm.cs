@@ -78,7 +78,7 @@ namespace ESHQSetupStub
 		private uint savingLayersCounter = 0;					// Счётчик сохранений
 
 		private Font demoFont;									// Объекты поддержки текстовых подписей на рендере
-		private string[] demoNames = new string[] { "SERAPHIM PROJECT", "В ОТРАЖЕНИИ КРИВЫХ ЗЕРКАЛ" };
+		private string[] demoNames = new string[] { "SERAPHIM PROJECT", "СРЕДЬ ТЁМНЫХ УЛИЦ" };
 		private SizeF[] demoSizes = new SizeF[2];
 #endif
 
@@ -202,7 +202,7 @@ namespace ESHQSetupStub
 
 #if VIDEO
 			// Подготовка параметров
-			demoFont = new Font ("a_GroticNr" /*"Hair ‱"*/, this.Width / 90);
+			demoFont = new Font ("a_GroticNr" /*"Hair ‱"*/, this.Width / 50);
 			for (int i = 0; i < demoNames.Length; i++)
 				{
 				demoSizes[i] = gr.MeasureString (demoNames[i], demoFont);
@@ -416,7 +416,8 @@ namespace ESHQSetupStub
 		private void RenderVideo (object sender, DoWorkEventArgs e)
 			{
 			// Запрос длины потока
-			uint length = (uint)(ConcurrentDrawLib.ChannelLength * fps + 250);
+			uint length = (uint)(ConcurrentDrawLib.ChannelLength * fps +
+				((cdp.VisualizationMode == VisualizationModes.Butterfly_histogram_with_logo) ? 250 : 350));
 
 			// Собственно, выполняемый процесс
 			for (int i = 0; i < length; i++)
@@ -585,9 +586,20 @@ namespace ESHQSetupStub
 					SpectrogramModes.NoSpectrogram) ? logo1b.Height : this.Height) - rad) / 2, rad, rad);
 
 #if VIDEO
-				mainLayer.Descriptor.DrawString (demoNames[0], demoFont, br, (this.Width - demoSizes[0].Width) / 2, 20);
-				mainLayer.Descriptor.DrawString (demoNames[1], demoFont, br, (this.Width - demoSizes[1].Width) / 2,
-					this.Height - demoSizes[1].Height - 20);
+				if (VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) == SpectrogramModes.NoSpectrogram)
+					{
+					mainLayer.Descriptor.DrawString (demoNames[0], demoFont, br, (this.Width - demoSizes[0].Width) / 2, 20);
+					mainLayer.Descriptor.DrawString (demoNames[1], demoFont, br, (this.Width - demoSizes[1].Width) / 2,
+						this.Height - demoSizes[1].Height - 20);
+					mainLayer.Descriptor.DrawString ((cumulativeCounter / cumulationDivisor).ToString (), demoFont, brushes[0],
+						(this.Width - rad) / 2, this.Height / 2 - 18);
+					}
+				else
+					{
+					mainLayer.Descriptor.DrawString (demoNames[0], demoFont, br, 20, logoHeight / 2);
+					mainLayer.Descriptor.DrawString (demoNames[1], demoFont, br, this.Width - demoSizes[1].Width - 20,
+						logoHeight / 2);
+					}
 #endif
 
 				br.Dispose ();
@@ -722,7 +734,7 @@ namespace ESHQSetupStub
 				logo1b.Dispose ();
 
 			// Установка главного расчётного размера
-			logoHeight = (uint)(Math.Min (this.Width, this.Height) * 6) / 12;
+			logoHeight = (uint)(Math.Min (this.Width, this.Height) * cdp.LogoHeight);
 
 			// Перезапуск алгоритма таймера
 			currentPhase = Phases.LayersPrecache;

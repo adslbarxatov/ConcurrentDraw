@@ -238,4 +238,7 @@ Settings will be saved by pressing OK button. They can be changed anytime you ne
   <data name="NoCompatibleDevices" xml:space="preserve">
     <value>No compatible audio output devices found on your system</value>
   </data>
+  <data name="CDP_LogoHeightLabel" xml:space="preserve">
+    <value>Logo height:</value>
+  </data>
 </root>

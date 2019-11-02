@@ -70,3 +70,10 @@ Version 1.9:
 • Added cumulative effect: in case of intensive and dense beats (or other 
   frequencies that are under detector) visualization background will change its
   color according to selected palette
+
+Version 1.9.1:
+• Some fixes applied to existent palettes
+
+Version 1.10:
+• Added the ability to set diameter of logo (as a percentage of window's height);
+• Some interface improvements applied

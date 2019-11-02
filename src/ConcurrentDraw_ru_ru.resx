@@ -238,4 +238,7 @@
   <data name="NoCompatibleDevices" xml:space="preserve">
     <value>В системе отсутствуют совместимые устройства аудиовывода</value>
   </data>
+  <data name="CDP_LogoHeightLabel" xml:space="preserve">
+    <value>Высота лого:</value>
+  </data>
 </root>
