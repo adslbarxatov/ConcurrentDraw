@@ -100,10 +100,15 @@ namespace ESHQSetupStub
 			// Кумулятивный эффект
 			CEDecumulationMultiplier.Value = 8;
 			decumulationMultiplier = (uint)CEDecumulationMultiplier.Value;
-			CECumulationSpeed.Value = 25;
+			CECumulationSpeed.Value = 70;
 			cumulationSpeed = (uint)CECumulationSpeed.Value;
-			LogoHeightPercentage.Value = 50;
+			LogoHeightPercentage.Value = 30;
 			logoHeight = (uint)LogoHeightPercentage.Value;
+
+			// Скорость вращения гистограммы
+			histoRotSpeedArc = 0;
+			HistoRotSpeedArc.Value = (decimal)histoRotSpeedArc;
+			HistoRotSpeed.Checked = true;
 
 			// Язык интерфейса
 			for (int i = 0; i < Localization.AvailableLanguages; i++)
@@ -132,8 +137,7 @@ namespace ESHQSetupStub
 			string settings = "";
 			try
 				{
-				settings = Registry.GetValue (SettingsKey,
-					SettingsValueName, "").ToString ();
+				settings = Registry.GetValue (SettingsKey, SettingsValueName, "").ToString ();
 				}
 			catch
 				{
@@ -188,6 +192,10 @@ namespace ESHQSetupStub
 				cumulationSpeed = (uint)CECumulationSpeed.Value;
 				LogoHeightPercentage.Value = int.Parse (values[13]);
 				logoHeight = (uint)LogoHeightPercentage.Value;
+
+				histoRotSpeedArc = int.Parse (values[14]);
+				HistoRotAccToBeats.Checked = (histoRotSpeedArc < 0);
+				HistoRotSpeedArc.Value = (histoRotSpeedArc < 0) ? 0 : (decimal)histoRotSpeedArc;
 				}
 			catch
 				{
@@ -228,6 +236,10 @@ namespace ESHQSetupStub
 			CumulationGroup.Text = Localization.GetText ("CDP_CumulationGroup", al);
 
 			CESpeed_ValueChanged (null, null);
+
+			HistoRotGroup.Text = Localization.GetText ("CDP_HistoRotGroup", al);
+			HistoRotAccToBeats.Text = Localization.GetText ("CDP_HistoRotAccToBeats", al);
+			HistoRotSpeed.Text = Localization.GetText ("CDP_HistoRotSpeed", al);
 			}
 
 		// Контроль наличия доступных устройств
@@ -330,6 +342,11 @@ namespace ESHQSetupStub
 			cumulationSpeed = (uint)CECumulationSpeed.Value;
 			logoHeight = (uint)LogoHeightPercentage.Value;
 
+			if (HistoRotAccToBeats.Checked)
+				histoRotSpeedArc = -1;
+			else
+				histoRotSpeedArc = (int)(HistoRotSpeedArc.Value - HistoRotSpeedArc.Minimum);
+
 			// Сохранение
 			string settings = deviceNumber.ToString () + splitter[0].ToString () +
 				paletteNumber.ToString () + splitter[0].ToString () +
@@ -347,7 +364,8 @@ namespace ESHQSetupStub
 				histogramFFTValuesCountShift.ToString () + splitter[0].ToString () +
 				decumulationMultiplier.ToString () + splitter[0].ToString () +
 				cumulationSpeed.ToString () + splitter[0].ToString () +
-				logoHeight.ToString ();
+				logoHeight.ToString () + splitter[0].ToString () +
+				histoRotSpeedArc.ToString ();
 
 			try
 				{
@@ -609,7 +627,7 @@ namespace ESHQSetupStub
 		private void VisualizationCombo_SelectedIndexChanged (object sender, EventArgs e)
 			{
 			SGHGHeightLabel.Enabled = SDHeight.Enabled = (VisualizationCombo.SelectedIndex != 3);
-			CumulationGroup.Enabled = (VisualizationCombo.SelectedIndex == 3);
+			CumulationGroup.Enabled = HistoRotGroup.Enabled = (VisualizationCombo.SelectedIndex == 3);
 			HGRangeLabel.Enabled = HistogramRangeCombo.Enabled = (VisualizationCombo.SelectedIndex >= 2);
 			}
 
@@ -624,5 +642,34 @@ namespace ESHQSetupStub
 				}
 			}
 		private uint logoHeight;
+
+		/// <summary>
+		/// Возвращает скорость изменения угла поворота гистограммы
+		/// </summary>
+		public uint HistoRotSpeedDelta
+			{
+			get
+				{
+				return (histoRotSpeedArc < 0) ? 0 : (uint)histoRotSpeedArc;
+				}
+			}
+
+		/// <summary>
+		/// Возвращает флаг, указывающий на режим синхронизации поворота гистограммы с бит-детектором
+		/// </summary>
+		public bool HistoRotAccordingToBeats
+			{
+			get
+				{
+				return (histoRotSpeedArc < 0);
+				}
+			}
+		private int histoRotSpeedArc;
+
+		// Выбор варианта скорости вращения гистограммы
+		private void HistoRotSpeed_CheckedChanged (object sender, EventArgs e)
+			{
+			HistoRotSpeedArc.Enabled = HistoRotSpeedLabel.Enabled = HistoRotSpeed.Checked;
+			}
 		}
 	}

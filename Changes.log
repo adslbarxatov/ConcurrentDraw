@@ -77,3 +77,7 @@ Version 1.9.1:
 Version 1.10:
 • Added the ability to set diameter of logo (as a percentage of window's height);
 • Some interface improvements applied
+
+Version 1.11:
+• Added rotation ability for butterfly histogram;
+• More correct palettes usage applied to butterfly histogram

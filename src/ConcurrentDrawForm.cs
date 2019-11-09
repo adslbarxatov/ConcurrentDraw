@@ -35,7 +35,8 @@ namespace ESHQSetupStub
 
 		private const int logoIdleSpeed = 2;					// Наименьшая скорость вращения лого
 		private int logoSpeedImpulse = 50,						// Импульс скорости
-			currentArc = 0;										// Текущий угол приращения поворота лого
+			currentLogoArcDelta = 0,							// Текущий угол приращения поворота лого
+			currentHistogramArc = 0;							// Текущий угол поворота гистограммы-бабочки
 		private uint logoHeight;								// Диаметр лого
 
 		private byte peak;										// Пиковое значение для расчёта битовых порогов
@@ -196,7 +197,7 @@ namespace ESHQSetupStub
 			ResetLogo ();
 
 			// Формирование кистей
-			brushes.Add (new SolidBrush (Color.FromArgb (0, 0, 0)));					// Фон
+			brushes.Add (new SolidBrush (ProgramDescription.MasterBackColor));			// Фон
 			brushes.Add (new SolidBrush (ConcurrentDrawLib.GetMasterPaletteColor ()));	// Лого и beat-детектор
 			brushes.Add (new SolidBrush (Color.FromArgb (20, brushes[0].Color)));		// Fade out
 
@@ -459,10 +460,10 @@ namespace ESHQSetupStub
 			{
 			// Торможение вращения
 			if (PushBrakes)
-				currentArc = (currentArc - logoIdleSpeed) / 2;
+				currentLogoArcDelta = (currentLogoArcDelta - logoIdleSpeed) / 2;
 
 			// Отрисовка
-			gl.RotateTransform (currentArc);
+			gl.RotateTransform (currentLogoArcDelta);
 			gl.DrawImage (logo1a, -3 * logoHeight / 5, -3 * logoHeight / 5);
 			mainLayer.Descriptor.DrawImage (logo1b, (this.Width - logo1b.Width) / 2,
 				((VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) !=
@@ -473,12 +474,12 @@ namespace ESHQSetupStub
 		private void RotatingLogo ()
 			{
 			// Отрисовка
-			currentArc = (int)(++steps);
+			currentLogoArcDelta = (int)(++steps);
 			RotateAndDrawLogo (false);
 
 			if (steps >= 170)
 				{
-				currentArc = -logoIdleSpeed;
+				currentLogoArcDelta = -logoIdleSpeed;
 				steps = 0;
 				currentPhase++;
 				}
@@ -537,9 +538,19 @@ namespace ESHQSetupStub
 					brushes[2].Color = Color.FromArgb (20,
 						ConcurrentDrawLib.GetMasterPaletteColor ((byte)(cumulativeCounter / cumulationDivisor)));
 
+				// Обработка вращения гистограммы
+				if (cdp.HistoRotAccordingToBeats)
+					currentHistogramArc += currentLogoArcDelta / 12;
+				else
+					currentHistogramArc += (int)cdp.HistoRotSpeedDelta;
+				if (currentHistogramArc > 360)
+					currentHistogramArc -= 360;
+				if (currentHistogramArc < 0)
+					currentHistogramArc += 360;
+
 				// Сброс изображения
-				mainLayer.Descriptor.FillEllipse (brushes[2], (this.Width - 3 * logo1b.Width) / 2,
-					(this.Height - 3 * logo1b.Height) / 2, 3 * logo1b.Width, 3 * logo1b.Height);
+				mainLayer.Descriptor.FillEllipse (brushes[2], (this.Width - 3 * logo1b.Width) / 2 - 1,
+					(this.Height - 3 * logo1b.Height) / 2 - 1, 3 * logo1b.Width + 2, 3 * logo1b.Height + 2);
 
 				// Отрисовка
 				for (int i = 0; i < 256; i++)
@@ -550,7 +561,7 @@ namespace ESHQSetupStub
 					// Получаем цвет
 					if (p != null)
 						p.Dispose ();
-					p = new Pen (ConcurrentDrawLib.GetColorFromPalette ((byte)amp)
+					p = new Pen (ConcurrentDrawLib.GetColorFromPalette ((byte)(3 * amp / 4))
 #if VIDEO
 , 2
 #endif
@@ -558,9 +569,9 @@ namespace ESHQSetupStub
 
 					// Определяем координаты линий
 					rad = logo1b.Width / 2 + (int)((uint)(logo1b.Width * amp) >> 8);	// Вместо /256
-					histoX[0] = histoX[2] = this.Width / 2 + (int)(rad * Math.Cos (ArcToRad (i / histoDensity)));
+					histoX[0] = histoX[2] = this.Width / 2 + (int)(rad * Math.Cos (ArcToRad (i / histoDensity + currentHistogramArc)));
 					histoX[1] = histoX[3] = this.Width - histoX[0];
-					histoY[0] = histoY[3] = this.Height / 2 + (int)(rad * Math.Sin (ArcToRad (i / histoDensity)));
+					histoY[0] = histoY[3] = this.Height / 2 + (int)(rad * Math.Sin (ArcToRad (i / histoDensity + currentHistogramArc)));
 					histoY[1] = histoY[2] = this.Height - histoY[0];
 
 					// Рисуем
@@ -575,7 +586,7 @@ namespace ESHQSetupStub
 				// Лого
 				RotateAndDrawLogo (true);
 				if (peak > peakTrigger)
-					currentArc = -logoSpeedImpulse;
+					currentLogoArcDelta = -logoSpeedImpulse;
 
 				// Бит-детектор
 				br = new SolidBrush (ConcurrentDrawLib.GetMasterPaletteColor (peak));

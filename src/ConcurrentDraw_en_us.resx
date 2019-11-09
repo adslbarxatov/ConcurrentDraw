@@ -225,7 +225,10 @@ At first application will start with recommended settings. But you can change:
 • Histogram density (how many frequencies will be shown);
 • Frequencies range and amplitude (loudness) threshold for beats detector;
 • FFT scale multiplier (contrast) for spectrogram and histogram;
-• 'Always on top' window state (turns off when settings window is active).
+• 'Always on top' window state (turns off when settings window is active);
+• Logo size;
+• Cumulative effect parameters (background color filling);
+• Histogram rotation parameters.
 
 Settings will be saved by pressing OK button. They can be changed anytime you need</value>
   </data>
@@ -240,5 +243,14 @@ Settings will be saved by pressing OK button. They can be changed anytime you ne
   </data>
   <data name="CDP_LogoHeightLabel" xml:space="preserve">
     <value>Logo height:</value>
+  </data>
+  <data name="CDP_HistoRotAccToBeats" xml:space="preserve">
+    <value>According to beats detector</value>
+  </data>
+  <data name="CDP_HistoRotGroup" xml:space="preserve">
+    <value>Butterfly histogram rotation speed</value>
+  </data>
+  <data name="CDP_HistoRotSpeed" xml:space="preserve">
+    <value>Using angle increment:</value>
   </data>
 </root>
