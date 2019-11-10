@@ -1,7 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
-using System.Windows.Forms;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace ESHQSetupStub
 	{
@@ -107,14 +107,12 @@ namespace ESHQSetupStub
 
 			// Скорость вращения гистограммы
 			histoRotSpeedArc = 0;
-			HistoRotSpeedArc.Value = (decimal)histoRotSpeedArc;
+			HistoRotSpeedArc.Value = 0;
 			HistoRotSpeed.Checked = true;
 
 			// Язык интерфейса
 			for (int i = 0; i < Localization.AvailableLanguages; i++)
-				{
 				LanguageCombo.Items.Add (((SupportedLanguages)i).ToString ());
-				}
 			LanguageCombo.SelectedIndex = (int)al;			// По умолчанию - английский
 
 			// Запрос настроек
@@ -195,7 +193,7 @@ namespace ESHQSetupStub
 
 				histoRotSpeedArc = int.Parse (values[14]);
 				HistoRotAccToBeats.Checked = (histoRotSpeedArc < 0);
-				HistoRotSpeedArc.Value = (histoRotSpeedArc < 0) ? 0 : (decimal)histoRotSpeedArc;
+				HistoRotSpeedArc.Value = (decimal)Math.Abs (histoRotSpeedArc / 10.0);
 				}
 			catch
 				{
@@ -343,9 +341,9 @@ namespace ESHQSetupStub
 			logoHeight = (uint)LogoHeightPercentage.Value;
 
 			if (HistoRotAccToBeats.Checked)
-				histoRotSpeedArc = -1;
+				histoRotSpeedArc = (int)(-HistoRotSpeedArc.Value * 10);
 			else
-				histoRotSpeedArc = (int)(HistoRotSpeedArc.Value - HistoRotSpeedArc.Minimum);
+				histoRotSpeedArc = (int)(HistoRotSpeedArc.Value * 10);
 
 			// Сохранение
 			string settings = deviceNumber.ToString () + splitter[0].ToString () +
@@ -646,11 +644,11 @@ namespace ESHQSetupStub
 		/// <summary>
 		/// Возвращает скорость изменения угла поворота гистограммы
 		/// </summary>
-		public uint HistoRotSpeedDelta
+		public double HistoRotSpeedDelta
 			{
 			get
 				{
-				return (histoRotSpeedArc < 0) ? 0 : (uint)histoRotSpeedArc;
+				return Math.Abs (histoRotSpeedArc / 10.0);
 				}
 			}
 
@@ -665,11 +663,5 @@ namespace ESHQSetupStub
 				}
 			}
 		private int histoRotSpeedArc;
-
-		// Выбор варианта скорости вращения гистограммы
-		private void HistoRotSpeed_CheckedChanged (object sender, EventArgs e)
-			{
-			HistoRotSpeedArc.Enabled = HistoRotSpeedLabel.Enabled = HistoRotSpeed.Checked;
-			}
 		}
 	}

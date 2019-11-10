@@ -35,8 +35,8 @@ namespace ESHQSetupStub
 
 		private const int logoIdleSpeed = 2;					// Наименьшая скорость вращения лого
 		private int logoSpeedImpulse = 50,						// Импульс скорости
-			currentLogoArcDelta = 0,							// Текущий угол приращения поворота лого
-			currentHistogramArc = 0;							// Текущий угол поворота гистограммы-бабочки
+			currentLogoArcDelta = 0;							// Текущий угол приращения поворота лого
+		private double currentHistogramArc = 0.0;				// Текущий угол поворота гистограммы-бабочки
 		private uint logoHeight;								// Диаметр лого
 
 		private byte peak;										// Пиковое значение для расчёта битовых порогов
@@ -47,7 +47,7 @@ namespace ESHQSetupStub
 
 		private int[] histoX = new int[4],
 			histoY = new int[4];								// Координаты линий гистограммы
-		private const double histoDensity = 4.0;				// Плотность гистограммы-бабочки
+		private const double histoDensity = 2.84;				// Плотность гистограммы-бабочки
 
 		private int rad, amp;									// Вспомогательные переменные
 		private SolidBrush br;
@@ -540,13 +540,14 @@ namespace ESHQSetupStub
 
 				// Обработка вращения гистограммы
 				if (cdp.HistoRotAccordingToBeats)
-					currentHistogramArc += currentLogoArcDelta / 12;
+					currentHistogramArc += cdp.HistoRotSpeedDelta * currentLogoArcDelta / logoSpeedImpulse;
 				else
-					currentHistogramArc += (int)cdp.HistoRotSpeedDelta;
-				if (currentHistogramArc > 360)
-					currentHistogramArc -= 360;
-				if (currentHistogramArc < 0)
-					currentHistogramArc += 360;
+					currentHistogramArc += cdp.HistoRotSpeedDelta;
+
+				if (currentHistogramArc > 360.0)
+					currentHistogramArc -= 360.0;
+				if (currentHistogramArc < 0.0)
+					currentHistogramArc += 360.0;
 
 				// Сброс изображения
 				mainLayer.Descriptor.FillEllipse (brushes[2], (this.Width - 3 * logo1b.Width) / 2 - 1,
@@ -561,11 +562,7 @@ namespace ESHQSetupStub
 					// Получаем цвет
 					if (p != null)
 						p.Dispose ();
-					p = new Pen (ConcurrentDrawLib.GetColorFromPalette ((byte)(3 * amp / 4))
-#if VIDEO
-, 2
-#endif
-);
+					p = new Pen (ConcurrentDrawLib.GetColorFromPalette ((byte)(3 * amp / 4)), 2);
 
 					// Определяем координаты линий
 					rad = logo1b.Width / 2 + (int)((uint)(logo1b.Width * amp) >> 8);	// Вместо /256
@@ -743,6 +740,7 @@ namespace ESHQSetupStub
 				logo1a.Dispose ();
 			if (logo1b != null)
 				logo1b.Dispose ();
+			currentHistogramArc = 0;
 
 			// Установка главного расчётного размера
 			logoHeight = (uint)(Math.Min (this.Width, this.Height) * cdp.LogoHeight);

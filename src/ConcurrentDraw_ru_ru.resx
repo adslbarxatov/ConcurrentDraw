@@ -245,12 +245,12 @@
     <value>Высота лого:</value>
   </data>
   <data name="CDP_HistoRotAccToBeats" xml:space="preserve">
-    <value>В соответствии с бит-детектором</value>
+    <value>В соотв. с бит-детектором с импульсом:</value>
   </data>
   <data name="CDP_HistoRotGroup" xml:space="preserve">
     <value>Скорость вращения гистограммы "бабочка"</value>
   </data>
   <data name="CDP_HistoRotSpeed" xml:space="preserve">
-    <value>Использовать угловое приращение:</value>
+    <value>Исп. постоянное угловое приращение:</value>
   </data>
 </root>

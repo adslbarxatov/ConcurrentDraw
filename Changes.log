@@ -81,3 +81,8 @@ Version 1.10:
 Version 1.11:
 • Added rotation ability for butterfly histogram;
 • More correct palettes usage applied to butterfly histogram
+
+Version 1.12:
+• Histogram rotation angle is more precise now;
+• 'Beats detector'-based histogram rotation's angle impulse now may be adjusted;
+• Butterfly histogram got full (360 degrees) field and more accurate spikes drawing

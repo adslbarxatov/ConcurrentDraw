@@ -245,12 +245,12 @@ Settings will be saved by pressing OK button. They can be changed anytime you ne
     <value>Logo height:</value>
   </data>
   <data name="CDP_HistoRotAccToBeats" xml:space="preserve">
-    <value>According to beats detector</value>
+    <value>Acc. to beats detector with angle impulse:</value>
   </data>
   <data name="CDP_HistoRotGroup" xml:space="preserve">
     <value>Butterfly histogram rotation speed</value>
   </data>
   <data name="CDP_HistoRotSpeed" xml:space="preserve">
-    <value>Using angle increment:</value>
+    <value>Using constant angle increment:</value>
   </data>
 </root>
