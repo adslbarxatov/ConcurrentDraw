@@ -12,7 +12,7 @@ uchar *sdBuffer;					// Буфер спектральной диаграммы
 uint sdFrameWidth, sdFrameHeight,	// Размеры изображения спектрограммы
 	sdCurrentPosition = 0;			// Текущая позиция на спектрограмме
 uchar sdSpectrogramMode = 0;		// Режим спектрограммы (0 - выключена, 1 - с курсором, 
-									// 2 - движущаяся, 3 - гистограмма)
+									// 2 - движущаяся, 3 - гистограмма, 4 - симметричная гистограмма)
 
 float cdFFTScale =
 	(float)CD_DEFAULT_FFT_SCALE_MULT * 25.5f;			// Масштаб значений FFT
@@ -156,7 +156,6 @@ CD_API(void) DestroySoundStreamEx ()
 float *GetDataFromStreamEx ()
 	{
 	// Контроль
-	ulong v;
 	if (!cdChannel)
 		return NULL;
 
@@ -261,8 +260,9 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 				}
 			break;
 
-		// Гистограмма
+		// Гистограмма и симметричная гистограмма
 		case 3:
+		case 4:
 			for (x = 0; x < sdFrameWidth; x++)
 				{
 				// Получение значения
@@ -270,10 +270,23 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 
 				// Отрисовка
 				v = sdFrameHeight * (ulong)v / CD_BMPINFO_COLORS_COUNT;	// Перемасштабирование
-				for (y = 0; y < v; y++)
-					sdBuffer[y * sdFrameWidth + x] = 3 * y / 4 + 64;	// Убираем чёрный низ палитр
-				for (y = v; y < sdFrameHeight; y++)
-					sdBuffer[y * sdFrameWidth + x] = 0;
+
+				if (sdSpectrogramMode == 3)
+					{
+					for (y = 0; y < v; y++)
+						sdBuffer[y * sdFrameWidth + x] = 3 * y / 4 + 48;	// Обрезаем края палитр
+					for (y = v; y < sdFrameHeight; y++)
+						sdBuffer[y * sdFrameWidth + x] = 8;
+					}
+				else
+					{
+					for (y = 0; y < v; y++)
+						sdBuffer[y * sdFrameWidth + (sdFrameWidth + x) / 2] =
+						sdBuffer[y * sdFrameWidth + (sdFrameWidth - x) / 2] = 3 * y / 4 + 48;	// Обрезаем края палитр
+					for (y = v; y < sdFrameHeight; y++)
+						sdBuffer[y * sdFrameWidth + (sdFrameWidth + x) / 2] =
+						sdBuffer[y * sdFrameWidth + (sdFrameWidth - x) / 2] = 8;
+					}
 				}
 			break;
 		}
@@ -282,7 +295,7 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 // Функция выполняет ручное обновление данных FFT вместо встроенного таймера
 CD_API(void) UpdateFFTDataEx ()
 	{
-	UpdateFFT (0, 0, NULL, 0, 0);
+	UpdateFFT (0, 0, 0, 0, 0);
 	}
 
 // Функция инициализирует спектрограмму

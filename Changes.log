@@ -91,3 +91,9 @@ Version 1.13:
 • Beat detector's code optimizations applied;
 • Some minor bugs fixed;
 • Quick logo reset algorithm on settings' changes applied
+
+Version 1.14:
+• Symmetric histogram mode added;
+• Non-black and semitransparent backgroung added for histogram modes;
+• Not needed drawing preparations removed;
+• Some code optimizations applied

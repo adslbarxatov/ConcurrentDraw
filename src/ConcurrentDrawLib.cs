@@ -173,7 +173,12 @@ namespace ESHQSetupStub
 		/// <summary>
 		/// Гистограмма
 		/// </summary>
-		Histogram = 3
+		Histogram = 3,
+
+		/// <summary>
+		/// Симметричная гистограмма
+		/// </summary>
+		SymmetricHistogram = 4,
 		}
 
 	/// <summary>

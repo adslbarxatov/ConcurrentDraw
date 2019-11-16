@@ -56,7 +56,7 @@ namespace ESHQSetupStub
 				VisualizationCombo.Items.Add (((VisualizationModes)i).ToString ().Replace ('_', ' '));
 				}
 			VisualizationCombo.SelectedIndex = (int)VisualizationModesChecker.VisualizationModesCount - 1;	// По умолчанию - бабочка
-			visualizationMode = VisualizationModes.Butterfly_histogram_with_logo;
+			visualizationMode = VisualizationModes.Butterfly_histogram;
 
 			// Высота спектрограммы
 			SDHeight.Minimum = VisHeight.Minimum = ConcurrentDrawLib.MinSpectrogramFrameHeight;
@@ -628,9 +628,11 @@ namespace ESHQSetupStub
 		// Изменение режима отображения
 		private void VisualizationCombo_SelectedIndexChanged (object sender, EventArgs e)
 			{
-			SGHGHeightLabel.Enabled = SDHeight.Enabled = (VisualizationCombo.SelectedIndex != 3);
-			CumulationGroup.Enabled = HistoRotGroup.Enabled = (VisualizationCombo.SelectedIndex == 3);
-			HGRangeLabel.Enabled = HistogramRangeCombo.Enabled = (VisualizationCombo.SelectedIndex >= 2);
+			VisualizationModes mode = (VisualizationModes)VisualizationCombo.SelectedIndex;
+			SGHGHeightLabel.Enabled = SDHeight.Enabled = (mode != VisualizationModes.Butterfly_histogram);
+			CumulationGroup.Enabled = HistoRotGroup.Enabled = (mode == VisualizationModes.Butterfly_histogram);
+			HGRangeLabel.Enabled = HistogramRangeCombo.Enabled = ((mode == VisualizationModes.Butterfly_histogram) ||
+				(mode == VisualizationModes.Histogram) || (mode == VisualizationModes.Symmetric_histogram));
 			}
 
 		/// <summary>

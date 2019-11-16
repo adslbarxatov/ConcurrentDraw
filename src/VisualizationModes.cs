@@ -8,42 +8,54 @@
 		/// <summary>
 		/// Статическая спектрограмма с курсором, с лого
 		/// </summary>
-		Static_spectrogram_with_logo = 0,
+		Static_spectrogram = 0,
 
 		/// <summary>
 		/// Движущаяся спектрограмма с курсором, с лого
 		/// </summary>
-		Moving_spectrogram_with_logo = 1,
+		Moving_spectrogram = 1,
 
 		/// <summary>
 		/// Гистограмма, с лого
 		/// </summary>
-		Histogram_with_logo = 2,
+		Histogram = 2,
+
+		/// <summary>
+		/// Симметричная гистограмма, с лого
+		/// </summary>
+		Symmetric_histogram = 3,
 
 		/// <summary>
 		/// Гистограмма «бабочка» со встроенным лого
 		/// </summary>
-		Butterfly_histogram_with_logo = 3,
+		Butterfly_histogram = 4,
 
+		/*
 		/// <summary>
 		/// Статическая спектрограмма с курсором, без лого
 		/// </summary>
-		Static_spectrogram = 4,
+		Static_spectrogram_without_logo = 5,
 
 		/// <summary>
 		/// Движущаяся спектрограмма с курсором, без лого
 		/// </summary>
-		Moving_spectrogram = 5,
+		Moving_spectrogram_without_logo = 6,
 
 		/// <summary>
 		/// Гистограмма, без лого
 		/// </summary>
-		Histogram = 6,
+		Histogram_without_logo = 7,
+
+		/// <summary>
+		/// Симметричная гистограмма, без лого
+		/// </summary>
+		Symmetric_histogram_without_logo = 8,
 
 		/// <summary>
 		/// Только логотип с реакцией на частотные маркеры
 		/// </summary>
-		Logo_only = 7,
+		Logo_only = 9
+		*/
 		}
 
 	/// <summary>
@@ -54,7 +66,7 @@
 		/// <summary>
 		/// Количество доступных режимов визуализации
 		/// </summary>
-		public const uint VisualizationModesCount = 4;
+		public const uint VisualizationModesCount = 5;
 
 		/// <summary>
 		/// Метод проверяет, требует ли указанный режим отрисовки лого
@@ -63,11 +75,12 @@
 		/// <returns>Возвращает true в случае, если лого необходимо</returns>
 		public static bool ContainsLogo (VisualizationModes Mode)
 			{
-			return (Mode == VisualizationModes.Logo_only) ||
-				(Mode == VisualizationModes.Moving_spectrogram_with_logo) ||
-				(Mode == VisualizationModes.Static_spectrogram_with_logo) ||
-				(Mode == VisualizationModes.Histogram_with_logo) ||
-				(Mode == VisualizationModes.Butterfly_histogram_with_logo);
+			return //(Mode == VisualizationModes.Logo_only) ||
+				(Mode == VisualizationModes.Moving_spectrogram) ||
+				(Mode == VisualizationModes.Static_spectrogram) ||
+				(Mode == VisualizationModes.Histogram) ||
+				(Mode == VisualizationModes.Symmetric_histogram) ||
+				(Mode == VisualizationModes.Butterfly_histogram);
 			}
 
 		/// <summary>
@@ -79,20 +92,24 @@
 			{
 			switch (Mode)
 				{
+				//case VisualizationModes.Histogram_without_logo:
 				case VisualizationModes.Histogram:
-				case VisualizationModes.Histogram_with_logo:
 					return SpectrogramModes.Histogram;
 
 				default:
 					return SpectrogramModes.NoSpectrogram;
 
+				//case VisualizationModes.Moving_spectrogram_without_logo:
 				case VisualizationModes.Moving_spectrogram:
-				case VisualizationModes.Moving_spectrogram_with_logo:
 					return SpectrogramModes.MovingSpectrogram;
 
+				//case VisualizationModes.Static_spectrogram_without_logo:
 				case VisualizationModes.Static_spectrogram:
-				case VisualizationModes.Static_spectrogram_with_logo:
 					return SpectrogramModes.StaticSpectrogram;
+
+				//case VisualizationModes.Symmetric_histogram_without_logo:
+				case VisualizationModes.Symmetric_histogram:
+					return SpectrogramModes.SymmetricHistogram;
 				}
 			}
 		}
