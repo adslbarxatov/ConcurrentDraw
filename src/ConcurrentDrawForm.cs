@@ -235,7 +235,7 @@ namespace ESHQSetupStub
 				{
 				ExtendedTimer.Enabled = true;
 				}
-				this.Activate ();
+			this.Activate ();
 			}
 
 		// Метод инициализирует аудиоканал
@@ -249,7 +249,7 @@ namespace ESHQSetupStub
 				ssie = ConcurrentDrawLib.InitializeSoundStream (OFAudio.FileName);
 			else
 #endif
-			ssie = ConcurrentDrawLib.InitializeSoundStream (cdp.DeviceNumber);
+				ssie = ConcurrentDrawLib.InitializeSoundStream (cdp.DeviceNumber);
 			switch (ssie)
 				{
 				case SoundStreamInitializationErrors.BASS_ERROR_ALREADY:
@@ -409,7 +409,7 @@ namespace ESHQSetupStub
 			{
 			// Запрос длины потока
 			uint length = (uint)(ConcurrentDrawLib.ChannelLength * fps +
-				((cdp.VisualizationMode == VisualizationModes.Butterfly_histogram_with_logo) ? 250 : 350));
+				((cdp.VisualizationMode == VisualizationModes.Butterfly_histogram) ? 250 : 350));
 
 			// Собственно, выполняемый процесс
 			for (int i = 0; i < length; i++)
@@ -590,7 +590,7 @@ namespace ESHQSetupStub
 					SpectrogramModes.NoSpectrogram) ? logo[1].Height : this.Height) - rad) / 2, rad, rad);
 
 #if VIDEO
-				if (VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) == SpectrogramModes.NoSpectrogram)
+				/*if (VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) == SpectrogramModes.NoSpectrogram)
 					{
 					mainLayer.Descriptor.DrawString (demoNames[0], demoFont, br, (this.Width - demoSizes[0].Width) / 2, 20);
 					mainLayer.Descriptor.DrawString (demoNames[1], demoFont, br, (this.Width - demoSizes[1].Width) / 2,
@@ -603,7 +603,7 @@ namespace ESHQSetupStub
 					mainLayer.Descriptor.DrawString (demoNames[0], demoFont, br, 20, logoHeight / 2);
 					mainLayer.Descriptor.DrawString (demoNames[1], demoFont, br, this.Width - demoSizes[1].Width - 20,
 						logoHeight / 2);
-					}
+					}*/
 #endif
 
 				p.Dispose ();

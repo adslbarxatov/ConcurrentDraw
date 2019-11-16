@@ -7,11 +7,11 @@ uint channelLength = 0;				// Длина потока (при инициализ
 float cdFFT[FFT_VALUES_COUNT];		// Массив значений, получаемый из канала
 MMRESULT cdFFTTimer = NULL;			// Дескриптор таймера запроса данных из буфера
 
-HBITMAP sdBMP = NULL;				// Дескриптор BITMAP спектральной диаграммы
-uchar *sdBuffer;					// Буфер спектральной диаграммы
-uint sdFrameWidth, sdFrameHeight,	// Размеры изображения спектрограммы
-	sdCurrentPosition = 0;			// Текущая позиция на спектрограмме
-uchar sdSpectrogramMode = 0;		// Режим спектрограммы (0 - выключена, 1 - с курсором, 
+HBITMAP sgBMP = NULL;				// Дескриптор BITMAP спектральной диаграммы
+uchar *sgBuffer;					// Буфер спектральной диаграммы
+uint sgFrameWidth, sgFrameHeight,	// Размеры изображения спектрограммы
+	sgCurrentPosition = 0;			// Текущая позиция на спектрограмме
+uchar sgSpectrogramMode = 0;		// Режим спектрограммы (0 - выключена, 1 - с курсором, 
 									// 2 - движущаяся, 3 - гистограмма, 4 - симметричная гистограмма)
 
 float cdFFTScale =
@@ -90,7 +90,7 @@ CD_API(sint) InitializeSoundStreamEx (uchar DeviceNumber)
 		return BASS_ErrorGetCode ();
 
 	// Запуск таймера запроса данных
-	cdFFTTimer = timeSetEvent (25, 25, (LPTIMECALLBACK)&UpdateFFT, NULL, TIME_PERIODIC);
+	cdFFTTimer = timeSetEvent (25, 25, (LPTIMECALLBACK)&UpdateFFT, 0, TIME_PERIODIC);
 
 	// Успешно
 	channelLength = 0;
@@ -206,7 +206,7 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 		return;
 
 	// Обновление спектрограммы, если требуется
-	switch (sdSpectrogramMode)
+	switch (sgSpectrogramMode)
 		{
 		// Без спектрограммы
 		default:
@@ -215,36 +215,36 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 
 		// С курсором
 		case 1:
-			for (y = 0; y < sdFrameHeight; y++)
+			for (y = 0; y < sgFrameHeight; y++)
 				{
 				// Получение значения
 				v = GetScaledAmplitudeEx (y + 1);
 
 				// Отрисовка
-				sdBuffer[y * sdFrameWidth + sdCurrentPosition] =
-#ifdef SD_DOUBLE_WIDTH
-				sdBuffer[y * sdFrameWidth + (sdCurrentPosition + 1) % sdFrameWidth] = 
+				sgBuffer[y * sgFrameWidth + sgCurrentPosition] =
+#ifdef SG_DOUBLE_WIDTH
+				sgBuffer[y * sgFrameWidth + (sgCurrentPosition + 1) % sgFrameWidth] = 
 #endif
 				v;
 
 				// Маркер
-				sdBuffer[y * sdFrameWidth + (sdCurrentPosition + SD_STEP) % sdFrameWidth] = 255;
+				sgBuffer[y * sgFrameWidth + (sgCurrentPosition + SG_STEP) % sgFrameWidth] = 255;
 				}
 
 			// Движение маркера
-			sdCurrentPosition = (sdCurrentPosition + SD_STEP) % sdFrameWidth;
+			sgCurrentPosition = (sgCurrentPosition + SG_STEP) % sgFrameWidth;
 			break;
 
 		// Движущаяся
 		case 2:
-			for (y = 0; y < sdFrameHeight; y++)
+			for (y = 0; y < sgFrameHeight; y++)
 				{
 				// Сдвиг изображения
-				for (x = 0; x < sdFrameWidth - SD_STEP; x += SD_STEP)
+				for (x = 0; x < sgFrameWidth - SG_STEP; x += SG_STEP)
 					{
-					sdBuffer[y * sdFrameWidth + x] = sdBuffer[y * sdFrameWidth + x + 1]
-#ifdef SD_DOUBLE_WIDTH
-					= sdBuffer[y * sdFrameWidth + x + 2]
+					sgBuffer[y * sgFrameWidth + x] = sgBuffer[y * sgFrameWidth + x + 1]
+#ifdef SG_DOUBLE_WIDTH
+					= sgBuffer[y * sgFrameWidth + x + 2]
 #endif
 					;
 					}
@@ -253,39 +253,39 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 				v = GetScaledAmplitudeEx (y + 1);
 
 				// Отрисовка
-#ifdef SD_DOUBLE_WIDTH
-				sdBuffer[y * sdFrameWidth + sdFrameWidth - 2] = 
+#ifdef SG_DOUBLE_WIDTH
+				sgBuffer[y * sgFrameWidth + sgFrameWidth - 2] = 
 #endif
-				sdBuffer[y * sdFrameWidth + sdFrameWidth - 1] = v;
+				sgBuffer[y * sgFrameWidth + sgFrameWidth - 1] = v;
 				}
 			break;
 
 		// Гистограмма и симметричная гистограмма
 		case 3:
 		case 4:
-			for (x = 0; x < sdFrameWidth; x++)
+			for (x = 0; x < sgFrameWidth; x++)
 				{
 				// Получение значения
-				v = GetScaledAmplitudeEx (cdHistogramFFTValuesCount * (ulong)x / sdFrameWidth);
+				v = GetScaledAmplitudeEx (cdHistogramFFTValuesCount * (ulong)x / sgFrameWidth);
 
 				// Отрисовка
-				v = sdFrameHeight * (ulong)v / CD_BMPINFO_COLORS_COUNT;	// Перемасштабирование
+				v = sgFrameHeight * (ulong)v / CD_BMPINFO_COLORS_COUNT;	// Перемасштабирование
 
-				if (sdSpectrogramMode == 3)
+				if (sgSpectrogramMode == 3)
 					{
 					for (y = 0; y < v; y++)
-						sdBuffer[y * sdFrameWidth + x] = 3 * y / 4 + 48;	// Обрезаем края палитр
-					for (y = v; y < sdFrameHeight; y++)
-						sdBuffer[y * sdFrameWidth + x] = 8;
+						sgBuffer[y * sgFrameWidth + x] = 3 * y / 4 + 48;	// Обрезаем края палитр
+					for (y = v; y < sgFrameHeight; y++)
+						sgBuffer[y * sgFrameWidth + x] = 8;
 					}
 				else
 					{
 					for (y = 0; y < v; y++)
-						sdBuffer[y * sdFrameWidth + (sdFrameWidth + x) / 2] =
-						sdBuffer[y * sdFrameWidth + (sdFrameWidth - x) / 2] = 3 * y / 4 + 48;	// Обрезаем края палитр
-					for (y = v; y < sdFrameHeight; y++)
-						sdBuffer[y * sdFrameWidth + (sdFrameWidth + x) / 2] =
-						sdBuffer[y * sdFrameWidth + (sdFrameWidth - x) / 2] = 8;
+						sgBuffer[y * sgFrameWidth + (sgFrameWidth + x) / 2] =
+						sgBuffer[y * sgFrameWidth + (sgFrameWidth - x) / 2] = 3 * y / 4 + 48;	// Обрезаем края палитр
+					for (y = v; y < sgFrameHeight; y++)
+						sgBuffer[y * sgFrameWidth + (sgFrameWidth + x) / 2] =
+						sgBuffer[y * sgFrameWidth + (sgFrameWidth - x) / 2] = 8;
 					}
 				}
 			break;
@@ -307,25 +307,25 @@ CD_API(sint) InitializeSpectrogramEx (uint FrameWidth, uint FrameHeight, uchar P
 		return -3;
 	if (!cdChannel)		// Канал должен быть инициализирован
 		return -1;
-	if (sdBMP)			// Спектрограмма не должна быть занята
+	if (sgBMP)			// Спектрограмма не должна быть занята
 		return -2;
 
-	sdFrameWidth = FrameWidth & 0xFFFC;		// Хрен знает, почему, но CreateDIBSection не понимает размеры,
-	if (sdFrameWidth != FrameWidth)
-		sdFrameWidth += 4;
+	sgFrameWidth = FrameWidth & 0xFFFC;		// Хрен знает, почему, но CreateDIBSection не понимает размеры,
+	if (sgFrameWidth != FrameWidth)
+		sgFrameWidth += 4;
 
-	sdFrameHeight = FrameHeight & 0xFFFC;	// которые не делятся на 4
-	if (sdFrameHeight != FrameHeight)
-		sdFrameHeight += 4;
+	sgFrameHeight = FrameHeight & 0xFFFC;	// которые не делятся на 4
+	if (sgFrameHeight != FrameHeight)
+		sgFrameHeight += 4;
 
-	sdSpectrogramMode = SpectrogramMode;
+	sgSpectrogramMode = SpectrogramMode;
 
 	// Инициализация описателя
 	memset (cdBMPInfo.cd_bmpinfo_ptr, 0x00, sizeof (union CD_BITMAPINFO));	// Сброс на нули всех значений
 
 	cdBMPInfo.cd_bmpinfo.header.biSize = sizeof (BITMAPINFOHEADER);
-	cdBMPInfo.cd_bmpinfo.header.biWidth = sdFrameWidth;
-	cdBMPInfo.cd_bmpinfo.header.biHeight = sdFrameHeight;
+	cdBMPInfo.cd_bmpinfo.header.biWidth = sgFrameWidth;
+	cdBMPInfo.cd_bmpinfo.header.biHeight = sgFrameHeight;
 	cdBMPInfo.cd_bmpinfo.header.biPlanes = 1;
 	cdBMPInfo.cd_bmpinfo.header.biBitCount = 8;
 	cdBMPInfo.cd_bmpinfo.header.biClrUsed = cdBMPInfo.cd_bmpinfo.header.biClrImportant = CD_BMPINFO_COLORS_COUNT;
@@ -333,7 +333,7 @@ CD_API(sint) InitializeSpectrogramEx (uint FrameWidth, uint FrameHeight, uchar P
 	FillPaletteEx (PaletteNumber);
 
 	// Создание BITMAP
-	if ((sdBMP = CreateDIBSection (NULL, (BITMAPINFO *)&cdBMPInfo, DIB_RGB_COLORS, (void **)&sdBuffer, NULL, 0)) == NULL)
+	if ((sgBMP = CreateDIBSection (NULL, (BITMAPINFO *)&cdBMPInfo, DIB_RGB_COLORS, (void **)&sgBuffer, NULL, 0)) == NULL)
 		return -4;
 
 	// Завершено
@@ -348,12 +348,12 @@ CD_API(void) DestroySpectrogramEx ()
 		return;
 
 	// Сброс
-	if (sdBMP)
+	if (sgBMP)
 		{
-		sdSpectrogramMode = 0;
+		sgSpectrogramMode = 0;
 		
-		DeleteObject (sdBMP);
-		sdBMP = NULL;
+		DeleteObject (sgBMP);
+		sgBMP = NULL;
 		}
 	}
 
@@ -361,11 +361,11 @@ CD_API(void) DestroySpectrogramEx ()
 CD_API(HBITMAP) GetSpectrogramFrameEx ()
 	{
 	// Контроль
-	if (!sdBMP)
+	if (!sgBMP)
 		return NULL;
 
 	// Завершено
-	return sdBMP;
+	return sgBMP;
 	}
 
 // Функция возвращает значение амплитуды на указанном уровне

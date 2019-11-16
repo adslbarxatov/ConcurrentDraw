@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////
 // Режим работы
 //#define BASSTEST
-//#define SD_DOUBLE_WIDTH
+//#define SG_DOUBLE_WIDTH
 
 /////////////////////////////////////////////////////
 // Заголовочные файлы и библиотеки
@@ -33,8 +33,8 @@
 /////////////////////////////////////////////////////
 // Константы
 #define BASS_VERSION				0x02040E00
-#define CD_VERSION					1,14,0,0
-#define CD_VERSION_S				"1.14.0.0"
+#define CD_VERSION					1,14,1,0
+#define CD_VERSION_S				"1.14.1.0"
 #define CD_PRODUCT					"ConcurrentDraw visualization tool's BASS adapter"
 #define CD_COMPANY					"RD AAOW"
 
@@ -64,9 +64,9 @@
 /////////////////////////////////////////////////////
 // Пререквизиты таймера
 #ifdef SD_DOUBLE_WIDTH
-	#define SD_STEP 2				// Ширина шага спектрограммы
+	#define SG_STEP 2				// Ширина шага спектрограммы
 #else
-	#define SD_STEP 1
+	#define SG_STEP 1
 #endif
 
 /////////////////////////////////////////////////////
