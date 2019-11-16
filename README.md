@@ -1,4 +1,4 @@
-# ConcurrentDraw v 1.12
+# ConcurrentDraw v 1.13
 A tool for visualization of system audio output / Утилита визуализации данных системного аудиовыхода
 #
 

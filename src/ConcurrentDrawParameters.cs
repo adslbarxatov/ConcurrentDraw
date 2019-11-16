@@ -192,7 +192,10 @@ namespace ESHQSetupStub
 				logoHeight = (uint)LogoHeightPercentage.Value;
 
 				histoRotSpeedArc = int.Parse (values[14]);
-				HistoRotAccToBeats.Checked = (histoRotSpeedArc < 0);
+				if (histoRotSpeedArc < 0)
+					HistoRotAccToBeats.Checked = true;
+				else
+					HistoRotSpeed.Checked = true;
 				HistoRotSpeedArc.Value = (decimal)Math.Abs (histoRotSpeedArc / 10.0);
 				}
 			catch
@@ -221,7 +224,7 @@ namespace ESHQSetupStub
 			LogoHeightLabel.Text = Localization.GetText ("CDP_LogoHeightLabel", al);
 
 			AlwaysOnTopFlag.Text = Localization.GetText ("CDP_AlwaysOnTopFlag", al);
-			LogoResetFlag.Text = Localization.GetText ("CDP_LogoResetFlag", al);
+			//LogoResetFlag.Text = Localization.GetText ("CDP_LogoResetFlag", al);
 
 			BeatsGroup.Text = Localization.GetText ("CDP_BeatsGroup", al);
 
@@ -257,7 +260,7 @@ namespace ESHQSetupStub
 				GetSavedSettings ();
 
 			// Отмена реинициализации, которая выставляется при загрузке
-			LogoResetFlag.Checked = false;
+			logoResetFlag = false;
 			}
 
 		/// <summary>
@@ -386,7 +389,7 @@ namespace ESHQSetupStub
 		// Отмена настройки
 		private void BCancel_Click (object sender, System.EventArgs e)
 			{
-			LogoResetFlag.Checked = false;	// Перерисовка при отмене бессмысленна
+			logoResetFlag = false;	// Перерисовка при отмене бессмысленна
 			this.Close ();
 			}
 
@@ -495,14 +498,15 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return LogoResetFlag.Checked;
+				return logoResetFlag;
 				}
 			}
+		private bool logoResetFlag = false;
 
 		// Установка реинициализации лого при изменении параметров, от которых зависит его вид
 		private void SDWindowsSize_Changed (object sender, EventArgs e)
 			{
-			LogoResetFlag.Checked = true;
+			logoResetFlag = true;
 			}
 
 		/// <summary>
@@ -555,7 +559,7 @@ namespace ESHQSetupStub
 		private void SDPaletteCombo_SelectedIndexChanged (object sender, EventArgs e)
 			{
 			// Предложение реинициализации
-			LogoResetFlag.Checked = true;
+			logoResetFlag = true;
 
 			// Сборка палитры
 			ConcurrentDrawLib.FillPalette ((byte)SDPaletteCombo.SelectedIndex);

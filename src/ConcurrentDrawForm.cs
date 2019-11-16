@@ -20,6 +20,7 @@ namespace ESHQSetupStub
 		{
 		// Общие переменные и константы
 		private Phases currentPhase = Phases.LayersPrecache;	// Текущая фаза отрисовки
+		private bool logoFirstShowMade = false;					// Флаг, указывающий на выполненное первое отображение лого
 		private uint steps = 0;									// Счётчик шагов отрисовки
 
 		private ConcurrentDrawParameters cdp;					// Параметры работы программы
@@ -29,9 +30,9 @@ namespace ESHQSetupStub
 		// Графика
 		private LogoDrawerLayer mainLayer;						// Базовый слой изображения
 
-		private Graphics gr, gl;								// Объекты-отрисовщики
+		private List<Graphics> gr = new List<Graphics> ();		// Объекты-отрисовщики
 		private List<SolidBrush> brushes = new List<SolidBrush> ();
-		private Bitmap logo1a, logo1b;
+		private List<Bitmap> logo = new List<Bitmap> ();
 
 		private const int logoIdleSpeed = 2;					// Наименьшая скорость вращения лого
 		private int logoSpeedImpulse = 50,						// Импульс скорости
@@ -40,17 +41,16 @@ namespace ESHQSetupStub
 		private uint logoHeight;								// Диаметр лого
 
 		private byte peak;										// Пиковое значение для расчёта битовых порогов
-		private const byte peakTrigger = 0xF0;					// Значение пика, достижение которого является триггером
+		private const byte peakTrigger = 0xF0;					// Значение пика, превышение которого является триггером
 		private uint cumulativeCounter;							// Накопитель, обеспечивающий изменение фона
-		private const uint cumulationDivisor = 100;				// Границы накопителя
-		private const uint cumulationLimit = 255 * cumulationDivisor;
+		private const uint cumulationDivisor = 100,				// Границы накопителя
+			cumulationLimit = 255 * cumulationDivisor;
 
 		private int[] histoX = new int[4],
 			histoY = new int[4];								// Координаты линий гистограммы
 		private const double histoDensity = 2.84;				// Плотность гистограммы-бабочки
 
 		private int rad, amp;									// Вспомогательные переменные
-		private SolidBrush br;
 		private Bitmap b;
 		private Pen p;
 
@@ -193,7 +193,7 @@ namespace ESHQSetupStub
 				}
 
 			// Настройка окна
-			gr = Graphics.FromHwnd (this.Handle);
+			gr.Add (Graphics.FromHwnd (this.Handle));
 			ResetLogo ();
 
 			// Формирование кистей
@@ -206,7 +206,7 @@ namespace ESHQSetupStub
 			demoFont = new Font ("a_GroticNr" /*"Hair ‱"*/, this.Width / 50);
 			for (int i = 0; i < demoNames.Length; i++)
 				{
-				demoSizes[i] = gr.MeasureString (demoNames[i], demoFont);
+				demoSizes[i] = gr[0].MeasureString (demoNames[i], demoFont);
 				}
 
 			// Запуск рендеринга
@@ -369,6 +369,12 @@ namespace ESHQSetupStub
 
 				// Вращение лого
 				case Phases.LogoRotation:
+					if (logoFirstShowMade)
+						{
+						currentLogoArcDelta = 0;
+						currentPhase = Phases.Visualization;
+						}
+
 					RotatingLogo ();
 					break;
 
@@ -399,6 +405,7 @@ namespace ESHQSetupStub
 #if AUDIO
 					am.PlayAudio ();
 #endif
+					logoFirstShowMade = true;
 					currentPhase++;
 					break;
 
@@ -451,7 +458,7 @@ namespace ESHQSetupStub
 			else
 #endif
 				{
-				gr.DrawImage (mainLayer.Layer, mainLayer.Left, mainLayer.Top);
+				gr[0].DrawImage (mainLayer.Layer, mainLayer.Left, mainLayer.Top);
 				}
 			}
 
@@ -463,11 +470,11 @@ namespace ESHQSetupStub
 				currentLogoArcDelta = (currentLogoArcDelta - logoIdleSpeed) / 2;
 
 			// Отрисовка
-			gl.RotateTransform (currentLogoArcDelta);
-			gl.DrawImage (logo1a, -3 * logoHeight / 5, -3 * logoHeight / 5);
-			mainLayer.Descriptor.DrawImage (logo1b, (this.Width - logo1b.Width) / 2,
+			gr[1].RotateTransform (currentLogoArcDelta);
+			gr[1].DrawImage (logo[0], -3 * logoHeight / 5, -3 * logoHeight / 5);
+			mainLayer.Descriptor.DrawImage (logo[1], (this.Width - logo[1].Width) / 2,
 				((VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) !=
-				SpectrogramModes.NoSpectrogram) ? 0 : (this.Height - logo1b.Height) / 2));
+				SpectrogramModes.NoSpectrogram) ? 0 : (this.Height - logo[1].Height) / 2));
 			}
 
 		// Первичное вращение лого
@@ -489,25 +496,27 @@ namespace ESHQSetupStub
 		private void DrawingLogo ()
 			{
 			// Задний круг
-			gl.FillEllipse (brushes[1], logoHeight / 10, logoHeight / 10, logoHeight, logoHeight);
+			gr[1].FillEllipse (brushes[1], logoHeight / 10, logoHeight / 10, logoHeight, logoHeight);
 
 			// Передний эллипс
-			gl.FillEllipse (brushes[0], logoHeight / 10 + steps, logoHeight / 10 - steps,
+			gr[1].FillEllipse (brushes[0], logoHeight / 10 + steps, logoHeight / 10 - steps,
 				logoHeight - 2 * steps, logoHeight + 2 * steps);
 
 			// Отрисовка
-			mainLayer.Descriptor.DrawImage (logo1a, (this.Width - logo1a.Width) / 2,
+			mainLayer.Descriptor.DrawImage (logo[0], (this.Width - logo[0].Width) / 2,
 				((VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) !=
-				SpectrogramModes.NoSpectrogram) ? 0 : (this.Height - logo1a.Height) / 2));
+				SpectrogramModes.NoSpectrogram) ? 0 : (this.Height - logo[0].Height) / 2));
 
 			steps++;
 			if (steps >= logoHeight / 20)
 				{
-				gl.Dispose ();
-				logo1b = new Bitmap (6 * (int)logoHeight / 5, 6 * (int)logoHeight / 5);
-				gl = Graphics.FromImage (logo1b);
+				gr[1].Dispose ();
+				gr.RemoveAt (1);
 
-				gl.TranslateTransform (3 * logoHeight / 5, 3 * logoHeight / 5);
+				logo.Add (new Bitmap (6 * (int)logoHeight / 5, 6 * (int)logoHeight / 5));
+				gr.Add (Graphics.FromImage (logo[1]));
+
+				gr[1].TranslateTransform (3 * logoHeight / 5, 3 * logoHeight / 5);
 				steps = 0;
 				currentPhase++;
 				}
@@ -540,7 +549,7 @@ namespace ESHQSetupStub
 
 				// Обработка вращения гистограммы
 				if (cdp.HistoRotAccordingToBeats)
-					currentHistogramArc += cdp.HistoRotSpeedDelta * currentLogoArcDelta / logoSpeedImpulse;
+					currentHistogramArc += (cdp.HistoRotSpeedDelta * currentLogoArcDelta / logoSpeedImpulse);
 				else
 					currentHistogramArc += cdp.HistoRotSpeedDelta;
 
@@ -550,8 +559,8 @@ namespace ESHQSetupStub
 					currentHistogramArc += 360.0;
 
 				// Сброс изображения
-				mainLayer.Descriptor.FillEllipse (brushes[2], (this.Width - 3 * logo1b.Width) / 2 - 1,
-					(this.Height - 3 * logo1b.Height) / 2 - 1, 3 * logo1b.Width + 2, 3 * logo1b.Height + 2);
+				mainLayer.Descriptor.FillEllipse (brushes[2], (this.Width - 3 * logo[1].Width) / 2 - 1,
+					(this.Height - 3 * logo[1].Height) / 2 - 1, 3 * logo[1].Width + 2, 3 * logo[1].Height + 2);
 
 				// Отрисовка
 				for (int i = 0; i < 256; i++)
@@ -560,12 +569,10 @@ namespace ESHQSetupStub
 					amp = ConcurrentDrawLib.GetScaledAmplitude ((uint)(cdp.HistogramFFTValuesCount * i) >> 8);	// Вместо /256
 
 					// Получаем цвет
-					if (p != null)
-						p.Dispose ();
-					p = new Pen (ConcurrentDrawLib.GetColorFromPalette ((byte)(3 * amp / 4)), 2);
+					p = new Pen (ConcurrentDrawLib.GetColorFromPalette ((byte)(3 * amp / 4)), logoHeight / 80);
 
 					// Определяем координаты линий
-					rad = logo1b.Width / 2 + (int)((uint)(logo1b.Width * amp) >> 8);	// Вместо /256
+					rad = logo[1].Width / 2 + (int)((uint)(logo[1].Width * amp) >> 8);	// Вместо /256
 					histoX[0] = histoX[2] = this.Width / 2 + (int)(rad * Math.Cos (ArcToRad (i / histoDensity + currentHistogramArc)));
 					histoX[1] = histoX[3] = this.Width - histoX[0];
 					histoY[0] = histoY[3] = this.Height / 2 + (int)(rad * Math.Sin (ArcToRad (i / histoDensity + currentHistogramArc)));
@@ -574,6 +581,9 @@ namespace ESHQSetupStub
 					// Рисуем
 					mainLayer.Descriptor.DrawLine (p, histoX[0], histoY[0], histoX[1], histoY[1]);
 					mainLayer.Descriptor.DrawLine (p, histoX[2], histoY[2], histoX[3], histoY[3]);
+
+					// Завершено
+					p.Dispose ();
 					}
 				}
 
@@ -586,12 +596,12 @@ namespace ESHQSetupStub
 					currentLogoArcDelta = -logoSpeedImpulse;
 
 				// Бит-детектор
-				br = new SolidBrush (ConcurrentDrawLib.GetMasterPaletteColor (peak));
-				rad = 650 * logo1b.Height / (1950 - peak);
+				p = new Pen (ConcurrentDrawLib.GetMasterPaletteColor (peak), logoHeight / 50);
+				rad = 650 * logo[1].Height / (1950 - peak);
 
-				mainLayer.Descriptor.FillEllipse (br, (this.Width - rad) / 2,
+				mainLayer.Descriptor.DrawEllipse (p, (this.Width - rad) / 2,
 					(((VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) !=
-					SpectrogramModes.NoSpectrogram) ? logo1b.Height : this.Height) - rad) / 2, rad, rad);
+					SpectrogramModes.NoSpectrogram) ? logo[1].Height : this.Height) - rad) / 2, rad, rad);
 
 #if VIDEO
 				if (VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) == SpectrogramModes.NoSpectrogram)
@@ -610,7 +620,7 @@ namespace ESHQSetupStub
 					}
 #endif
 
-				br.Dispose ();
+				p.Dispose ();
 				}
 
 			// Отрисовка спектрограммы при необходимости
@@ -637,8 +647,8 @@ namespace ESHQSetupStub
 			mainLayer.Descriptor.FillRectangle (brushes[0], 0, 0, this.Width, this.Height);
 
 			// Инициализация лого
-			logo1a = new Bitmap (6 * (int)logoHeight / 5, 6 * (int)logoHeight / 5);
-			gl = Graphics.FromImage (logo1a);
+			logo.Add (new Bitmap (6 * (int)logoHeight / 5, 6 * (int)logoHeight / 5));
+			gr.Add (Graphics.FromImage (logo[0]));
 
 			// Переход к следующему обработчику
 			steps = 0;
@@ -661,14 +671,14 @@ namespace ESHQSetupStub
 				brushes[i].Dispose ();
 			brushes.Clear ();
 
-			if (gr != null)
-				gr.Dispose ();
-			if (gl != null)
-				gl.Dispose ();
-			if (logo1a != null)
-				logo1a.Dispose ();
-			if (logo1b != null)
-				logo1b.Dispose ();
+			for (int i = 0; i < gr.Count; i++)
+				gr[i].Dispose ();
+			gr.Clear ();
+
+			for (int i = 0; i < logo.Count; i++)
+				logo[i].Dispose ();
+			logo.Clear ();
+
 			if (mainLayer != null)
 				mainLayer.Dispose ();
 			if (cdp != null)
@@ -701,8 +711,11 @@ namespace ESHQSetupStub
 
 				if (mainLayer != null)
 					mainLayer.Dispose ();
-				if (gr != null)
-					gr.Dispose ();
+				if (gr[0] != null)
+					{
+					gr[0].Dispose ();
+					gr.RemoveAt (0);
+					}
 				this.TopMost = false;						// Разрешает отображение окна параметров
 
 				// Перезапрос параметров
@@ -720,7 +733,7 @@ namespace ESHQSetupStub
 			brushes[1].Color = ConcurrentDrawLib.GetMasterPaletteColor ();
 			mainLayer = new LogoDrawerLayer (0, 0, (uint)this.Width, (uint)this.Height);
 			mainLayer.Descriptor.FillRectangle (brushes[0], 0, 0, this.Width, this.Height);
-			gr = Graphics.FromHwnd (this.Handle);
+			gr.Insert (0, Graphics.FromHwnd (this.Handle));
 
 			// Реинициализация лого (при необходимости)
 			if (cdp.ReselLogo)
@@ -734,12 +747,16 @@ namespace ESHQSetupStub
 		private void ResetLogo ()
 			{
 			// Сброс дескрипторов
-			if (gl != null)
-				gl.Dispose ();
-			if (logo1a != null)
-				logo1a.Dispose ();
-			if (logo1b != null)
-				logo1b.Dispose ();
+			if (gr.Count > 1)
+				{
+				gr[1].Dispose ();
+				gr.RemoveAt (1);
+				}
+
+			for (int i = 0; i < logo.Count; i++)
+				logo[i].Dispose ();
+			logo.Clear ();
+
 			currentHistogramArc = 0;
 
 			// Установка главного расчётного размера

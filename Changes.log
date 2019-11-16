@@ -86,3 +86,8 @@ Version 1.12:
 • Histogram rotation angle is more precise now;
 • 'Beats detector'-based histogram rotation's angle impulse now may be adjusted;
 • Butterfly histogram got full (360 degrees) field and more accurate spikes drawing
+
+Version 1.13:
+• Beat detector's code optimizations applied;
+• Some minor bugs fixed;
+• Quick logo reset algorithm on settings' changes applied
