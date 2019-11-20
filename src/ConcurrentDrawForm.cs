@@ -235,7 +235,7 @@ namespace ESHQSetupStub
 				{
 				ExtendedTimer.Enabled = true;
 				}
-			this.Activate ();
+				this.Activate ();
 			}
 
 		// Метод инициализирует аудиоканал
@@ -249,7 +249,7 @@ namespace ESHQSetupStub
 				ssie = ConcurrentDrawLib.InitializeSoundStream (OFAudio.FileName);
 			else
 #endif
-				ssie = ConcurrentDrawLib.InitializeSoundStream (cdp.DeviceNumber);
+			ssie = ConcurrentDrawLib.InitializeSoundStream (cdp.DeviceNumber);
 			switch (ssie)
 				{
 				case SoundStreamInitializationErrors.BASS_ERROR_ALREADY:

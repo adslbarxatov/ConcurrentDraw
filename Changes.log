@@ -99,3 +99,10 @@ Version 1.14:
 
 Version 1.14.1:
 • Some code optimizations and improvements applied
+
+Version 1.15:
+• Some minor bugs fixed;
+• Application failure on settings call fixed: forced threads synchronization
+  applied;
+• Max histogram height extended up to 512 px;
+• Beats detector's peaks evaluation is more stable now

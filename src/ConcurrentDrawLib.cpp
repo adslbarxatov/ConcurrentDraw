@@ -6,6 +6,7 @@ HRECORD cdChannel = NULL;			// Дескриптор чтения
 uint channelLength = 0;				// Длина потока (при инициализации из файла будет ненулевой)
 float cdFFT[FFT_VALUES_COUNT];		// Массив значений, получаемый из канала
 MMRESULT cdFFTTimer = NULL;			// Дескриптор таймера запроса данных из буфера
+uchar updating = 0;					// Флаг, указывающий на незавершённость последнего процесса обновления FFT
 
 HBITMAP sgBMP = NULL;				// Дескриптор BITMAP спектральной диаграммы
 uchar *sgBuffer;					// Буфер спектральной диаграммы
@@ -134,15 +135,15 @@ CD_API(void) DestroySoundStreamEx ()
 	if (!cdChannel)
 		return;
 
-	// Закрытие спектрограммы, если есть
-	DestroySpectrogramEx ();
-
 	// Закрытие таймера
 	if (cdFFTTimer)
 		{
 		timeKillEvent (cdFFTTimer);
 		cdFFTTimer = NULL;
 		}
+
+	// Закрытие спектрограммы, если есть
+	DestroySpectrogramEx ();
 
 	// Остановка
 	if (channelLength)
@@ -183,7 +184,7 @@ CD_API(uchar) GetScaledAmplitudeEx (uint FrequencyLevel)
 	v = (uint)(sqrt (cdFFT[FrequencyLevel]) * cdFFTScale);
 
 	// Вписывание в диапазон (uchar)
-	if (v > CD_BMPINFO_COLORS_COUNT - 1) 
+	if (v > CD_BMPINFO_COLORS_COUNT - 1)
 		v = CD_BMPINFO_COLORS_COUNT - 1;
 
 	// Пересчёт пика
@@ -204,6 +205,9 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 	// Заполнение массива (если возможно)
 	if (!GetDataFromStreamEx ())
 		return;
+
+	// Переход в режим обновления
+	updating = 1;
 
 	// Обновление спектрограммы, если требуется
 	switch (sgSpectrogramMode)
@@ -268,28 +272,32 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 				// Получение значения
 				v = GetScaledAmplitudeEx (cdHistogramFFTValuesCount * (ulong)x / sgFrameWidth);
 
-				// Отрисовка
-				v = sgFrameHeight * (ulong)v / CD_BMPINFO_COLORS_COUNT;	// Перемасштабирование
+				// Перемасштабирование
+				v = sgFrameHeight * (ulong)v / CD_BMPINFO_COLORS_COUNT;	
 
 				if (sgSpectrogramMode == 3)
 					{
 					for (y = 0; y < v; y++)
-						sgBuffer[y * sgFrameWidth + x] = 3 * y / 4 + 48;	// Обрезаем края палитр
+						sgBuffer[y * sgFrameWidth + x] = CD_HISTO_BAR;	// Обрезаем края палитр
 					for (y = v; y < sgFrameHeight; y++)
-						sgBuffer[y * sgFrameWidth + x] = 8;
+						sgBuffer[y * sgFrameWidth + x] = CD_HISTO_SPACE;
 					}
 				else
 					{
 					for (y = 0; y < v; y++)
 						sgBuffer[y * sgFrameWidth + (sgFrameWidth + x) / 2] =
-						sgBuffer[y * sgFrameWidth + (sgFrameWidth - x) / 2] = 3 * y / 4 + 48;	// Обрезаем края палитр
+						sgBuffer[y * sgFrameWidth + (sgFrameWidth - x) / 2] = CD_HISTO_BAR;	// Обрезаем края палитр
+
 					for (y = v; y < sgFrameHeight; y++)
 						sgBuffer[y * sgFrameWidth + (sgFrameWidth + x) / 2] =
-						sgBuffer[y * sgFrameWidth + (sgFrameWidth - x) / 2] = 8;
+						sgBuffer[y * sgFrameWidth + (sgFrameWidth - x) / 2] = CD_HISTO_SPACE;
 					}
 				}
 			break;
 		}
+
+	// Обновление завершено
+	updating = 0;
 	}
 
 // Функция выполняет ручное обновление данных FFT вместо встроенного таймера
@@ -347,6 +355,9 @@ CD_API(void) DestroySpectrogramEx ()
 	if (!cdChannel)
 		return;
 
+	// Запрет на инвалидацию спектрограммы при активном процессе обновления
+	while (updating);
+
 	// Сброс
 	if (sgBMP)
 		{
@@ -372,8 +383,8 @@ CD_API(HBITMAP) GetSpectrogramFrameEx ()
 CD_API(uchar) GetCurrentPeakEx ()
 	{
 	// Не требует защиты
-	if (cdFFTPeak == 0xFF)
-		cdFFTPeak--;		// На первый раз прощаем
+	if (cdFFTPeak > 0xFD)
+		cdFFTPeak--;		// "Эхо"
 	else if (cdFFTPeak > 40)
 		cdFFTPeak -= 40;	// Далее - затухание
 	else
