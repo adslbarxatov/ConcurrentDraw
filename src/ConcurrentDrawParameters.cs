@@ -14,11 +14,6 @@ namespace ESHQSetupStub
 		private char[] splitter = new char[] { ';' };
 		private SupportedLanguages al = Localization.CurrentLanguage;
 
-		/// <summary>
-		/// Возвращает ключ реестра, в котором хранятся настройки приложения
-		/// </summary>
-		public const string SettingsKey = "HKEY_LOCAL_MACHINE\\SOFTWARE\\" + ProgramDescription.AssemblyMainName;
-
 		// Название параметра с настройками
 		private const string SettingsValueName = "";
 
@@ -135,7 +130,7 @@ namespace ESHQSetupStub
 			string settings = "";
 			try
 				{
-				settings = Registry.GetValue (SettingsKey, SettingsValueName, "").ToString ();
+				settings = Registry.GetValue (ProgramDescription.AssemblySettingsKey, SettingsValueName, "").ToString ();
 				}
 			catch
 				{
@@ -370,7 +365,7 @@ namespace ESHQSetupStub
 
 			try
 				{
-				Registry.SetValue (SettingsKey, SettingsValueName, settings);
+				Registry.SetValue (ProgramDescription.AssemblySettingsKey, SettingsValueName, settings);
 				}
 			catch
 				{

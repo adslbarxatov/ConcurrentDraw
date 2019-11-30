@@ -5,10 +5,11 @@
 
 /////////////////////////////////////////////////////
 // Заголовочные файлы и библиотеки
-#include <windows.h>
-#include <stdio.h>
-#include <math.h>
 #include <malloc.h>
+#include <math.h>
+#include <stdio.h>
+#include <time.h> 
+#include <windows.h>
 
 #include "BASS/bass.h"
 #pragma comment (lib, "BASS/bass.lib")
@@ -33,8 +34,8 @@
 /////////////////////////////////////////////////////
 // Константы
 #define BASS_VERSION				0x02040E00
-#define CD_VERSION					1,15,0,0
-#define CD_VERSION_S				"1.15.0.0"
+#define CD_VERSION					1,16,0,0
+#define CD_VERSION_S				"1.16.0.0"
 #define CD_PRODUCT					"ConcurrentDraw visualization tool's BASS adapter"
 #define CD_COMPANY					"RD AAOW"
 
@@ -50,6 +51,7 @@
 #define MINFRAMEHEIGHT				128
 #define CD_BMPINFO_COLORS_COUNT		256
 #define MAXFRAMEHEIGHT				512
+#define POLYMORPH_UPDATE_PAUSE		30
 
 #define CD_HISTO_BAR				(192 * y / sgFrameHeight + 48)
 #define CD_HISTO_SPACE				8
@@ -155,6 +157,9 @@ CD_API(void) SetHistogramFFTValuesCountEx (uint Count);
 
 // Функция возвращает длину текущего файлового потока (для аудиовыхода всегда 0)
 CD_API(uint) GetChannelLengthEx ();
+
+// Функция возвращает ПСЗ из диапазона [Min; Max)
+sint GetRandomValue (sint Min, sint Max);
 
 #ifdef BASSTEST
 	// Тестовая функция для библиотеки BASS

@@ -26,7 +26,9 @@ uchar cdFFTPeak = 0,									// Текущее пиковое значение
 
 union CD_BITMAPINFO cdBMPInfo,		// Данные для инициализации спектрограммы
 	cdDummyInfo;					// Вспомогательная палитра для бит-детектора
-uchar cdCurrentPalette = 0;			// Номер текущей палитры
+
+RGBQUAD polymorphColors[5];			// Опорные цвета полиморфной палитры
+uint polymorphUpdateCounter = 0;	// Счётчик обновления полиморфной палитры
 
 // Функция получает имена устройств вывода звука (массив символов по 128 на имя)
 CD_API(uchar) GetDevicesEx (schar **Devices)
@@ -208,6 +210,15 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 
 	// Переход в режим обновления
 	updating = 1;
+
+	// Обновление полиморфной палитры
+	if (polymorphUpdateCounter != 0)	// Нулевое значение используется как блокировка
+		{
+		if (polymorphUpdateCounter++ >= POLYMORPH_UPDATE_PAUSE)
+			{
+			FillPaletteEx (10);
+			}
+		}
 
 	// Обновление спектрограммы, если требуется
 	switch (sgSpectrogramMode)
@@ -412,8 +423,9 @@ CD_API(void) SetPeakEvaluationParametersEx (uchar LowEdge, uchar HighEdge,
 // Функция формирует палитру
 CD_API(void) FillPaletteEx (uchar PaletteNumber)
 	{
-	uint i;
+	uint i, j;
 	uint qSize = CD_BMPINFO_COLORS_COUNT / 4;
+	polymorphUpdateCounter = 0;
 
 	switch (PaletteNumber)
 		{
@@ -447,8 +459,6 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 				cdDummyInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
 				cdDummyInfo.cd_bmpinfo.colors[i].rgbBlue = i;
 				}
-
-			cdCurrentPalette = 0;
 			break;
 
 		// Море
@@ -478,8 +488,6 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 					cdDummyInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
 				cdDummyInfo.cd_bmpinfo.colors[i].rgbBlue = i;
 				}
-
-			cdCurrentPalette = PaletteNumber;
 			break;
 
 		// Огонь
@@ -509,8 +517,6 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 				cdDummyInfo.cd_bmpinfo.colors[i].rgbGreen = i / 4;
 				cdDummyInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
 				}
-
-			cdCurrentPalette = PaletteNumber;
 			break;
 
 		// Серая
@@ -533,8 +539,6 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 					cdDummyInfo.cd_bmpinfo.colors[i].rgbGreen =
 					cdDummyInfo.cd_bmpinfo.colors[i].rgbBlue = 4 * i / 5;
 				}
-
-			cdCurrentPalette = PaletteNumber;
 			break;
 
 		// Рассвет
@@ -564,8 +568,6 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 					cdDummyInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
 				cdDummyInfo.cd_bmpinfo.colors[i].rgbGreen = 3 * i / 4;
 				}
-
-			cdCurrentPalette = PaletteNumber;
 			break;
 
 		// Кислота
@@ -576,11 +578,11 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 				cdBMPInfo.cd_bmpinfo.colors[i].rgbRed = 
 					cdBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
 
-				cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbGreen = 64 + i;
+				cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbGreen = qSize + i;
 				cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbRed =
 					cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbBlue = 0;
 
-				cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbGreen = 128 + 2 * i;
+				cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbGreen = 2 * (qSize + i);
 				cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbRed =
 					cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbBlue = 0;
 
@@ -595,8 +597,6 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 				cdDummyInfo.cd_bmpinfo.colors[i].rgbRed =
 					cdDummyInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
 				}
-
-			cdCurrentPalette = PaletteNumber;
 			break;
 
 		// 7 пропущенных
@@ -685,6 +685,91 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 					cdDummyInfo.cd_bmpinfo.colors[i].rgbBlue = 3 * i / 4;
 				}
 			break;
+
+		// Кровь
+		case 9:
+			for (i = 0; i < qSize; i++) 
+				{
+				cdBMPInfo.cd_bmpinfo.colors[i].rgbRed = i;
+				cdBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 
+					cdBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
+
+				cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbRed = qSize + i;
+				cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbGreen =
+					cdBMPInfo.cd_bmpinfo.colors[qSize + i].rgbBlue = 0;
+
+				cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbRed = 2 * (qSize + i);
+				cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbGreen =
+					cdBMPInfo.cd_bmpinfo.colors[2 * qSize + i].rgbBlue = 0;
+
+				cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbGreen =
+					cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbBlue = 4 *  i;
+				cdBMPInfo.cd_bmpinfo.colors[3 * qSize + i].rgbRed = 255;
+				}
+
+			for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
+				{
+				cdDummyInfo.cd_bmpinfo.colors[i].rgbRed = i;
+				cdDummyInfo.cd_bmpinfo.colors[i].rgbGreen =
+					cdDummyInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
+				}
+			break;
+
+		// Полиморфная и случайная
+		case 10:
+		case 11:
+			// Обновление цветов
+			if ((polymorphColors[4].rgbRed != 255) || (PaletteNumber == 11))
+				{
+				srand((uint)time (NULL));
+				//polymorphColors[0].rgbRed = polymorphColors[0].rgbGreen = polymorphColors[0].rgbBlue = 0;
+				polymorphColors[4].rgbRed = polymorphColors[4].rgbGreen = polymorphColors[4].rgbBlue = 255;
+
+				for (i = 1; i < 4; i++)
+					{
+					polymorphColors[i].rgbRed = GetRandomValue (64, 256);
+					polymorphColors[i].rgbGreen = GetRandomValue (64, 256);
+					polymorphColors[i].rgbBlue = GetRandomValue (64, 256);
+					}
+				}
+
+			for (i = 1; i < 4; i++)
+				{
+				polymorphColors[i].rgbRed += GetRandomValue (-10, 10);
+				if (polymorphColors[i].rgbRed < 10) polymorphColors[i].rgbRed = 255;
+				if (polymorphColors[i].rgbRed < 64) polymorphColors[i].rgbRed = 64;
+
+				polymorphColors[i].rgbGreen += GetRandomValue (-10, 10);
+				if (polymorphColors[i].rgbGreen < 10) polymorphColors[i].rgbGreen = 255;
+				if (polymorphColors[i].rgbGreen < 64) polymorphColors[i].rgbGreen = 64;
+
+				polymorphColors[i].rgbBlue += GetRandomValue (-10, 10);
+				if (polymorphColors[i].rgbBlue < 10) polymorphColors[i].rgbBlue = 255;
+				if (polymorphColors[i].rgbBlue < 64) polymorphColors[i].rgbBlue = 64;
+				}
+
+			// Заполнение
+			for (i = 0; i < qSize; i++)
+				for (j = 0; j < 4; j++)
+					{
+					cdBMPInfo.cd_bmpinfo.colors[j * qSize + i].rgbRed = ((qSize - i) * polymorphColors[j].rgbRed +
+						i * polymorphColors[j + 1].rgbRed) / qSize;
+					cdBMPInfo.cd_bmpinfo.colors[j * qSize + i].rgbGreen = ((qSize - i) * polymorphColors[j].rgbGreen +
+						i * polymorphColors[j + 1].rgbGreen) / qSize;
+					cdBMPInfo.cd_bmpinfo.colors[j * qSize + i].rgbBlue = ((qSize - i) * polymorphColors[j].rgbBlue +
+						i * polymorphColors[j + 1].rgbBlue) / qSize;
+					}
+
+			for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
+				{
+				cdDummyInfo.cd_bmpinfo.colors[i].rgbRed = i * polymorphColors[2].rgbRed / CD_BMPINFO_COLORS_COUNT;
+				cdDummyInfo.cd_bmpinfo.colors[i].rgbGreen = i * polymorphColors[2].rgbGreen / CD_BMPINFO_COLORS_COUNT;
+				cdDummyInfo.cd_bmpinfo.colors[i].rgbBlue = i * polymorphColors[2].rgbBlue / CD_BMPINFO_COLORS_COUNT;
+				}
+
+			if (PaletteNumber == 10)
+				polymorphUpdateCounter = 1;
+			break;
 		}
 	}
 
@@ -714,7 +799,10 @@ CD_API(schar *) GetPalettesNamesEx ()
 		"Acid" NAMES_DELIMITER_S \
 		"7 missed calls" NAMES_DELIMITER_S \
 		"Sail on the sea" NAMES_DELIMITER_S \
-		"Mirror")
+		"Mirror" NAMES_DELIMITER_S \
+		"Blood" NAMES_DELIMITER_S \
+		"Polymorph" NAMES_DELIMITER_S \
+		"Random")
 
 	return PALETTES_NAMES;
 	}
@@ -755,4 +843,10 @@ CD_API(uint) GetChannelLengthEx ()
 		return 0;
 
 	return channelLength;
+	}
+
+// Функция возвращает ПСЗ из диапазона [Min; Max)
+sint GetRandomValue (sint Min, sint Max)
+	{
+	return (double)rand () / (RAND_MAX + 1.0) * (Max - Min) + Min;
 	}

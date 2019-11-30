@@ -44,7 +44,7 @@ namespace ESHQSetupStub
 				string lang = "";
 				try
 					{
-					lang = Registry.GetValue (ConcurrentDrawParameters.SettingsKey,
+					lang = Registry.GetValue (ProgramDescription.AssemblySettingsKey,
 						LanguageValueName, "").ToString ();	// Вызовет исключение при отсутствии ключа
 					}
 				catch
@@ -79,7 +79,7 @@ namespace ESHQSetupStub
 				{
 				try
 					{
-					Registry.SetValue (ConcurrentDrawParameters.SettingsKey,
+					Registry.SetValue (ProgramDescription.AssemblySettingsKey,
 						LanguageValueName, value.ToString ());	// Вызовет исключение, если раздел не удалось создать
 					}
 				catch
@@ -99,10 +99,10 @@ namespace ESHQSetupStub
 			switch (Language)
 				{
 				default:
-					return ConcurrentDraw_en_us.ResourceManager.GetString (TextName);
+					return ProgramDescription.AssemblyLocalizationRMs[0].GetString (TextName);
 
 				case SupportedLanguages.ru_ru:
-					return ConcurrentDraw_ru_ru.ResourceManager.GetString (TextName);
+					return ProgramDescription.AssemblyLocalizationRMs[1].GetString (TextName);
 				}
 			}
 		}

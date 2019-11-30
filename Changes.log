@@ -106,3 +106,7 @@ Version 1.15:
   applied;
 • Max histogram height extended up to 512 px;
 • Beats detector's peaks evaluation is more stable now
+
+Version 1.16:
+• Some improvements applied;
+• Added new palettes including the one that changes over time and the random one
