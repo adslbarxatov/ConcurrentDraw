@@ -1,14 +1,9 @@
 /////////////////////////////////////////////////////
-// Режим работы
-//#define BASSTEST
-//#define SG_DOUBLE_WIDTH
-
-/////////////////////////////////////////////////////
 // Заголовочные файлы и библиотеки
 #include <malloc.h>
 #include <math.h>
 #include <stdio.h>
-#include <time.h> 
+#include <time.h>
 #include <windows.h>
 
 #include "BASS/bass.h"
@@ -34,8 +29,8 @@
 /////////////////////////////////////////////////////
 // Константы
 #define BASS_VERSION				0x02040E00
-#define CD_VERSION					1,16,0,0
-#define CD_VERSION_S				"1.16.0.0"
+#define CD_VERSION					1,17,0,0
+#define CD_VERSION_S				"1.17.0.0"
 #define CD_PRODUCT					"ConcurrentDraw visualization tool's BASS adapter"
 #define CD_COMPANY					"RD AAOW"
 
@@ -53,18 +48,22 @@
 #define MAXFRAMEHEIGHT				512
 #define POLYMORPH_UPDATE_PAUSE		30
 
-#define CD_HISTO_BAR				(192 * y / sgFrameHeight + 48)
+#define CD_HISTO_BAR				(192 * y / AS.sgFrameHeight + 48)
 #define CD_HISTO_SPACE				8
 
 #define PEAK_EVALUATION_LOW_EDGE	0
 #define PEAK_EVALUATION_HIGH_EDGE	4
 #define PEAK_EVALUATION_LOW_LEVEL	0xF8
 #define CD_DEFAULT_FFT_SCALE_MULT	40
+#define CD_SECOND_FFT_SCALE_MULT	25.5f
 #define CD_MIN_FFT_SCALE_MULT		10
 #define CD_MAX_FFT_SCALE_MULT		100
 
 #define NAMES_DELIMITER_C			'\x1'
 #define NAMES_DELIMITER_S			"\x1"
+
+#define CD_RECORD_FREQ				44100
+#define CD_TIMER_TPS				25
 
 /////////////////////////////////////////////////////
 // Пререквизиты таймера
@@ -90,6 +89,7 @@ union CD_BITMAPINFO
 // Внутренние функции
 float *GetDataFromStreamEx ();
 void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWORD dw2);
+sint GetRandomValue (sint Min, sint Max);
 
 /////////////////////////////////////////
 // Внешние функции
@@ -143,7 +143,19 @@ CD_API(ulong) GetDefaultPeakEvaluationParametersEx ();
 // Функция возвращает масштабированное значение амплитуды на указанной частоте
 CD_API(uchar) GetScaledAmplitudeEx (uint FrequencyLevel);
 
-// Функция формирует палитру
+// Функции формирует палитры
+void FillPalette_Default (void);
+void FillPalette_Sea (void);
+void FillPalette_Fire (void);
+void FillPalette_Grey (void);
+void FillPalette_Sunrise (void);
+void FillPalette_Acid (void);
+void FillPalette_7MissedCalls (void);
+void FillPalette_SailOnTheSea (void);
+void FillPalette_Mirror (void);
+void FillPalette_Blood (void);
+void FillPalette_PolymorphRandom (uchar Polymorph, uchar Monocolor);
+
 CD_API(void) FillPaletteEx (uchar PaletteNumber);
 
 // Функция получает указанный цвет из текущей палитры
@@ -158,10 +170,46 @@ CD_API(void) SetHistogramFFTValuesCountEx (uint Count);
 // Функция возвращает длину текущего файлового потока (для аудиовыхода всегда 0)
 CD_API(uint) GetChannelLengthEx ();
 
-// Функция возвращает ПСЗ из диапазона [Min; Max)
-sint GetRandomValue (sint Min, sint Max);
+// Состояние программы
+union CDSTATE
+	{
+	struct CDSTATE_ST
+		{
+		HRECORD cdChannel;				// Дескриптор чтения
+		uint channelLength;				// Длина потока (при инициализации из файла будет ненулевой)
+		float cdFFT[FFT_VALUES_COUNT];	// Массив значений, получаемый из канала
+		MMRESULT cdFFTTimer;			// Дескриптор таймера запроса данных из буфера
+		uchar updating;					// Флаг, указывающий на незавершённость последнего процесса обновления FFT
 
-#ifdef BASSTEST
-	// Тестовая функция для библиотеки BASS
-	CD_API(void) BASSTest ();
-#endif
+		HBITMAP sgBMP;					// Дескриптор BITMAP спектральной диаграммы
+		uchar *sgBuffer;				// Буфер спектральной диаграммы
+		uint sgFrameWidth;				// Размеры изображения спектрограммы
+		uint sgFrameHeight;
+		uint sgCurrentPosition;			// Текущая позиция на статичной спектрограмме
+		uchar sgSpectrogramMode;		// Режим спектрограммы (0 - выключена, 1 - с курсором, 
+										// 2 - движущаяся, 3 - гистограмма, 4 - симметричная гистограмма)
+
+		float cdFFTScale;				// Масштаб значений FFT
+		uint cdHistogramFFTValuesCount;	// Количество значений FFT, используемых для гистограмм
+		uchar cdFFTPeak;				// Текущее пиковое значение
+		uchar cdFFTPeakEvLowEdge;		// Нижняя граница диапазона определения пика
+		uchar cdFFTPeakEvHighEdge;		// Верхняя граница диапазона определения пика
+		uchar cdFFTPeakEvLowLevel;		// Наименьшая амплитуда, на которой определяется пик
+
+		union CD_BITMAPINFO cdBMPInfo;	// Данные для инициализации спектрограммы
+		union CD_BITMAPINFO cdDummyInfo;// Вспомогательная палитра для бит-детектора
+
+		RGBQUAD polymorphColors[5];		// Опорные цвета полиморфной палитры
+		uint polymorphUpdateCounter;	// Счётчик обновления полиморфной палитры
+		uint cdCurrentPalette;			// Текущая палитра
+		} cdState_St;
+
+	//uchar cdState_Ptr[sizeof (struct CDSTATE_ST)];
+	};
+
+// Функция возвращает ссылку на состояние программы
+#define AS	GetAppState()->cdState_St
+union CDSTATE *GetAppState (void);
+
+// Функция инициализирует состояние программы
+void InitAppState (void);

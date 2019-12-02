@@ -255,7 +255,7 @@ namespace ESHQSetupStub
 				GetSavedSettings ();
 
 			// Отмена реинициализации, которая выставляется при загрузке
-			logoResetFlag = false;
+			logoResetFlag = (SDPaletteCombo.SelectedIndex >= 10) && (SDPaletteCombo.SelectedIndex <= 13);
 			}
 
 		/// <summary>

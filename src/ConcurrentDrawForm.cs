@@ -696,7 +696,18 @@ namespace ESHQSetupStub
 		// Вызов настроек
 		private void ConcurrentDrawForm_MouseClick (object sender, MouseEventArgs e)
 			{
-			// Реинициализация
+			// Простой сброс логотипа
+			if ((e.Button == MouseButtons.Left) && (e.Clicks == 2))
+				{
+				// Перезаполнение палитры (без сброса поля отрисовки)
+				ConcurrentDrawLib.FillPalette (cdp.PaletteNumber);
+				brushes[1].Color = ConcurrentDrawLib.GetMasterPaletteColor ();
+
+				ResetLogo ();
+				return;
+				}
+
+			// Реинициализация окна
 			if (e.Button != MouseButtons.Right)
 				return;
 
