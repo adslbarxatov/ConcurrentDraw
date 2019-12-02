@@ -29,8 +29,8 @@
 /////////////////////////////////////////////////////
 // Константы
 #define BASS_VERSION				0x02040E00
-#define CD_VERSION					1,17,0,0
-#define CD_VERSION_S				"1.17.0.0"
+#define CD_VERSION					1,17,1,0
+#define CD_VERSION_S				"1.17.1.0"
 #define CD_PRODUCT					"ConcurrentDraw visualization tool's BASS adapter"
 #define CD_COMPANY					"RD AAOW"
 
@@ -48,7 +48,7 @@
 #define MAXFRAMEHEIGHT				512
 #define POLYMORPH_UPDATE_PAUSE		30
 
-#define CD_HISTO_BAR				(192 * y / AS.sgFrameHeight + 48)
+#define CD_HISTO_BAR				(192 * y / AS->sgFrameHeight + 48)
 #define CD_HISTO_SPACE				8
 
 #define PEAK_EVALUATION_LOW_EDGE	0
@@ -82,7 +82,41 @@ union CD_BITMAPINFO
 		BITMAPINFOHEADER    header;
 		RGBQUAD             colors[CD_BMPINFO_COLORS_COUNT];
 		} cd_bmpinfo;
+
 	uchar cd_bmpinfo_ptr [sizeof (struct CD_BMPINFO)];
+	};
+
+/////////////////////////////////////////////////////
+// Структура-описатель состояния программы
+struct CDSTATE
+	{
+	HRECORD cdChannel;				// Дескриптор чтения
+	uint cdChannelLength;				// Длина потока (при инициализации из файла будет ненулевой)
+	float cdFFT[FFT_VALUES_COUNT];	// Массив значений, получаемый из канала
+	MMRESULT cdFFTTimer;			// Дескриптор таймера запроса данных из буфера
+	uchar updating;					// Флаг, указывающий на незавершённость последнего процесса обновления FFT
+
+	HBITMAP sgBMP;					// Дескриптор BITMAP спектральной диаграммы
+	uchar *sgBuffer;				// Буфер спектральной диаграммы
+	uint sgFrameWidth;				// Размеры изображения спектрограммы
+	uint sgFrameHeight;
+	uint sgCurrentPosition;			// Текущая позиция на статичной спектрограмме
+	uchar sgSpectrogramMode;		// Режим спектрограммы (0 - выключена, 1 - с курсором, 
+										// 2 - движущаяся, 3 - гистограмма, 4 - симметричная гистограмма)
+
+	float cdFFTScale;				// Масштаб значений FFT
+	uint cdHistogramFFTValuesCount;	// Количество значений FFT, используемых для гистограмм
+	uchar cdFFTPeak;				// Текущее пиковое значение
+	uchar cdFFTPeakEvLowEdge;		// Нижняя граница диапазона определения пика
+	uchar cdFFTPeakEvHighEdge;		// Верхняя граница диапазона определения пика
+	uchar cdFFTPeakEvLowLevel;		// Наименьшая амплитуда, на которой определяется пик
+
+	union CD_BITMAPINFO sgBMPInfo;	// Данные для инициализации спектрограммы
+	union CD_BITMAPINFO sgBeatsInfo;// Палитра для бит-детектора
+
+	RGBQUAD cdPolymorphColors[5];		// Опорные цвета полиморфной палитры
+	uint cdPolymorphUpdateCounter;	// Счётчик обновления полиморфной палитры
+	uint cdCurrentPalette;			// Текущая палитра
 	};
 
 /////////////////////////////////////////////////////
@@ -143,7 +177,7 @@ CD_API(ulong) GetDefaultPeakEvaluationParametersEx ();
 // Функция возвращает масштабированное значение амплитуды на указанной частоте
 CD_API(uchar) GetScaledAmplitudeEx (uint FrequencyLevel);
 
-// Функции формирует палитры
+// Функции формируют палитры приложения
 void FillPalette_Default (void);
 void FillPalette_Sea (void);
 void FillPalette_Fire (void);
@@ -170,46 +204,9 @@ CD_API(void) SetHistogramFFTValuesCountEx (uint Count);
 // Функция возвращает длину текущего файлового потока (для аудиовыхода всегда 0)
 CD_API(uint) GetChannelLengthEx ();
 
-// Состояние программы
-union CDSTATE
-	{
-	struct CDSTATE_ST
-		{
-		HRECORD cdChannel;				// Дескриптор чтения
-		uint channelLength;				// Длина потока (при инициализации из файла будет ненулевой)
-		float cdFFT[FFT_VALUES_COUNT];	// Массив значений, получаемый из канала
-		MMRESULT cdFFTTimer;			// Дескриптор таймера запроса данных из буфера
-		uchar updating;					// Флаг, указывающий на незавершённость последнего процесса обновления FFT
-
-		HBITMAP sgBMP;					// Дескриптор BITMAP спектральной диаграммы
-		uchar *sgBuffer;				// Буфер спектральной диаграммы
-		uint sgFrameWidth;				// Размеры изображения спектрограммы
-		uint sgFrameHeight;
-		uint sgCurrentPosition;			// Текущая позиция на статичной спектрограмме
-		uchar sgSpectrogramMode;		// Режим спектрограммы (0 - выключена, 1 - с курсором, 
-										// 2 - движущаяся, 3 - гистограмма, 4 - симметричная гистограмма)
-
-		float cdFFTScale;				// Масштаб значений FFT
-		uint cdHistogramFFTValuesCount;	// Количество значений FFT, используемых для гистограмм
-		uchar cdFFTPeak;				// Текущее пиковое значение
-		uchar cdFFTPeakEvLowEdge;		// Нижняя граница диапазона определения пика
-		uchar cdFFTPeakEvHighEdge;		// Верхняя граница диапазона определения пика
-		uchar cdFFTPeakEvLowLevel;		// Наименьшая амплитуда, на которой определяется пик
-
-		union CD_BITMAPINFO cdBMPInfo;	// Данные для инициализации спектрограммы
-		union CD_BITMAPINFO cdDummyInfo;// Вспомогательная палитра для бит-детектора
-
-		RGBQUAD polymorphColors[5];		// Опорные цвета полиморфной палитры
-		uint polymorphUpdateCounter;	// Счётчик обновления полиморфной палитры
-		uint cdCurrentPalette;			// Текущая палитра
-		} cdState_St;
-
-	//uchar cdState_Ptr[sizeof (struct CDSTATE_ST)];
-	};
-
 // Функция возвращает ссылку на состояние программы
-#define AS	GetAppState()->cdState_St
-union CDSTATE *GetAppState (void);
+#define AS	GetAppState()
+struct CDSTATE *GetAppState (void);
 
 // Функция инициализирует состояние программы
 void InitAppState (void);

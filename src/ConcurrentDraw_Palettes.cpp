@@ -14,29 +14,29 @@ void FillPalette_Default (void)
 	// Основная палитра
 	for (i = 0; i < FP_QMAX; i++) 
 		{
-		AS.cdBMPInfo.cd_bmpinfo.colors[i].rgbRed = 
-			AS.cdBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
-		AS.cdBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 2 * i;
+		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbRed = 
+			AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
+		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 2 * i;
 		
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbRed = 4 * i;
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbGreen = 0;
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbBlue = 2 * (FP_QMAX + i);
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbRed = 4 * i;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbGreen = 0;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbBlue = 2 * (FP_QMAX + i);
 
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbRed = FP_MAX;
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbGreen = 4 * i;
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbBlue = 4 * (FP_QMAX - 1 - i);
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbRed = FP_MAX;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbGreen = 4 * i;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbBlue = 4 * (FP_QMAX - 1 - i);
 
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbRed =
-			AS.cdBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbGreen = FP_MAX;
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbBlue = 4 * i;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbRed =
+			AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbGreen = FP_MAX;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbBlue = 4 * i;
 		}
 
 	// Палитра бит-детектора
 	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
 		{
-		AS.cdDummyInfo.cd_bmpinfo.colors[i].rgbRed = i / 2; 
-		AS.cdDummyInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
-		AS.cdDummyInfo.cd_bmpinfo.colors[i].rgbBlue = i;
+		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbRed = i / 2; 
+		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
+		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbBlue = i;
 		}
 	}
 
@@ -46,28 +46,28 @@ void FillPalette_Sea (void)
 
 	for (i = 0; i < FP_QMAX; i++) 
 		{
-		AS.cdBMPInfo.cd_bmpinfo.colors[i].rgbRed = 
-			AS.cdBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
-		AS.cdBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 4 * i;
+		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbRed = 
+			AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
+		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 4 * i;
 
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbRed = 0;
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbGreen = 2 * i;
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbBlue = FP_MAX;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbRed = 0;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbGreen = 2 * i;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbBlue = FP_MAX;
 
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbRed = 0;
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbGreen = 2 * (FP_QMAX + i);
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbBlue = FP_MAX;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbRed = 0;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbGreen = 2 * (FP_QMAX + i);
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbBlue = FP_MAX;
 
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbRed = 4 * i;
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbGreen =
-			AS.cdBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbBlue = FP_MAX;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbRed = 4 * i;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbGreen =
+			AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbBlue = FP_MAX;
 		}
 
 	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
 		{
-		AS.cdDummyInfo.cd_bmpinfo.colors[i].rgbRed = 
-			AS.cdDummyInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
-		AS.cdDummyInfo.cd_bmpinfo.colors[i].rgbBlue = i;
+		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbRed = 
+			AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
+		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbBlue = i;
 		}
 	}
 
@@ -77,28 +77,28 @@ void FillPalette_Fire (void)
 
 	for (i = 0; i < FP_QMAX; i++) 
 		{
-		AS.cdBMPInfo.cd_bmpinfo.colors[i].rgbRed = 4 * i;
-		AS.cdBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 
-			AS.cdBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
+		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbRed = 4 * i;
+		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 
+			AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
 
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbRed = FP_MAX;
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbGreen = 2 * i;
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbBlue = 0;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbRed = FP_MAX;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbGreen = 2 * i;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbBlue = 0;
 
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbRed = FP_MAX;
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbGreen = 2 * (FP_QMAX + i);
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbBlue = 0;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbRed = FP_MAX;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbGreen = 2 * (FP_QMAX + i);
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbBlue = 0;
 
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbRed = 
-			AS.cdBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbGreen = FP_MAX;
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbBlue = 4 * i;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbRed = 
+			AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbGreen = FP_MAX;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbBlue = 4 * i;
 		}
 
 	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
 		{
-		AS.cdDummyInfo.cd_bmpinfo.colors[i].rgbRed = i; 
-		AS.cdDummyInfo.cd_bmpinfo.colors[i].rgbGreen = i / 4;
-		AS.cdDummyInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
+		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbRed = i; 
+		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbGreen = i / 4;
+		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
 		}
 	}
 
@@ -108,28 +108,28 @@ void FillPalette_Grey (void)
 
 	for (i = 0; i < FP_QMAX; i++) 
 		{
-		AS.cdBMPInfo.cd_bmpinfo.colors[i].rgbRed = 
-			AS.cdBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 
-			AS.cdBMPInfo.cd_bmpinfo.colors[i].rgbBlue = i / 2;
+		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbRed = 
+			AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 
+			AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbBlue = i / 2;
 
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbRed = 
-			AS.cdBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbGreen = 
-			AS.cdBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbBlue = (FP_QMAX + i) / 2;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbRed = 
+			AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbGreen = 
+			AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbBlue = (FP_QMAX + i) / 2;
 
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbRed = 
-			AS.cdBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbGreen = 
-			AS.cdBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbBlue = FP_QMAX + i;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbRed = 
+			AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbGreen = 
+			AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbBlue = FP_QMAX + i;
 
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbRed = 
-			AS.cdBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbGreen = 
-			AS.cdBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbBlue = 2 * (FP_QMAX + i);
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbRed = 
+			AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbGreen = 
+			AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbBlue = 2 * (FP_QMAX + i);
 		}
 
 	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
 		{
-		AS.cdDummyInfo.cd_bmpinfo.colors[i].rgbRed =  
-			AS.cdDummyInfo.cd_bmpinfo.colors[i].rgbGreen =
-			AS.cdDummyInfo.cd_bmpinfo.colors[i].rgbBlue = 4 * i / 5;
+		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbRed =  
+			AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbGreen =
+			AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbBlue = 4 * i / 5;
 		}
 	}
 
@@ -139,28 +139,28 @@ void FillPalette_Sunrise (void)
 
 	for (i = 0; i < FP_QMAX; i++) 
 		{
-		AS.cdBMPInfo.cd_bmpinfo.colors[i].rgbRed = 
-			AS.cdBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
-		AS.cdBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 2 * i;
+		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbRed = 
+			AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
+		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 2 * i;
 
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbRed = 0;
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbGreen = 3 * i;
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbBlue = 2 * (FP_QMAX - i);
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbRed = 0;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbGreen = 3 * i;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbBlue = 2 * (FP_QMAX - i);
 
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbRed = 4 * i;
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbGreen = FP_AMAX - i;
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbBlue = 0;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbRed = 4 * i;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbGreen = FP_AMAX - i;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbBlue = 0;
 
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbRed = FP_MAX;
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbGreen = 2 * (FP_QMAX + i);
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbBlue = 4 * i;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbRed = FP_MAX;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbGreen = 2 * (FP_QMAX + i);
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbBlue = 4 * i;
 		}
 
 	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
 		{
-		AS.cdDummyInfo.cd_bmpinfo.colors[i].rgbRed = 
-			AS.cdDummyInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
-		AS.cdDummyInfo.cd_bmpinfo.colors[i].rgbGreen = 3 * i / 4;
+		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbRed = 
+			AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
+		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbGreen = 3 * i / 4;
 		}
 	}
 
@@ -170,28 +170,28 @@ void FillPalette_Acid (void)
 
 	for (i = 0; i < FP_QMAX; i++) 
 		{
-		AS.cdBMPInfo.cd_bmpinfo.colors[i].rgbGreen = i;
-		AS.cdBMPInfo.cd_bmpinfo.colors[i].rgbRed = 
-			AS.cdBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
+		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbGreen = i;
+		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbRed = 
+			AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
 
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbGreen = FP_QMAX + i;
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbRed =
-			AS.cdBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbBlue = 0;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbGreen = FP_QMAX + i;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbRed =
+			AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbBlue = 0;
 
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbGreen = 2 * (FP_QMAX + i);
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbRed =
-			AS.cdBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbBlue = 0;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbGreen = 2 * (FP_QMAX + i);
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbRed =
+			AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbBlue = 0;
 
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbRed =
-			AS.cdBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbBlue = 4 *  i;
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbGreen = FP_MAX;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbRed =
+			AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbBlue = 4 *  i;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbGreen = FP_MAX;
 		}
 
 	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
 		{
-		AS.cdDummyInfo.cd_bmpinfo.colors[i].rgbGreen = i;
-		AS.cdDummyInfo.cd_bmpinfo.colors[i].rgbRed =
-			AS.cdDummyInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
+		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbGreen = i;
+		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbRed =
+			AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
 		}
 	}
 
@@ -201,28 +201,28 @@ void FillPalette_7MissedCalls (void)
 
 	for (i = 0; i < FP_QMAX; i++) 
 		{
-		AS.cdBMPInfo.cd_bmpinfo.colors[i].rgbRed = 3 * i;
-		AS.cdBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
-		AS.cdBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 2 * i;
+		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbRed = 3 * i;
+		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
+		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 2 * i;
 
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbRed = 3 * (FP_QMAX - i);
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbGreen = 3 * i / 2;
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbBlue = FP_HMAX + i;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbRed = 3 * (FP_QMAX - i);
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbGreen = 3 * i / 2;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbBlue = FP_HMAX + i;
 
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbRed = 2 * i;
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbGreen = (FP_AMAX + 5 * i) / 2;
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbBlue = FP_AMAX - i;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbRed = 2 * i;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbGreen = (FP_AMAX + 5 * i) / 2;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbBlue = FP_AMAX - i;
 
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbRed = 
-			AS.cdBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbBlue = 2 * (FP_QMAX + i);
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbGreen = FP_MAX;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbRed = 
+			AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbBlue = 2 * (FP_QMAX + i);
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbGreen = FP_MAX;
 		}
 
 	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
 		{
-		AS.cdDummyInfo.cd_bmpinfo.colors[i].rgbRed = 3 * i / 4;
-		AS.cdDummyInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
-		AS.cdDummyInfo.cd_bmpinfo.colors[i].rgbBlue = i / 2;
+		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbRed = 3 * i / 4;
+		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
+		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbBlue = i / 2;
 		}
 	}
 
@@ -232,28 +232,28 @@ void FillPalette_SailOnTheSea (void)
 
 	for (i = 0; i < FP_QMAX; i++) 
 		{
-		AS.cdBMPInfo.cd_bmpinfo.colors[i].rgbRed = 
-			AS.cdBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
-		AS.cdBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 4 * i;
+		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbRed = 
+			AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
+		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 4 * i;
 
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbRed = 2 * i;
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbGreen = 0;
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbBlue = FP_MAX;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbRed = 2 * i;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbGreen = 0;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbBlue = FP_MAX;
 
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbRed = 2 * (FP_QMAX + i);
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbGreen = 0;
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbBlue = 4 * (FP_QMAX - 1 - i);
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbRed = 2 * (FP_QMAX + i);
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbGreen = 0;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbBlue = 4 * (FP_QMAX - 1 - i);
 
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbRed = FP_MAX;
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbGreen = 
-			AS.cdBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbBlue = 4 * i;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbRed = FP_MAX;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbGreen = 
+			AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbBlue = 4 * i;
 		}
 
 	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
 		{
-		AS.cdDummyInfo.cd_bmpinfo.colors[i].rgbRed = i;
-		AS.cdDummyInfo.cd_bmpinfo.colors[i].rgbGreen =
-			AS.cdDummyInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
+		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbRed = i;
+		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbGreen =
+			AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
 		}
 	}
 
@@ -263,28 +263,28 @@ void FillPalette_Mirror (void)
 
 	for (i = 0; i < FP_QMAX; i++) 
 		{
-		AS.cdBMPInfo.cd_bmpinfo.colors[i].rgbRed = 
-			AS.cdBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 
-			AS.cdBMPInfo.cd_bmpinfo.colors[i].rgbBlue = i;
+		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbRed = 
+			AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 
+			AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbBlue = i;
 
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbRed = 
-			AS.cdBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbGreen =
-			AS.cdBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbBlue = FP_QMAX + i;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbRed = 
+			AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbGreen =
+			AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbBlue = FP_QMAX + i;
 
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbRed =
-			AS.cdBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbGreen = 2 * (FP_QMAX + i);
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbBlue = 2 * (FP_QMAX - i);
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbRed =
+			AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbGreen = 2 * (FP_QMAX + i);
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbBlue = 2 * (FP_QMAX - i);
 
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbRed = 
-			AS.cdBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbGreen = FP_MAX;
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbBlue = 4 * i;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbRed = 
+			AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbGreen = FP_MAX;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbBlue = 4 * i;
 		}
 
 	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
 		{
-		AS.cdDummyInfo.cd_bmpinfo.colors[i].rgbRed =
-			AS.cdDummyInfo.cd_bmpinfo.colors[i].rgbGreen =
-			AS.cdDummyInfo.cd_bmpinfo.colors[i].rgbBlue = 3 * i / 4;
+		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbRed =
+			AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbGreen =
+			AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbBlue = 3 * i / 4;
 		}
 	}
 
@@ -294,28 +294,28 @@ void FillPalette_Blood (void)
 
 	for (i = 0; i < FP_QMAX; i++) 
 		{
-		AS.cdBMPInfo.cd_bmpinfo.colors[i].rgbRed = i;
-		AS.cdBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 
-			AS.cdBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
+		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbRed = i;
+		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 
+			AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
 
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbRed = FP_QMAX + i;
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbGreen =
-			AS.cdBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbBlue = 0;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbRed = FP_QMAX + i;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbGreen =
+			AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbBlue = 0;
 
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbRed = 2 * (FP_QMAX + i);
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbGreen =
-			AS.cdBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbBlue = 0;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbRed = 2 * (FP_QMAX + i);
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbGreen =
+			AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbBlue = 0;
 
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbGreen =
-			AS.cdBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbBlue = 4 *  i;
-		AS.cdBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbRed = FP_MAX;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbGreen =
+			AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbBlue = 4 *  i;
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbRed = FP_MAX;
 		}
 
 	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
 		{
-		AS.cdDummyInfo.cd_bmpinfo.colors[i].rgbRed = i;
-		AS.cdDummyInfo.cd_bmpinfo.colors[i].rgbGreen =
-			AS.cdDummyInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
+		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbRed = i;
+		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbGreen =
+			AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
 		}
 	}
 
@@ -332,53 +332,53 @@ void FillPalette_PolymorphRandom (uchar Polymorph, uchar Monocolor)
 		{
 		if (Monocolor)
 			{
-			AS.polymorphColors[3].rgbRed += GetRandomValue (-FPPR_RND_LIMIT, FPPR_RND_LIMIT);
-			if (AS.polymorphColors[3].rgbRed < FPPR_RND_LIMIT)
-				AS.polymorphColors[3].rgbRed = FP_MAX;
-			if (AS.polymorphColors[3].rgbRed < FPPR_CLR_MIN_MONO)
-				AS.polymorphColors[3].rgbRed = FPPR_CLR_MIN_MONO;
+			AS->cdPolymorphColors[3].rgbRed += GetRandomValue (-FPPR_RND_LIMIT, FPPR_RND_LIMIT);
+			if (AS->cdPolymorphColors[3].rgbRed < FPPR_RND_LIMIT)
+				AS->cdPolymorphColors[3].rgbRed = FP_MAX;
+			if (AS->cdPolymorphColors[3].rgbRed < FPPR_CLR_MIN_MONO)
+				AS->cdPolymorphColors[3].rgbRed = FPPR_CLR_MIN_MONO;
 
-			AS.polymorphColors[3].rgbGreen += GetRandomValue (-FPPR_RND_LIMIT, FPPR_RND_LIMIT);
-			if (AS.polymorphColors[3].rgbGreen < FPPR_RND_LIMIT)
-				AS.polymorphColors[3].rgbGreen = FP_MAX;
-			if (AS.polymorphColors[3].rgbGreen < FPPR_CLR_MIN_MONO)
-				AS.polymorphColors[3].rgbGreen = FPPR_CLR_MIN_MONO;
+			AS->cdPolymorphColors[3].rgbGreen += GetRandomValue (-FPPR_RND_LIMIT, FPPR_RND_LIMIT);
+			if (AS->cdPolymorphColors[3].rgbGreen < FPPR_RND_LIMIT)
+				AS->cdPolymorphColors[3].rgbGreen = FP_MAX;
+			if (AS->cdPolymorphColors[3].rgbGreen < FPPR_CLR_MIN_MONO)
+				AS->cdPolymorphColors[3].rgbGreen = FPPR_CLR_MIN_MONO;
 
-			AS.polymorphColors[3].rgbBlue += GetRandomValue (-FPPR_RND_LIMIT, FPPR_RND_LIMIT);
-			if (AS.polymorphColors[3].rgbBlue < FPPR_RND_LIMIT)
-				AS.polymorphColors[3].rgbBlue = FP_MAX;
-			if (AS.polymorphColors[3].rgbBlue < FPPR_CLR_MIN_MONO)
-				AS.polymorphColors[3].rgbBlue = FPPR_CLR_MIN_MONO;
+			AS->cdPolymorphColors[3].rgbBlue += GetRandomValue (-FPPR_RND_LIMIT, FPPR_RND_LIMIT);
+			if (AS->cdPolymorphColors[3].rgbBlue < FPPR_RND_LIMIT)
+				AS->cdPolymorphColors[3].rgbBlue = FP_MAX;
+			if (AS->cdPolymorphColors[3].rgbBlue < FPPR_CLR_MIN_MONO)
+				AS->cdPolymorphColors[3].rgbBlue = FPPR_CLR_MIN_MONO;
 
-			AS.polymorphColors[2].rgbRed = AS.polymorphColors[3].rgbRed / 2;
-			AS.polymorphColors[2].rgbGreen = AS.polymorphColors[3].rgbGreen / 2;
-			AS.polymorphColors[2].rgbBlue = AS.polymorphColors[3].rgbBlue / 2;
+			AS->cdPolymorphColors[2].rgbRed = AS->cdPolymorphColors[3].rgbRed / 2;
+			AS->cdPolymorphColors[2].rgbGreen = AS->cdPolymorphColors[3].rgbGreen / 2;
+			AS->cdPolymorphColors[2].rgbBlue = AS->cdPolymorphColors[3].rgbBlue / 2;
 
-			AS.polymorphColors[1].rgbRed = AS.polymorphColors[3].rgbRed / 4;
-			AS.polymorphColors[1].rgbGreen = AS.polymorphColors[3].rgbGreen / 4;
-			AS.polymorphColors[1].rgbBlue = AS.polymorphColors[3].rgbBlue / 4;
+			AS->cdPolymorphColors[1].rgbRed = AS->cdPolymorphColors[3].rgbRed / 4;
+			AS->cdPolymorphColors[1].rgbGreen = AS->cdPolymorphColors[3].rgbGreen / 4;
+			AS->cdPolymorphColors[1].rgbBlue = AS->cdPolymorphColors[3].rgbBlue / 4;
 			}
 		else
 			{
 			for (i = 1; i < 4; i++)
 				{
-				AS.polymorphColors[i].rgbRed += GetRandomValue (-FPPR_RND_LIMIT, FPPR_RND_LIMIT);
-				if (AS.polymorphColors[i].rgbRed < FPPR_RND_LIMIT)
-					AS.polymorphColors[i].rgbRed = FP_MAX;
-				if (AS.polymorphColors[i].rgbRed < FPPR_CLR_MIN_POLY)
-					AS.polymorphColors[i].rgbRed = FPPR_CLR_MIN_POLY;
+				AS->cdPolymorphColors[i].rgbRed += GetRandomValue (-FPPR_RND_LIMIT, FPPR_RND_LIMIT);
+				if (AS->cdPolymorphColors[i].rgbRed < FPPR_RND_LIMIT)
+					AS->cdPolymorphColors[i].rgbRed = FP_MAX;
+				if (AS->cdPolymorphColors[i].rgbRed < FPPR_CLR_MIN_POLY)
+					AS->cdPolymorphColors[i].rgbRed = FPPR_CLR_MIN_POLY;
 
-				AS.polymorphColors[i].rgbGreen += GetRandomValue (-FPPR_RND_LIMIT, FPPR_RND_LIMIT);
-				if (AS.polymorphColors[i].rgbGreen < FPPR_RND_LIMIT)
-					AS.polymorphColors[i].rgbGreen = FP_MAX;
-				if (AS.polymorphColors[i].rgbGreen < FPPR_CLR_MIN_POLY)
-					AS.polymorphColors[i].rgbGreen = FPPR_CLR_MIN_POLY;
+				AS->cdPolymorphColors[i].rgbGreen += GetRandomValue (-FPPR_RND_LIMIT, FPPR_RND_LIMIT);
+				if (AS->cdPolymorphColors[i].rgbGreen < FPPR_RND_LIMIT)
+					AS->cdPolymorphColors[i].rgbGreen = FP_MAX;
+				if (AS->cdPolymorphColors[i].rgbGreen < FPPR_CLR_MIN_POLY)
+					AS->cdPolymorphColors[i].rgbGreen = FPPR_CLR_MIN_POLY;
 
-				AS.polymorphColors[i].rgbBlue += GetRandomValue (-FPPR_RND_LIMIT, FPPR_RND_LIMIT);
-				if (AS.polymorphColors[i].rgbBlue < FPPR_RND_LIMIT)
-					AS.polymorphColors[i].rgbBlue = FP_MAX;
-				if (AS.polymorphColors[i].rgbBlue < FPPR_CLR_MIN_POLY)
-					AS.polymorphColors[i].rgbBlue = FPPR_CLR_MIN_POLY;
+				AS->cdPolymorphColors[i].rgbBlue += GetRandomValue (-FPPR_RND_LIMIT, FPPR_RND_LIMIT);
+				if (AS->cdPolymorphColors[i].rgbBlue < FPPR_RND_LIMIT)
+					AS->cdPolymorphColors[i].rgbBlue = FP_MAX;
+				if (AS->cdPolymorphColors[i].rgbBlue < FPPR_CLR_MIN_POLY)
+					AS->cdPolymorphColors[i].rgbBlue = FPPR_CLR_MIN_POLY;
 				}
 			}
 		}
@@ -388,25 +388,25 @@ void FillPalette_PolymorphRandom (uchar Polymorph, uchar Monocolor)
 		{
 		if (Monocolor)
 			{
-			AS.polymorphColors[3].rgbRed = GetRandomValue (FPPR_CLR_MIN_MONO, FP_MAX + 1);
-			AS.polymorphColors[3].rgbGreen = GetRandomValue (FPPR_CLR_MIN_MONO, FP_MAX + 1);
-			AS.polymorphColors[3].rgbBlue = GetRandomValue (FPPR_CLR_MIN_MONO, FP_MAX + 1);
+			AS->cdPolymorphColors[3].rgbRed = GetRandomValue (FPPR_CLR_MIN_MONO, FP_MAX + 1);
+			AS->cdPolymorphColors[3].rgbGreen = GetRandomValue (FPPR_CLR_MIN_MONO, FP_MAX + 1);
+			AS->cdPolymorphColors[3].rgbBlue = GetRandomValue (FPPR_CLR_MIN_MONO, FP_MAX + 1);
 
-			AS.polymorphColors[2].rgbRed = AS.polymorphColors[3].rgbRed / 2;
-			AS.polymorphColors[2].rgbGreen = AS.polymorphColors[3].rgbGreen / 2;
-			AS.polymorphColors[2].rgbBlue = AS.polymorphColors[3].rgbBlue / 2;
+			AS->cdPolymorphColors[2].rgbRed = AS->cdPolymorphColors[3].rgbRed / 2;
+			AS->cdPolymorphColors[2].rgbGreen = AS->cdPolymorphColors[3].rgbGreen / 2;
+			AS->cdPolymorphColors[2].rgbBlue = AS->cdPolymorphColors[3].rgbBlue / 2;
 
-			AS.polymorphColors[1].rgbRed = AS.polymorphColors[3].rgbRed / 4;
-			AS.polymorphColors[1].rgbGreen = AS.polymorphColors[3].rgbGreen / 4;
-			AS.polymorphColors[1].rgbBlue = AS.polymorphColors[3].rgbBlue / 4;
+			AS->cdPolymorphColors[1].rgbRed = AS->cdPolymorphColors[3].rgbRed / 4;
+			AS->cdPolymorphColors[1].rgbGreen = AS->cdPolymorphColors[3].rgbGreen / 4;
+			AS->cdPolymorphColors[1].rgbBlue = AS->cdPolymorphColors[3].rgbBlue / 4;
 			}
 		else
 			{
 			for (i = 1; i < 4; i++)
 				{
-				AS.polymorphColors[i].rgbRed = GetRandomValue (FPPR_CLR_MIN_POLY, FP_MAX + 1);
-				AS.polymorphColors[i].rgbGreen = GetRandomValue (FPPR_CLR_MIN_POLY, FP_MAX + 1);
-				AS.polymorphColors[i].rgbBlue = GetRandomValue (FPPR_CLR_MIN_POLY, FP_MAX + 1);
+				AS->cdPolymorphColors[i].rgbRed = GetRandomValue (FPPR_CLR_MIN_POLY, FP_MAX + 1);
+				AS->cdPolymorphColors[i].rgbGreen = GetRandomValue (FPPR_CLR_MIN_POLY, FP_MAX + 1);
+				AS->cdPolymorphColors[i].rgbBlue = GetRandomValue (FPPR_CLR_MIN_POLY, FP_MAX + 1);
 				}
 			}
 		}
@@ -416,21 +416,21 @@ void FillPalette_PolymorphRandom (uchar Polymorph, uchar Monocolor)
 		{
 		for (j = 0; j < 4; j++)
 			{
-			AS.cdBMPInfo.cd_bmpinfo.colors[j * FP_QMAX + i].rgbRed = ((FP_QMAX - 1 - i) * AS.polymorphColors[j].rgbRed +
-				i * AS.polymorphColors[j + 1].rgbRed) / FP_QMAX;
-			AS.cdBMPInfo.cd_bmpinfo.colors[j * FP_QMAX + i].rgbGreen = ((FP_QMAX - 1 - i) * AS.polymorphColors[j].rgbGreen +
-				i * AS.polymorphColors[j + 1].rgbGreen) / FP_QMAX;
-			AS.cdBMPInfo.cd_bmpinfo.colors[j * FP_QMAX + i].rgbBlue = ((FP_QMAX - 1 - i) * AS.polymorphColors[j].rgbBlue +
-				i * AS.polymorphColors[j + 1].rgbBlue) / FP_QMAX;
+			AS->sgBMPInfo.cd_bmpinfo.colors[j * FP_QMAX + i].rgbRed = ((FP_QMAX - 1 - i) * AS->cdPolymorphColors[j].rgbRed +
+				i * AS->cdPolymorphColors[j + 1].rgbRed) / FP_QMAX;
+			AS->sgBMPInfo.cd_bmpinfo.colors[j * FP_QMAX + i].rgbGreen = ((FP_QMAX - 1 - i) * AS->cdPolymorphColors[j].rgbGreen +
+				i * AS->cdPolymorphColors[j + 1].rgbGreen) / FP_QMAX;
+			AS->sgBMPInfo.cd_bmpinfo.colors[j * FP_QMAX + i].rgbBlue = ((FP_QMAX - 1 - i) * AS->cdPolymorphColors[j].rgbBlue +
+				i * AS->cdPolymorphColors[j + 1].rgbBlue) / FP_QMAX;
 			}
 		}
 
 	// Заполнение цветов бит-детектора
 	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
 		{
-		AS.cdDummyInfo.cd_bmpinfo.colors[i].rgbRed = i * AS.polymorphColors[3].rgbRed / CD_BMPINFO_COLORS_COUNT;
-		AS.cdDummyInfo.cd_bmpinfo.colors[i].rgbGreen = i * AS.polymorphColors[3].rgbGreen / CD_BMPINFO_COLORS_COUNT;
-		AS.cdDummyInfo.cd_bmpinfo.colors[i].rgbBlue = i * AS.polymorphColors[3].rgbBlue / CD_BMPINFO_COLORS_COUNT;
+		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbRed = i * AS->cdPolymorphColors[3].rgbRed / CD_BMPINFO_COLORS_COUNT;
+		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbGreen = i * AS->cdPolymorphColors[3].rgbGreen / CD_BMPINFO_COLORS_COUNT;
+		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbBlue = i * AS->cdPolymorphColors[3].rgbBlue / CD_BMPINFO_COLORS_COUNT;
 		}
 	}
 
@@ -438,10 +438,10 @@ void FillPalette_PolymorphRandom (uchar Polymorph, uchar Monocolor)
 CD_API(void) FillPaletteEx (uchar PaletteNumber)
 	{
 	// Установка параметров
-	uchar polymorphResetNotRequired = (AS.polymorphUpdateCounter >= POLYMORPH_UPDATE_PAUSE) * 2;
-	AS.polymorphUpdateCounter = 0;
+	uchar polymorphResetNotRequired = (AS->cdPolymorphUpdateCounter >= POLYMORPH_UPDATE_PAUSE) * 2;
+	AS->cdPolymorphUpdateCounter = 0;
 
-	AS.cdCurrentPalette = PaletteNumber;
+	AS->cdCurrentPalette = PaletteNumber;
 
 	// Выбор палитры
 	switch (PaletteNumber)
@@ -450,7 +450,7 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 		default:
 		case 0:
 			FillPalette_Default ();
-			AS.cdCurrentPalette = 0;
+			AS->cdCurrentPalette = 0;
 			break;
 
 		// Море
@@ -504,7 +504,7 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 		case 12:
 		case 13:
 			FillPalette_PolymorphRandom (PaletteNumber & 0x2 & polymorphResetNotRequired, PaletteNumber & 0x1);
-			AS.polymorphUpdateCounter = PaletteNumber & 0x2;
+			AS->cdPolymorphUpdateCounter = PaletteNumber & 0x2;
 			break;
 		}
 	}
@@ -513,18 +513,18 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 CD_API(ulong) GetColorFromPaletteEx (uchar ColorNumber)
 	{
 	return 0xFF000000 | 
-		(AS.cdBMPInfo.cd_bmpinfo.colors[ColorNumber].rgbRed << 16) |
-		(AS.cdBMPInfo.cd_bmpinfo.colors[ColorNumber].rgbGreen << 8) | 
-		AS.cdBMPInfo.cd_bmpinfo.colors[ColorNumber].rgbBlue;
+		(AS->sgBMPInfo.cd_bmpinfo.colors[ColorNumber].rgbRed << 16) |
+		(AS->sgBMPInfo.cd_bmpinfo.colors[ColorNumber].rgbGreen << 8) | 
+		AS->sgBMPInfo.cd_bmpinfo.colors[ColorNumber].rgbBlue;
 	}
 
 // Функция возвращает основной цвет текущей палитры с указанной яркостью
 CD_API(ulong) GetMasterPaletteColorEx (uchar Brightness)
 	{
 	return 0xFF000000 | 
-		(AS.cdDummyInfo.cd_bmpinfo.colors[Brightness].rgbRed << 16) |
-		(AS.cdDummyInfo.cd_bmpinfo.colors[Brightness].rgbGreen << 8) | 
-		AS.cdDummyInfo.cd_bmpinfo.colors[Brightness].rgbBlue;
+		(AS->sgBeatsInfo.cd_bmpinfo.colors[Brightness].rgbRed << 16) |
+		(AS->sgBeatsInfo.cd_bmpinfo.colors[Brightness].rgbGreen << 8) | 
+		AS->sgBeatsInfo.cd_bmpinfo.colors[Brightness].rgbBlue;
 	}
 
 // Функция возвращает названия доступных палитр

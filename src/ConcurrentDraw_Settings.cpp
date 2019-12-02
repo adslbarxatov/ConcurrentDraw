@@ -49,25 +49,25 @@ CD_API(uchar) GetDevicesEx (schar **Devices)
 CD_API(HBITMAP) GetSpectrogramFrameEx ()
 	{
 	// Контроль
-	if (!AS.sgBMP)
+	if (!AS->sgBMP)
 		return NULL;
 
 	// Завершено
-	return AS.sgBMP;
+	return AS->sgBMP;
 	}
 
 // Функция возвращает значение амплитуды на указанном уровне
 CD_API(uchar) GetCurrentPeakEx ()
 	{
 	// Не требует защиты
-	if (AS.cdFFTPeak > 0xFD)
-		AS.cdFFTPeak--;		// "Эхо"
-	else if (AS.cdFFTPeak > 40)
-		AS.cdFFTPeak -= 40;	// Далее - затухание
+	if (AS->cdFFTPeak > 0xFD)
+		AS->cdFFTPeak--;		// "Эхо"
+	else if (AS->cdFFTPeak > 40)
+		AS->cdFFTPeak -= 40;	// Далее - затухание
 	else
-		AS.cdFFTPeak = 0;		// Глушение
+		AS->cdFFTPeak = 0;		// Глушение
 
-	return AS.cdFFTPeak;
+	return AS->cdFFTPeak;
 	}
 
 // Функция устанавливает метрики определения пикового значения
@@ -75,15 +75,15 @@ CD_API(void) SetPeakEvaluationParametersEx (uchar LowEdge, uchar HighEdge,
 	uchar LowLevel, uchar FFTScaleMultiplier)
 	{
 	// Не требует защиты
-	AS.cdFFTPeakEvLowLevel = LowLevel;
-	AS.cdFFTPeakEvLowEdge = LowEdge;
-	AS.cdFFTPeakEvHighEdge = (HighEdge < LowEdge) ? LowEdge : HighEdge;
+	AS->cdFFTPeakEvLowLevel = LowLevel;
+	AS->cdFFTPeakEvLowEdge = LowEdge;
+	AS->cdFFTPeakEvHighEdge = (HighEdge < LowEdge) ? LowEdge : HighEdge;
 
 	if ((FFTScaleMultiplier >= CD_MIN_FFT_SCALE_MULT) && (FFTScaleMultiplier <= CD_MAX_FFT_SCALE_MULT))
-		AS.cdFFTScale = (float)FFTScaleMultiplier;
+		AS->cdFFTScale = (float)FFTScaleMultiplier;
 	else
-		AS.cdFFTScale = (float)CD_DEFAULT_FFT_SCALE_MULT;
-	AS.cdFFTScale *= CD_SECOND_FFT_SCALE_MULT;
+		AS->cdFFTScale = (float)CD_DEFAULT_FFT_SCALE_MULT;
+	AS->cdFFTScale *= CD_SECOND_FFT_SCALE_MULT;
 	}
 
 // Функция возвращает ограничивающие размеры фреймов спектрограмм
@@ -109,17 +109,17 @@ CD_API(schar *) GetCDLibVersionEx ()
 // Функция устанавливает количество значений FFT, которое будет использоваться в гистограммах
 CD_API(void) SetHistogramFFTValuesCountEx (uint Count)
 	{
-	AS.cdHistogramFFTValuesCount = Count;
+	AS->cdHistogramFFTValuesCount = Count;
 
 	if ((Count < 64) || (Count > FFT_VALUES_COUNT))
-		AS.cdHistogramFFTValuesCount = DEFAULT_FFT_VALUES_COUNT;
+		AS->cdHistogramFFTValuesCount = DEFAULT_FFT_VALUES_COUNT;
 	}
 
 // Функция возвращает длину текущего файлового потока в миллисекундах (для аудиовыхода всегда 0)
 CD_API(uint) GetChannelLengthEx ()
 	{
-	if (!AS.cdChannel)
+	if (!AS->cdChannel)
 		return 0;
 
-	return AS.channelLength;
+	return AS->cdChannelLength;
 	}

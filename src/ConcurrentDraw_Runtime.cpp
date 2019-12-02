@@ -5,17 +5,17 @@
 float *GetDataFromStreamEx ()
 	{
 	// Контроль
-	if (!AS.cdChannel)
+	if (!AS->cdChannel)
 		return NULL;
 
 	// Получение
-	if (BASS_ChannelGetData (AS.cdChannel, &AS.cdFFT, BASS_DATA_AVAILABLE) < FFT_VALUES_COUNT)
+	if (BASS_ChannelGetData (AS->cdChannel, &AS->cdFFT, BASS_DATA_AVAILABLE) < FFT_VALUES_COUNT)
 		return NULL;
 
-	if (BASS_ChannelGetData (AS.cdChannel, &AS.cdFFT, FFT_MODE) < 0)
+	if (BASS_ChannelGetData (AS->cdChannel, &AS->cdFFT, FFT_MODE) < 0)
 		return NULL;
 
-	return AS.cdFFT;
+	return AS->cdFFT;
 	}
 
 // Функция возвращает масштабированное значение амплитуды на указанной частоте
@@ -29,17 +29,17 @@ CD_API(uchar) GetScaledAmplitudeEx (uint FrequencyLevel)
 		return 0;
 	
 	// Получение (uint, чтобы исключить суммирование с переносом)
-	v = (uint)(sqrt (AS.cdFFT[FrequencyLevel]) * AS.cdFFTScale);
+	v = (uint)(sqrt (AS->cdFFT[FrequencyLevel]) * AS->cdFFTScale);
 
 	// Вписывание в диапазон (uchar)
 	if (v > CD_BMPINFO_COLORS_COUNT - 1)
 		v = CD_BMPINFO_COLORS_COUNT - 1;
 
 	// Пересчёт пика
-	if ((FrequencyLevel >= AS.cdFFTPeakEvLowEdge) && (FrequencyLevel <= AS.cdFFTPeakEvHighEdge) && 
-		(v >= AS.cdFFTPeakEvLowLevel))
+	if ((FrequencyLevel >= AS->cdFFTPeakEvLowEdge) && (FrequencyLevel <= AS->cdFFTPeakEvHighEdge) && 
+		(v >= AS->cdFFTPeakEvLowLevel))
 		{
-		AS.cdFFTPeak = 0xFF;
+		AS->cdFFTPeak = 0xFF;
 		rand ();	// Привязка поведения ГПСЧ к звуковому потоку
 		}
 
@@ -58,19 +58,19 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 		return;
 
 	// Переход в режим обновления
-	AS.updating = 1;
+	AS->updating = 1;
 
 	// Обновление полиморфной палитры
-	if (AS.polymorphUpdateCounter != 0)	// Нулевое значение используется как блокировка
+	if (AS->cdPolymorphUpdateCounter != 0)	// Нулевое значение используется как блокировка
 		{
-		if (AS.polymorphUpdateCounter++ >= POLYMORPH_UPDATE_PAUSE)
+		if (AS->cdPolymorphUpdateCounter++ >= POLYMORPH_UPDATE_PAUSE)
 			{
-			FillPaletteEx (AS.cdCurrentPalette);
+			FillPaletteEx (AS->cdCurrentPalette);
 			}
 		}
 
 	// Обновление спектрограммы, если требуется
-	switch (AS.sgSpectrogramMode)
+	switch (AS->sgSpectrogramMode)
 		{
 		// Без спектрограммы
 		default:
@@ -79,36 +79,36 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 
 		// С курсором
 		case 1:
-			for (y = 0; y < AS.sgFrameHeight; y++)
+			for (y = 0; y < AS->sgFrameHeight; y++)
 				{
 				// Получение значения
 				v = GetScaledAmplitudeEx (y + 1);
 
 				// Отрисовка
-				AS.sgBuffer[y * AS.sgFrameWidth + AS.sgCurrentPosition] =
+				AS->sgBuffer[y * AS->sgFrameWidth + AS->sgCurrentPosition] =
 #ifdef SG_DOUBLE_WIDTH
-				AS.sgBuffer[y * AS.sgFrameWidth + (AS.sgCurrentPosition + 1) % AS.sgFrameWidth] = 
+				AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + 1) % AS->sgFrameWidth] = 
 #endif
 				v;
 
 				// Маркер
-				AS.sgBuffer[y * AS.sgFrameWidth + (AS.sgCurrentPosition + SG_STEP) % AS.sgFrameWidth] = 255;
+				AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + SG_STEP) % AS->sgFrameWidth] = 255;
 				}
 
 			// Движение маркера
-			AS.sgCurrentPosition = (AS.sgCurrentPosition + SG_STEP) % AS.sgFrameWidth;
+			AS->sgCurrentPosition = (AS->sgCurrentPosition + SG_STEP) % AS->sgFrameWidth;
 			break;
 
 		// Движущаяся
 		case 2:
-			for (y = 0; y < AS.sgFrameHeight; y++)
+			for (y = 0; y < AS->sgFrameHeight; y++)
 				{
 				// Сдвиг изображения
-				for (x = 0; x < AS.sgFrameWidth - SG_STEP; x += SG_STEP)
+				for (x = 0; x < AS->sgFrameWidth - SG_STEP; x += SG_STEP)
 					{
-					AS.sgBuffer[y * AS.sgFrameWidth + x] = AS.sgBuffer[y * AS.sgFrameWidth + x + 1]
+					AS->sgBuffer[y * AS->sgFrameWidth + x] = AS->sgBuffer[y * AS->sgFrameWidth + x + 1]
 #ifdef SG_DOUBLE_WIDTH
-					= AS.sgBuffer[y * AS.sgFrameWidth + x + 2]
+					= AS->sgBuffer[y * AS->sgFrameWidth + x + 2]
 #endif
 					;
 					}
@@ -118,46 +118,46 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 
 				// Отрисовка
 #ifdef SG_DOUBLE_WIDTH
-				AS.sgBuffer[y * AS.sgFrameWidth + AS.sgFrameWidth - 2] = 
+				AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - 2] = 
 #endif
-				AS.sgBuffer[y * AS.sgFrameWidth + AS.sgFrameWidth - 1] = v;
+				AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - 1] = v;
 				}
 			break;
 
 		// Гистограмма и симметричная гистограмма
 		case 3:
 		case 4:
-			for (x = 0; x < AS.sgFrameWidth; x++)
+			for (x = 0; x < AS->sgFrameWidth; x++)
 				{
 				// Получение значения
-				v = GetScaledAmplitudeEx (AS.cdHistogramFFTValuesCount * (ulong)x / AS.sgFrameWidth);
+				v = GetScaledAmplitudeEx (AS->cdHistogramFFTValuesCount * (ulong)x / AS->sgFrameWidth);
 
 				// Перемасштабирование
-				v = AS.sgFrameHeight * (ulong)v / CD_BMPINFO_COLORS_COUNT;	
+				v = AS->sgFrameHeight * (ulong)v / CD_BMPINFO_COLORS_COUNT;	
 
-				if (AS.sgSpectrogramMode == 3)
+				if (AS->sgSpectrogramMode == 3)
 					{
 					for (y = 0; y < v; y++)
-						AS.sgBuffer[y * AS.sgFrameWidth + x] = CD_HISTO_BAR;	// Обрезаем края палитр
-					for (y = v; y < AS.sgFrameHeight; y++)
-						AS.sgBuffer[y * AS.sgFrameWidth + x] = CD_HISTO_SPACE;
+						AS->sgBuffer[y * AS->sgFrameWidth + x] = CD_HISTO_BAR;	// Обрезаем края палитр
+					for (y = v; y < AS->sgFrameHeight; y++)
+						AS->sgBuffer[y * AS->sgFrameWidth + x] = CD_HISTO_SPACE;
 					}
 				else
 					{
 					for (y = 0; y < v; y++)
-						AS.sgBuffer[y * AS.sgFrameWidth + (AS.sgFrameWidth + x) / 2] =
-						AS.sgBuffer[y * AS.sgFrameWidth + (AS.sgFrameWidth - x) / 2] = CD_HISTO_BAR;	// Обрезаем края палитр
+						AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth + x) / 2] =
+						AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth - x) / 2] = CD_HISTO_BAR;	// Обрезаем края палитр
 
-					for (y = v; y < AS.sgFrameHeight; y++)
-						AS.sgBuffer[y * AS.sgFrameWidth + (AS.sgFrameWidth + x) / 2] =
-						AS.sgBuffer[y * AS.sgFrameWidth + (AS.sgFrameWidth - x) / 2] = CD_HISTO_SPACE;
+					for (y = v; y < AS->sgFrameHeight; y++)
+						AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth + x) / 2] =
+						AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth - x) / 2] = CD_HISTO_SPACE;
 					}
 				}
 			break;
 		}
 
 	// Обновление завершено
-	AS.updating = 0;
+	AS->updating = 0;
 	}
 
 // Функция выполняет ручное обновление данных FFT вместо встроенного таймера
