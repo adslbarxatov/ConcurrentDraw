@@ -115,5 +115,9 @@ Version 1.17:
 • Sources splitted to different files using readability and usability rules;
 • In case of 'polymorph' or 'random' palette logo will be reset anytime you'll
   change settings;
-• Also palette may be changed by double mouse click on the main window;
+• Also 'random' and 'polymorph' palettes may be changed by double mouse click
+  on the main window;
 • Added monocolor variants of 'polymorph' and 'random' palettes
+
+Version 1.17.1:
+• Some code improvements applied
