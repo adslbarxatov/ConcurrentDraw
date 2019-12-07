@@ -41,6 +41,7 @@ namespace ESHQSetupStub
 			currentLogoArcDelta = 0;							// Текущий угол приращения поворота лого
 		private double currentHistogramArc = 0.0;				// Текущий угол поворота гистограммы-бабочки
 		private uint logoHeight;								// Диаметр лого
+		private const int fillingOpacity = 15;					// Непрозрачность эффекта fadeout
 
 		private byte peak;										// Пиковое значение для расчёта битовых порогов
 		private const byte peakTrigger = 0xF0;					// Значение пика, превышение которого является триггером
@@ -208,9 +209,9 @@ namespace ESHQSetupStub
 			ResetLogo ();
 
 			// Формирование кистей
-			brushes.Add (new SolidBrush (ProgramDescription.MasterBackColor));			// Фон
-			brushes.Add (new SolidBrush (ConcurrentDrawLib.GetMasterPaletteColor ()));	// Лого и beat-детектор
-			brushes.Add (new SolidBrush (Color.FromArgb (20, brushes[0].Color)));		// Fade out
+			brushes.Add (new SolidBrush (ProgramDescription.MasterBackColor));					// Фон
+			brushes.Add (new SolidBrush (ConcurrentDrawLib.GetMasterPaletteColor ()));			// Лого и beat-детектор
+			brushes.Add (new SolidBrush (Color.FromArgb (fillingOpacity, brushes[0].Color)));	// Fade out
 
 #if VIDEO
 			// Подготовка параметров
@@ -237,7 +238,7 @@ namespace ESHQSetupStub
 				{
 				ExtendedTimer.Enabled = true;
 				}
-				this.Activate ();
+			this.Activate ();
 			}
 
 		// Метод инициализирует аудиоканал
@@ -251,7 +252,7 @@ namespace ESHQSetupStub
 				ssie = ConcurrentDrawLib.InitializeSoundStream (OFAudio.FileName);
 			else
 #endif
-			ssie = ConcurrentDrawLib.InitializeSoundStream (cdp.DeviceNumber);
+				ssie = ConcurrentDrawLib.InitializeSoundStream (cdp.DeviceNumber);
 			switch (ssie)
 				{
 				case SoundStreamInitializationErrors.BASS_ERROR_ALREADY:
@@ -532,12 +533,19 @@ namespace ESHQSetupStub
 				{
 				// Обработка кумулятивного значения
 				uint oldCC = cumulativeCounter;
-				if (cumulativeCounter > cdp.DecumulationSpeed)
-					cumulativeCounter -= cdp.DecumulationSpeed;
-				if ((peak > peakTrigger) && (cumulativeCounter < cumulationLimit))
-					cumulativeCounter += cdp.CumulationSpeed;
+				if (cdp.DecumulationSpeed != 0)
+					{
+					if (cumulativeCounter > cdp.DecumulationSpeed)
+						cumulativeCounter -= cdp.DecumulationSpeed;
+					if ((peak > peakTrigger) && (cumulativeCounter < cumulationLimit))
+						cumulativeCounter += cdp.CumulationSpeed;
+					}
+				else if (cumulativeCounter != 0)
+					{
+					cumulativeCounter = 0;
+					}
 				if ((cumulativeCounter / cumulationDivisor) != (oldCC / cumulationDivisor))
-					brushes[2].Color = Color.FromArgb (15,
+					brushes[2].Color = Color.FromArgb (fillingOpacity,
 						ConcurrentDrawLib.GetMasterPaletteColor ((byte)(cumulativeCounter / cumulationDivisor)));
 
 				// Сброс изображения

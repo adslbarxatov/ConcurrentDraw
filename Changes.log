@@ -131,3 +131,6 @@ Version 1.18:
 • Added ability to make logo transparent in butterfly histogram mode (when no
   rotation enabled);
 • Added shaking beats detector
+
+Version 1.18.1:
+• Fixed incorrect processing of 'no cumulative effect' state
