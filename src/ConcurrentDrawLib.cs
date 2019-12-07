@@ -189,14 +189,6 @@ namespace ESHQSetupStub
 		// Переменные
 		private static char[] splitter = new char[] { '\x1' };
 
-#if BASSTEST
-		/// <summary>
-		/// Тестовая функция для библиотеки BASS
-		/// </summary>
-		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
-		public static extern void BASSTest ();
-#endif
-
 		/// <summary>
 		/// Функция получает имена устройств вывода звука (массив символов по 128 на имя)
 		/// </summary>

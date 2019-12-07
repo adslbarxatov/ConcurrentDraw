@@ -121,3 +121,13 @@ Version 1.17:
 
 Version 1.17.1:
 • Some code improvements applied
+
+Version 1.18:
+• Some visual improvements applied;
+• Some code improvements applied;
+• Fixed 'random' palette reset failure for histograms and spectrograms on double
+  left click;
+• Fixed settings misapplying on application startup;
+• Added ability to make logo transparent in butterfly histogram mode (when no
+  rotation enabled);
+• Added shaking beats detector

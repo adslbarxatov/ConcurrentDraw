@@ -192,6 +192,9 @@ namespace ESHQSetupStub
 				else
 					HistoRotSpeed.Checked = true;
 				HistoRotSpeedArc.Value = (decimal)Math.Abs (histoRotSpeedArc / 10.0);
+
+				transparentLogo = TransparentFlag.Checked = (values[15] != "0");
+				shakingBitDetector = ShakeFlag.Checked = (values[16] != "0");
 				}
 			catch
 				{
@@ -219,7 +222,6 @@ namespace ESHQSetupStub
 			LogoHeightLabel.Text = Localization.GetText ("CDP_LogoHeightLabel", al);
 
 			AlwaysOnTopFlag.Text = Localization.GetText ("CDP_AlwaysOnTopFlag", al);
-			//LogoResetFlag.Text = Localization.GetText ("CDP_LogoResetFlag", al);
 
 			BeatsGroup.Text = Localization.GetText ("CDP_BeatsGroup", al);
 
@@ -236,6 +238,9 @@ namespace ESHQSetupStub
 			HistoRotGroup.Text = Localization.GetText ("CDP_HistoRotGroup", al);
 			HistoRotAccToBeats.Text = Localization.GetText ("CDP_HistoRotAccToBeats", al);
 			HistoRotSpeed.Text = Localization.GetText ("CDP_HistoRotSpeed", al);
+
+			TransparentFlag.Text = Localization.GetText ("CDP_TransparentFlag", al);
+			ShakeFlag.Text = Localization.GetText ("CDP_ShakeFlag", al);
 			}
 
 		// Контроль наличия доступных устройств
@@ -343,6 +348,9 @@ namespace ESHQSetupStub
 			else
 				histoRotSpeedArc = (int)(HistoRotSpeedArc.Value * 10);
 
+			transparentLogo = TransparentFlag.Checked && TransparentFlag.Enabled;
+			shakingBitDetector = ShakeFlag.Checked;
+
 			// Сохранение
 			string settings = deviceNumber.ToString () + splitter[0].ToString () +
 				paletteNumber.ToString () + splitter[0].ToString () +
@@ -361,7 +369,10 @@ namespace ESHQSetupStub
 				decumulationMultiplier.ToString () + splitter[0].ToString () +
 				cumulationSpeed.ToString () + splitter[0].ToString () +
 				logoHeight.ToString () + splitter[0].ToString () +
-				histoRotSpeedArc.ToString ();
+				histoRotSpeedArc.ToString () + splitter[0].ToString () +
+
+				(transparentLogo ? "1" : "0") + splitter[0].ToString () +
+				(shakingBitDetector ? "1" : "0");
 
 			try
 				{
@@ -624,10 +635,16 @@ namespace ESHQSetupStub
 		private void VisualizationCombo_SelectedIndexChanged (object sender, EventArgs e)
 			{
 			VisualizationModes mode = (VisualizationModes)VisualizationCombo.SelectedIndex;
+
 			SGHGHeightLabel.Enabled = SDHeight.Enabled = (mode != VisualizationModes.Butterfly_histogram);
 			CumulationGroup.Enabled = HistoRotGroup.Enabled = (mode == VisualizationModes.Butterfly_histogram);
+
 			HGRangeLabel.Enabled = HistogramRangeCombo.Enabled = ((mode == VisualizationModes.Butterfly_histogram) ||
 				(mode == VisualizationModes.Histogram) || (mode == VisualizationModes.Symmetric_histogram));
+
+			TransparentFlag.Enabled = (mode == VisualizationModes.Butterfly_histogram);
+			if (!TransparentFlag.Enabled)
+				TransparentFlag.Checked = false;
 			}
 
 		/// <summary>
@@ -664,5 +681,40 @@ namespace ESHQSetupStub
 				}
 			}
 		private int histoRotSpeedArc;
+
+
+		/// <summary>
+		/// Возвращает флаг, указывающий на прозрачность лого
+		/// </summary>
+		public bool TransparentLogo
+			{
+			get
+				{
+				return transparentLogo && TransparentFlag.Enabled;
+				}
+			}
+		private bool transparentLogo = false;
+
+		/// <summary>
+		/// Возвращает флаг, указывающий на дребезг бит-детектора
+		/// </summary>
+		public bool ShakingBitDetector
+			{
+			get
+				{
+				return shakingBitDetector;
+				}
+			}
+		private bool shakingBitDetector = false;
+
+		// Изменение инкрементного угла
+		private void HistoRotSpeedArc_ValueChanged (object sender, EventArgs e)
+			{
+			TransparentFlag.Enabled = (HistoRotSpeedArc.Value == 0);
+			if (!TransparentFlag.Enabled)
+				TransparentFlag.Checked = false;
+
+			logoResetFlag = true;
+			}
 		}
 	}

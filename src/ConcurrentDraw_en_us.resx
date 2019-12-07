@@ -215,7 +215,7 @@ Fade out speed multiplier: {1:S}
   <data name="HelpText" xml:space="preserve">
     <value>Quick user manual
 
-Press right mouse button to get to settings window later, ESC key to close the application.
+Use right mouse button to get to settings window later; double left click to change colors of 'polymorph' and 'random' palettes; ESC key to close the application.
 
 At first application will start with recommended settings. But you can change:
 • Output device for audio data getting (stereo mixer or speakers required);
@@ -252,5 +252,11 @@ Settings will be saved by pressing OK button. They can be changed anytime you ne
   </data>
   <data name="CDP_HistoRotSpeed" xml:space="preserve">
     <value>Using constant angle increment:</value>
+  </data>
+  <data name="CDP_ShakeFlag" xml:space="preserve">
+    <value>Shaking beats detector</value>
+  </data>
+  <data name="CDP_TransparentFlag" xml:space="preserve">
+    <value>Transparent logo</value>
   </data>
 </root>

@@ -12,7 +12,7 @@ CD_API(sint) InitializeSoundStreamEx (uchar DeviceNumber)
 	if (BASS_GetVersion () != BASS_VERSION)
 		return -10;
 
-	// Сброс состояния программы
+	// Установка начального состояния программы (если не выполнено ранее функциями настройки)
 	InitAppState ();
 
 	// Инициализация
@@ -44,7 +44,7 @@ CD_API(sint) InitializeFileStreamEx (schar *FileName)
 	if (BASS_GetVersion () != BASS_VERSION)
 		return -10;
 
-	// Сброс состояния программы
+	// Установка начального состояния программы (если не выполнено ранее функциями настройки)
 	InitAppState ();
 
 	// Инициализация

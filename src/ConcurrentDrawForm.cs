@@ -50,11 +50,13 @@ namespace ESHQSetupStub
 
 		private int[] histoX = new int[4],
 			histoY = new int[4];								// Координаты линий гистограммы
-		private const double histoDensity = 2.84;				// Плотность гистограммы-бабочки
+		private const double histoDensity = 2.75;				// Плотность гистограммы-бабочки
+		// (даёт полный угол чуть более 90°; 90° <=> 2.84)
 
 		private int rad, amp;									// Вспомогательные переменные
 		private Bitmap b;
 		private Pen p;
+		private Random rnd = new Random ();
 
 		// Аудио
 #if AUDIO
@@ -212,7 +214,7 @@ namespace ESHQSetupStub
 
 #if VIDEO
 			// Подготовка параметров
-			demoFont = new Font ("a_GroticNr" /*"Hair ‱"*/, this.Width / 50);
+			demoFont = new Font ("a_GroticNr", this.Width / 50);
 			for (int i = 0; i < demoNames.Length; i++)
 				{
 				demoSizes[i] = gr[0].MeasureString (demoNames[i], demoFont);
@@ -379,7 +381,7 @@ namespace ESHQSetupStub
 				// Вращение лого
 				case Phases.LogoRotation:
 					if (logoFirstShowMade)
-						currentPhase = Phases.Visualization;
+						currentPhase = Phases.PreVisualization;
 
 					RotatingLogo ();
 					break;
@@ -389,6 +391,12 @@ namespace ESHQSetupStub
 #if AUDIO
 					am.PlayAudio ();
 #endif
+					if (cdp.TransparentLogo)
+						{
+						logo[0].MakeTransparent (ProgramDescription.MasterBackColor);
+						gr[1].CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+						}
+
 					logoFirstShowMade = true;
 					currentPhase++;
 					break;
@@ -455,6 +463,7 @@ namespace ESHQSetupStub
 
 			// Отрисовка
 			gr[1].RotateTransform (currentLogoArcDelta);
+
 			gr[1].DrawImage (logo[0], -3 * logoHeight / 5, -3 * logoHeight / 5);
 			mainLayer.Descriptor.DrawImage (logo[1], (this.Width - logo[1].Width) / 2,
 				((VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) !=
@@ -492,7 +501,7 @@ namespace ESHQSetupStub
 				SpectrogramModes.NoSpectrogram) ? 0 : (this.Height - logo[0].Height) / 2));
 
 			steps++;
-			if (steps >= logoHeight / 20)
+			if (steps >= logoHeight / 27)
 				{
 				gr[1].Dispose ();
 				gr.RemoveAt (1);
@@ -528,7 +537,7 @@ namespace ESHQSetupStub
 				if ((peak > peakTrigger) && (cumulativeCounter < cumulationLimit))
 					cumulativeCounter += cdp.CumulationSpeed;
 				if ((cumulativeCounter / cumulationDivisor) != (oldCC / cumulationDivisor))
-					brushes[2].Color = Color.FromArgb (20,
+					brushes[2].Color = Color.FromArgb (15,
 						ConcurrentDrawLib.GetMasterPaletteColor ((byte)(cumulativeCounter / cumulationDivisor)));
 
 				// Сброс изображения
@@ -584,10 +593,17 @@ namespace ESHQSetupStub
 				// Бит-детектор
 				p = new Pen (ConcurrentDrawLib.GetMasterPaletteColor (peak), logoHeight / 50);
 				rad = 650 * logo[1].Height / (1950 - peak);
+				if (cdp.ShakingBitDetector)
+					amp = (int)((logoHeight * peak) >> 15);
 
-				mainLayer.Descriptor.DrawEllipse (p, (this.Width - rad) / 2,
+				mainLayer.Descriptor.DrawEllipse (p, (this.Width - rad) / 2 +
+					(cdp.ShakingBitDetector ? rnd.Next (-amp, amp) : 0),
+
 					(((VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) !=
-					SpectrogramModes.NoSpectrogram) ? logo[1].Height : this.Height) - rad) / 2, rad, rad);
+					SpectrogramModes.NoSpectrogram) ? logo[1].Height : this.Height) - rad) / 2 +
+					(cdp.ShakingBitDetector ? rnd.Next (-amp, amp) : 0),
+
+					rad, rad);
 
 #if VIDEO
 				/*if (VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) == SpectrogramModes.NoSpectrogram)
@@ -699,11 +715,28 @@ namespace ESHQSetupStub
 			// Простой сброс логотипа
 			if ((e.Button == MouseButtons.Left) && (e.Clicks == 2))
 				{
-				// Перезаполнение палитры (без сброса поля отрисовки)
-				ConcurrentDrawLib.FillPalette (cdp.PaletteNumber);
-				brushes[1].Color = ConcurrentDrawLib.GetMasterPaletteColor ();
+				// Остановка отрисовки и сброс спектрограммы/гистограммы
+				ExtendedTimer.Enabled = false;
+				ConcurrentDrawLib.DestroySpectrogram ();	// Объединяет функционал
 
+				// Перезапуск
+				if (VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) ==
+					SpectrogramModes.NoSpectrogram)
+					{
+					// Перезаполнение палитры (без сброса поля отрисовки)
+					ConcurrentDrawLib.FillPalette (cdp.PaletteNumber);
+					}
+				else
+					{
+					// Пересоздание спектрограммы / гистограммы
+					ConcurrentDrawLib.InitializeSpectrogram ((uint)this.Width, cdp.SpectrogramHeight,
+						cdp.PaletteNumber, VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode));
+					}
+
+				brushes[1].Color = ConcurrentDrawLib.GetMasterPaletteColor ();
 				ResetLogo ();
+				ExtendedTimer.Enabled = true;
+
 				return;
 				}
 

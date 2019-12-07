@@ -321,7 +321,8 @@ void FillPalette_Blood (void)
 
 #define FPPR_RND_LIMIT		10
 #define FPPR_CLR_MIN_MONO	32
-#define FPPR_CLR_MIN_POLY	32
+#define FPPR_CLR_MIN_POLY	64
+#define FPPR_CLR_MIN_SUMMA	0x1E0
 
 void FillPalette_PolymorphRandom (uchar Polymorph, uchar Monocolor)
 	{
@@ -332,6 +333,7 @@ void FillPalette_PolymorphRandom (uchar Polymorph, uchar Monocolor)
 		{
 		if (Monocolor)
 			{
+			// Смещение
 			AS->cdPolymorphColors[3].rgbRed += GetRandomValue (-FPPR_RND_LIMIT, FPPR_RND_LIMIT);
 			if (AS->cdPolymorphColors[3].rgbRed < FPPR_RND_LIMIT)
 				AS->cdPolymorphColors[3].rgbRed = FP_MAX;
@@ -350,6 +352,16 @@ void FillPalette_PolymorphRandom (uchar Polymorph, uchar Monocolor)
 			if (AS->cdPolymorphColors[3].rgbBlue < FPPR_CLR_MIN_MONO)
 				AS->cdPolymorphColors[3].rgbBlue = FPPR_CLR_MIN_MONO;
 
+			// Осветление
+			while (AS->cdPolymorphColors[3].rgbRed + AS->cdPolymorphColors[3].rgbGreen +
+				AS->cdPolymorphColors[3].rgbBlue < FPPR_CLR_MIN_SUMMA)
+				{
+				AS->cdPolymorphColors[3].rgbRed += (AS->cdPolymorphColors[3].rgbRed < 255 ? 1 : 0);
+				AS->cdPolymorphColors[3].rgbGreen += (AS->cdPolymorphColors[3].rgbGreen < 255 ? 1 : 0);
+				AS->cdPolymorphColors[3].rgbBlue += (AS->cdPolymorphColors[3].rgbBlue < 255 ? 1 : 0);
+				}
+
+			// Распространение
 			AS->cdPolymorphColors[2].rgbRed = AS->cdPolymorphColors[3].rgbRed / 2;
 			AS->cdPolymorphColors[2].rgbGreen = AS->cdPolymorphColors[3].rgbGreen / 2;
 			AS->cdPolymorphColors[2].rgbBlue = AS->cdPolymorphColors[3].rgbBlue / 2;
@@ -388,10 +400,21 @@ void FillPalette_PolymorphRandom (uchar Polymorph, uchar Monocolor)
 		{
 		if (Monocolor)
 			{
+			// Генерация
 			AS->cdPolymorphColors[3].rgbRed = GetRandomValue (FPPR_CLR_MIN_MONO, FP_MAX + 1);
 			AS->cdPolymorphColors[3].rgbGreen = GetRandomValue (FPPR_CLR_MIN_MONO, FP_MAX + 1);
 			AS->cdPolymorphColors[3].rgbBlue = GetRandomValue (FPPR_CLR_MIN_MONO, FP_MAX + 1);
 
+			// Осветление
+			while (AS->cdPolymorphColors[3].rgbRed + AS->cdPolymorphColors[3].rgbGreen +
+				AS->cdPolymorphColors[3].rgbBlue < FPPR_CLR_MIN_SUMMA)
+				{
+				AS->cdPolymorphColors[3].rgbRed += (AS->cdPolymorphColors[3].rgbRed < 255 ? 1 : 0);
+				AS->cdPolymorphColors[3].rgbGreen += (AS->cdPolymorphColors[3].rgbGreen < 255 ? 1 : 0);
+				AS->cdPolymorphColors[3].rgbBlue += (AS->cdPolymorphColors[3].rgbBlue < 255 ? 1 : 0);
+				}
+
+			// Распространение
 			AS->cdPolymorphColors[2].rgbRed = AS->cdPolymorphColors[3].rgbRed / 2;
 			AS->cdPolymorphColors[2].rgbGreen = AS->cdPolymorphColors[3].rgbGreen / 2;
 			AS->cdPolymorphColors[2].rgbBlue = AS->cdPolymorphColors[3].rgbBlue / 2;
@@ -521,7 +544,7 @@ CD_API(ulong) GetColorFromPaletteEx (uchar ColorNumber)
 // Функция возвращает основной цвет текущей палитры с указанной яркостью
 CD_API(ulong) GetMasterPaletteColorEx (uchar Brightness)
 	{
-	return 0xFF000000 | 
+	return /* 0xFF000000 */ ((ulong)Brightness << 24) | 
 		(AS->sgBeatsInfo.cd_bmpinfo.colors[Brightness].rgbRed << 16) |
 		(AS->sgBeatsInfo.cd_bmpinfo.colors[Brightness].rgbGreen << 8) | 
 		AS->sgBeatsInfo.cd_bmpinfo.colors[Brightness].rgbBlue;
@@ -551,5 +574,5 @@ CD_API(schar *) GetPalettesNamesEx ()
 // Функция возвращает псевдослучайное число между Min и Max
 sint GetRandomValue (sint Min, sint Max)
 	{
-	return (double)rand () / (RAND_MAX + 1.0) * (Max - Min) + Min;
+	return (Max - Min) * (sdlong)rand () / (RAND_MAX + 1) + Min;
 	}

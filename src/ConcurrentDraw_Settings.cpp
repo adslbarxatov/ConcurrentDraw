@@ -74,6 +74,10 @@ CD_API(uchar) GetCurrentPeakEx ()
 CD_API(void) SetPeakEvaluationParametersEx (uchar LowEdge, uchar HighEdge, 
 	uchar LowLevel, uchar FFTScaleMultiplier)
 	{
+	// Установка начального состояния программы (функция срабатывает только один раз
+	// за время жизни программы)
+	InitAppState ();
+
 	// Не требует защиты
 	AS->cdFFTPeakEvLowLevel = LowLevel;
 	AS->cdFFTPeakEvLowEdge = LowEdge;
@@ -109,6 +113,11 @@ CD_API(schar *) GetCDLibVersionEx ()
 // Функция устанавливает количество значений FFT, которое будет использоваться в гистограммах
 CD_API(void) SetHistogramFFTValuesCountEx (uint Count)
 	{
+	// Установка начального состояния программы (функция срабатывает только один раз
+	// за время жизни программы)
+	InitAppState ();
+
+	// Установка значения
 	AS->cdHistogramFFTValuesCount = Count;
 
 	if ((Count < 64) || (Count > FFT_VALUES_COUNT))

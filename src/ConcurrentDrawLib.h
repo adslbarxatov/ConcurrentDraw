@@ -29,8 +29,8 @@
 /////////////////////////////////////////////////////
 // Константы
 #define BASS_VERSION				0x02040E00
-#define CD_VERSION					1,17,1,0
-#define CD_VERSION_S				"1.17.1.0"
+#define CD_VERSION					1,18,0,0
+#define CD_VERSION_S				"1.18.0.0"
 #define CD_PRODUCT					"ConcurrentDraw visualization tool's BASS adapter"
 #define CD_COMPANY					"RD AAOW"
 
@@ -46,7 +46,7 @@
 #define MINFRAMEHEIGHT				128
 #define CD_BMPINFO_COLORS_COUNT		256
 #define MAXFRAMEHEIGHT				512
-#define POLYMORPH_UPDATE_PAUSE		30
+#define POLYMORPH_UPDATE_PAUSE		25
 
 #define CD_HISTO_BAR				(192 * y / AS->sgFrameHeight + 48)
 #define CD_HISTO_SPACE				8
