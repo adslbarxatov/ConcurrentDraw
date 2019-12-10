@@ -1,10 +1,10 @@
-# ConcurrentDraw v 1.18
+# ConcurrentDraw v 1.19
 A tool for visualization of system audio output / Утилита визуализации данных системного аудиовыхода
 #
 
-This tool allows you to visualize the audio data that comes from system's output
+This tool allows you to visualize audio data that comes from system's output
 (system mixer or speakers). All sound that you can play on your PC can be drawn.
-No additional codecs or application. Just launch and behold!
+No additional codecs or applications. Just launch and behold!
 
 Этот инструмент позволяет визуализировать аудиоданные из системного выхода
 (микшера или динамиков). Любой звук, который можно воспроизвести на Вашем ПК,

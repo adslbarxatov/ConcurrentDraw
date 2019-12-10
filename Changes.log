@@ -134,3 +134,6 @@ Version 1.18:
 
 Version 1.18.1:
 • Fixed incorrect processing of 'no cumulative effect' state
+
+Version 1.19:
+• Amplitude threshold (setting) now will be presented in percentage;
