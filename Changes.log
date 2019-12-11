@@ -1,139 +1,143 @@
 ConcurrentDraw changes log
 
 Version 1.2 (first publication):
-• Supports getting FFT data from specified audio output using BASS library;
-• Supports getting list of supported devices;
-• Supports drawing static and moving spectrograms based on FFT data;
-• Supports adjustable beats detection (frequencies range and amplitude threshold);
-• Supports 4 palettes for spectrograms;
-• Supports holding of settings for spectrogram palettes, window size and
+â€¢ Supports getting FFT data from specified audio output using BASS library;
+â€¢ Supports getting list of supported devices;
+â€¢ Supports drawing static and moving spectrograms based on FFT data;
+â€¢ Supports adjustable beats detection (frequencies range and amplitude threshold);
+â€¢ Supports 4 palettes for spectrograms;
+â€¢ Supports holding of settings for spectrogram palettes, window size and
   position, specified output device, beats detection metrics
 
 Version 1.3:
-• Generic code improvements;
-• Added support for 'always on top' flag;
-• Added support for adjustable FFT scale multiplier (spectrogram contrast);
-• Added histogram mode up to 22050 Hz;
-• Added high contrast palette 'Sunshine'
+â€¢ Generic code improvements;
+â€¢ Added support for 'always on top' flag;
+â€¢ Added support for adjustable FFT scale multiplier (spectrogram contrast);
+â€¢ Added histogram mode up to 22050 Hz;
+â€¢ Added high contrast palette 'Sunshine'
 
 Version 1.4:
-• Added 'Acid' palette with high contrast on high amplitudes;
-• Added 'Butterfly' histogram mode;
-• Generic code improvements;
-• Fixed incorrect behavior of main window when it's always on top and user
+â€¢ Added 'Acid' palette with high contrast on high amplitudes;
+â€¢ Added 'Butterfly' histogram mode;
+â€¢ Generic code improvements;
+â€¢ Fixed incorrect behavior of main window when it's always on top and user
   calls settings interface;
-• Fixed logo redraw and placement in different modes
+â€¢ Fixed logo redraw and placement in different modes
 
 Version 1.4.1:
-• Added versions checker: now application will launch only with compatible
+â€¢ Added versions checker: now application will launch only with compatible
   libraries
 
 Version 1.5:
-• Settings interface improvements applied;
-• Added support for adjustable quantity of FFT values for histograms building;
-• Beats detector's behavior updated;
-• Fixed behavior of 'Cancel' button at first start of application;
-• Code improvements applied;
-• Added user manual at first launch and on '?' button
+â€¢ Settings interface improvements applied;
+â€¢ Added support for adjustable quantity of FFT values for histograms building;
+â€¢ Beats detector's behavior updated;
+â€¢ Fixed behavior of 'Cancel' button at first start of application;
+â€¢ Code improvements applied;
+â€¢ Added user manual at first launch and on '?' button
 
 Version 1.6:
-• Code optimizations applied; old unused code removed;
-• Added russian language and localization support for user interface;
-• Settings are now reset to previously saved when you click 'Cancel' button;
-• Logo, 'about' info and quick user manual added to the 'first start' event
+â€¢ Code optimizations applied; old unused code removed;
+â€¢ Added russian language and localization support for user interface;
+â€¢ Settings are now reset to previously saved when you click 'Cancel' button;
+â€¢ Logo, 'about' info and quick user manual added to the 'first start' event
 
 Version 1.7:
-• Math optimizations applied;
-• Logo placement algorithm optimized for 16:9 window mode;
-• Added support for file streaming (test mode; not available for users for now);
-• Generic code review performed
+â€¢ Math optimizations applied;
+â€¢ Logo placement algorithm optimized for 16:9 window mode;
+â€¢ Added support for file streaming (test mode; not available for users for now);
+â€¢ Generic code review performed
 
 Version 1.7.2:
-• Added OS language autodetection at first launch;
-• Added '7MissedCalls' and 'Sail' palettes;
-• Generic optimizations for file streaming support applied (test mode; still not
+â€¢ Added OS language autodetection at first launch;
+â€¢ Added '7MissedCalls' and 'Sail' palettes;
+â€¢ Generic optimizations for file streaming support applied (test mode; still not
   available for users);
 
 Version 1.8:
-• Added ability to set visualization position and size using mouse;
-• Fixed invalid behavior of parameters window in case of changing values without
+â€¢ Added ability to set visualization position and size using mouse;
+â€¢ Fixed invalid behavior of parameters window in case of changing values without
   saving them;
-• Added palettes preview;
-• Fixed infinite restart when system stereo mixer on Windows 7 conflicts with
+â€¢ Added palettes preview;
+â€¢ Fixed infinite restart when system stereo mixer on Windows 7 conflicts with
   hardware microphone;
-• Some fixes applied to existent palettes
+â€¢ Some fixes applied to existent palettes
 
 Version 1.8.1:
-• Added 'Mirror' palette
+â€¢ Added 'Mirror' palette
 
 Version 1.9:
-• Added cumulative effect: in case of intensive and dense beats (or other 
+â€¢ Added cumulative effect: in case of intensive and dense beats (or other 
   frequencies that are under detector) visualization background will change its
   color according to selected palette
 
 Version 1.9.1:
-• Some fixes applied to existent palettes
+â€¢ Some fixes applied to existent palettes
 
 Version 1.10:
-• Added the ability to set diameter of logo (as a percentage of window's height);
-• Some interface improvements applied
+â€¢ Added the ability to set diameter of logo (as a percentage of window's height);
+â€¢ Some interface improvements applied
 
 Version 1.11:
-• Added rotation ability for butterfly histogram;
-• More correct palettes usage applied to butterfly histogram
+â€¢ Added rotation ability for butterfly histogram;
+â€¢ More correct palettes usage applied to butterfly histogram
 
 Version 1.12:
-• Histogram rotation angle is more precise now;
-• 'Beats detector'-based histogram rotation's angle impulse now may be adjusted;
-• Butterfly histogram got full (360 degrees) field and more accurate spikes drawing
+â€¢ Histogram rotation angle is more precise now;
+â€¢ 'Beats detector'-based histogram rotation's angle impulse now may be adjusted;
+â€¢ Butterfly histogram got full (360 degrees) field and more accurate spikes drawing
 
 Version 1.13:
-• Beat detector's code optimizations applied;
-• Some minor bugs fixed;
-• Quick logo reset algorithm on settings' changes applied
+â€¢ Beat detector's code optimizations applied;
+â€¢ Some minor bugs fixed;
+â€¢ Quick logo reset algorithm on settings' changes applied
 
 Version 1.14:
-• Symmetric histogram mode added;
-• Non-black and semitransparent backgroung added for histogram modes;
-• Not needed drawing preparations removed;
+â€¢ Symmetric histogram mode added;
+â€¢ Non-black and semitransparent backgroung added for histogram modes;
+â€¢ Not needed drawing preparations removed;
 
 Version 1.14.1:
-• Some code optimizations and improvements applied
+â€¢ Some code optimizations and improvements applied
 
 Version 1.15:
-• Some minor bugs fixed;
-• Application failure on settings call fixed: forced threads synchronization
+â€¢ Some minor bugs fixed;
+â€¢ Application failure on settings call fixed: forced threads synchronization
   applied;
-• Max histogram height extended up to 512 px;
-• Beats detector's peaks evaluation is more stable now
+â€¢ Max histogram height extended up to 512 px;
+â€¢ Beats detector's peaks evaluation is more stable now
 
 Version 1.16:
-• Some improvements applied;
-• Added new palettes including the one that changes over time and the random one
+â€¢ Some improvements applied;
+â€¢ Added new palettes including the one that changes over time and the random one
 
 Version 1.17:
-• Sources splitted to different files using readability and usability rules;
-• In case of 'polymorph' or 'random' palette logo will be reset anytime you'll
+â€¢ Sources splitted to different files using readability and usability rules;
+â€¢ In case of 'polymorph' or 'random' palette logo will be reset anytime you'll
   change settings;
-• Also 'random' and 'polymorph' palettes may be changed by double mouse click
+â€¢ Also 'random' and 'polymorph' palettes may be changed by double mouse click
   on the main window;
-• Added monocolor variants of 'polymorph' and 'random' palettes
+â€¢ Added monocolor variants of 'polymorph' and 'random' palettes
 
 Version 1.17.1:
-• Some code improvements applied
+â€¢ Some code improvements applied
 
 Version 1.18:
-• Some visual improvements applied;
-• Some code improvements applied;
-• Fixed 'random' palette reset failure for histograms and spectrograms on double
+â€¢ Some visual improvements applied;
+â€¢ Some code improvements applied;
+â€¢ Fixed 'random' palette reset failure for histograms and spectrograms on double
   left click;
-• Fixed settings misapplying on application startup;
-• Added ability to make logo transparent in butterfly histogram mode (when no
+â€¢ Fixed settings misapplying on application startup;
+â€¢ Added ability to make logo transparent in butterfly histogram mode (when no
   rotation enabled);
-• Added shaking beats detector
+â€¢ Added shaking beats detector
 
 Version 1.18.1:
-• Fixed incorrect processing of 'no cumulative effect' state
+â€¢ Fixed incorrect processing of 'no cumulative effect' state
 
 Version 1.19:
-• Amplitude threshold (setting) now will be presented in percentage;
+â€¢ Amplitude threshold (setting) now will be presented in percentage;
+â€¢ Window alignment at first launch is more accurate now;
+â€¢ Cumulative effect's background changed to fullwindow rectangle (instead of
+  peaksfitting ellipse);
+â€¢ Added 'perspective histogram' mode
