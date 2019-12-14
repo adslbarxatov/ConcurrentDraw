@@ -51,10 +51,12 @@ namespace ESHQSetupStub
 
 		private int[] histoX = new int[4],
 			histoY = new int[4];								// Координаты линий гистограммы
-		private const double histoDensity = 2.75;				// Плотность гистограммы-бабочки
-		// (даёт полный угол чуть более 90°; 90° <=> 2.84)
+		private const double butterflyDensity = 2.75;			// Плотность гистограммы-бабочки
+		private const double perspectiveDensity = 3.2;			// Плотность гистограммы-перспективы
+		// (даёт полный угол чуть более 90°; 90° <=> 2.84; 80° <=> 3.2)
 
 		private int rad, amp;									// Вспомогательные переменные
+		private double angle;
 		private Bitmap b;
 		private Pen p;
 		private Random rnd = new Random ();
@@ -212,6 +214,7 @@ namespace ESHQSetupStub
 			brushes.Add (new SolidBrush (ProgramDescription.MasterBackColor));					// Фон
 			brushes.Add (new SolidBrush (ConcurrentDrawLib.GetMasterPaletteColor ()));			// Лого и beat-детектор
 			brushes.Add (new SolidBrush (Color.FromArgb (fillingOpacity, brushes[0].Color)));	// Fade out
+			brushes.Add (new SolidBrush (ProgramDescription.MasterBackColor));					// "Пол" перспективы
 
 #if VIDEO
 			// Подготовка параметров
@@ -238,7 +241,7 @@ namespace ESHQSetupStub
 				{
 				ExtendedTimer.Enabled = true;
 				}
-			this.Activate ();
+				this.Activate ();
 			}
 
 		// Метод инициализирует аудиоканал
@@ -252,7 +255,7 @@ namespace ESHQSetupStub
 				ssie = ConcurrentDrawLib.InitializeSoundStream (OFAudio.FileName);
 			else
 #endif
-				ssie = ConcurrentDrawLib.InitializeSoundStream (cdp.DeviceNumber);
+			ssie = ConcurrentDrawLib.InitializeSoundStream (cdp.DeviceNumber);
 			switch (ssie)
 				{
 				case SoundStreamInitializationErrors.BASS_ERROR_ALREADY:
@@ -325,8 +328,7 @@ namespace ESHQSetupStub
 				}
 
 			// Отмена инициализации спектрограммы, если она не требуется
-			if (VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) ==
-				SpectrogramModes.NoSpectrogram)
+			if (!VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode))
 				{
 				// Ручное заполнение палитры и выход
 				ConcurrentDrawLib.FillPalette (cdp.PaletteNumber);
@@ -467,8 +469,7 @@ namespace ESHQSetupStub
 
 			gr[1].DrawImage (logo[0], -3 * logoHeight / 5, -3 * logoHeight / 5);
 			mainLayer.Descriptor.DrawImage (logo[1], (this.Width - logo[1].Width) / 2,
-				((VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) !=
-				SpectrogramModes.NoSpectrogram) ? 0 : (this.Height - logo[1].Height) / 2));
+				(VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode) ? 0 : (this.Height - logo[1].Height) / 2));
 			}
 
 		// Первичное вращение лого
@@ -498,8 +499,7 @@ namespace ESHQSetupStub
 
 			// Отрисовка
 			mainLayer.Descriptor.DrawImage (logo[0], (this.Width - logo[0].Width) / 2,
-				((VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) !=
-				SpectrogramModes.NoSpectrogram) ? 0 : (this.Height - logo[0].Height) / 2));
+				(VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode) ? 0 : (this.Height - logo[0].Height) / 2));
 
 			steps++;
 			if (steps >= logoHeight / 27)
@@ -516,6 +516,93 @@ namespace ESHQSetupStub
 				}
 			}
 
+		// Метод отрисовывает гистограммы «бабочка» и «перспектива»
+		private void DrawButterflyAndPerspective ()
+			{
+			// Обработка кумулятивного значения
+			uint oldCC = cumulativeCounter;
+			if (cdp.DecumulationSpeed != 0)
+				{
+				if (cumulativeCounter > cdp.DecumulationSpeed)
+					cumulativeCounter -= cdp.DecumulationSpeed;
+				if ((peak > peakTrigger) && (cumulativeCounter < cumulationLimit))
+					cumulativeCounter += cdp.CumulationSpeed;
+				}
+			else if (cumulativeCounter != 0)
+				{
+				cumulativeCounter = 0;
+				}
+
+			if ((cumulativeCounter / cumulationDivisor) != (oldCC / cumulationDivisor))
+				{
+				brushes[2].Color = Color.FromArgb (fillingOpacity,
+					ConcurrentDrawLib.GetMasterPaletteColor ((byte)(cumulativeCounter / cumulationDivisor)));
+				}
+
+			// Затенение изображения / кумулятивный эффект
+			mainLayer.Descriptor.FillRectangle (brushes[2], 0, 0, mainLayer.Layer.Width, mainLayer.Layer.Height);
+			if (cdp.VisualizationMode == VisualizationModes.Perspective_histogram)
+				{
+				brushes[3].Color = Color.FromArgb (255, ConcurrentDrawLib.GetMasterPaletteColor (peak < 8 ? (byte)8 : peak));
+				mainLayer.Descriptor.FillRectangle (brushes[3], 0, this.Height / 2 + logoHeight / 128, this.Width, this.Height / 2);
+				}
+
+			// Обработка вращения гистограммы
+			if (cdp.VisualizationMode == VisualizationModes.Butterfly_histogram)
+				{
+				if (cdp.HistoRotAccordingToBeats)
+					currentHistogramArc += (cdp.HistoRotSpeedDelta * currentLogoArcDelta / logoSpeedImpulse);
+				else
+					currentHistogramArc += cdp.HistoRotSpeedDelta;
+
+				if (currentHistogramArc > 360.0)
+					currentHistogramArc -= 360.0;
+				if (currentHistogramArc < 0.0)
+					currentHistogramArc += 360.0;
+				}
+
+			// Отрисовка
+			for (int i = 0; i < 256; i++)
+				{
+				// Получаем амплитуду
+				amp = ConcurrentDrawLib.GetScaledAmplitude ((uint)(cdp.HistogramFFTValuesCount * i) >> 8);	// Вместо /256
+
+				// Получаем цвет
+				p = new Pen (ConcurrentDrawLib.GetColorFromPalette ((byte)(3 * amp / 4)), logoHeight / 80);
+
+				// Определяем координаты линий
+				if (cdp.VisualizationMode == VisualizationModes.Butterfly_histogram)
+					{
+					rad = logo[1].Width / 2 + (int)((uint)(logo[1].Width * amp) >> 8);	// Вместо /256
+					angle = ArcToRad (i / butterflyDensity + currentHistogramArc);
+
+					histoX[0] = histoX[2] = this.Width / 2 + (int)(rad * Math.Cos (angle));
+					histoX[1] = histoX[3] = this.Width - histoX[0];
+					histoY[0] = histoY[3] = this.Height / 2 + (int)(rad * Math.Sin (angle));
+					histoY[1] = histoY[2] = this.Height - histoY[0];
+					}
+				else
+					{
+					rad = (int)Math.Sqrt (this.Width * this.Width + this.Height * this.Height) / 2;
+					angle = ArcToRad ((i - 128) / perspectiveDensity);
+
+					histoX[0] = this.Width / 2 + (int)(rad * Math.Cos (angle));
+					histoX[1] = this.Width / 2 + (int)(logoHeight >> 6);
+					histoX[2] = this.Width - histoX[0];
+					histoX[3] = this.Width - histoX[1];
+					histoY[0] = histoY[2] = this.Height / 2 + (int)(rad * Math.Sin (angle));
+					histoY[1] = histoY[3] = this.Height / 2;
+					}
+
+				// Рисуем
+				mainLayer.Descriptor.DrawLine (p, histoX[0], histoY[0], histoX[1], histoY[1]);
+				mainLayer.Descriptor.DrawLine (p, histoX[2], histoY[2], histoX[3], histoY[3]);
+
+				// Завершено
+				p.Dispose ();
+				}
+			}
+
 		// Отрисовка фрагментов лого
 		private void DrawingVisualization ()
 			{
@@ -528,65 +615,9 @@ namespace ESHQSetupStub
 			// Запрос пикового значения
 			peak = ConcurrentDrawLib.CurrentPeak;
 
-			// Отрисовка гистограммы-бабочки при необходимости (исключает спектрограмму)
+			// Отрисовка гистограммы-бабочки при необходимости
 			if (cdp.VisualizationMode == VisualizationModes.Butterfly_histogram)
-				{
-				// Обработка кумулятивного значения
-				uint oldCC = cumulativeCounter;
-				if (cdp.DecumulationSpeed != 0)
-					{
-					if (cumulativeCounter > cdp.DecumulationSpeed)
-						cumulativeCounter -= cdp.DecumulationSpeed;
-					if ((peak > peakTrigger) && (cumulativeCounter < cumulationLimit))
-						cumulativeCounter += cdp.CumulationSpeed;
-					}
-				else if (cumulativeCounter != 0)
-					{
-					cumulativeCounter = 0;
-					}
-				if ((cumulativeCounter / cumulationDivisor) != (oldCC / cumulationDivisor))
-					brushes[2].Color = Color.FromArgb (fillingOpacity,
-						ConcurrentDrawLib.GetMasterPaletteColor ((byte)(cumulativeCounter / cumulationDivisor)));
-
-				// Сброс изображения
-				mainLayer.Descriptor.FillEllipse (brushes[2], (this.Width - 3 * logo[1].Width) / 2 - 1,
-					(this.Height - 3 * logo[1].Height) / 2 - 1, 3 * logo[1].Width + 2, 3 * logo[1].Height + 2);
-
-				// Обработка вращения гистограммы
-				if (cdp.HistoRotAccordingToBeats)
-					currentHistogramArc += (cdp.HistoRotSpeedDelta * currentLogoArcDelta / logoSpeedImpulse);
-				else
-					currentHistogramArc += cdp.HistoRotSpeedDelta;
-
-				if (currentHistogramArc > 360.0)
-					currentHistogramArc -= 360.0;
-				if (currentHistogramArc < 0.0)
-					currentHistogramArc += 360.0;
-
-				// Отрисовка
-				for (int i = 0; i < 256; i++)
-					{
-					// Получаем амплитуду
-					amp = ConcurrentDrawLib.GetScaledAmplitude ((uint)(cdp.HistogramFFTValuesCount * i) >> 8);	// Вместо /256
-
-					// Получаем цвет
-					p = new Pen (ConcurrentDrawLib.GetColorFromPalette ((byte)(3 * amp / 4)), logoHeight / 80);
-
-					// Определяем координаты линий
-					rad = logo[1].Width / 2 + (int)((uint)(logo[1].Width * amp) >> 8);	// Вместо /256
-					histoX[0] = histoX[2] = this.Width / 2 + (int)(rad * Math.Cos (ArcToRad (i / histoDensity + currentHistogramArc)));
-					histoX[1] = histoX[3] = this.Width - histoX[0];
-					histoY[0] = histoY[3] = this.Height / 2 + (int)(rad * Math.Sin (ArcToRad (i / histoDensity + currentHistogramArc)));
-					histoY[1] = histoY[2] = this.Height - histoY[0];
-
-					// Рисуем
-					mainLayer.Descriptor.DrawLine (p, histoX[0], histoY[0], histoX[1], histoY[1]);
-					mainLayer.Descriptor.DrawLine (p, histoX[2], histoY[2], histoX[3], histoY[3]);
-
-					// Завершено
-					p.Dispose ();
-					}
-				}
+				DrawButterflyAndPerspective ();
 
 			// Отрисовка лого при необходимости
 			if (VisualizationModesChecker.ContainsLogo (cdp.VisualizationMode))
@@ -594,21 +625,18 @@ namespace ESHQSetupStub
 				// Лого
 				RotateAndDrawLogo (true);
 				if (peak > peakTrigger)
-					{
 					currentLogoArcDelta = -logoSpeedImpulse;
-					}
 
 				// Бит-детектор
 				p = new Pen (ConcurrentDrawLib.GetMasterPaletteColor (peak), logoHeight / 50);
-				rad = 650 * logo[1].Height / (1950 - peak);
+				rad = 500 * logo[1].Height / (1500 - peak);
 				if (cdp.ShakingBitDetector)
 					amp = (int)((logoHeight * peak) >> 15);
 
 				mainLayer.Descriptor.DrawEllipse (p, (this.Width - rad) / 2 +
 					(cdp.ShakingBitDetector ? rnd.Next (-amp, amp) : 0),
 
-					(((VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) !=
-					SpectrogramModes.NoSpectrogram) ? logo[1].Height : this.Height) - rad) / 2 +
+					((VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode) ? logo[1].Height : this.Height) - rad) / 2 +
 					(cdp.ShakingBitDetector ? rnd.Next (-amp, amp) : 0),
 
 					rad, rad);
@@ -633,14 +661,16 @@ namespace ESHQSetupStub
 				p.Dispose ();
 				}
 
+			// Отрисовка перспективы поверх лого
+			if (cdp.VisualizationMode == VisualizationModes.Perspective_histogram)
+				DrawButterflyAndPerspective ();
+
 			// Отрисовка спектрограммы при необходимости
-			if (VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) !=
-				SpectrogramModes.NoSpectrogram)
+			if (VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode))
 				{
 				b = ConcurrentDrawLib.CurrentSpectrogramFrame;
 
-				if ((cdp.VisualizationMode == VisualizationModes.Static_spectrogram) ||
-					(cdp.VisualizationMode == VisualizationModes.Moving_spectrogram))
+				if (VisualizationModesChecker.ContainsSGorWF (cdp.VisualizationMode))
 					{
 					mainLayer.Descriptor.DrawImage (b, new Rectangle (0, this.Height - b.Height, b.Width, b.Height),
 						0, 0, b.Width, b.Height, GraphicsUnit.Pixel, sgAttributes[0]);
@@ -728,8 +758,7 @@ namespace ESHQSetupStub
 				ConcurrentDrawLib.DestroySpectrogram ();	// Объединяет функционал
 
 				// Перезапуск
-				if (VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) ==
-					SpectrogramModes.NoSpectrogram)
+				if (!VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode))
 					{
 					// Перезаполнение палитры (без сброса поля отрисовки)
 					ConcurrentDrawLib.FillPalette (cdp.PaletteNumber);

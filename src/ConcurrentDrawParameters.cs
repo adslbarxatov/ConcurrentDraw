@@ -50,8 +50,8 @@ namespace ESHQSetupStub
 				{
 				VisualizationCombo.Items.Add (((VisualizationModes)i).ToString ().Replace ('_', ' '));
 				}
-			VisualizationCombo.SelectedIndex = (int)VisualizationModesChecker.VisualizationModesCount - 1;	// По умолчанию - бабочка
-			visualizationMode = VisualizationModes.Butterfly_histogram;
+			visualizationMode = VisualizationModes.Butterfly_histogram;		// По умолчанию - бабочка
+			VisualizationCombo.SelectedIndex = (int)visualizationMode;
 
 			// Высота спектрограммы
 			SDHeight.Minimum = VisHeight.Minimum = ConcurrentDrawLib.MinSpectrogramFrameHeight;
@@ -64,51 +64,51 @@ namespace ESHQSetupStub
 			VisWidth.Maximum = Math.Min (ScreenWidth, ConcurrentDrawLib.MaxSpectrogramFrameWidth);
 			VisHeight.Maximum = Math.Min (ScreenHeight, 1024);
 
-			VisWidth.Value = 9 * VisWidth.Maximum / 16;
-			VisHeight.Value = 9 * VisHeight.Maximum / 16;	// По умолчанию - (9 / 16) размера экрана
+			VisWidth.Value = (int)(9 * VisWidth.Maximum / 16);
+			VisHeight.Value = (int)(9 * VisHeight.Maximum / 16);	// По умолчанию - (9 / 16) размера экрана
 
 			visualizationWidth = (uint)VisWidth.Value;
 			visualizationHeight = (uint)VisHeight.Value;
 
 			// Позиция визуализации
 			VisLeft.Maximum = ScreenWidth;
-			VisLeft.Value = ScreenWidth - VisWidth.Value;	// По умолчанию - верхний правый угол
+			VisLeft.Value = ScreenWidth - VisWidth.Value;	// По умолчанию - верхняя правая четверть экрана
 			VisTop.Maximum = ScreenHeight;
 
 			visualizationLeft = (uint)VisLeft.Value;
 			visualizationTop = (uint)VisTop.Value;
 
 			// Параметры детектора битов (получаются из DLL)
-			BDLowEdge.Value = ConcurrentDrawLib.DefaultPeakEvaluationLowEdge;
+			BDLowEdge.Value = ConcurrentDrawLib.DefaultPeakEvaluationLowEdge;			// По умолчанию - 0 - 86 Hz, peak = 97%, FFTm = 40
 			BDHighEdge.Value = ConcurrentDrawLib.DefaultPeakEvaluationHighEdge;
 			BDLowLevel.Value = ConcurrentDrawLib.DefaultPeakEvaluationLowLevel;
 			BDFFTScaleMultiplier.Value = ConcurrentDrawLib.DefaultFFTScaleMultiplier;
 
 			// Плотность гистограммы
-			for (int i = 1; i <= 16; i *= 2)
+			for (int i = 1; i <= 32; i *= 2)
 				{
-				HistogramRangeCombo.Items.Add ("0 – " + (i * 22050.0 / 16.0).ToString () +
+				HistogramRangeCombo.Items.Add ("0 – " + (i * 22050.0 / 32.0).ToString () +
 					" " + Localization.GetText ("CDP_Hz", al));
 				}
-			histogramFFTValuesCountShift = HistogramRangeCombo.SelectedIndex = 1;			// По умолчанию - до 2,7 кГц
+			histogramFFTValuesCountShift = HistogramRangeCombo.SelectedIndex = 2;			// По умолчанию - до 2,7 кГц
 
 			// Кумулятивный эффект
-			CEDecumulationMultiplier.Value = 8;
+			CEDecumulationMultiplier.Value = 8;									// По умолчанию - 0,8
 			decumulationMultiplier = (uint)CEDecumulationMultiplier.Value;
-			CECumulationSpeed.Value = 70;
+			CECumulationSpeed.Value = 70;										// По умолчанию - 70
 			cumulationSpeed = (uint)CECumulationSpeed.Value;
-			LogoHeightPercentage.Value = 30;
+			LogoHeightPercentage.Value = 30;									// По умолчанию - 30%
 			logoHeight = (uint)LogoHeightPercentage.Value;
 
 			// Скорость вращения гистограммы
-			histoRotSpeedArc = 0;
+			histoRotSpeedArc = 0;							// По умолчанию - без вращения
 			HistoRotSpeedArc.Value = 0;
 			HistoRotSpeed.Checked = true;
 
 			// Язык интерфейса
 			for (int i = 0; i < Localization.AvailableLanguages; i++)
 				LanguageCombo.Items.Add (((SupportedLanguages)i).ToString ());
-			LanguageCombo.SelectedIndex = (int)al;			// По умолчанию - английский
+			LanguageCombo.SelectedIndex = (int)al;			// По умолчанию - язык системы или английский
 
 			// Запрос настроек
 			bool requestRequired = GetSavedSettings ();
@@ -470,7 +470,7 @@ namespace ESHQSetupStub
 			BDSettings.Text = string.Format (Localization.GetText ("CDP_BDSettingsText", al),
 				(44100 * BDLowEdge.Value / 2048).ToString (),
 				(44100 * BDHighEdge.Value / 2048).ToString (),
-				BDLowLevel.Value.ToString (), BDFFTScaleMultiplier.Value.ToString ());
+				(100 * BDLowLevel.Value / 255).ToString (), BDFFTScaleMultiplier.Value.ToString ());
 			}
 
 		// Выравнивание окна по экрану
@@ -522,7 +522,7 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return 64u << histogramFFTValuesCountShift;
+				return 32u << histogramFFTValuesCountShift;
 				}
 			}
 		private int histogramFFTValuesCountShift;
@@ -636,15 +636,16 @@ namespace ESHQSetupStub
 			{
 			VisualizationModes mode = (VisualizationModes)VisualizationCombo.SelectedIndex;
 
-			SGHGHeightLabel.Enabled = SDHeight.Enabled = (mode != VisualizationModes.Butterfly_histogram);
-			CumulationGroup.Enabled = HistoRotGroup.Enabled = (mode == VisualizationModes.Butterfly_histogram);
+			SGHGHeightLabel.Enabled = SDHeight.Enabled = VisualizationModesChecker.ContainsSGHGorWF (mode);
+			CumulationGroup.Enabled = !VisualizationModesChecker.ContainsSGHGorWF (mode);
+			HistoRotGroup.Enabled = (mode == VisualizationModes.Butterfly_histogram);
+			if (mode == VisualizationModes.Perspective_histogram)
+				HistoRotSpeedArc.Value = 0;
 
-			HGRangeLabel.Enabled = HistogramRangeCombo.Enabled = ((mode == VisualizationModes.Butterfly_histogram) ||
-				(mode == VisualizationModes.Histogram) || (mode == VisualizationModes.Symmetric_histogram));
+			HGRangeLabel.Enabled = HistogramRangeCombo.Enabled = !VisualizationModesChecker.ContainsSGonly (mode);
 
-			TransparentFlag.Enabled = (mode == VisualizationModes.Butterfly_histogram);
-			if (!TransparentFlag.Enabled)
-				TransparentFlag.Checked = false;
+			TransparentFlag.Enabled = !VisualizationModesChecker.ContainsSGHGorWF (mode) && (HistoRotSpeedArc.Value == 0);
+			TransparentFlag.Checked &= TransparentFlag.Enabled;
 			}
 
 		/// <summary>
@@ -682,7 +683,6 @@ namespace ESHQSetupStub
 			}
 		private int histoRotSpeedArc;
 
-
 		/// <summary>
 		/// Возвращает флаг, указывающий на прозрачность лого
 		/// </summary>
@@ -710,9 +710,9 @@ namespace ESHQSetupStub
 		// Изменение инкрементного угла
 		private void HistoRotSpeedArc_ValueChanged (object sender, EventArgs e)
 			{
-			TransparentFlag.Enabled = (HistoRotSpeedArc.Value == 0);
-			if (!TransparentFlag.Enabled)
-				TransparentFlag.Checked = false;
+			VisualizationModes mode = (VisualizationModes)VisualizationCombo.SelectedIndex;
+			TransparentFlag.Enabled = !VisualizationModesChecker.ContainsSGHGorWF (mode) && (HistoRotSpeedArc.Value == 0);
+			TransparentFlag.Checked &= TransparentFlag.Enabled;
 
 			logoResetFlag = true;
 			}

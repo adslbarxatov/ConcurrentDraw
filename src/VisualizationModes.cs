@@ -6,22 +6,22 @@
 	public enum VisualizationModes
 		{
 		/// <summary>
-		/// Статическая спектрограмма с курсором, с лого
+		/// Статичная спектрограмма с курсором со встроенным лого
 		/// </summary>
 		Static_spectrogram = 0,
 
 		/// <summary>
-		/// Движущаяся спектрограмма с курсором, с лого
+		/// Движущаяся спектрограмма со встроенным лого
 		/// </summary>
 		Moving_spectrogram = 1,
 
 		/// <summary>
-		/// Гистограмма, с лого
+		/// Гистограмма со встроенным лого
 		/// </summary>
 		Histogram = 2,
 
 		/// <summary>
-		/// Симметричная гистограмма, с лого
+		/// Симметричная гистограмма со встроенным лого
 		/// </summary>
 		Symmetric_histogram = 3,
 
@@ -30,32 +30,65 @@
 		/// </summary>
 		Butterfly_histogram = 4,
 
-		/*
 		/// <summary>
-		/// Статическая спектрограмма с курсором, без лого
+		/// Гистограмма-перспектива со встроенным лого
 		/// </summary>
-		Static_spectrogram_without_logo = 5,
+		Perspective_histogram = 5,
 
 		/// <summary>
-		/// Движущаяся спектрограмма с курсором, без лого
+		/// Статичная амплитудная с курсором со встроенным лого
 		/// </summary>
-		Moving_spectrogram_without_logo = 6,
+		Static_amplitude = 6,
 
 		/// <summary>
-		/// Гистограмма, без лого
+		/// Движущаяся амплитудная со встроенным лого
 		/// </summary>
-		Histogram_without_logo = 7,
+		Moving_amplitude = 7,
 
 		/// <summary>
-		/// Симметричная гистограмма, без лого
+		/// Статичная спектрограмма с курсором без лого
 		/// </summary>
-		Symmetric_histogram_without_logo = 8,
+		Static_spectrogram_without_logo = 8,
 
 		/// <summary>
-		/// Только логотип с реакцией на частотные маркеры
+		/// Движущаяся спектрограмма без лого
 		/// </summary>
-		Logo_only = 9
-		*/
+		Moving_spectrogram_without_logo = 9,
+
+		/// <summary>
+		/// Гистограмма без лого
+		/// </summary>
+		Histogram_without_logo = 10,
+
+		/// <summary>
+		/// Симметричная гистограмма без лого
+		/// </summary>
+		Symmetric_histogram_without_logo = 11,
+
+		/// <summary>
+		/// Гистограмма «бабочка» без лого
+		/// </summary>
+		Butterfly_histogram_without_logo = 12,
+
+		/// <summary>
+		/// Гистограмма-перспектива без лого
+		/// </summary>
+		Perspective_histogram_without_logo = 13,
+
+		/// <summary>
+		/// Статичная амплитудная с курсором без лого
+		/// </summary>
+		Static_amplitude_without_logo = 14,
+
+		/// <summary>
+		/// Движущаяся амплитудная без лого
+		/// </summary>
+		Moving_amplitude_without_logo = 15,
+
+		/// <summary>
+		/// Только лого 
+		/// </summary>
+		Logo_only = 16
 		}
 
 	/// <summary>
@@ -66,7 +99,7 @@
 		/// <summary>
 		/// Количество доступных режимов визуализации
 		/// </summary>
-		public const uint VisualizationModesCount = 5;
+		public const uint VisualizationModesCount = 8;
 
 		/// <summary>
 		/// Метод проверяет, требует ли указанный режим отрисовки лого
@@ -75,12 +108,8 @@
 		/// <returns>Возвращает true в случае, если лого необходимо</returns>
 		public static bool ContainsLogo (VisualizationModes Mode)
 			{
-			return //(Mode == VisualizationModes.Logo_only) ||
-				(Mode == VisualizationModes.Moving_spectrogram) ||
-				(Mode == VisualizationModes.Static_spectrogram) ||
-				(Mode == VisualizationModes.Histogram) ||
-				(Mode == VisualizationModes.Symmetric_histogram) ||
-				(Mode == VisualizationModes.Butterfly_histogram);
+			return (Mode == VisualizationModes.Logo_only) ||
+				(Mode <= VisualizationModes.Moving_amplitude);
 			}
 
 		/// <summary>
@@ -92,25 +121,66 @@
 			{
 			switch (Mode)
 				{
-				//case VisualizationModes.Histogram_without_logo:
-				case VisualizationModes.Histogram:
-					return SpectrogramModes.Histogram;
-
-				default:
-					return SpectrogramModes.NoSpectrogram;
-
-				//case VisualizationModes.Moving_spectrogram_without_logo:
-				case VisualizationModes.Moving_spectrogram:
-					return SpectrogramModes.MovingSpectrogram;
-
-				//case VisualizationModes.Static_spectrogram_without_logo:
+				case VisualizationModes.Static_spectrogram_without_logo:
 				case VisualizationModes.Static_spectrogram:
 					return SpectrogramModes.StaticSpectrogram;
 
-				//case VisualizationModes.Symmetric_histogram_without_logo:
+				case VisualizationModes.Moving_spectrogram_without_logo:
+				case VisualizationModes.Moving_spectrogram:
+					return SpectrogramModes.MovingSpectrogram;
+
+				case VisualizationModes.Histogram_without_logo:
+				case VisualizationModes.Histogram:
+					return SpectrogramModes.Histogram;
+
+				case VisualizationModes.Symmetric_histogram_without_logo:
 				case VisualizationModes.Symmetric_histogram:
 					return SpectrogramModes.SymmetricHistogram;
+
+				case VisualizationModes.Static_amplitude:
+				case VisualizationModes.Static_amplitude_without_logo:
+					return SpectrogramModes.StaticAmplitude;
+
+				case VisualizationModes.Moving_amplitude:
+				case VisualizationModes.Moving_amplitude_without_logo:
+					return SpectrogramModes.MovingAmplitude;
+
+				default:
+					return SpectrogramModes.NoSpectrogram;
 				}
+			}
+
+		/// <summary>
+		/// Метод проверяет, требует ли указанный режим отрисовки спектрограммы, гистограммы или волновые формы
+		/// </summary>
+		/// <param name="Mode">Режим для проверки</param>
+		/// <returns>Возвращает true в случае, если спектрограмма необходима</returns>
+		public static bool ContainsSGHGorWF (VisualizationModes Mode)
+			{
+			return VisualizationModeToSpectrogramMode (Mode) != SpectrogramModes.NoSpectrogram;
+			}
+
+		/// <summary>
+		/// Метод проверяет, требует ли указанный режим отрисовки только спектрограммы
+		/// </summary>
+		/// <param name="Mode">Режим для проверки</param>
+		/// <returns>Возвращает true в случае, если спектрограмма необходима</returns>
+		public static bool ContainsSGonly (VisualizationModes Mode)
+			{
+			return (VisualizationModeToSpectrogramMode (Mode) == SpectrogramModes.MovingSpectrogram) ||
+				(VisualizationModeToSpectrogramMode (Mode) == SpectrogramModes.StaticSpectrogram);
+			}
+
+		/// <summary>
+		/// Метод проверяет, требует ли указанный режим отрисовки только амплитудной
+		/// </summary>
+		/// <param name="Mode">Режим для проверки</param>
+		/// <returns>Возвращает true в случае, если спектрограмма необходима</returns>
+		public static bool ContainsSGorWF (VisualizationModes Mode)
+			{
+			return ContainsSGonly (Mode) ||
+				(VisualizationModeToSpectrogramMode (Mode) == SpectrogramModes.StaticAmplitude) ||
+				(VisualizationModeToSpectrogramMode (Mode) == SpectrogramModes.MovingAmplitude);
 			}
 		}
 	}

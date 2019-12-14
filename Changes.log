@@ -140,4 +140,9 @@ Version 1.19:
 • Window alignment at first launch is more accurate now;
 • Cumulative effect's background changed to fullwindow rectangle (instead of
   peaksfitting ellipse);
-• Added 'perspective histogram' mode
+• Added 'perspective histogram' mode;
+• Added 'amplitude histogram' mode (static and moving);
+• Added [0; 690] Hz histigram range;
+• Some math improvements applied;
+• Some code improvements applied;
+• Some parameters interface's bugs fixed

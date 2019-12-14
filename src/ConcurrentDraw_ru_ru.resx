@@ -154,7 +154,7 @@
     <value>Поверх всех окон</value>
   </data>
   <data name="CDP_BDSettingsText" xml:space="preserve">
-    <value>Диапазон: {0:D} – {1:D} Гц; порог амплитуды: {2:D} из 255; множитель значений БПФ: {3:D}</value>
+    <value>Диапазон: {0:D} – {1:D} Гц; порог амплитуды: {2:D}%; множитель значений БПФ: {3:D}</value>
   </data>
   <data name="CDP_BeatsGroup" xml:space="preserve">
     <value>Настройки детектора битов</value>

@@ -52,6 +52,7 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 	{
 	// Переменные
 	uint y, x, v;
+	ulong v2;
 
 	// Заполнение массива (если возможно)
 	if (!GetDataFromStreamEx ())
@@ -77,7 +78,7 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 		case 0:
 			break;
 
-		// С курсором
+		// Статичная спектрограмма с курсором
 		case 1:
 			for (y = 0; y < AS->sgFrameHeight; y++)
 				{
@@ -99,7 +100,7 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 			AS->sgCurrentPosition = (AS->sgCurrentPosition + SG_STEP) % AS->sgFrameWidth;
 			break;
 
-		// Движущаяся
+		// Движущаяся спектрограмма
 		case 2:
 			for (y = 0; y < AS->sgFrameHeight; y++)
 				{
@@ -152,6 +153,88 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 						AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth + x) / 2] =
 						AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth - x) / 2] = CD_HISTO_SPACE;
 					}
+				}
+			break;
+
+		// Статичная и движущаяся амплитудная
+		case 5:
+		case 6:
+			for (x = v2 = 0; x < AS->cdHistogramFFTValuesCount; x++)
+				{
+				// Получение значения
+				v = GetScaledAmplitudeEx (x);
+				v2 += v * v;
+				}
+
+			// Перемасштабирование
+			v2 = sqrt(v2 / AS->cdHistogramFFTValuesCount);
+			v = v2;
+			v2 = AS->sgFrameHeight * (ulong)v2 / CD_BMPINFO_COLORS_COUNT;
+
+			if (AS->sgSpectrogramMode == 5)
+				{
+				// Линии
+				for (y = 0; y < (AS->sgFrameHeight - v2) / 2; y++)
+					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgCurrentPosition] = 
+#ifdef SG_DOUBLE_WIDTH
+					AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + 1) % AS->sgFrameWidth] = 
+#endif
+					CD_HISTO_SPACE;
+
+				for (y = (AS->sgFrameHeight - v2) / 2; y < (AS->sgFrameHeight + v2) / 2; y++)
+					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgCurrentPosition] = 
+#ifdef SG_DOUBLE_WIDTH
+					AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + 1) % AS->sgFrameWidth] = 
+#endif
+					v;
+
+				for (y = (AS->sgFrameHeight + v2) / 2; y < AS->sgFrameHeight; y++)
+					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgCurrentPosition] = 
+#ifdef SG_DOUBLE_WIDTH
+					AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + 1) % AS->sgFrameWidth] = 
+#endif
+					CD_HISTO_SPACE;
+
+				// Маркер
+				for (y = 0; y < AS->sgFrameHeight; y++)
+					AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + SG_STEP) % AS->sgFrameWidth] = 255;
+
+				// Движение маркера
+				AS->sgCurrentPosition = (AS->sgCurrentPosition + SG_STEP) % AS->sgFrameWidth;
+				}
+			else
+				{
+				for (y = 0; y < AS->sgFrameHeight; y++)
+					{
+					// Сдвиг изображения
+					for (x = 0; x < AS->sgFrameWidth - SG_STEP; x += SG_STEP)
+						{
+						AS->sgBuffer[y * AS->sgFrameWidth + x] = AS->sgBuffer[y * AS->sgFrameWidth + x + 1]
+	#ifdef SG_DOUBLE_WIDTH
+						= AS->sgBuffer[y * AS->sgFrameWidth + x + 2]
+	#endif
+						;
+						}
+					}
+
+				// Отрисовка
+				for (y = 0; y < (AS->sgFrameHeight - v2) / 2; y++)
+#ifdef SG_DOUBLE_WIDTH
+					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - 2] = 
+#endif
+					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - 1] = CD_HISTO_SPACE;
+
+				for (y = (AS->sgFrameHeight - v2) / 2; y < (AS->sgFrameHeight + v2) / 2; y++)
+#ifdef SG_DOUBLE_WIDTH
+					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - 2] = 
+#endif
+					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - 1] = v;
+
+				for (y = (AS->sgFrameHeight + v2) / 2; y < AS->sgFrameHeight; y++)
+#ifdef SG_DOUBLE_WIDTH
+					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - 2] = 
+#endif
+					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - 1] = CD_HISTO_SPACE;
 				}
 			break;
 		}

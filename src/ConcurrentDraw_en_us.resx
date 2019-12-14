@@ -154,7 +154,7 @@
     <value>Always on top</value>
   </data>
   <data name="CDP_BDSettingsText" xml:space="preserve">
-    <value>Range: {0:D} – {1:D} Hz; amplitude threshold: {2:D} of 255; FFT scale multiplier: {3:D}</value>
+    <value>Range: {0:D} – {1:D} Hz; amplitude threshold: {2:D}%; FFT scale multiplier: {3:D}</value>
   </data>
   <data name="CDP_BeatsGroup" xml:space="preserve">
     <value>Beats detection settings</value>
