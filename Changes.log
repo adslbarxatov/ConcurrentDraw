@@ -141,8 +141,15 @@ Version 1.19:
 • Cumulative effect's background changed to fullwindow rectangle (instead of
   peaksfitting ellipse);
 • Added 'perspective histogram' mode;
-• Added 'amplitude histogram' mode (static and moving);
-• Added [0; 690] Hz histigram range;
+• Added 'static amplitude histogram' and 'moving amplitude histogram' modes;
+• Added [0; 690] Hz histogram range;
 • Some math improvements applied;
 • Some code improvements applied;
 • Some parameters interface's bugs fixed
+
+Version 1.20:
+• Rotation math reviewed: histograms rotation is literally rotation now;
+  Also it can be used with transparency flag;
+• 'Noise' rotation in beats-according rotation mode fixed;
+• Perspective histogram mode completely reviewed: it's more usable now;
+  Also it can be used with transparency flag

@@ -38,8 +38,8 @@ namespace ESHQSetupStub
 
 		private const int logoIdleSpeed = 2;					// Наименьшая скорость вращения лого
 		private int logoSpeedImpulse = 50,						// Импульс скорости
-			currentLogoArcDelta = 0;							// Текущий угол приращения поворота лого
-		private double currentHistogramArc = 0.0;				// Текущий угол поворота гистограммы-бабочки
+			currentLogoAngleDelta = 0;							// Текущий угол приращения поворота лого
+		private double currentHistogramAngle = 0.0;				// Текущий угол поворота гистограммы-бабочки
 		private uint logoHeight;								// Диаметр лого
 		private const int fillingOpacity = 15;					// Непрозрачность эффекта fadeout
 
@@ -52,11 +52,11 @@ namespace ESHQSetupStub
 		private int[] histoX = new int[4],
 			histoY = new int[4];								// Координаты линий гистограммы
 		private const double butterflyDensity = 2.75;			// Плотность гистограммы-бабочки
-		private const double perspectiveDensity = 3.2;			// Плотность гистограммы-перспективы
+		private const double perspectiveDensity = 3.6;			// Плотность гистограммы-перспективы
 		// (даёт полный угол чуть более 90°; 90° <=> 2.84; 80° <=> 3.2)
 
 		private int rad, amp;									// Вспомогательные переменные
-		private double angle;
+		private double angle1, angle2;
 		private Bitmap b;
 		private Pen p;
 		private Random rnd = new Random ();
@@ -462,10 +462,10 @@ namespace ESHQSetupStub
 			{
 			// Торможение вращения
 			if (PushBrakes)
-				currentLogoArcDelta = (currentLogoArcDelta - logoIdleSpeed) / 2;
+				currentLogoAngleDelta = (currentLogoAngleDelta - logoIdleSpeed) / 2;
 
 			// Отрисовка
-			gr[1].RotateTransform (currentLogoArcDelta);
+			gr[1].RotateTransform (currentLogoAngleDelta);
 
 			gr[1].DrawImage (logo[0], -3 * logoHeight / 5, -3 * logoHeight / 5);
 			mainLayer.Descriptor.DrawImage (logo[1], (this.Width - logo[1].Width) / 2,
@@ -476,12 +476,12 @@ namespace ESHQSetupStub
 		private void RotatingLogo ()
 			{
 			// Отрисовка
-			currentLogoArcDelta = (int)(++steps);
+			currentLogoAngleDelta = (int)(++steps);
 			RotateAndDrawLogo (false);
 
 			if (steps >= 170)
 				{
-				currentLogoArcDelta = -logoIdleSpeed;
+				currentLogoAngleDelta = -logoIdleSpeed;
 				steps = 0;
 				currentPhase++;
 				}
@@ -541,57 +541,73 @@ namespace ESHQSetupStub
 
 			// Затенение изображения / кумулятивный эффект
 			mainLayer.Descriptor.FillRectangle (brushes[2], 0, 0, mainLayer.Layer.Width, mainLayer.Layer.Height);
-			if (cdp.VisualizationMode == VisualizationModes.Perspective_histogram)
-				{
-				brushes[3].Color = Color.FromArgb (255, ConcurrentDrawLib.GetMasterPaletteColor (peak < 8 ? (byte)8 : peak));
-				mainLayer.Descriptor.FillRectangle (brushes[3], 0, this.Height / 2 + logoHeight / 128, this.Width, this.Height / 2);
-				}
 
 			// Обработка вращения гистограммы
-			if (cdp.VisualizationMode == VisualizationModes.Butterfly_histogram)
+			if (cdp.HistoRotAccordingToBeats)
 				{
-				if (cdp.HistoRotAccordingToBeats)
-					currentHistogramArc += (cdp.HistoRotSpeedDelta * currentLogoArcDelta / logoSpeedImpulse);
-				else
-					currentHistogramArc += cdp.HistoRotSpeedDelta;
-
-				if (currentHistogramArc > 360.0)
-					currentHistogramArc -= 360.0;
-				if (currentHistogramArc < 0.0)
-					currentHistogramArc += 360.0;
+				if (currentLogoAngleDelta < -logoIdleSpeed)
+					currentHistogramAngle -= (cdp.HistoRotSpeedDelta * currentLogoAngleDelta / logoSpeedImpulse);
+				}
+			else
+				{
+				currentHistogramAngle += cdp.HistoRotSpeedDelta;
 				}
 
+			if (currentHistogramAngle > 360.0)
+				currentHistogramAngle -= 360.0;
+			if (currentHistogramAngle < 0.0)
+				currentHistogramAngle += 360.0;
+
 			// Отрисовка
+			if (cdp.VisualizationMode == VisualizationModes.Perspective_histogram)
+				rad = (int)Math.Sqrt (this.Width * this.Width + this.Height * this.Height) / 2;		// Радиус для перспективы
+
 			for (int i = 0; i < 256; i++)
 				{
 				// Получаем амплитуду
-				amp = ConcurrentDrawLib.GetScaledAmplitude ((uint)(cdp.HistogramFFTValuesCount * i) >> 8);	// Вместо /256
+				amp = ConcurrentDrawLib.GetScaledAmplitude ((uint)(cdp.HistogramFFTValuesCount * i) / 256);
 
-				// Получаем цвет
-				p = new Pen (ConcurrentDrawLib.GetColorFromPalette ((byte)(3 * amp / 4)), logoHeight / 80);
-
-				// Определяем координаты линий
+				// Определяем координаты линий и создаём кисть
 				if (cdp.VisualizationMode == VisualizationModes.Butterfly_histogram)
 					{
-					rad = logo[1].Width / 2 + (int)((uint)(logo[1].Width * amp) >> 8);	// Вместо /256
-					angle = ArcToRad (i / butterflyDensity + currentHistogramArc);
+					// Кисть
+					p = new Pen (ConcurrentDrawLib.GetColorFromPalette ((byte)(3 * amp / 4)), logoHeight / 80);
 
-					histoX[0] = histoX[2] = this.Width / 2 + (int)(rad * Math.Cos (angle));
-					histoX[1] = histoX[3] = this.Width - histoX[0];
-					histoY[0] = histoY[3] = this.Height / 2 + (int)(rad * Math.Sin (angle));
-					histoY[1] = histoY[2] = this.Height - histoY[0];
+					// Радиус и углы поворота по индексу и общему вращению
+					rad = logo[1].Width / 2 + (int)((uint)(logo[1].Width * amp) / 256);
+					angle1 = ArcToRad (i / butterflyDensity);
+					angle2 = ArcToRad (currentHistogramAngle);
+
+					// Расчёт координат
+					histoX[0] = (int)(this.Width / 2 + rad * Math.Cos (angle2 + angle1));
+					histoX[1] = this.Width - histoX[0];
+					histoX[2] = (int)(this.Width / 2 + rad * Math.Cos (angle2 - angle1));
+					histoX[3] = this.Width - histoX[2];
+					histoY[0] = (int)(this.Height / 2 + rad * Math.Sin (angle2 + angle1));
+					histoY[1] = this.Height - histoY[0];
+					histoY[2] = (int)(this.Height / 2 + rad * Math.Sin (angle2 - angle1));
+					histoY[3] = this.Height - histoY[2];
 					}
 				else
 					{
-					rad = (int)Math.Sqrt (this.Width * this.Width + this.Height * this.Height) / 2;
-					angle = ArcToRad ((i - 128) / perspectiveDensity);
+					// Кисть
+					p = new Pen (Color.FromArgb (90, ConcurrentDrawLib.GetColorFromPalette ((byte)(3 * amp / 4))),
+						logoHeight / ((i > 252) ? 100 : 50));
 
-					histoX[0] = this.Width / 2 + (int)(rad * Math.Cos (angle));
-					histoX[1] = this.Width / 2 + (int)(logoHeight >> 6);
+					// Углы
+					// (двойная длина дуги для того же количества линий)
+					angle1 = ArcToRad (((255 - i) * ((i % 2 == 0) ? 1 : -1)) / perspectiveDensity);
+					angle2 = ArcToRad (currentHistogramAngle + 90);
+
+					// Координаты
+					histoX[0] = (int)(this.Width / 2 + rad * Math.Cos (angle2 + angle1));
+					histoX[1] = (int)(this.Width / 2 + logoHeight * Math.Cos (angle2) / 20);
 					histoX[2] = this.Width - histoX[0];
 					histoX[3] = this.Width - histoX[1];
-					histoY[0] = histoY[2] = this.Height / 2 + (int)(rad * Math.Sin (angle));
-					histoY[1] = histoY[3] = this.Height / 2;
+					histoY[0] = (int)(this.Height / 2 + rad * Math.Sin (angle2 + angle1));
+					histoY[1] = (int)(this.Height / 2 + logoHeight * Math.Sin (angle2) / 20);
+					histoY[2] = this.Height - histoY[0];
+					histoY[3] = this.Height - histoY[1];
 					}
 
 				// Рисуем
@@ -625,7 +641,7 @@ namespace ESHQSetupStub
 				// Лого
 				RotateAndDrawLogo (true);
 				if (peak > peakTrigger)
-					currentLogoArcDelta = -logoSpeedImpulse;
+					currentLogoAngleDelta = -logoSpeedImpulse;
 
 				// Бит-детектор
 				p = new Pen (ConcurrentDrawLib.GetMasterPaletteColor (peak), logoHeight / 50);
@@ -835,7 +851,7 @@ namespace ESHQSetupStub
 				logo[i].Dispose ();
 			logo.Clear ();
 
-			currentHistogramArc = 0;
+			currentHistogramAngle = 0;
 
 			// Установка главного расчётного размера
 			logoHeight = (uint)(Math.Min (this.Width, this.Height) * cdp.LogoHeight);

@@ -637,14 +637,11 @@ namespace ESHQSetupStub
 			VisualizationModes mode = (VisualizationModes)VisualizationCombo.SelectedIndex;
 
 			SGHGHeightLabel.Enabled = SDHeight.Enabled = VisualizationModesChecker.ContainsSGHGorWF (mode);
-			CumulationGroup.Enabled = !VisualizationModesChecker.ContainsSGHGorWF (mode);
-			HistoRotGroup.Enabled = (mode == VisualizationModes.Butterfly_histogram);
-			if (mode == VisualizationModes.Perspective_histogram)
-				HistoRotSpeedArc.Value = 0;
+			CumulationGroup.Enabled = HistoRotGroup.Enabled = !VisualizationModesChecker.ContainsSGHGorWF (mode);
 
 			HGRangeLabel.Enabled = HistogramRangeCombo.Enabled = !VisualizationModesChecker.ContainsSGonly (mode);
 
-			TransparentFlag.Enabled = !VisualizationModesChecker.ContainsSGHGorWF (mode) && (HistoRotSpeedArc.Value == 0);
+			TransparentFlag.Enabled = !VisualizationModesChecker.ContainsSGHGorWF (mode);
 			TransparentFlag.Checked &= TransparentFlag.Enabled;
 			}
 
@@ -706,15 +703,5 @@ namespace ESHQSetupStub
 				}
 			}
 		private bool shakingBitDetector = false;
-
-		// Изменение инкрементного угла
-		private void HistoRotSpeedArc_ValueChanged (object sender, EventArgs e)
-			{
-			VisualizationModes mode = (VisualizationModes)VisualizationCombo.SelectedIndex;
-			TransparentFlag.Enabled = !VisualizationModesChecker.ContainsSGHGorWF (mode) && (HistoRotSpeedArc.Value == 0);
-			TransparentFlag.Checked &= TransparentFlag.Enabled;
-
-			logoResetFlag = true;
-			}
 		}
 	}
