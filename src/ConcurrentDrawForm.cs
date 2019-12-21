@@ -83,6 +83,7 @@ namespace ESHQSetupStub
 		// (8 * sizeof (float) * 2048 fftv)
 
 		private VideoManager vm = new VideoManager ();			// Видеофайл (балластная инициализация)
+		private AudioManager amv;								// Аудиодорожка видео
 		private uint savingLayersCounter = 0;					// Счётчик сохранений
 
 		private Font demoFont;									// Объекты поддержки текстовых подписей на рендере
@@ -752,6 +753,15 @@ namespace ESHQSetupStub
 				cdp.Dispose ();
 
 #if VIDEO
+			// Попытка добавления аудио
+			amv = new AudioManager (SFVideo.FileName.Substring (0, SFVideo.FileName.Length - 4) + ".wav", false);
+			if (amv.IsInited)
+				{
+				vm.AddAudio (amv);
+				amv.Dispose ();
+				}
+	
+			// Завершение
 			vm.Dispose ();
 #endif
 			}

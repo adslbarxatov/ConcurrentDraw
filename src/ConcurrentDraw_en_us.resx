@@ -259,4 +259,7 @@ Settings will be saved by pressing OK button. They can be changed anytime you ne
   <data name="CDP_TransparentFlag" xml:space="preserve">
     <value>Transparent logo</value>
   </data>
+  <data name="CDPWindowSize" xml:space="preserve">
+    <value>Select window size</value>
+  </data>
 </root>

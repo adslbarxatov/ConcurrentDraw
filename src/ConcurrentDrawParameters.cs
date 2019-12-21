@@ -56,7 +56,7 @@ namespace ESHQSetupStub
 			// Высота спектрограммы
 			SDHeight.Minimum = VisHeight.Minimum = ConcurrentDrawLib.MinSpectrogramFrameHeight;
 			SDHeight.Maximum = ConcurrentDrawLib.MaxSpectrogramFrameHeight;
-			SDHeight.Value = 220;					// По умолчанию - 220 px
+			SDHeight.Value = 256;					// По умолчанию - 256 px
 			sdHeight = (uint)SDHeight.Value;
 
 			// Размеры визуализации 
@@ -155,9 +155,6 @@ namespace ESHQSetupStub
 				VisualizationCombo.SelectedIndex = int.Parse (values[2]);
 				visualizationMode = (VisualizationModes)VisualizationCombo.SelectedIndex;
 
-				SDHeight.Value = decimal.Parse (values[3]);
-				sdHeight = (uint)SDHeight.Value;
-
 				VisWidth.Value = decimal.Parse (values[4]);
 				visualizationWidth = (uint)VisWidth.Value;
 
@@ -169,6 +166,9 @@ namespace ESHQSetupStub
 
 				VisTop.Value = decimal.Parse (values[7]);
 				visualizationTop = (uint)VisTop.Value;
+
+				SDHeight.Value = decimal.Parse (values[3]);		// Установка размеров окна определяет максимум SDHeight
+				sdHeight = (uint)SDHeight.Value;
 
 				uint bdSettings = uint.Parse (values[8]);
 				BDLowEdge.Value = (int)(bdSettings & 0xFF);
@@ -483,7 +483,7 @@ namespace ESHQSetupStub
 					break;
 
 				case "AlignToBottom":
-					VisTop.Value = VisHeight.Maximum - VisHeight.Value;
+					VisTop.Value = VisTop.Maximum - VisHeight.Value;
 					break;
 
 				case "AlignToLeft":
@@ -491,7 +491,7 @@ namespace ESHQSetupStub
 					break;
 
 				case "AlignToRight":
-					VisLeft.Value = VisWidth.Maximum - VisWidth.Value;
+					VisLeft.Value = VisLeft.Maximum - VisWidth.Value;
 					break;
 				}
 
@@ -512,6 +512,8 @@ namespace ESHQSetupStub
 		// Установка реинициализации лого при изменении параметров, от которых зависит его вид
 		private void SDWindowsSize_Changed (object sender, EventArgs e)
 			{
+			SDHeight.Maximum = Math.Min (ConcurrentDrawLib.MaxSpectrogramFrameHeight, VisHeight.Value);
+
 			logoResetFlag = true;
 			}
 
@@ -545,7 +547,7 @@ namespace ESHQSetupStub
 			}
 
 		// Задание размера и позиции окна визуализации мышью
-		private void SelectWindowPosition_Click (object sender, EventArgs e)
+		private void SpecifyWindowPosition_Click (object sender, EventArgs e)
 			{
 			// Запрос размеров и позиции
 			ScreenShooterForm ssf = new ScreenShooterForm ((uint)VisWidth.Minimum, (uint)VisWidth.Maximum,
@@ -558,6 +560,20 @@ namespace ESHQSetupStub
 				VisHeight.Value = ssf.WindowSize.Height;
 				VisLeft.Value = ssf.LeftTopPoint.X;
 				VisTop.Value = ssf.LeftTopPoint.Y;
+				}
+			}
+
+		// Задание размера окна визуализации вариантом из списка
+		private void SelectWindowSize_Click (object sender, EventArgs e)
+			{
+			// Запрос размеров
+			WindowSizeForm wsf = new WindowSizeForm (al);
+
+			// Перенос
+			if (wsf.Selected)
+				{
+				VisWidth.Value = wsf.WindowSize.Width;
+				VisHeight.Value = wsf.WindowSize.Height;
 				}
 			}
 

@@ -10,7 +10,6 @@ namespace ESHQSetupStub
 		{
 		// Параметры
 		private Point start, end;
-		private bool selected = false;
 
 		/// <summary>
 		/// Возвращает флаг, указывающий на успешное задание размера
@@ -22,6 +21,7 @@ namespace ESHQSetupStub
 				return selected;
 				}
 			}
+		private bool selected = false;
 
 		/// <summary>
 		/// Возвращает требуемый размер окна
@@ -46,7 +46,7 @@ namespace ESHQSetupStub
 			}
 
 		/// <summary>
-		/// Главная форма программы
+		/// Конструктор. Запускает визуальный выбор размеров и позиции окна
 		/// </summary>
 		/// <param name="MaxHeight">Максимальная высота окна</param>
 		/// <param name="MaxWidth">Максимальная ширина окна</param>

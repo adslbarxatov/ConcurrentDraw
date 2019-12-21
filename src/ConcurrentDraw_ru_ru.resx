@@ -259,4 +259,7 @@
   <data name="CDP_TransparentFlag" xml:space="preserve">
     <value>Прозрачное лого</value>
   </data>
+  <data name="CDPWindowSize" xml:space="preserve">
+    <value>Выберите размер окна</value>
+  </data>
 </root>
