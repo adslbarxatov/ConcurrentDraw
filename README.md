@@ -13,6 +13,14 @@ No additional codecs or applications. Just launch and behold!
 
 #
 
+We've formalized our [Applications development policy (ADP)](https://vk.com/@rdaaow_fupl-adp).
+We're strongly recommend reading it before using our products
+
+Мы формализовали нашу [Политику разработки приложений (ADP)](https://vk.com/@rdaaow_fupl-adp).
+Настоятельно рекомендуем ознакомиться с ней перед использованием наших продуктов
+
+#
+
 Needs Windows XP or newer, Framework 4.0 or newer.
 [BASS library v 2.4.14](http://www.un4seen.com/) required.
 Interface languages: ru_ru, en_us

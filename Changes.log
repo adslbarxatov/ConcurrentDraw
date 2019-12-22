@@ -157,4 +157,7 @@ Version 1.20:
 Version 1.21:
 • Incorrect window alignment on large screens fixed;
 • Window size now can be set using list of most common videomodes' sizes;
-• Window size now defines maximum of spectrogram's and histogram's height
+• Window size now defines maximum of spectrogram's and histogram's height;
+• Negative palettes implemented (not active yet)
+• Applications development policy (ADP) accordance checked; read application
+  annotation for details

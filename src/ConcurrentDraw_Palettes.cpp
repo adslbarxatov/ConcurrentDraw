@@ -457,6 +457,37 @@ void FillPalette_PolymorphRandom (uchar Polymorph, uchar Monocolor)
 		}
 	}
 
+/*void FillPalette_Negative (void)
+	{
+	uint i;
+
+	for (i = 0; i < FP_QMAX; i++) 
+		{
+		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbRed = 
+			AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 
+			AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbBlue = FP_MAX - i / 2;
+
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbRed = 
+			AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbGreen = 
+			AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbBlue = FP_MAX - (FP_QMAX + i) / 2;
+
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbRed = 
+			AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbGreen = 
+			AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbBlue = FP_MAX - (FP_QMAX + i);
+
+		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbRed = 
+			AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbGreen = 
+			AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbBlue = FP_MAX - 2 * (FP_QMAX + i);
+		}
+
+	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
+		{
+		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbRed = 
+		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbGreen = 
+			AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbBlue = FP_MAX - i;
+		}
+	}*/
+
 // Функция формирует палитру приложения
 CD_API(void) FillPaletteEx (uchar PaletteNumber)
 	{
@@ -529,6 +560,11 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 			FillPalette_PolymorphRandom (PaletteNumber & 0x2 & polymorphResetNotRequired, PaletteNumber & 0x1);
 			AS->cdPolymorphUpdateCounter = PaletteNumber & 0x2;
 			break;
+
+		// Негатив
+		/*case 14:
+			FillPalette_Negative ();
+			break;*/
 		}
 	}
 

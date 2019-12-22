@@ -212,10 +212,9 @@ namespace ESHQSetupStub
 			ResetLogo ();
 
 			// Формирование кистей
-			brushes.Add (new SolidBrush (ProgramDescription.MasterBackColor));					// Фон
+			brushes.Add (new SolidBrush (ConcurrentDrawLib.GetColorFromPalette (0)));			// Фон
 			brushes.Add (new SolidBrush (ConcurrentDrawLib.GetMasterPaletteColor ()));			// Лого и beat-детектор
 			brushes.Add (new SolidBrush (Color.FromArgb (fillingOpacity, brushes[0].Color)));	// Fade out
-			brushes.Add (new SolidBrush (ProgramDescription.MasterBackColor));					// "Пол" перспективы
 
 #if VIDEO
 			// Подготовка параметров
@@ -397,7 +396,7 @@ namespace ESHQSetupStub
 #endif
 					if (cdp.TransparentLogo)
 						{
-						logo[0].MakeTransparent (ProgramDescription.MasterBackColor);
+						logo[0].MakeTransparent (ConcurrentDrawLib.GetColorFromPalette (0));
 						gr[1].CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
 						}
 
@@ -796,6 +795,7 @@ namespace ESHQSetupStub
 						cdp.PaletteNumber, VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode));
 					}
 
+				brushes[0].Color = ConcurrentDrawLib.GetColorFromPalette (0);
 				brushes[1].Color = ConcurrentDrawLib.GetMasterPaletteColor ();
 				ResetLogo ();
 				ExtendedTimer.Enabled = true;
@@ -834,6 +834,7 @@ namespace ESHQSetupStub
 				} while (InitializeAudioStream () != 0);
 
 			// Пересоздание кисти лого и поля отрисовки
+			brushes[0].Color = ConcurrentDrawLib.GetColorFromPalette (0);
 			brushes[1].Color = ConcurrentDrawLib.GetMasterPaletteColor ();
 			mainLayer = new LogoDrawerLayer (0, 0, (uint)this.Width, (uint)this.Height);
 			mainLayer.Descriptor.FillRectangle (brushes[0], 0, 0, this.Width, this.Height);

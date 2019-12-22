@@ -189,6 +189,7 @@ void FillPalette_SailOnTheSea (void);
 void FillPalette_Mirror (void);
 void FillPalette_Blood (void);
 void FillPalette_PolymorphRandom (uchar Polymorph, uchar Monocolor);
+//void FillPalette_Negative (void);
 
 CD_API(void) FillPaletteEx (uchar PaletteNumber);
 
