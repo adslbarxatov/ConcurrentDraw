@@ -27,7 +27,6 @@ Needs Windows XP or newer, Framework 4.0 or newer.
 [BASS library v 2.4.14](http://www.un4seen.com/) required.
 Interface languages: ru_ru, en_us
 
-
 Требуется ОС Windows XP и новее, Framework 4.0 и новее.
 Наличие [библиотеки BASS версии 2.4.14](http://www.un4seen.com/) обязательно.
 Языки интерфейса: ru_ru, en_us

@@ -36,6 +36,9 @@ CD_API(uchar) GetScaledAmplitudeEx (uint FrequencyLevel)
 		v = CD_BMPINFO_COLORS_COUNT - 1;
 
 	// Пересчёт пика
+	if (AS->cdFFTPeakEvLowEdge | AS->cdFFTPeakEvHighEdge == 0)	// Состояние отключения
+		return v;
+
 	if ((FrequencyLevel >= AS->cdFFTPeakEvLowEdge) && (FrequencyLevel <= AS->cdFFTPeakEvHighEdge) && 
 		(v >= AS->cdFFTPeakEvLowLevel))
 		{
@@ -83,7 +86,7 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 			for (y = 0; y < AS->sgFrameHeight; y++)
 				{
 				// Получение значения
-				v = GetScaledAmplitudeEx (y + 1);
+				v = GetScaledAmplitudeEx (384 * y / AS->sgFrameHeight);
 
 				// Отрисовка
 				AS->sgBuffer[y * AS->sgFrameWidth + AS->sgCurrentPosition] =
@@ -115,7 +118,7 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 					}
 
 				// Получение значения
-				v = GetScaledAmplitudeEx (y + 1);
+				v = GetScaledAmplitudeEx (384 * y / AS->sgFrameHeight);
 
 				// Отрисовка
 #ifdef SG_DOUBLE_WIDTH

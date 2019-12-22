@@ -160,4 +160,6 @@ Version 1.21:
 • Window size now defines maximum of spectrogram's and histogram's height;
 • Negative palettes implemented (not active yet)
 • Applications development policy (ADP) accordance checked; read application
-  annotation for details
+  annotation for details;
+• Spectrograms aligned to 8268.75 Hz; 'height' value now works as scale;
+• Beats detector's range now may be turned off properly
