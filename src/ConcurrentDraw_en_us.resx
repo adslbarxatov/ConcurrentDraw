@@ -218,17 +218,18 @@ Fade out speed multiplier: {1:S}
 Use right mouse button to get to settings window later; double left click to change colors of 'polymorph' and 'random' palettes; ESC key to close the application.
 
 At first application will start with recommended settings. But you can change:
-• Output device for audio data getting (stereo mixer or speakers required);
-• Visualization mode (spectrogram, histogram or 'butterfly' histogram for now);
+• Output device for audio data capturing (stereo mixer recommended);
+• Visualization mode (spectrogram, histogram, 'butterfly' or 'perspective' histogram, amplitude histogram);
 • Window size and placement (not less than 128 x 128 px and not more than 2048 x 1024 px);
-• Spectrogram and histogram height (between 128 and 256 px; may load CPU);
+• Spectrogram and histogram height (between 128 and 512 px);
 • Histogram density (how many frequencies will be shown);
 • Frequencies range and amplitude (loudness) threshold for beats detector;
 • FFT scale multiplier (contrast) for spectrogram and histogram;
 • 'Always on top' window state (turns off when settings window is active);
 • Logo size;
 • Cumulative effect parameters (background color filling);
-• Histogram rotation parameters.
+• Histogram rotation parameters;
+• Logo transparency and shake effect.
 
 Settings will be saved by pressing OK button. They can be changed anytime you need</value>
   </data>
@@ -254,7 +255,7 @@ Settings will be saved by pressing OK button. They can be changed anytime you ne
     <value>Using constant angle increment:</value>
   </data>
   <data name="CDP_ShakeFlag" xml:space="preserve">
-    <value>Shaking beats detector</value>
+    <value>Shake effect</value>
   </data>
   <data name="CDP_TransparentFlag" xml:space="preserve">
     <value>Transparent logo</value>

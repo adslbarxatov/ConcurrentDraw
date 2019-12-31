@@ -41,15 +41,7 @@ namespace ESHQSetupStub
 			get
 				{
 				// Получение значения
-				string lang = "";
-				try
-					{
-					lang = Registry.GetValue (ProgramDescription.AssemblySettingsKey,
-						LanguageValueName, "").ToString ();	// Вызовет исключение при отсутствии ключа
-					}
-				catch
-					{
-					}
+				string lang = GetCurrentLanguage ();
 
 				// При пустом значении пробуем получить язык от системы
 				if (lang == "")
@@ -80,12 +72,40 @@ namespace ESHQSetupStub
 				try
 					{
 					Registry.SetValue (ProgramDescription.AssemblySettingsKey,
-						LanguageValueName, value.ToString ());	// Вызовет исключение, если раздел не удалось создать
+						LanguageValueName, value.ToString ());
 					}
 				catch
 					{
 					}
 				}
+			}
+
+		/// <summary>
+		/// Возвращает факт предыдущей установки языка приложения
+		/// </summary>
+		public static bool IsCurrentLanguageSpecified
+			{
+			get
+				{
+				return (GetCurrentLanguage () != "");
+				}
+			}
+
+		// Метод запрашивает настройку из реестра
+		private static string GetCurrentLanguage ()
+			{
+			// Получение значения
+			string lang = "";
+			try
+				{
+				lang = Registry.GetValue (ProgramDescription.AssemblySettingsKey,
+					LanguageValueName, "").ToString ();
+				}
+			catch
+				{
+				}
+
+			return lang;
 			}
 
 		/// <summary>

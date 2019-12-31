@@ -57,7 +57,7 @@ namespace ESHQSetupStub
 
 		private int rad, amp;									// Вспомогательные переменные
 		private double angle1, angle2;
-		private Bitmap b;
+		private Bitmap b, b2;
 		private Pen p;
 		private Random rnd = new Random ();
 
@@ -184,6 +184,10 @@ namespace ESHQSetupStub
 							this.Close ();
 							return;
 							}
+						else
+							{
+							this.TopMost = false;
+							}
 						}
 					break;
 
@@ -208,13 +212,23 @@ namespace ESHQSetupStub
 				}
 
 			// Настройка окна
-			gr.Add (Graphics.FromHwnd (this.Handle));
-			ResetLogo ();
+#if VIDEO
+			if (vm.IsInited)
+				{
+				b = new Bitmap (this.Width, this.Height);
+				gr.Add (Graphics.FromImage (b));
+				}
+			else
+#endif
+				{
+				gr.Add (Graphics.FromHwnd (this.Handle));
+				}
+				ResetLogo ();
 
-			// Формирование кистей
-			brushes.Add (new SolidBrush (ConcurrentDrawLib.GetColorFromPalette (0)));			// Фон
-			brushes.Add (new SolidBrush (ConcurrentDrawLib.GetMasterPaletteColor ()));			// Лого и beat-детектор
-			brushes.Add (new SolidBrush (Color.FromArgb (fillingOpacity, brushes[0].Color)));	// Fade out
+				// Формирование кистей
+				brushes.Add (new SolidBrush (ConcurrentDrawLib.GetColorFromPalette (0)));			// Фон
+				brushes.Add (new SolidBrush (ConcurrentDrawLib.GetMasterPaletteColor ()));			// Лого и beat-детектор
+				brushes.Add (new SolidBrush (Color.FromArgb (fillingOpacity, brushes[0].Color)));	// Fade out
 
 #if VIDEO
 			// Подготовка параметров
@@ -227,7 +241,6 @@ namespace ESHQSetupStub
 			// Запуск рендеринга
 			if (vm.IsInited)
 				{
-				this.TopMost = false;
 				logoSpeedImpulse += 10;	// Из-за низкого FPS приходится ускорять
 				HardWorkExecutor hwe = new HardWorkExecutor (RenderVideo, "Total count of frames", "Rendering...");
 
@@ -237,11 +250,11 @@ namespace ESHQSetupStub
 				}
 			else
 #endif
-			// Запуск таймера
-				{
-				ExtendedTimer.Enabled = true;
-				}
-				this.Activate ();
+				// Запуск таймера
+					{
+					ExtendedTimer.Enabled = true;
+					}
+					this.Activate ();
 			}
 
 		// Метод инициализирует аудиоканал
@@ -441,20 +454,28 @@ namespace ESHQSetupStub
 		// Метод отрисовывает сформированный кадр
 		private void DrawFrame ()
 			{
+			if (cdp.ShakeEffect)
+				{
+				amp = (int)((logoHeight * peak) >> 14);
+
+				gr[0].DrawImage (mainLayer.Layer, mainLayer.Left + rnd.Next (-amp, amp),
+					mainLayer.Top + rnd.Next (-amp, amp));
+				}
+			else
+				{
+				gr[0].DrawImage (mainLayer.Layer, mainLayer.Left, mainLayer.Top);
+				}
+
 			// Отрисовка
 #if VIDEO
 			if (vm.IsInited)
 				{
-				b = (Bitmap)mainLayer.Layer.Clone ();
-				vm.AddFrame (b);
-				b.Dispose ();
+				b2 = (Bitmap)b.Clone ();
+				vm.AddFrame (b2);
+				b2.Dispose ();
 				savingLayersCounter++;
 				}
-			else
 #endif
-				{
-				gr[0].DrawImage (mainLayer.Layer, mainLayer.Left, mainLayer.Top);
-				}
 			}
 
 		// Поворачивает и отрисовывает лого
@@ -646,14 +667,12 @@ namespace ESHQSetupStub
 				// Бит-детектор
 				p = new Pen (ConcurrentDrawLib.GetMasterPaletteColor (peak), logoHeight / 50);
 				rad = 500 * logo[1].Height / (1500 - peak);
-				if (cdp.ShakingBitDetector)
-					amp = (int)((logoHeight * peak) >> 15);
 
-				mainLayer.Descriptor.DrawEllipse (p, (this.Width - rad) / 2 +
-					(cdp.ShakingBitDetector ? rnd.Next (-amp, amp) : 0),
+				mainLayer.Descriptor.DrawEllipse (p, (this.Width - rad) / 2 /*+
+					(cdp.ShakingBitDetector ? rnd.Next (-amp, amp) : 0)*/,
 
-					((VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode) ? logo[1].Height : this.Height) - rad) / 2 +
-					(cdp.ShakingBitDetector ? rnd.Next (-amp, amp) : 0),
+					((VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode) ? logo[1].Height : this.Height) - rad) / 2 /*+
+					(cdp.ShakingBitDetector ? rnd.Next (-amp, amp) : 0)*/,
 
 					rad, rad);
 
@@ -748,6 +767,8 @@ namespace ESHQSetupStub
 
 			if (mainLayer != null)
 				mainLayer.Dispose ();
+			if (b != null)
+				b.Dispose ();
 			if (cdp != null)
 				cdp.Dispose ();
 
@@ -759,7 +780,7 @@ namespace ESHQSetupStub
 				vm.AddAudio (amv);
 				amv.Dispose ();
 				}
-	
+
 			// Завершение
 			vm.Dispose ();
 #endif

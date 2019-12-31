@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace ESHQSetupStub
@@ -9,14 +10,7 @@ namespace ESHQSetupStub
 	public partial class WindowSizeForm:Form
 		{
 		// Доступные размеры
-		private Point[] availableSizes = new Point[] {
-			new Point (640, 480),
-			new Point (640, 360),
-			new Point (960, 720),
-			new Point (960, 540),
-			new Point (1024, 768),
-			new Point (1280, 720)
-			};
+		private List<Point> availableSizes = new List<Point> ();
 
 		/// <summary>
 		/// Возвращает флаг, указывающий на успешное задание размера
@@ -46,7 +40,9 @@ namespace ESHQSetupStub
 		/// Конструктор. Запускает форму выбора размера
 		/// </summary>
 		/// <param name="InterfaceLanguage">Язык интерфейса</param>
-		public WindowSizeForm (SupportedLanguages InterfaceLanguage)
+		/// <param name="MaxHeight">Максимальная высота окна</param>
+		/// <param name="MaxWidth">Максимальная ширина окна</param>
+		public WindowSizeForm (uint MaxWidth, uint MaxHeight, SupportedLanguages InterfaceLanguage)
 			{
 			// Инициализация
 			InitializeComponent ();
@@ -55,7 +51,18 @@ namespace ESHQSetupStub
 			BOK.Text = Localization.GetText ("CDP_OK", InterfaceLanguage);
 			BCancel.Text = Localization.GetText ("CDP_Cancel", InterfaceLanguage);
 
-			for (int i = 0; i < availableSizes.Length; i++)
+			availableSizes.Add (new Point (640, 480));
+			availableSizes.Add (new Point (640, 360));
+			availableSizes.Add (new Point (800, 600));
+			availableSizes.Add (new Point (800, 450));
+			availableSizes.Add (new Point (960, 720));
+			availableSizes.Add (new Point (960, 540));
+			availableSizes.Add (new Point (1024, 768));
+			availableSizes.Add (new Point (1280, 720));
+			availableSizes.Add (new Point ((int)MaxWidth, 128));
+			availableSizes.Add (new Point ((int)MaxWidth, (int)MaxHeight));
+
+			for (int i = 0; i < availableSizes.Count; i++)
 				SizesCombo.Items.Add (availableSizes[i].X.ToString () + " x " + availableSizes[i].Y.ToString () + " px");
 			SizesCombo.SelectedIndex = 0;
 

@@ -194,7 +194,7 @@ namespace ESHQSetupStub
 				HistoRotSpeedArc.Value = (decimal)Math.Abs (histoRotSpeedArc / 10.0);
 
 				transparentLogo = TransparentFlag.Checked = (values[15] != "0");
-				shakingBitDetector = ShakeFlag.Checked = (values[16] != "0");
+				shakeEffect = ShakeFlag.Checked = (values[16] != "0");
 				}
 			catch
 				{
@@ -349,7 +349,7 @@ namespace ESHQSetupStub
 				histoRotSpeedArc = (int)(HistoRotSpeedArc.Value * 10);
 
 			transparentLogo = TransparentFlag.Checked && TransparentFlag.Enabled;
-			shakingBitDetector = ShakeFlag.Checked;
+			shakeEffect = ShakeFlag.Checked;
 
 			// Сохранение
 			string settings = deviceNumber.ToString () + splitter[0].ToString () +
@@ -372,7 +372,7 @@ namespace ESHQSetupStub
 				histoRotSpeedArc.ToString () + splitter[0].ToString () +
 
 				(transparentLogo ? "1" : "0") + splitter[0].ToString () +
-				(shakingBitDetector ? "1" : "0");
+				(shakeEffect ? "1" : "0");
 
 			try
 				{
@@ -567,7 +567,7 @@ namespace ESHQSetupStub
 		private void SelectWindowSize_Click (object sender, EventArgs e)
 			{
 			// Запрос размеров
-			WindowSizeForm wsf = new WindowSizeForm (al);
+			WindowSizeForm wsf = new WindowSizeForm ((uint)VisLeft.Maximum, (uint)VisTop.Maximum, al);
 
 			// Перенос
 			if (wsf.Selected)
@@ -709,15 +709,15 @@ namespace ESHQSetupStub
 		private bool transparentLogo = false;
 
 		/// <summary>
-		/// Возвращает флаг, указывающий на дребезг бит-детектора
+		/// Возвращает флаг, указывающий на эффект тряски
 		/// </summary>
-		public bool ShakingBitDetector
+		public bool ShakeEffect
 			{
 			get
 				{
-				return shakingBitDetector;
+				return shakeEffect;
 				}
 			}
-		private bool shakingBitDetector = false;
+		private bool shakeEffect = false;
 		}
 	}

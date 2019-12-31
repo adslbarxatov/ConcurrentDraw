@@ -158,8 +158,13 @@ Version 1.21:
 • Incorrect window alignment on large screens fixed;
 • Window size now can be set using list of most common videomodes' sizes;
 • Window size now defines maximum of spectrogram's and histogram's height;
-• Negative palettes implemented (not active yet)
+• Negative palettes implemented (not active yet);
 • Applications development policy (ADP) accordance checked; read application
   annotation for details;
 • Spectrograms aligned to 8268.75 Hz; 'height' value now works as scale;
-• Beats detector's range now may be turned off properly
+• Beats detector now may be turned off properly
+
+Version 1.22:
+• Some code improvements applied;
+• New predefined window sizes added;
+• Shake effect now works with the whole visualization.

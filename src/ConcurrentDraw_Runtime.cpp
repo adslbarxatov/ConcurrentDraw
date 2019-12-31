@@ -86,7 +86,7 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 			for (y = 0; y < AS->sgFrameHeight; y++)
 				{
 				// Получение значения
-				v = GetScaledAmplitudeEx (384 * y / AS->sgFrameHeight);
+				v = GetScaledAmplitudeEx (SD_SCALE * y / AS->sgFrameHeight + 1);
 
 				// Отрисовка
 				AS->sgBuffer[y * AS->sgFrameWidth + AS->sgCurrentPosition] =
@@ -118,7 +118,7 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 					}
 
 				// Получение значения
-				v = GetScaledAmplitudeEx (384 * y / AS->sgFrameHeight);
+				v = GetScaledAmplitudeEx (SD_SCALE * y / AS->sgFrameHeight + 1);
 
 				// Отрисовка
 #ifdef SG_DOUBLE_WIDTH
