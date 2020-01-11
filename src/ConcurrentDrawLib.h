@@ -29,8 +29,8 @@
 /////////////////////////////////////////////////////
 // Константы
 #define BASS_VERSION				0x02040E00
-#define CD_VERSION					1,22,0,0
-#define CD_VERSION_S				"1.22.0.0"
+#define CD_VERSION					1,23,0,0
+#define CD_VERSION_S				"1.23.0.0"
 #define CD_PRODUCT					"ConcurrentDraw visualization tool's BASS adapter"
 #define CD_COMPANY					"RD AAOW"
 
@@ -50,7 +50,6 @@
 #define POLYMORPH_UPDATE_PAUSE		25
 
 #define CD_HISTO_BAR				(192 * y / AS->sgFrameHeight + 48)
-#define CD_HISTO_SPACE				8
 
 #define PEAK_EVALUATION_LOW_EDGE	0
 #define PEAK_EVALUATION_HIGH_EDGE	4
@@ -92,7 +91,7 @@ union CD_BITMAPINFO
 struct CDSTATE
 	{
 	HRECORD cdChannel;				// Дескриптор чтения
-	uint cdChannelLength;				// Длина потока (при инициализации из файла будет ненулевой)
+	uint cdChannelLength;			// Длина потока (при инициализации из файла будет ненулевой)
 	float cdFFT[FFT_VALUES_COUNT];	// Массив значений, получаемый из канала
 	MMRESULT cdFFTTimer;			// Дескриптор таймера запроса данных из буфера
 	uchar updating;					// Флаг, указывающий на незавершённость последнего процесса обновления FFT
@@ -102,8 +101,7 @@ struct CDSTATE
 	uint sgFrameWidth;				// Размеры изображения спектрограммы
 	uint sgFrameHeight;
 	uint sgCurrentPosition;			// Текущая позиция на статичной спектрограмме
-	uchar sgSpectrogramMode;		// Режим спектрограммы (0 - выключена, 1 - с курсором, 
-										// 2 - движущаяся, 3 - гистограмма, 4 - симметричная гистограмма)
+	uchar sgSpectrogramMode;		// Режим спектрограммы (см. описание InitializeSpectrogramEx)
 
 	float cdFFTScale;				// Масштаб значений FFT
 	uint cdHistogramFFTValuesCount;	// Количество значений FFT, используемых для гистограмм
@@ -115,9 +113,10 @@ struct CDSTATE
 	union CD_BITMAPINFO sgBMPInfo;	// Данные для инициализации спектрограммы
 	union CD_BITMAPINFO sgBeatsInfo;// Палитра для бит-детектора
 
-	RGBQUAD cdPolymorphColors[5];		// Опорные цвета полиморфной палитры
+	RGBQUAD cdPolymorphColors[5];	// Опорные цвета полиморфной палитры
 	uint cdPolymorphUpdateCounter;	// Счётчик обновления полиморфной палитры
 	uint cdCurrentPalette;			// Текущая палитра
+	uchar cdBackgroundColorNumber;	// Цвет текущей палитры, используемый в качестве фона спектрограмм
 	};
 
 /////////////////////////////////////////////////////
@@ -190,7 +189,7 @@ void FillPalette_SailOnTheSea (void);
 void FillPalette_Mirror (void);
 void FillPalette_Blood (void);
 void FillPalette_PolymorphRandom (uchar Polymorph, uchar Monocolor);
-//void FillPalette_Negative (void);
+void FillPalette_Negative (void);
 
 CD_API(void) FillPaletteEx (uchar PaletteNumber);
 

@@ -168,3 +168,11 @@ Version 1.22:
 • Some code improvements applied;
 • New predefined window sizes added;
 • Shake effect now works with the whole visualization
+
+Version 1.23:
+• Some unused code removed;
+• Palettes code review applied;
+• Negative palette added; modes have been reviewed and now support negative
+  palettes properly;
+• Logo will now be transparent in all modes;
+• Modes without logo will now be supported properly; they aren't available yet

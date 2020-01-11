@@ -1,12 +1,27 @@
 // Общий заголовок
 #include "ConcurrentDrawLib.h"
 
-// Функции, инициализирующие отдельные палитры
+// Общие константы
 #define FP_QMAX		64
 #define FP_HMAX		128
 #define FP_AMAX		192
 #define FP_MAX		255
 
+// Макроподстановки
+#define FP_Q1(r,g,b)	AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbRed = r;\
+						AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbGreen = g;\
+						AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbBlue = b;
+#define FP_QM(d,r,g,b)	AS->sgBMPInfo.cd_bmpinfo.colors[d + i].rgbRed = r;\
+						AS->sgBMPInfo.cd_bmpinfo.colors[d + i].rgbGreen = g;\
+						AS->sgBMPInfo.cd_bmpinfo.colors[d + i].rgbBlue = b;
+#define FP_Q2(r,g,b)	FP_QM(FP_QMAX,r,g,b)
+#define FP_Q3(r,g,b)	FP_QM(FP_HMAX,r,g,b)
+#define FP_Q4(r,g,b)	FP_QM(FP_AMAX,r,g,b)
+#define FP_B(r,g,b)		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbRed = r;\
+						AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbGreen = g;\
+						AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbBlue = b;
+
+// Функции, инициализирующие отдельные палитры
 void FillPalette_Default (void)
 	{
 	uint i;
@@ -14,309 +29,227 @@ void FillPalette_Default (void)
 	// Основная палитра
 	for (i = 0; i < FP_QMAX; i++) 
 		{
-		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbRed = 
-			AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
-		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 2 * i;
-		
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbRed = 4 * i;
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbGreen = 0;
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbBlue = 2 * (FP_QMAX + i);
-
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbRed = FP_MAX;
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbGreen = 4 * i;
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbBlue = 4 * (FP_QMAX - 1 - i);
-
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbRed =
-			AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbGreen = FP_MAX;
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbBlue = 4 * i;
+		FP_Q1 (0, 0, 2 * i);
+		FP_Q2 (4 * i, 0, 2 * (FP_QMAX + i));
+		FP_Q3 (FP_MAX, 4 * i, 4 * (FP_QMAX - 1 - i));
+		FP_Q4 (FP_MAX, FP_MAX, 4 * i);
 		}
 
 	// Палитра бит-детектора
 	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
 		{
-		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbRed = i / 2; 
-		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
-		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbBlue = i;
+		FP_B (i / 2, 0, i);
 		}
+
+	// Цвет фона спектрограмм
+	AS->cdBackgroundColorNumber = 8;
 	}
 
 void FillPalette_Sea (void)
 	{
 	uint i;
 
+	// Основная палитра
 	for (i = 0; i < FP_QMAX; i++) 
 		{
-		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbRed = 
-			AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
-		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 4 * i;
-
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbRed = 0;
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbGreen = 2 * i;
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbBlue = FP_MAX;
-
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbRed = 0;
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbGreen = 2 * (FP_QMAX + i);
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbBlue = FP_MAX;
-
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbRed = 4 * i;
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbGreen =
-			AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbBlue = FP_MAX;
+		FP_Q1 (0, 0, 4 * i);
+		FP_Q2 (0, 2 * i, FP_MAX);
+		FP_Q3 (0, 2 * (FP_QMAX + i), FP_MAX);
+		FP_Q4 (4 * i, FP_MAX, FP_MAX);
 		}
 
+	// Палитра бит-детектора
 	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
 		{
-		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbRed = 
-			AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
-		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbBlue = i;
+		FP_B (0, 0, i);
 		}
+
+	// Цвет фона спектрограмм
+	AS->cdBackgroundColorNumber = 8;
 	}
 
 void FillPalette_Fire (void)
 	{
 	uint i;
 
+	// Основная палитра
 	for (i = 0; i < FP_QMAX; i++) 
 		{
-		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbRed = 4 * i;
-		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 
-			AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
-
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbRed = FP_MAX;
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbGreen = 2 * i;
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbBlue = 0;
-
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbRed = FP_MAX;
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbGreen = 2 * (FP_QMAX + i);
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbBlue = 0;
-
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbRed = 
-			AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbGreen = FP_MAX;
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbBlue = 4 * i;
+		FP_Q1 (4 * i, 0, 0);
+		FP_Q2 (FP_MAX, 2 * i, 0);
+		FP_Q3 (FP_MAX, 2 * (FP_QMAX + i), 0);
+		FP_Q4 (FP_MAX, FP_MAX, 4 * i);
 		}
 
+	// Палитра бит-детектора
 	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
 		{
-		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbRed = i; 
-		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbGreen = i / 4;
-		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
+		FP_B (i, i / 4, 0);
 		}
+
+	// Цвет фона спектрограмм
+	AS->cdBackgroundColorNumber = 8;
 	}
 
 void FillPalette_Grey (void)
 	{
 	uint i;
 
+	// Основная палитра
 	for (i = 0; i < FP_QMAX; i++) 
 		{
-		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbRed = 
-			AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 
-			AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbBlue = i / 2;
-
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbRed = 
-			AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbGreen = 
-			AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbBlue = (FP_QMAX + i) / 2;
-
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbRed = 
-			AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbGreen = 
-			AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbBlue = FP_QMAX + i;
-
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbRed = 
-			AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbGreen = 
-			AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbBlue = 2 * (FP_QMAX + i);
+		FP_Q1 (i / 2, i / 2, i / 2);
+		FP_Q2 ((FP_QMAX + i) / 2, (FP_QMAX + i) / 2, (FP_QMAX + i) / 2);
+		FP_Q3 (FP_QMAX + i, FP_QMAX + i, FP_QMAX + i);
+		FP_Q4 (2 * (FP_QMAX + i), 2 * (FP_QMAX + i), 2 * (FP_QMAX + i));
 		}
 
+	// Палитра бит-детектора
 	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
 		{
-		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbRed =  
-			AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbGreen =
-			AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbBlue = 4 * i / 5;
+		FP_B (4 * i / 5, 4 * i / 5, 4 * i / 5);
 		}
+
+	// Цвет фона спектрограмм
+	AS->cdBackgroundColorNumber = 8;
 	}
 
 void FillPalette_Sunrise (void)
 	{
 	uint i;
 
+	// Основная палитра
 	for (i = 0; i < FP_QMAX; i++) 
 		{
-		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbRed = 
-			AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
-		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 2 * i;
-
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbRed = 0;
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbGreen = 3 * i;
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbBlue = 2 * (FP_QMAX - i);
-
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbRed = 4 * i;
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbGreen = FP_AMAX - i;
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbBlue = 0;
-
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbRed = FP_MAX;
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbGreen = 2 * (FP_QMAX + i);
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbBlue = 4 * i;
+		FP_Q1 (0, 0, 2 * i);
+		FP_Q2 (0, 3 * i, 2 * (FP_QMAX - i));
+		FP_Q3 (4 * i, FP_AMAX - i, 0);
+		FP_Q4 (FP_MAX, 2 * (FP_QMAX + i), 4 * i);
 		}
 
+	// Палитра бит-детектора
 	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
 		{
-		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbRed = 
-			AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
-		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbGreen = 3 * i / 4;
+		FP_B (0, 3 * i / 4, 0);
 		}
+
+	// Цвет фона спектрограмм
+	AS->cdBackgroundColorNumber = 8;
 	}
 
 void FillPalette_Acid (void)
 	{
 	uint i;
 
+	// Основная палитра
 	for (i = 0; i < FP_QMAX; i++) 
 		{
-		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbGreen = i;
-		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbRed = 
-			AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
-
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbGreen = FP_QMAX + i;
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbRed =
-			AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbBlue = 0;
-
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbGreen = 2 * (FP_QMAX + i);
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbRed =
-			AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbBlue = 0;
-
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbRed =
-			AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbBlue = 4 *  i;
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbGreen = FP_MAX;
+		FP_Q1 (0, i, 0);
+		FP_Q2 (0, FP_QMAX + i, 0);
+		FP_Q3 (0, 2 * (FP_QMAX + i), 0);
+		FP_Q4 (4 * i, FP_MAX, 4 * i);
 		}
 
+	// Палитра бит-детектора
 	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
 		{
-		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbGreen = i;
-		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbRed =
-			AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
+		FP_B (0, i, 0);
 		}
+
+	// Цвет фона спектрограмм
+	AS->cdBackgroundColorNumber = 8;
 	}
 
 void FillPalette_7MissedCalls (void)
 	{
 	uint i;
 
+	// Основная палитра
 	for (i = 0; i < FP_QMAX; i++) 
 		{
-		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbRed = 3 * i;
-		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
-		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 2 * i;
-
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbRed = 3 * (FP_QMAX - i);
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbGreen = 3 * i / 2;
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbBlue = FP_HMAX + i;
-
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbRed = 2 * i;
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbGreen = (FP_AMAX + 5 * i) / 2;
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbBlue = FP_AMAX - i;
-
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbRed = 
-			AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbBlue = 2 * (FP_QMAX + i);
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbGreen = FP_MAX;
+		FP_Q1 (3 * i, 0, 2 * i);
+		FP_Q2 (3 * (FP_QMAX - i), 3 * i / 2, FP_HMAX + i);
+		FP_Q3 (2 * i, (FP_AMAX + 5 * i) / 2, FP_AMAX - i);
+		FP_Q4 (2 * (FP_QMAX + i), FP_MAX, 2 * (FP_QMAX + i));
 		}
 
+	// Палитра бит-детектора
 	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
 		{
-		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbRed = 3 * i / 4;
-		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
-		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbBlue = i / 2;
+		FP_B (3 * i / 4, 0, i / 2);
 		}
+
+	// Цвет фона спектрограмм
+	AS->cdBackgroundColorNumber = 8;
 	}
 
 void FillPalette_SailOnTheSea (void)
 	{
 	uint i;
 
+	// Основная палитра
 	for (i = 0; i < FP_QMAX; i++) 
 		{
-		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbRed = 
-			AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 0;
-		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 4 * i;
-
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbRed = 2 * i;
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbGreen = 0;
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbBlue = FP_MAX;
-
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbRed = 2 * (FP_QMAX + i);
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbGreen = 0;
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbBlue = 4 * (FP_QMAX - 1 - i);
-
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbRed = FP_MAX;
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbGreen = 
-			AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbBlue = 4 * i;
+		FP_Q1 (0, 0, 4 * i);
+		FP_Q2 (2 * i, 0, FP_MAX);
+		FP_Q3 (2 * (FP_QMAX + i), 0, 4 * (FP_QMAX - 1 - i));
+		FP_Q4 (FP_MAX, 4 * i, 4 * i);
 		}
 
+	// Палитра бит-детектора
 	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
 		{
-		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbRed = i;
-		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbGreen =
-			AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
+		FP_B (i, 0, 0);
 		}
+
+	// Цвет фона спектрограмм
+	AS->cdBackgroundColorNumber = 8;
 	}
 
 void FillPalette_Mirror (void)
 	{
 	uint i;
 
+	// Основная палитра
 	for (i = 0; i < FP_QMAX; i++) 
 		{
-		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbRed = 
-			AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 
-			AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbBlue = i;
-
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbRed = 
-			AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbGreen =
-			AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbBlue = FP_QMAX + i;
-
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbRed =
-			AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbGreen = 2 * (FP_QMAX + i);
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbBlue = 2 * (FP_QMAX - i);
-
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbRed = 
-			AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbGreen = FP_MAX;
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbBlue = 4 * i;
+		FP_Q1 (i, i, i);
+		FP_Q2 (FP_QMAX + i, FP_QMAX + i, FP_QMAX + i);
+		FP_Q3 (2 * (FP_QMAX + i), 2 * (FP_QMAX + i), 2 * (FP_QMAX - i));
+		FP_Q4 (FP_MAX, FP_MAX, 4 * i);
 		}
 
+	// Палитра бит-детектора
 	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
 		{
-		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbRed =
-			AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbGreen =
-			AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbBlue = 3 * i / 4;
+		FP_B (3 * i / 4, 3 * i / 4, 3 * i / 4);
 		}
+
+	// Цвет фона спектрограмм
+	AS->cdBackgroundColorNumber = 8;
 	}
 
 void FillPalette_Blood (void)
 	{
 	uint i;
 
+	// Основная палитра
 	for (i = 0; i < FP_QMAX; i++) 
 		{
-		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbRed = i;
-		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 
-			AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
-
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbRed = FP_QMAX + i;
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbGreen =
-			AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbBlue = 0;
-
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbRed = 2 * (FP_QMAX + i);
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbGreen =
-			AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbBlue = 0;
-
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbGreen =
-			AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbBlue = 4 *  i;
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbRed = FP_MAX;
+		FP_Q1 (i, 0, 0);
+		FP_Q2 (FP_QMAX + i, 0, 0);
+		FP_Q3 (2 * (FP_QMAX + i), 0, 0);
+		FP_Q4 (FP_MAX, 4 * i, 4 * i);
 		}
 
+	// Палитра бит-детектора
 	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
 		{
-		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbRed = i;
-		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbGreen =
-			AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbBlue = 0;
+		FP_B (i, 0, 0);
 		}
+
+	// Цвет фона спектрограмм
+	AS->cdBackgroundColorNumber = 8;
 	}
 
 #define FPPR_RND_LIMIT		10
@@ -451,42 +384,37 @@ void FillPalette_PolymorphRandom (uchar Polymorph, uchar Monocolor)
 	// Заполнение цветов бит-детектора
 	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
 		{
-		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbRed = i * AS->cdPolymorphColors[3].rgbRed / CD_BMPINFO_COLORS_COUNT;
-		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbGreen = i * AS->cdPolymorphColors[3].rgbGreen / CD_BMPINFO_COLORS_COUNT;
-		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbBlue = i * AS->cdPolymorphColors[3].rgbBlue / CD_BMPINFO_COLORS_COUNT;
+		FP_B (i * AS->cdPolymorphColors[3].rgbRed / CD_BMPINFO_COLORS_COUNT, 
+			i * AS->cdPolymorphColors[3].rgbGreen / CD_BMPINFO_COLORS_COUNT,
+			i * AS->cdPolymorphColors[3].rgbBlue / CD_BMPINFO_COLORS_COUNT);
 		}
+
+	// Цвет фона спектрограмм
+	AS->cdBackgroundColorNumber = 8;
 	}
 
-/*void FillPalette_Negative (void)
+void FillPalette_Negative (void)
 	{
 	uint i;
 
+	// Основная палитра
 	for (i = 0; i < FP_QMAX; i++) 
 		{
-		AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbRed = 
-			AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbGreen = 
-			AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbBlue = FP_MAX - i / 2;
-
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbRed = 
-			AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbGreen = 
-			AS->sgBMPInfo.cd_bmpinfo.colors[FP_QMAX + i].rgbBlue = FP_MAX - (FP_QMAX + i) / 2;
-
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbRed = 
-			AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbGreen = 
-			AS->sgBMPInfo.cd_bmpinfo.colors[FP_HMAX + i].rgbBlue = FP_MAX - (FP_QMAX + i);
-
-		AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbRed = 
-			AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbGreen = 
-			AS->sgBMPInfo.cd_bmpinfo.colors[FP_AMAX + i].rgbBlue = FP_MAX - 2 * (FP_QMAX + i);
+		FP_Q1 (FP_MAX - i, FP_MAX - i, FP_MAX - i);
+		FP_Q2 (FP_AMAX - i, FP_AMAX - i, FP_AMAX - i);
+		FP_Q3 (FP_HMAX - i, FP_HMAX - i, FP_HMAX - i);
+		FP_Q4 (FP_QMAX - i, FP_QMAX - i, FP_QMAX - i);
 		}
 
+	// Палитра бит-детектора
 	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
 		{
-		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbRed = 
-		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbGreen = 
-			AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbBlue = FP_MAX - i;
+		FP_B (FP_MAX - i, FP_MAX - i, FP_MAX - i);
 		}
-	}*/
+
+	// Цвет фона спектрограмм
+	AS->cdBackgroundColorNumber = 192;
+	}
 
 // Функция формирует палитру приложения
 CD_API(void) FillPaletteEx (uchar PaletteNumber)
@@ -494,7 +422,6 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 	// Установка параметров
 	uchar polymorphResetNotRequired = (AS->cdPolymorphUpdateCounter >= POLYMORPH_UPDATE_PAUSE) * 2;
 	AS->cdPolymorphUpdateCounter = 0;
-
 	AS->cdCurrentPalette = PaletteNumber;
 
 	// Выбор палитры
@@ -562,9 +489,9 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 			break;
 
 		// Негатив
-		/*case 14:
+		case 14:
 			FillPalette_Negative ();
-			break;*/
+			break;
 		}
 	}
 
@@ -580,7 +507,7 @@ CD_API(ulong) GetColorFromPaletteEx (uchar ColorNumber)
 // Функция возвращает основной цвет текущей палитры с указанной яркостью
 CD_API(ulong) GetMasterPaletteColorEx (uchar Brightness)
 	{
-	return /* 0xFF000000 */ ((ulong)Brightness << 24) | 
+	return ((ulong)Brightness << 24) | 
 		(AS->sgBeatsInfo.cd_bmpinfo.colors[Brightness].rgbRed << 16) |
 		(AS->sgBeatsInfo.cd_bmpinfo.colors[Brightness].rgbGreen << 8) | 
 		AS->sgBeatsInfo.cd_bmpinfo.colors[Brightness].rgbBlue;
@@ -602,7 +529,8 @@ CD_API(schar *) GetPalettesNamesEx ()
 		"Polymorph" NAMES_DELIMITER_S \
 		"Polymorph monocolor" NAMES_DELIMITER_S \
 		"Random" NAMES_DELIMITER_S \
-		"Random monocolor")
+		"Random monocolor" NAMES_DELIMITER_S \
+		"Negative")
 
 	return PALETTES_NAMES;
 	}

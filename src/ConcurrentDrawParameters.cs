@@ -152,8 +152,10 @@ namespace ESHQSetupStub
 				SDPaletteCombo.SelectedIndex = int.Parse (values[1]);
 				paletteNumber = (byte)SDPaletteCombo.SelectedIndex;
 
-				VisualizationCombo.SelectedIndex = int.Parse (values[2]);
-				visualizationMode = (VisualizationModes)VisualizationCombo.SelectedIndex;
+				visualizationMode = (VisualizationModes)int.Parse (values[2]);
+				if ((uint)visualizationMode >= VisualizationModesChecker.VisualizationModesCount)
+					visualizationMode = VisualizationModes.Butterfly_histogram;
+				VisualizationCombo.SelectedIndex = (int)visualizationMode;
 
 				VisWidth.Value = decimal.Parse (values[4]);
 				visualizationWidth = (uint)VisWidth.Value;
@@ -193,7 +195,7 @@ namespace ESHQSetupStub
 					HistoRotSpeed.Checked = true;
 				HistoRotSpeedArc.Value = (decimal)Math.Abs (histoRotSpeedArc / 10.0);
 
-				transparentLogo = TransparentFlag.Checked = (values[15] != "0");
+				//transparentLogo = TransparentFlag.Checked = (values[15] != "0");
 				shakeEffect = ShakeFlag.Checked = (values[16] != "0");
 				}
 			catch
@@ -348,7 +350,7 @@ namespace ESHQSetupStub
 			else
 				histoRotSpeedArc = (int)(HistoRotSpeedArc.Value * 10);
 
-			transparentLogo = TransparentFlag.Checked && TransparentFlag.Enabled;
+			//transparentLogo = TransparentFlag.Checked && TransparentFlag.Enabled;
 			shakeEffect = ShakeFlag.Checked;
 
 			// Сохранение
@@ -657,8 +659,8 @@ namespace ESHQSetupStub
 
 			HGRangeLabel.Enabled = HistogramRangeCombo.Enabled = !VisualizationModesChecker.ContainsSGonly (mode);
 
-			TransparentFlag.Enabled = !VisualizationModesChecker.ContainsSGHGorWF (mode);
-			TransparentFlag.Checked &= TransparentFlag.Enabled;
+			//TransparentFlag.Enabled = !VisualizationModesChecker.ContainsSGHGorWF (mode);
+			//TransparentFlag.Checked &= TransparentFlag.Enabled;
 			}
 
 		/// <summary>
@@ -703,10 +705,10 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return transparentLogo && TransparentFlag.Enabled;
+				return transparentLogo; // && TransparentFlag.Enabled;
 				}
 			}
-		private bool transparentLogo = false;
+		private bool transparentLogo = true;
 
 		/// <summary>
 		/// Возвращает флаг, указывающий на эффект тряски

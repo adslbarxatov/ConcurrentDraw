@@ -57,7 +57,7 @@ namespace ESHQSetupStub
 
 		private int rad, amp;									// Вспомогательные переменные
 		private double angle1, angle2;
-		private Bitmap b, b2;
+		private Bitmap b;
 		private Pen p;
 		private Random rnd = new Random ();
 
@@ -89,6 +89,7 @@ namespace ESHQSetupStub
 		private Font demoFont;									// Объекты поддержки текстовых подписей на рендере
 		private string[] demoNames = new string[] { "SERAPHIM PROJECT", "СРЕДЬ ТЁМНЫХ УЛИЦ" };
 		private SizeF[] demoSizes = new SizeF[2];
+		private Bitmap b2;
 #endif
 
 		// Фазы отрисовки
@@ -195,6 +196,10 @@ namespace ESHQSetupStub
 					if (OFAudio.ShowDialog () != DialogResult.OK)
 						OFAudio.FileName = "";
 					break;
+
+				case DialogResult.Cancel:
+					this.Close ();
+					return;
 				}
 #endif
 
@@ -407,10 +412,20 @@ namespace ESHQSetupStub
 #if AUDIO
 					am.PlayAudio ();
 #endif
+					// Донастройка отрисовщика
 					if (cdp.TransparentLogo)
 						{
 						logo[0].MakeTransparent (ConcurrentDrawLib.GetColorFromPalette (0));
 						gr[1].CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+						}
+
+					// Перекрытие остатка лого при его отсутствии
+					if (!VisualizationModesChecker.ContainsLogo (cdp.VisualizationMode) &&
+						VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode) &&
+						(this.Height - cdp.SpectrogramHeight > 0))
+						{
+						mainLayer.Descriptor.FillRectangle (brushes[0], (this.Width - logo[1].Width) / 2, 0,
+							logo[1].Width, this.Height - cdp.SpectrogramHeight);
 						}
 
 					logoFirstShowMade = true;
@@ -432,8 +447,7 @@ namespace ESHQSetupStub
 		private void RenderVideo (object sender, DoWorkEventArgs e)
 			{
 			// Запрос длины потока
-			uint length = (uint)(ConcurrentDrawLib.ChannelLength * fps +
-				((cdp.VisualizationMode == VisualizationModes.Butterfly_histogram) ? 250 : 350));
+			uint length = (uint)(ConcurrentDrawLib.ChannelLength * fps + 350);
 
 			// Собственно, выполняемый процесс
 			for (int i = 0; i < length; i++)
@@ -487,8 +501,25 @@ namespace ESHQSetupStub
 
 			// Отрисовка
 			gr[1].RotateTransform (currentLogoAngleDelta);
-
 			gr[1].DrawImage (logo[0], -3 * logoHeight / 5, -3 * logoHeight / 5);
+
+			// Перекрытие старой отрисовки (необходимо из-за прозрачности лого)
+			if (VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode) && (this.Height - cdp.SpectrogramHeight > 0))
+				mainLayer.Descriptor.FillRectangle (brushes[0], (this.Width - logo[1].Width) / 2, 0,
+					logo[1].Width, this.Height - cdp.SpectrogramHeight);
+
+			// Обработка режима "только лого"
+			if (cdp.VisualizationMode == VisualizationModes.Logo_only)
+				{
+				// Ручной перебор амплитуд для поддержки бит-детектора
+				for (uint i = 0; i < 256; i++)
+					ConcurrentDrawLib.GetScaledAmplitude (i);
+
+				mainLayer.Descriptor.FillRectangle (brushes[0], (this.Width - logo[1].Width) / 2, (this.Height - logo[1].Height) / 2,
+					logo[1].Width, logo[1].Height);
+				}
+
+			// Отрисовка лого
 			mainLayer.Descriptor.DrawImage (logo[1], (this.Width - logo[1].Width) / 2,
 				(VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode) ? 0 : (this.Height - logo[1].Height) / 2));
 			}
@@ -580,7 +611,7 @@ namespace ESHQSetupStub
 				currentHistogramAngle += 360.0;
 
 			// Отрисовка
-			if (cdp.VisualizationMode == VisualizationModes.Perspective_histogram)
+			if (VisualizationModesChecker.IsPerspective (cdp.VisualizationMode))
 				rad = (int)Math.Sqrt (this.Width * this.Width + this.Height * this.Height) / 2;		// Радиус для перспективы
 
 			for (int i = 0; i < 256; i++)
@@ -589,10 +620,10 @@ namespace ESHQSetupStub
 				amp = ConcurrentDrawLib.GetScaledAmplitude ((uint)(cdp.HistogramFFTValuesCount * i) / 256);
 
 				// Определяем координаты линий и создаём кисть
-				if (cdp.VisualizationMode == VisualizationModes.Butterfly_histogram)
+				if (VisualizationModesChecker.IsButterfly (cdp.VisualizationMode))
 					{
 					// Кисть
-					p = new Pen (ConcurrentDrawLib.GetColorFromPalette ((byte)(3 * amp / 4)), logoHeight / 80);
+					p = new Pen (ConcurrentDrawLib.GetColorFromPalette ((byte)(4 * amp / 5)), logoHeight / 80);
 
 					// Радиус и углы поворота по индексу и общему вращению
 					rad = logo[1].Width / 2 + (int)((uint)(logo[1].Width * amp) / 256);
@@ -653,7 +684,7 @@ namespace ESHQSetupStub
 			peak = ConcurrentDrawLib.CurrentPeak;
 
 			// Отрисовка гистограммы-бабочки при необходимости
-			if (cdp.VisualizationMode == VisualizationModes.Butterfly_histogram)
+			if (VisualizationModesChecker.IsButterfly (cdp.VisualizationMode))
 				DrawButterflyAndPerspective ();
 
 			// Отрисовка лого при необходимости
@@ -661,18 +692,16 @@ namespace ESHQSetupStub
 				{
 				// Лого
 				RotateAndDrawLogo (true);
-				if (peak > peakTrigger)
-					currentLogoAngleDelta = -logoSpeedImpulse;
 
 				// Бит-детектор
+				if (peak > peakTrigger)
+					currentLogoAngleDelta = -logoSpeedImpulse;
 				p = new Pen (ConcurrentDrawLib.GetMasterPaletteColor (peak), logoHeight / 50);
 				rad = 500 * logo[1].Height / (1500 - peak);
 
-				mainLayer.Descriptor.DrawEllipse (p, (this.Width - rad) / 2 /*+
-					(cdp.ShakingBitDetector ? rnd.Next (-amp, amp) : 0)*/,
+				mainLayer.Descriptor.DrawEllipse (p, (this.Width - rad) / 2,
 
-					((VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode) ? logo[1].Height : this.Height) - rad) / 2 /*+
-					(cdp.ShakingBitDetector ? rnd.Next (-amp, amp) : 0)*/,
+					((VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode) ? logo[1].Height : this.Height) - rad) / 2,
 
 					rad, rad);
 
@@ -697,14 +726,16 @@ namespace ESHQSetupStub
 				}
 
 			// Отрисовка перспективы поверх лого
-			if (cdp.VisualizationMode == VisualizationModes.Perspective_histogram)
+			if (VisualizationModesChecker.IsPerspective (cdp.VisualizationMode))
 				DrawButterflyAndPerspective ();
 
 			// Отрисовка спектрограммы при необходимости
 			if (VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode))
 				{
+				// Получение текущего фрейма спектрограммы
 				b = ConcurrentDrawLib.CurrentSpectrogramFrame;
 
+				// Отрисовка фрейма
 				if (VisualizationModesChecker.ContainsSGorWF (cdp.VisualizationMode))
 					{
 					mainLayer.Descriptor.DrawImage (b, new Rectangle (0, this.Height - b.Height, b.Width, b.Height),
@@ -715,6 +746,7 @@ namespace ESHQSetupStub
 					mainLayer.Descriptor.DrawImage (b, new Rectangle (0, this.Height - b.Height, b.Width, b.Height),
 						0, 0, b.Width, b.Height, GraphicsUnit.Pixel, sgAttributes[1]);
 					}
+
 				b.Dispose ();
 				}
 			}

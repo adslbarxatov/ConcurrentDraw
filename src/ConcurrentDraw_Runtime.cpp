@@ -144,7 +144,7 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 					for (y = 0; y < v; y++)
 						AS->sgBuffer[y * AS->sgFrameWidth + x] = CD_HISTO_BAR;	// Обрезаем края палитр
 					for (y = v; y < AS->sgFrameHeight; y++)
-						AS->sgBuffer[y * AS->sgFrameWidth + x] = CD_HISTO_SPACE;
+						AS->sgBuffer[y * AS->sgFrameWidth + x] = AS->cdBackgroundColorNumber;
 					}
 				else
 					{
@@ -154,7 +154,7 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 
 					for (y = v; y < AS->sgFrameHeight; y++)
 						AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth + x) / 2] =
-						AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth - x) / 2] = CD_HISTO_SPACE;
+						AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth - x) / 2] = AS->cdBackgroundColorNumber;
 					}
 				}
 			break;
@@ -182,7 +182,7 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 #ifdef SG_DOUBLE_WIDTH
 					AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + 1) % AS->sgFrameWidth] = 
 #endif
-					CD_HISTO_SPACE;
+					AS->cdBackgroundColorNumber;
 
 				for (y = (AS->sgFrameHeight - v2) / 2; y < (AS->sgFrameHeight + v2) / 2; y++)
 					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgCurrentPosition] = 
@@ -196,7 +196,7 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 #ifdef SG_DOUBLE_WIDTH
 					AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + 1) % AS->sgFrameWidth] = 
 #endif
-					CD_HISTO_SPACE;
+					AS->cdBackgroundColorNumber;
 
 				// Маркер
 				for (y = 0; y < AS->sgFrameHeight; y++)
@@ -225,7 +225,7 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 #ifdef SG_DOUBLE_WIDTH
 					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - 2] = 
 #endif
-					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - 1] = CD_HISTO_SPACE;
+					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - 1] = AS->cdBackgroundColorNumber;
 
 				for (y = (AS->sgFrameHeight - v2) / 2; y < (AS->sgFrameHeight + v2) / 2; y++)
 #ifdef SG_DOUBLE_WIDTH
@@ -237,7 +237,7 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 #ifdef SG_DOUBLE_WIDTH
 					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - 2] = 
 #endif
-					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - 1] = CD_HISTO_SPACE;
+					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - 1] = AS->cdBackgroundColorNumber;
 				}
 			break;
 		}

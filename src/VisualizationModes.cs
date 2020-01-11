@@ -99,7 +99,11 @@
 		/// <summary>
 		/// Количество доступных режимов визуализации
 		/// </summary>
+#if ALL_MODES
+		public const uint VisualizationModesCount = 17;
+#else
 		public const uint VisualizationModesCount = 8;
+#endif
 
 		/// <summary>
 		/// Метод проверяет, требует ли указанный режим отрисовки лого
@@ -172,7 +176,8 @@
 			}
 
 		/// <summary>
-		/// Метод проверяет, требует ли указанный режим отрисовки только амплитудной
+		/// Метод проверяет, требует ли указанный режим отрисовки только спектрограммы
+		/// или амплитудной гистограммы
 		/// </summary>
 		/// <param name="Mode">Режим для проверки</param>
 		/// <returns>Возвращает true в случае, если спектрограмма необходима</returns>
@@ -181,6 +186,28 @@
 			return ContainsSGonly (Mode) ||
 				(VisualizationModeToSpectrogramMode (Mode) == SpectrogramModes.StaticAmplitude) ||
 				(VisualizationModeToSpectrogramMode (Mode) == SpectrogramModes.MovingAmplitude);
+			}
+
+		/// <summary>
+		/// Метод возвращает true, если режим предполагает гистограмму-бабочку
+		/// </summary>
+		/// <param name="Mode">Режим для проверки</param>
+		/// <returns>Возвращает true в случае, если предполагается гистограмма-бабочка</returns>
+		public static bool IsButterfly (VisualizationModes Mode)
+			{
+			return (Mode == VisualizationModes.Butterfly_histogram) ||
+				(Mode == VisualizationModes.Butterfly_histogram_without_logo);
+			}
+
+		/// <summary>
+		/// Метод возвращает true, если режим предполагает гистограмму-перспективу
+		/// </summary>
+		/// <param name="Mode">Режим для проверки</param>
+		/// <returns>Возвращает true в случае, если предполагается гистограмма-перспектива</returns>
+		public static bool IsPerspective (VisualizationModes Mode)
+			{
+			return (Mode == VisualizationModes.Perspective_histogram) ||
+				(Mode == VisualizationModes.Perspective_histogram_without_logo);
 			}
 		}
 	}
