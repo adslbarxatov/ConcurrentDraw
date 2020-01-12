@@ -29,8 +29,8 @@
 /////////////////////////////////////////////////////
 // Константы
 #define BASS_VERSION				0x02040E00
-#define CD_VERSION					1,23,0,0
-#define CD_VERSION_S				"1.23.0.0"
+#define CD_VERSION					1,23,2,0
+#define CD_VERSION_S				"1.23.2.0"
 #define CD_PRODUCT					"ConcurrentDraw visualization tool's BASS adapter"
 #define CD_COMPANY					"RD AAOW"
 
@@ -67,6 +67,7 @@
 
 /////////////////////////////////////////////////////
 // Пререквизиты таймера
+#define SD_DOUBLE_WIDTH
 #ifdef SD_DOUBLE_WIDTH
 	#define SG_STEP 2				// Ширина шага спектрограммы
 #else

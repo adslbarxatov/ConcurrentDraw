@@ -61,7 +61,7 @@ void FillPalette_Sea (void)
 	// Палитра бит-детектора
 	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
 		{
-		FP_B (0, 0, i);
+		FP_B (0, 2 * i / 3, i);
 		}
 
 	// Цвет фона спектрограмм
@@ -84,7 +84,7 @@ void FillPalette_Fire (void)
 	// Палитра бит-детектора
 	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
 		{
-		FP_B (i, i / 4, 0);
+		FP_B (i, 2 * i / 3, 0);
 		}
 
 	// Цвет фона спектрограмм
@@ -176,7 +176,7 @@ void FillPalette_7MissedCalls (void)
 	// Палитра бит-детектора
 	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
 		{
-		FP_B (3 * i / 4, 0, i / 2);
+		FP_B (i, 0, 3 * i / 4);
 		}
 
 	// Цвет фона спектрограмм

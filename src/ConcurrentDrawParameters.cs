@@ -319,7 +319,10 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return sdHeight;
+				if ((sdHeight & 0xFFFC) == sdHeight)
+					return sdHeight & 0xFFFC;		// Исправление, связанное с внутренней корректировкой высоты фрейма
+
+				return (sdHeight & 0xFFFC) + 4;		// (см. текст InitializeSpectrogramEx)
 				}
 			}
 		private uint sdHeight;

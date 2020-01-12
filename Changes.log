@@ -176,3 +176,9 @@ Version 1.23:
   palettes properly;
 • Logo will now be transparent in all modes;
 • Modes without logo will now be supported properly; they aren't available yet
+
+Version 1.23.2:
+• Some adjustments for palettes added: beats detectors will now be properly
+  visible with all default palettes;
+• Some code fixes applied;
+• Invalid beats detector behaviour on high frequencies fixed

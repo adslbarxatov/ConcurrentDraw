@@ -36,7 +36,7 @@ CD_API(uchar) GetScaledAmplitudeEx (uint FrequencyLevel)
 		v = CD_BMPINFO_COLORS_COUNT - 1;
 
 	// Пересчёт пика
-	if (AS->cdFFTPeakEvLowEdge | AS->cdFFTPeakEvHighEdge == 0)	// Состояние отключения
+	if ((AS->cdFFTPeakEvLowEdge | AS->cdFFTPeakEvHighEdge) == 0)	// Состояние отключения
 		return v;
 
 	if ((FrequencyLevel >= AS->cdFFTPeakEvLowEdge) && (FrequencyLevel <= AS->cdFFTPeakEvHighEdge) && 
@@ -90,7 +90,7 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 
 				// Отрисовка
 				AS->sgBuffer[y * AS->sgFrameWidth + AS->sgCurrentPosition] =
-#ifdef SG_DOUBLE_WIDTH
+#ifdef SD_DOUBLE_WIDTH
 				AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + 1) % AS->sgFrameWidth] = 
 #endif
 				v;
@@ -111,7 +111,7 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 				for (x = 0; x < AS->sgFrameWidth - SG_STEP; x += SG_STEP)
 					{
 					AS->sgBuffer[y * AS->sgFrameWidth + x] = AS->sgBuffer[y * AS->sgFrameWidth + x + 1]
-#ifdef SG_DOUBLE_WIDTH
+#ifdef SD_DOUBLE_WIDTH
 					= AS->sgBuffer[y * AS->sgFrameWidth + x + 2]
 #endif
 					;
@@ -121,7 +121,7 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 				v = GetScaledAmplitudeEx (SD_SCALE * y / AS->sgFrameHeight + 1);
 
 				// Отрисовка
-#ifdef SG_DOUBLE_WIDTH
+#ifdef SD_DOUBLE_WIDTH
 				AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - 2] = 
 #endif
 				AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - 1] = v;
@@ -179,21 +179,21 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 				// Линии
 				for (y = 0; y < (AS->sgFrameHeight - v2) / 2; y++)
 					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgCurrentPosition] = 
-#ifdef SG_DOUBLE_WIDTH
+#ifdef SD_DOUBLE_WIDTH
 					AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + 1) % AS->sgFrameWidth] = 
 #endif
 					AS->cdBackgroundColorNumber;
 
 				for (y = (AS->sgFrameHeight - v2) / 2; y < (AS->sgFrameHeight + v2) / 2; y++)
 					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgCurrentPosition] = 
-#ifdef SG_DOUBLE_WIDTH
+#ifdef SD_DOUBLE_WIDTH
 					AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + 1) % AS->sgFrameWidth] = 
 #endif
 					v;
 
 				for (y = (AS->sgFrameHeight + v2) / 2; y < AS->sgFrameHeight; y++)
 					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgCurrentPosition] = 
-#ifdef SG_DOUBLE_WIDTH
+#ifdef SD_DOUBLE_WIDTH
 					AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + 1) % AS->sgFrameWidth] = 
 #endif
 					AS->cdBackgroundColorNumber;
@@ -213,28 +213,28 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 					for (x = 0; x < AS->sgFrameWidth - SG_STEP; x += SG_STEP)
 						{
 						AS->sgBuffer[y * AS->sgFrameWidth + x] = AS->sgBuffer[y * AS->sgFrameWidth + x + 1]
-	#ifdef SG_DOUBLE_WIDTH
+#ifdef SD_DOUBLE_WIDTH
 						= AS->sgBuffer[y * AS->sgFrameWidth + x + 2]
-	#endif
+#endif
 						;
 						}
 					}
 
 				// Отрисовка
 				for (y = 0; y < (AS->sgFrameHeight - v2) / 2; y++)
-#ifdef SG_DOUBLE_WIDTH
+#ifdef SD_DOUBLE_WIDTH
 					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - 2] = 
 #endif
 					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - 1] = AS->cdBackgroundColorNumber;
 
 				for (y = (AS->sgFrameHeight - v2) / 2; y < (AS->sgFrameHeight + v2) / 2; y++)
-#ifdef SG_DOUBLE_WIDTH
+#ifdef SD_DOUBLE_WIDTH
 					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - 2] = 
 #endif
 					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - 1] = v;
 
 				for (y = (AS->sgFrameHeight + v2) / 2; y < AS->sgFrameHeight; y++)
-#ifdef SG_DOUBLE_WIDTH
+#ifdef SD_DOUBLE_WIDTH
 					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - 2] = 
 #endif
 					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - 1] = AS->cdBackgroundColorNumber;

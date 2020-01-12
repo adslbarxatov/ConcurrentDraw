@@ -85,11 +85,12 @@ namespace ESHQSetupStub
 		private VideoManager vm = new VideoManager ();			// Видеофайл (балластная инициализация)
 		private AudioManager amv;								// Аудиодорожка видео
 		private uint savingLayersCounter = 0;					// Счётчик сохранений
+		private Bitmap b2;										// Промежуточный кадр отрисовки
+		private bool allowDemoText = false;						// Флаг разрешения отрисовки текстовых подписей
 
-		private Font demoFont;									// Объекты поддержки текстовых подписей на рендере
-		private string[] demoNames = new string[] { "SERAPHIM PROJECT", "СРЕДЬ ТЁМНЫХ УЛИЦ" };
+		private Font[] demoFonts = new Font[2];					// Объекты поддержки текстовых подписей на рендере
+		private string[] demoNames = new string[] { "THE SERAPHIM PROJECT", "ПУСТЬ СИЯЕТ ОГОНЬ" };
 		private SizeF[] demoSizes = new SizeF[2];
-		private Bitmap b2;
 #endif
 
 		// Фазы отрисовки
@@ -197,9 +198,9 @@ namespace ESHQSetupStub
 						OFAudio.FileName = "";
 					break;
 
-				case DialogResult.Cancel:
+				/*case DialogResult.Cancel:
 					this.Close ();
-					return;
+					return;*/
 				}
 #endif
 
@@ -228,19 +229,20 @@ namespace ESHQSetupStub
 				{
 				gr.Add (Graphics.FromHwnd (this.Handle));
 				}
-				ResetLogo ();
+			ResetLogo ();
 
-				// Формирование кистей
-				brushes.Add (new SolidBrush (ConcurrentDrawLib.GetColorFromPalette (0)));			// Фон
-				brushes.Add (new SolidBrush (ConcurrentDrawLib.GetMasterPaletteColor ()));			// Лого и beat-детектор
-				brushes.Add (new SolidBrush (Color.FromArgb (fillingOpacity, brushes[0].Color)));	// Fade out
+			// Формирование кистей
+			brushes.Add (new SolidBrush (ConcurrentDrawLib.GetColorFromPalette (0)));			// Фон
+			brushes.Add (new SolidBrush (ConcurrentDrawLib.GetMasterPaletteColor ()));			// Лого и beat-детектор
+			brushes.Add (new SolidBrush (Color.FromArgb (fillingOpacity, brushes[0].Color)));	// Fade out
 
 #if VIDEO
 			// Подготовка параметров
-			demoFont = new Font ("a_GroticNr", this.Width / 50);
+			demoFonts[0] = new Font ("a_GroticNr", this.Width / 55, FontStyle.Bold);
+			demoFonts[1] = new Font ("a_GroticNr", this.Width / 45, FontStyle.Bold);
 			for (int i = 0; i < demoNames.Length; i++)
 				{
-				demoSizes[i] = gr[0].MeasureString (demoNames[i], demoFont);
+				demoSizes[i] = gr[0].MeasureString (demoNames[i], demoFonts[i]);
 				}
 
 			// Запуск рендеринга
@@ -255,11 +257,11 @@ namespace ESHQSetupStub
 				}
 			else
 #endif
-				// Запуск таймера
-					{
-					ExtendedTimer.Enabled = true;
-					}
-					this.Activate ();
+			// Запуск таймера
+				{
+				ExtendedTimer.Enabled = true;
+				}
+			this.Activate ();
 			}
 
 		// Метод инициализирует аудиоканал
@@ -273,7 +275,7 @@ namespace ESHQSetupStub
 				ssie = ConcurrentDrawLib.InitializeSoundStream (OFAudio.FileName);
 			else
 #endif
-			ssie = ConcurrentDrawLib.InitializeSoundStream (cdp.DeviceNumber);
+				ssie = ConcurrentDrawLib.InitializeSoundStream (cdp.DeviceNumber);
 			switch (ssie)
 				{
 				case SoundStreamInitializationErrors.BASS_ERROR_ALREADY:
@@ -447,12 +449,16 @@ namespace ESHQSetupStub
 		private void RenderVideo (object sender, DoWorkEventArgs e)
 			{
 			// Запрос длины потока
-			uint length = (uint)(ConcurrentDrawLib.ChannelLength * fps + 350);
+			uint length = (uint)(ConcurrentDrawLib.ChannelLength * fps + 250);
 
 			// Собственно, выполняемый процесс
 			for (int i = 0; i < length; i++)
 				{
 				ExtendedTimer_Tick (null, null);
+
+#if DEMO_TEXT
+				allowDemoText = (i >= 375) && (i <= 475);
+#endif
 
 				((BackgroundWorker)sender).ReportProgress (100 * i / (int)length,
 					"Rendered frames: " + i.ToString () + " out of " + length.ToString ());
@@ -706,20 +712,13 @@ namespace ESHQSetupStub
 					rad, rad);
 
 #if VIDEO
-				/*if (VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode) == SpectrogramModes.NoSpectrogram)
+				if (allowDemoText)
 					{
-					mainLayer.Descriptor.DrawString (demoNames[0], demoFont, br, (this.Width - demoSizes[0].Width) / 2, 20);
-					mainLayer.Descriptor.DrawString (demoNames[1], demoFont, br, (this.Width - demoSizes[1].Width) / 2,
-						this.Height - demoSizes[1].Height - 20);
-					mainLayer.Descriptor.DrawString ((cumulativeCounter / cumulationDivisor).ToString (), demoFont, brushes[0],
-						(this.Width - rad) / 2, this.Height / 2 - 18);
+					mainLayer.Descriptor.DrawString (demoNames[0], demoFonts[0], brushes[1], this.Width - demoSizes[0].Width - 50,
+						this.Height - demoSizes[1].Height - 50);
+					mainLayer.Descriptor.DrawString (demoNames[1], demoFonts[1], brushes[1], this.Width - demoSizes[1].Width - 50,
+						this.Height - 50);
 					}
-				else
-					{
-					mainLayer.Descriptor.DrawString (demoNames[0], demoFont, br, 20, logoHeight / 2);
-					mainLayer.Descriptor.DrawString (demoNames[1], demoFont, br, this.Width - demoSizes[1].Width - 20,
-						logoHeight / 2);
-					}*/
 #endif
 
 				p.Dispose ();
