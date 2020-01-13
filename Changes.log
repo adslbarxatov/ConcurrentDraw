@@ -182,3 +182,6 @@ Version 1.23.2:
   visible with all default palettes;
 • Some code fixes applied;
 • Invalid beats detector behaviour on high frequencies fixed
+
+Version 1.23.7:
+• Some extensions' bugs fixed

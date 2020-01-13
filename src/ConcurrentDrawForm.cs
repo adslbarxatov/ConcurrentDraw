@@ -57,7 +57,7 @@ namespace ESHQSetupStub
 
 		private int rad, amp;									// Вспомогательные переменные
 		private double angle1, angle2;
-		private Bitmap b;
+		private Bitmap b, b2;
 		private Pen p;
 		private Random rnd = new Random ();
 
@@ -78,19 +78,19 @@ namespace ESHQSetupStub
 
 		// Видео
 #if VIDEO
-		private const double fps = 23.4375;						// Частота кадров видео 
-		// определена по аудио как 48000 Hz * 2 ch * 16 bps / 
-		// (8 * sizeof (float) * 2048 fftv)
+		private const double fps = 23.4375;
+		// Частота кадров видео 
+		// определена по аудио как (48000 Hz * 2 ch * 16 bps) / (8 * sizeof (float) * 2048 fftv)
 
 		private VideoManager vm = new VideoManager ();			// Видеофайл (балластная инициализация)
 		private AudioManager amv;								// Аудиодорожка видео
-		private uint savingLayersCounter = 0;					// Счётчик сохранений
-		private Bitmap b2;										// Промежуточный кадр отрисовки
 		private bool allowDemoText = false;						// Флаг разрешения отрисовки текстовых подписей
+		private const uint fadeOutLength = 40;					// Длина эффекта fade out
 
 		private Font[] demoFonts = new Font[2];					// Объекты поддержки текстовых подписей на рендере
-		private string[] demoNames = new string[] { "THE SERAPHIM PROJECT", "ПУСТЬ СИЯЕТ ОГОНЬ" };
+		private string[] demoNames = new string[] { "THE SERAPHIM PROJECT", "В ОТРАЖЕНИИ КРИВЫХ ЗЕРКАЛ" };
 		private SizeF[] demoSizes = new SizeF[2];
+		private int demoTextBrushNumber = 1;
 #endif
 
 		// Фазы отрисовки
@@ -166,8 +166,11 @@ namespace ESHQSetupStub
 #if VIDEO
 			SFVideo.Title = "Select placement of new video file";
 			SFVideo.Filter = "Audio-Video Interchange video format (*.avi)|*.avi";
+#if DEMO_TEXT
+			SFVideo.FileName = demoNames[1] + ".avi";
+#else
 			SFVideo.FileName = "NewVideo.avi";
-
+#endif
 			OFAudio.Title = "Select audio file for rendering";
 			OFAudio.Filter = "Windows PCM audio files (*.wav)|*.wav";
 
@@ -198,9 +201,9 @@ namespace ESHQSetupStub
 						OFAudio.FileName = "";
 					break;
 
-				/*case DialogResult.Cancel:
+				case DialogResult.Cancel:
 					this.Close ();
-					return;*/
+					return;
 				}
 #endif
 
@@ -454,16 +457,30 @@ namespace ESHQSetupStub
 			// Собственно, выполняемый процесс
 			for (int i = 0; i < length; i++)
 				{
+				// Отрисовка
 				ExtendedTimer_Tick (null, null);
 
 #if DEMO_TEXT
-				allowDemoText = (i >= 375) && (i <= 475);
+				allowDemoText = (i >= 375) && (i <= 525);
 #endif
 
-				((BackgroundWorker)sender).ReportProgress (100 * i / (int)length,
-					"Rendered frames: " + i.ToString () + " out of " + length.ToString ());
 				// Возврат прогресса
-				// Отмена запрещена
+				((BackgroundWorker)sender).ReportProgress ((int)HardWorkExecutor.ProgressBarSize * i / (int)length,
+					"Rendered frames: " + i.ToString () + " out of " + length.ToString ());
+				}
+
+			// Fade out
+			brushes[2] = new SolidBrush (Color.FromArgb (2 * fillingOpacity, brushes[0].Color));
+			for (int i = 0; i < fadeOutLength; i++)
+				{
+				gr[0].FillRectangle (brushes[2], 0, 0, this.Width, this.Height);
+				b2 = (Bitmap)b.Clone ();
+				vm.AddFrame (b2);
+				b2.Dispose ();
+
+				// Возврат прогресса
+				((BackgroundWorker)sender).ReportProgress ((int)HardWorkExecutor.ProgressBarSize * i / (int)fadeOutLength,
+					"Fadeout frames: " + i.ToString () + " out of " + fadeOutLength.ToString ());
 				}
 
 			// Завершено
@@ -493,7 +510,6 @@ namespace ESHQSetupStub
 				b2 = (Bitmap)b.Clone ();
 				vm.AddFrame (b2);
 				b2.Dispose ();
-				savingLayersCounter++;
 				}
 #endif
 			}
@@ -711,16 +727,6 @@ namespace ESHQSetupStub
 
 					rad, rad);
 
-#if VIDEO
-				if (allowDemoText)
-					{
-					mainLayer.Descriptor.DrawString (demoNames[0], demoFonts[0], brushes[1], this.Width - demoSizes[0].Width - 50,
-						this.Height - demoSizes[1].Height - 50);
-					mainLayer.Descriptor.DrawString (demoNames[1], demoFonts[1], brushes[1], this.Width - demoSizes[1].Width - 50,
-						this.Height - 50);
-					}
-#endif
-
 				p.Dispose ();
 				}
 
@@ -732,22 +738,33 @@ namespace ESHQSetupStub
 			if (VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode))
 				{
 				// Получение текущего фрейма спектрограммы
-				b = ConcurrentDrawLib.CurrentSpectrogramFrame;
+				b2 = ConcurrentDrawLib.CurrentSpectrogramFrame;
 
 				// Отрисовка фрейма
 				if (VisualizationModesChecker.ContainsSGorWF (cdp.VisualizationMode))
 					{
-					mainLayer.Descriptor.DrawImage (b, new Rectangle (0, this.Height - b.Height, b.Width, b.Height),
-						0, 0, b.Width, b.Height, GraphicsUnit.Pixel, sgAttributes[0]);
+					mainLayer.Descriptor.DrawImage (b2, new Rectangle (0, this.Height - b2.Height, b2.Width, b2.Height),
+						0, 0, b2.Width, b2.Height, GraphicsUnit.Pixel, sgAttributes[0]);
 					}
 				else
 					{
-					mainLayer.Descriptor.DrawImage (b, new Rectangle (0, this.Height - b.Height, b.Width, b.Height),
-						0, 0, b.Width, b.Height, GraphicsUnit.Pixel, sgAttributes[1]);
+					mainLayer.Descriptor.DrawImage (b2, new Rectangle (0, this.Height - b2.Height, b2.Width, b2.Height),
+						0, 0, b2.Width, b2.Height, GraphicsUnit.Pixel, sgAttributes[1]);
 					}
 
-				b.Dispose ();
+				b2.Dispose ();
 				}
+
+#if DEMO_TEXT
+			// Отрисовка тестовых подписей
+			if (allowDemoText)
+				{
+				mainLayer.Descriptor.DrawString (demoNames[0], demoFonts[0], brushes[demoTextBrushNumber],
+					this.Width - demoSizes[0].Width - 50, this.Height - demoSizes[0].Height - demoSizes[1].Height - 30);
+				mainLayer.Descriptor.DrawString (demoNames[1], demoFonts[1], brushes[demoTextBrushNumber],
+					this.Width - demoSizes[1].Width - 50, this.Height - demoSizes[1].Height - 30);
+				}
+#endif
 			}
 
 		// Метод пересчитывает градусы в радианы
