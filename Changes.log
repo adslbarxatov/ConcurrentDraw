@@ -185,3 +185,13 @@ Version 1.23.2:
 
 Version 1.23.7:
 • Some extensions' bugs fixed
+
+Version 1.24:
+• Palettes code complete review applied;
+• Lemon palette added;
+• Probability distribution bug fixed: polymorph and random palettes will not
+  'roll down' anymore
+
+ToDo:
+  Fix cumulation jumps (decrease step);
+  Do something with trackbars in parameters window

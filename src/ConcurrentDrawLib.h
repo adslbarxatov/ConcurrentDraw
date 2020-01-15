@@ -29,8 +29,8 @@
 /////////////////////////////////////////////////////
 // Константы
 #define BASS_VERSION				0x02040E00
-#define CD_VERSION					1,23,7,0
-#define CD_VERSION_S				"1.23.7.0"
+#define CD_VERSION					1,24,0,0
+#define CD_VERSION_S				"1.24.0.0"
 #define CD_PRODUCT					"ConcurrentDraw visualization tool's BASS adapter"
 #define CD_COMPANY					"RD AAOW"
 
@@ -179,7 +179,7 @@ CD_API(ulong) GetDefaultPeakEvaluationParametersEx ();
 CD_API(uchar) GetScaledAmplitudeEx (uint FrequencyLevel);
 
 // Функции формируют палитры приложения
-void FillPalette_Default (void);
+/*void FillPalette_Default (void);
 void FillPalette_Sea (void);
 void FillPalette_Fire (void);
 void FillPalette_Grey (void);
@@ -189,8 +189,8 @@ void FillPalette_7MissedCalls (void);
 void FillPalette_SailOnTheSea (void);
 void FillPalette_Mirror (void);
 void FillPalette_Blood (void);
+void FillPalette_Negative (void);*/
 void FillPalette_PolymorphRandom (uchar Polymorph, uchar Monocolor);
-void FillPalette_Negative (void);
 
 CD_API(void) FillPaletteEx (uchar PaletteNumber);
 

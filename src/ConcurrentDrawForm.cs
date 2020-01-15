@@ -57,7 +57,7 @@ namespace ESHQSetupStub
 
 		private int rad, amp;									// Вспомогательные переменные
 		private double angle1, angle2;
-		private Bitmap b, b2;
+		private Bitmap firstBMP;
 		private Pen p;
 		private Random rnd = new Random ();
 
@@ -86,11 +86,20 @@ namespace ESHQSetupStub
 		private AudioManager amv;								// Аудиодорожка видео
 		private bool allowDemoText = false;						// Флаг разрешения отрисовки текстовых подписей
 		private const uint fadeOutLength = 40;					// Длина эффекта fade out
+		private Bitmap secondBMP;								// Отрисовочный кадр
 
+#if DEMO_TEXT
 		private Font[] demoFonts = new Font[2];					// Объекты поддержки текстовых подписей на рендере
-		private string[] demoNames = new string[] { "THE SERAPHIM PROJECT", "В ОТРАЖЕНИИ КРИВЫХ ЗЕРКАЛ" };
+		private string[] demoNames = new string[] { "Seraphim Project", 
+			//"Пусть сияет огонь",
+			"Парус",
+			//"В отражении кривых зеркал",
+			//"Под гнётом войны",
+			//"Средь тёмных улиц"
+			};
 		private SizeF[] demoSizes = new SizeF[2];
 		private int demoTextBrushNumber = 1;
+#endif
 #endif
 
 		// Фазы отрисовки
@@ -224,29 +233,31 @@ namespace ESHQSetupStub
 #if VIDEO
 			if (vm.IsInited)
 				{
-				b = new Bitmap (this.Width, this.Height);
-				gr.Add (Graphics.FromImage (b));
+				secondBMP = new Bitmap (this.Width, this.Height);
+				gr.Add (Graphics.FromImage (secondBMP));
 				}
 			else
 #endif
 				{
 				gr.Add (Graphics.FromHwnd (this.Handle));
 				}
-			ResetLogo ();
+				ResetLogo ();
 
-			// Формирование кистей
-			brushes.Add (new SolidBrush (ConcurrentDrawLib.GetColorFromPalette (0)));			// Фон
-			brushes.Add (new SolidBrush (ConcurrentDrawLib.GetMasterPaletteColor ()));			// Лого и beat-детектор
-			brushes.Add (new SolidBrush (Color.FromArgb (fillingOpacity, brushes[0].Color)));	// Fade out
+				// Формирование кистей
+				brushes.Add (new SolidBrush (ConcurrentDrawLib.GetColorFromPalette (0)));			// Фон
+				brushes.Add (new SolidBrush (ConcurrentDrawLib.GetMasterPaletteColor ()));			// Лого и beat-детектор
+				brushes.Add (new SolidBrush (Color.FromArgb (fillingOpacity, brushes[0].Color)));	// Fade out
 
 #if VIDEO
 			// Подготовка параметров
+#if DEMO_TEXT
 			demoFonts[0] = new Font ("a_GroticNr", this.Width / 55, FontStyle.Bold);
 			demoFonts[1] = new Font ("a_GroticNr", this.Width / 45, FontStyle.Bold);
 			for (int i = 0; i < demoNames.Length; i++)
 				{
 				demoSizes[i] = gr[0].MeasureString (demoNames[i], demoFonts[i]);
 				}
+#endif
 
 			// Запуск рендеринга
 			if (vm.IsInited)
@@ -260,11 +271,11 @@ namespace ESHQSetupStub
 				}
 			else
 #endif
-			// Запуск таймера
-				{
-				ExtendedTimer.Enabled = true;
-				}
-			this.Activate ();
+				// Запуск таймера
+					{
+					ExtendedTimer.Enabled = true;
+					}
+					this.Activate ();
 			}
 
 		// Метод инициализирует аудиоканал
@@ -278,7 +289,7 @@ namespace ESHQSetupStub
 				ssie = ConcurrentDrawLib.InitializeSoundStream (OFAudio.FileName);
 			else
 #endif
-				ssie = ConcurrentDrawLib.InitializeSoundStream (cdp.DeviceNumber);
+			ssie = ConcurrentDrawLib.InitializeSoundStream (cdp.DeviceNumber);
 			switch (ssie)
 				{
 				case SoundStreamInitializationErrors.BASS_ERROR_ALREADY:
@@ -474,9 +485,9 @@ namespace ESHQSetupStub
 			for (int i = 0; i < fadeOutLength; i++)
 				{
 				gr[0].FillRectangle (brushes[2], 0, 0, this.Width, this.Height);
-				b2 = (Bitmap)b.Clone ();
-				vm.AddFrame (b2);
-				b2.Dispose ();
+				firstBMP = (Bitmap)secondBMP.Clone ();
+				vm.AddFrame (firstBMP);
+				firstBMP.Dispose ();
 
 				// Возврат прогресса
 				((BackgroundWorker)sender).ReportProgress ((int)HardWorkExecutor.ProgressBarSize * i / (int)fadeOutLength,
@@ -507,9 +518,9 @@ namespace ESHQSetupStub
 #if VIDEO
 			if (vm.IsInited)
 				{
-				b2 = (Bitmap)b.Clone ();
-				vm.AddFrame (b2);
-				b2.Dispose ();
+				firstBMP = (Bitmap)secondBMP.Clone ();
+				vm.AddFrame (firstBMP);
+				firstBMP.Dispose ();
 				}
 #endif
 			}
@@ -738,25 +749,27 @@ namespace ESHQSetupStub
 			if (VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode))
 				{
 				// Получение текущего фрейма спектрограммы
-				b2 = ConcurrentDrawLib.CurrentSpectrogramFrame;
+				firstBMP = ConcurrentDrawLib.CurrentSpectrogramFrame;
 
 				// Отрисовка фрейма
 				if (VisualizationModesChecker.ContainsSGorWF (cdp.VisualizationMode))
 					{
-					mainLayer.Descriptor.DrawImage (b2, new Rectangle (0, this.Height - b2.Height, b2.Width, b2.Height),
-						0, 0, b2.Width, b2.Height, GraphicsUnit.Pixel, sgAttributes[0]);
+					mainLayer.Descriptor.DrawImage (firstBMP,
+						new Rectangle (0, this.Height - firstBMP.Height, firstBMP.Width, firstBMP.Height),
+						0, 0, firstBMP.Width, firstBMP.Height, GraphicsUnit.Pixel, sgAttributes[0]);
 					}
 				else
 					{
-					mainLayer.Descriptor.DrawImage (b2, new Rectangle (0, this.Height - b2.Height, b2.Width, b2.Height),
-						0, 0, b2.Width, b2.Height, GraphicsUnit.Pixel, sgAttributes[1]);
+					mainLayer.Descriptor.DrawImage (firstBMP,
+						new Rectangle (0, this.Height - firstBMP.Height, firstBMP.Width, firstBMP.Height),
+						0, 0, firstBMP.Width, firstBMP.Height, GraphicsUnit.Pixel, sgAttributes[1]);
 					}
 
-				b2.Dispose ();
+				firstBMP.Dispose ();
 				}
 
 #if DEMO_TEXT
-			// Отрисовка тестовых подписей
+			// Отрисовка текстовых подписей
 			if (allowDemoText)
 				{
 				mainLayer.Descriptor.DrawString (demoNames[0], demoFonts[0], brushes[demoTextBrushNumber],
@@ -815,12 +828,15 @@ namespace ESHQSetupStub
 
 			if (mainLayer != null)
 				mainLayer.Dispose ();
-			if (b != null)
-				b.Dispose ();
+			if (firstBMP != null)
+				firstBMP.Dispose ();
 			if (cdp != null)
 				cdp.Dispose ();
 
 #if VIDEO
+			if (secondBMP != null)
+				secondBMP.Dispose ();
+
 			// Попытка добавления аудио
 			amv = new AudioManager (SFVideo.FileName.Substring (0, SFVideo.FileName.Length - 4) + ".wav", false);
 			if (amv.IsInited)
