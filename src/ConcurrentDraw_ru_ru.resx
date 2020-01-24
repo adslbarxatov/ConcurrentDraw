@@ -154,10 +154,12 @@
     <value>Поверх всех окон</value>
   </data>
   <data name="CDP_BDSettingsText" xml:space="preserve">
-    <value>Диапазон: {0:D} – {1:D} Гц; порог амплитуды: {2:D}%; множитель значений БПФ: {3:D}</value>
+    <value>Диапазон: {0:D} – {1:D} Гц
+Порог амплитуды: {2:D}%
+Множитель значений БПФ: {3:D}</value>
   </data>
   <data name="CDP_BeatsGroup" xml:space="preserve">
-    <value>Настройки детектора битов</value>
+    <value>Детектор бито́в</value>
   </data>
   <data name="CDP_Cancel" xml:space="preserve">
     <value>От&amp;мена</value>
@@ -171,7 +173,7 @@
 (0 = без эффекта накопления)</value>
   </data>
   <data name="CDP_CumulationGroup" xml:space="preserve">
-    <value>Настройки кумулятивного эффекта</value>
+    <value>Кумулятивный эффект</value>
   </data>
   <data name="CDP_DevicesLabel" xml:space="preserve">
     <value>Устройство:</value>
@@ -249,7 +251,7 @@
     <value>В соотв. с бит-детектором с импульсом:</value>
   </data>
   <data name="CDP_HistoRotGroup" xml:space="preserve">
-    <value>Скорость вращения гистограммы "бабочка"</value>
+    <value>Вращение гистограмм</value>
   </data>
   <data name="CDP_HistoRotSpeed" xml:space="preserve">
     <value>Исп. постоянное угловое приращение:</value>
@@ -262,5 +264,8 @@
   </data>
   <data name="CDPWindowSize" xml:space="preserve">
     <value>Выберите размер окна</value>
+  </data>
+  <data name="CDP_GenericGroup" xml:space="preserve">
+    <value>Основные</value>
   </data>
 </root>

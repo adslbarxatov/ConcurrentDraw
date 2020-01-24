@@ -37,260 +37,7 @@
 							AS->cdPolymorphColors[3].rgbGreen += ((AS->cdPolymorphColors[3].rgbGreen < 255) ? 1 : 0);\
 							AS->cdPolymorphColors[3].rgbBlue += ((AS->cdPolymorphColors[3].rgbBlue < 255) ? 1 : 0); }
 
-// Функции, инициализирующие отдельные палитры
-/*void FillPalette_Default (void)
-	{
-	uint i;
-
-	// Основная палитра
-	for (i = 0; i < FP_QMAX; i++) 
-		{
-		FP_Q1 (0, 0, 2 * i);
-		FP_Q2 (4 * i, 0, 2 * (FP_QMAX + i));
-		FP_Q3 (FP_MAX, 4 * i, 4 * (FP_QMAX - 1 - i));
-		FP_Q4 (FP_MAX, FP_MAX, 4 * i);
-		}
-
-	// Палитра бит-детектора
-	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
-		{
-		FP_B (i / 2, 0, i);
-		}
-
-	// Цвет фона спектрограмм
-	AS->cdBackgroundColorNumber = 8;
-	}
-
-void FillPalette_Sea (void)
-	{
-	uint i;
-
-	// Основная палитра
-	for (i = 0; i < FP_QMAX; i++) 
-		{
-		FP_Q1 (0, 0, 4 * i);
-		FP_Q2 (0, 2 * i, FP_MAX);
-		FP_Q3 (0, 2 * (FP_QMAX + i), FP_MAX);
-		FP_Q4 (4 * i, FP_MAX, FP_MAX);
-		}
-
-	// Палитра бит-детектора
-	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
-		{
-		FP_B (0, 2 * i / 3, i);
-		}
-
-	// Цвет фона спектрограмм
-	AS->cdBackgroundColorNumber = 8;
-	}
-
-void FillPalette_Fire (void)
-	{
-	uint i;
-
-	// Основная палитра
-	for (i = 0; i < FP_QMAX; i++) 
-		{
-		FP_Q1 (4 * i, 0, 0);
-		FP_Q2 (FP_MAX, 2 * i, 0);
-		FP_Q3 (FP_MAX, 2 * (FP_QMAX + i), 0);
-		FP_Q4 (FP_MAX, FP_MAX, 4 * i);
-		}
-
-	// Палитра бит-детектора
-	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
-		{
-		FP_B (i, 2 * i / 3, 0);
-		}
-
-	// Цвет фона спектрограмм
-	AS->cdBackgroundColorNumber = 8;
-	}
-
-void FillPalette_Grey (void)
-	{
-	uint i;
-
-	// Основная палитра
-	for (i = 0; i < FP_QMAX; i++) 
-		{
-		FP_Q1 (i / 2, i / 2, i / 2);
-		FP_Q2 ((FP_QMAX + i) / 2, (FP_QMAX + i) / 2, (FP_QMAX + i) / 2);
-		FP_Q3 (FP_QMAX + i, FP_QMAX + i, FP_QMAX + i);
-		FP_Q4 (2 * (FP_QMAX + i), 2 * (FP_QMAX + i), 2 * (FP_QMAX + i));
-		}
-
-	// Палитра бит-детектора
-	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
-		{
-		FP_B (4 * i / 5, 4 * i / 5, 4 * i / 5);
-		}
-
-	// Цвет фона спектрограмм
-	AS->cdBackgroundColorNumber = 8;
-	}
-
-void FillPalette_Sunrise (void)
-	{
-	uint i;
-
-	// Основная палитра
-	for (i = 0; i < FP_QMAX; i++) 
-		{
-		FP_Q1 (0, 0, 2 * i);
-		FP_Q2 (0, 3 * i, 2 * (FP_QMAX - i));
-		FP_Q3 (4 * i, FP_AMAX - i, 0);
-		FP_Q4 (FP_MAX, 2 * (FP_QMAX + i), 4 * i);
-		}
-
-	// Палитра бит-детектора
-	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
-		{
-		FP_B (0, 3 * i / 4, 0);
-		}
-
-	// Цвет фона спектрограмм
-	AS->cdBackgroundColorNumber = 8;
-	}
-
-void FillPalette_Acid (void)
-	{
-	uint i;
-
-	// Основная палитра
-	for (i = 0; i < FP_QMAX; i++) 
-		{
-		FP_Q1 (0, i, 0);
-		FP_Q2 (0, FP_QMAX + i, 0);
-		FP_Q3 (0, 2 * (FP_QMAX + i), 0);
-		FP_Q4 (4 * i, FP_MAX, 4 * i);
-		}
-
-	// Палитра бит-детектора
-	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
-		{
-		FP_B (0, i, 0);
-		}
-
-	// Цвет фона спектрограмм
-	AS->cdBackgroundColorNumber = 8;
-	}
-
-void FillPalette_7MissedCalls (void)
-	{
-	uint i;
-
-	// Основная палитра
-	for (i = 0; i < FP_QMAX; i++) 
-		{
-		FP_Q1 (3 * i, 0, 2 * i);
-		FP_Q2 (3 * (FP_QMAX - i), 3 * i / 2, FP_HMAX + i);
-		FP_Q3 (2 * i, (FP_AMAX + 5 * i) / 2, FP_AMAX - i);
-		FP_Q4 (2 * (FP_QMAX + i), FP_MAX, 2 * (FP_QMAX + i));
-		}
-
-	// Палитра бит-детектора
-	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
-		{
-		FP_B (i, 0, 3 * i / 4);
-		}
-
-	// Цвет фона спектрограмм
-	AS->cdBackgroundColorNumber = 8;
-	}
-
-void FillPalette_SailOnTheSea (void)
-	{
-	uint i;
-
-	// Основная палитра
-	for (i = 0; i < FP_QMAX; i++) 
-		{
-		FP_Q1 (0, 0, 4 * i);
-		FP_Q2 (2 * i, 0, FP_MAX);
-		FP_Q3 (2 * (FP_QMAX + i), 0, 4 * (FP_QMAX - 1 - i));
-		FP_Q4 (FP_MAX, 4 * i, 4 * i);
-		}
-
-	// Палитра бит-детектора
-	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
-		{
-		FP_B (i, 0, 0);
-		}
-
-	// Цвет фона спектрограмм
-	AS->cdBackgroundColorNumber = 8;
-	}
-
-void FillPalette_Mirror (void)
-	{
-	uint i;
-
-	// Основная палитра
-	for (i = 0; i < FP_QMAX; i++) 
-		{
-		FP_Q1 (i, i, i);
-		FP_Q2 (FP_QMAX + i, FP_QMAX + i, FP_QMAX + i);
-		FP_Q3 (2 * (FP_QMAX + i), 2 * (FP_QMAX + i), 2 * (FP_QMAX - i));
-		FP_Q4 (FP_MAX, FP_MAX, 4 * i);
-		}
-
-	// Палитра бит-детектора
-	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
-		{
-		FP_B (3 * i / 4, 3 * i / 4, 3 * i / 4);
-		}
-
-	// Цвет фона спектрограмм
-	AS->cdBackgroundColorNumber = 8;
-	}
-
-void FillPalette_Blood (void)
-	{
-	uint i;
-
-	// Основная палитра
-	for (i = 0; i < FP_QMAX; i++) 
-		{
-		FP_Q1 (i, 0, 0);
-		FP_Q2 (FP_QMAX + i, 0, 0);
-		FP_Q3 (2 * (FP_QMAX + i), 0, 0);
-		FP_Q4 (FP_MAX, 4 * i, 4 * i);
-		}
-
-	// Палитра бит-детектора
-	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
-		{
-		FP_B (i, 0, 0);
-		}
-
-	// Цвет фона спектрограмм
-	AS->cdBackgroundColorNumber = 8;
-	}
-
-void FillPalette_Negative (void)
-	{
-	uint i;
-
-	// Основная палитра
-	for (i = 0; i < FP_QMAX; i++) 
-		{
-		FP_Q1 (FP_MAX - i, FP_MAX - i, FP_MAX - i);
-		FP_Q2 (FP_AMAX - i, FP_AMAX - i, FP_AMAX - i);
-		FP_Q3 (FP_HMAX - i, FP_HMAX - i, FP_HMAX - i);
-		FP_Q4 (FP_QMAX - i, FP_QMAX - i, FP_QMAX - i);
-		}
-
-	// Палитра бит-детектора
-	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
-		{
-		FP_B (FP_MAX - i, FP_MAX - i, FP_MAX - i);
-		}
-
-	// Цвет фона спектрограмм
-	AS->cdBackgroundColorNumber = 192;
-	}*/
-
+// Функции, инициализирующие палитры
 #define FPPR_RND_LIMIT		10
 #define FPPR_CLR_MIN_MONO	32
 #define FPPR_CLR_MIN_POLY	64
@@ -441,7 +188,6 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 		// Стандартная
 		default:
 		case 0:
-			//FillPalette_Default ();
 			FP_PALETTE (
 				(0, 0, 2 * i), 
 				(4 * i, 0, 2 * (FP_QMAX + i)),
@@ -453,7 +199,6 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 
 		// Море
 		case 1:
-			//FillPalette_Sea ();
 			FP_PALETTE (
 				(0, 0, 4 * i),
 				(0, 2 * i, FP_MAX),
@@ -464,7 +209,6 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 
 		// Огонь
 		case 2:
-			//FillPalette_Fire ();
 			FP_PALETTE (
 				(4 * i, 0, 0),
 				(FP_MAX, 2 * i, 0),
@@ -475,7 +219,6 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 
 		// Серая
 		case 3:
-			//FillPalette_Grey ();
 			FP_PALETTE (
 				(i / 2, i / 2, i / 2),
 				((FP_QMAX + i) / 2, (FP_QMAX + i) / 2, (FP_QMAX + i) / 2),
@@ -486,7 +229,6 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 
 		// Рассвет
 		case 4:
-			//FillPalette_Sunrise ();
 			FP_PALETTE (
 				(0, 0, 2 * i),
 				(0, 3 * i, 2 * (FP_QMAX - i)),
@@ -497,7 +239,6 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 
 		// Кислота
 		case 5:
-			//FillPalette_Acid ();
 			FP_PALETTE (
 				(0, i, 0),
 				(0, FP_QMAX + i, 0),
@@ -508,7 +249,6 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 
 		// 7 пропущенных
 		case 6:
-			//FillPalette_7MissedCalls ();
 			FP_PALETTE (
 				(3 * i, 0, 2 * i),
 				(3 * (FP_QMAX - i), 3 * i / 2, FP_HMAX + i),
@@ -519,7 +259,6 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 
 		// Парус
 		case 7:
-			//FillPalette_SailOnTheSea ();
 			FP_PALETTE (
 				(0, 0, 4 * i),
 				(2 * i, 0, FP_MAX),
@@ -530,7 +269,6 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 
 		// Зеркало
 		case 8:
-			//FillPalette_Mirror ();
 			FP_PALETTE (
 				(i, i, i),
 				(FP_QMAX + i, FP_QMAX + i, FP_QMAX + i),
@@ -541,7 +279,6 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 
 		// Кровь
 		case 9:
-			//FillPalette_Blood ();
 			FP_PALETTE (
 				(i, 0, 0),
 				(FP_QMAX + i, 0, 0),
@@ -552,7 +289,6 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 
 		// Негатив
 		case 10:
-			//FillPalette_Negative ();
 			FP_PALETTE (
 				(FP_MAX - i, FP_MAX - i, FP_MAX - i),
 				(FP_AMAX - i, FP_AMAX - i, FP_AMAX - i),
@@ -571,11 +307,31 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 				(i, i, 0), 8)
 			break;
 
-		// Полиморфная и случайная
+		// Огонь обратный
 		case 12:
+			FP_PALETTE (
+				(FP_MAX, FP_MAX, FP_AMAX - 3 * i),
+				(FP_MAX, FP_MAX - 2 * i, 0),
+				(FP_MAX - 2 * i, FP_HMAX - 2 * i, 0),
+				(FP_HMAX - 2 * i, 0, 0),
+				(FP_MAX - 4 * i / 5, FP_HMAX - i / 2, 0), 224)
+			break;
+
+		// Море обратный
 		case 13:
+			FP_PALETTE (
+				(FP_AMAX - 3 * i, FP_MAX, FP_MAX),
+				(0, FP_MAX - 2 * i, FP_MAX),
+				(0, FP_HMAX - 2 * i, FP_MAX - 2 * i),
+				(0, 0, FP_HMAX - 2 * i),
+				(0, FP_HMAX - i / 2, FP_MAX - 4 * i / 5), 224)
+			break;
+
+		// Полиморфная и случайная
 		case 14:
 		case 15:
+		case 16:
+		case 17:
 			FillPalette_PolymorphRandom (PaletteNumber & 0x2 & polymorphResetNotRequired, PaletteNumber & 0x1);
 			AS->cdPolymorphUpdateCounter = PaletteNumber & 0x2;
 			break;
@@ -615,10 +371,12 @@ CD_API(schar *) GetPalettesNamesEx ()
 		"Blood" NAMES_DELIMITER_S \
 		"Negative" NAMES_DELIMITER_S \
 		"Lemon" NAMES_DELIMITER_S \
-		"Random" NAMES_DELIMITER_S \
-		"Random monocolor" NAMES_DELIMITER_S \
+		"Fire (reversed)" NAMES_DELIMITER_S \
+		"Sea (reversed)" NAMES_DELIMITER_S \
 		"Polymorph" NAMES_DELIMITER_S \
-		"Polymorph monocolor")
+		"Polymorph monocolor" NAMES_DELIMITER_S \
+		"Random" NAMES_DELIMITER_S \
+		"Random monocolor" )
 
 	return PALETTES_NAMES;
 	}

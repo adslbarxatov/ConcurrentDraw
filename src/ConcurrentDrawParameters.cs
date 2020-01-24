@@ -93,7 +93,7 @@ namespace ESHQSetupStub
 			histogramFFTValuesCountShift = HistogramRangeCombo.SelectedIndex = 2;			// По умолчанию - до 2,7 кГц
 
 			// Кумулятивный эффект
-			CEDecumulationMultiplier.Value = 8;									// По умолчанию - 0,8
+			CEDecumulationMultiplier.Value = 16;									// По умолчанию - 0,8
 			decumulationMultiplier = (uint)CEDecumulationMultiplier.Value;
 			CECumulationSpeed.Value = 70;										// По умолчанию - 70
 			cumulationSpeed = (uint)CECumulationSpeed.Value;
@@ -195,8 +195,7 @@ namespace ESHQSetupStub
 					HistoRotSpeed.Checked = true;
 				HistoRotSpeedArc.Value = (decimal)Math.Abs (histoRotSpeedArc / 10.0);
 
-				//transparentLogo = TransparentFlag.Checked = (values[15] != "0");
-				shakeEffect = ShakeFlag.Checked = (values[16] != "0");
+				shakeEffect = ShakeFlag.Checked = (values[15] != "0");
 				}
 			catch
 				{
@@ -225,7 +224,8 @@ namespace ESHQSetupStub
 
 			AlwaysOnTopFlag.Text = Localization.GetText ("CDP_AlwaysOnTopFlag", al);
 
-			BeatsGroup.Text = Localization.GetText ("CDP_BeatsGroup", al);
+			GenericTab.Text = Localization.GetText ("CDP_GenericGroup", al);
+			BeatsTab.Text = Localization.GetText ("CDP_BeatsGroup", al);
 
 			BOK.Text = Localization.GetText ("CDP_OK", al);
 			BCancel.Text = Localization.GetText ("CDP_Cancel", al);
@@ -233,15 +233,14 @@ namespace ESHQSetupStub
 
 			BDLowEdge_ValueChanged (BDLowEdge, null);
 
-			CumulationGroup.Text = Localization.GetText ("CDP_CumulationGroup", al);
+			CumulationTab.Text = Localization.GetText ("CDP_CumulationGroup", al);
 
 			CESpeed_ValueChanged (null, null);
 
-			HistoRotGroup.Text = Localization.GetText ("CDP_HistoRotGroup", al);
+			RotationTab.Text = Localization.GetText ("CDP_HistoRotGroup", al);
 			HistoRotAccToBeats.Text = Localization.GetText ("CDP_HistoRotAccToBeats", al);
 			HistoRotSpeed.Text = Localization.GetText ("CDP_HistoRotSpeed", al);
 
-			TransparentFlag.Text = Localization.GetText ("CDP_TransparentFlag", al);
 			ShakeFlag.Text = Localization.GetText ("CDP_ShakeFlag", al);
 			}
 
@@ -353,7 +352,6 @@ namespace ESHQSetupStub
 			else
 				histoRotSpeedArc = (int)(HistoRotSpeedArc.Value * 10);
 
-			//transparentLogo = TransparentFlag.Checked && TransparentFlag.Enabled;
 			shakeEffect = ShakeFlag.Checked;
 
 			// Сохранение
@@ -376,7 +374,6 @@ namespace ESHQSetupStub
 				logoHeight.ToString () + splitter[0].ToString () +
 				histoRotSpeedArc.ToString () + splitter[0].ToString () +
 
-				(transparentLogo ? "1" : "0") + splitter[0].ToString () +
 				(shakeEffect ? "1" : "0");
 
 			try
@@ -388,8 +385,13 @@ namespace ESHQSetupStub
 				}
 
 			// Установка параметров
+#if VIDEO
+			ConcurrentDrawLib.SetPeakEvaluationParameters ((byte)BDLowEdge.Value, (byte)BDHighEdge.Value,
+				(byte)BDLowLevel.Value, (byte)(3 * BDFFTScaleMultiplier.Value / 4));
+#else
 			ConcurrentDrawLib.SetPeakEvaluationParameters ((byte)BDLowEdge.Value, (byte)BDHighEdge.Value,
 				(byte)BDLowLevel.Value, (byte)BDFFTScaleMultiplier.Value);
+#endif
 			ConcurrentDrawLib.SetHistogramFFTValuesCount (this.HistogramFFTValuesCount);
 
 			// Завершение
@@ -658,12 +660,9 @@ namespace ESHQSetupStub
 			VisualizationModes mode = (VisualizationModes)VisualizationCombo.SelectedIndex;
 
 			SGHGHeightLabel.Enabled = SDHeight.Enabled = VisualizationModesChecker.ContainsSGHGorWF (mode);
-			CumulationGroup.Enabled = HistoRotGroup.Enabled = !VisualizationModesChecker.ContainsSGHGorWF (mode);
+			CumulationTab.Enabled = RotationTab.Enabled = !VisualizationModesChecker.ContainsSGHGorWF (mode);
 
 			HGRangeLabel.Enabled = HistogramRangeCombo.Enabled = !VisualizationModesChecker.ContainsSGonly (mode);
-
-			//TransparentFlag.Enabled = !VisualizationModesChecker.ContainsSGHGorWF (mode);
-			//TransparentFlag.Checked &= TransparentFlag.Enabled;
 			}
 
 		/// <summary>
@@ -700,18 +699,6 @@ namespace ESHQSetupStub
 				}
 			}
 		private int histoRotSpeedArc;
-
-		/// <summary>
-		/// Возвращает флаг, указывающий на прозрачность лого
-		/// </summary>
-		public bool TransparentLogo
-			{
-			get
-				{
-				return transparentLogo; // && TransparentFlag.Enabled;
-				}
-			}
-		private bool transparentLogo = true;
 
 		/// <summary>
 		/// Возвращает флаг, указывающий на эффект тряски

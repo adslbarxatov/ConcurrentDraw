@@ -154,10 +154,12 @@
     <value>Always on top</value>
   </data>
   <data name="CDP_BDSettingsText" xml:space="preserve">
-    <value>Range: {0:D} – {1:D} Hz; amplitude threshold: {2:D}%; FFT scale multiplier: {3:D}</value>
+    <value>Range: {0:D} – {1:D} Hz
+Amplitude threshold: {2:D}%
+FFT scale multiplier: {3:D}</value>
   </data>
   <data name="CDP_BeatsGroup" xml:space="preserve">
-    <value>Beats detection settings</value>
+    <value>Beats detection</value>
   </data>
   <data name="CDP_Cancel" xml:space="preserve">
     <value>&amp;Cancel</value>
@@ -171,7 +173,7 @@ Fade out speed multiplier: {1:S}
 (0 = no cumulative effect)</value>
   </data>
   <data name="CDP_CumulationGroup" xml:space="preserve">
-    <value>Cumulative effect settings</value>
+    <value>Cumulative effect</value>
   </data>
   <data name="CDP_DevicesLabel" xml:space="preserve">
     <value>Output device:</value>
@@ -249,7 +251,7 @@ Settings will be saved by pressing OK button. They can be changed anytime you ne
     <value>Acc. to beats detector with angle impulse:</value>
   </data>
   <data name="CDP_HistoRotGroup" xml:space="preserve">
-    <value>Butterfly histogram rotation speed</value>
+    <value>Histogram rotation</value>
   </data>
   <data name="CDP_HistoRotSpeed" xml:space="preserve">
     <value>Using constant angle increment:</value>
@@ -262,5 +264,8 @@ Settings will be saved by pressing OK button. They can be changed anytime you ne
   </data>
   <data name="CDPWindowSize" xml:space="preserve">
     <value>Select window size</value>
+  </data>
+  <data name="CDP_GenericGroup" xml:space="preserve">
+    <value>Generic</value>
   </data>
 </root>

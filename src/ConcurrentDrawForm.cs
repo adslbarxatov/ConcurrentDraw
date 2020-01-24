@@ -37,8 +37,12 @@ namespace ESHQSetupStub
 		private List<Bitmap> logo = new List<Bitmap> ();
 
 		private const int logoIdleSpeed = 2;					// Наименьшая скорость вращения лого
-		private int logoSpeedImpulse = 50,						// Импульс скорости
-			currentLogoAngleDelta = 0;							// Текущий угол приращения поворота лого
+#if VIDEO
+		private const int logoSpeedImpulse = 65;				// Импульс скорости
+#else
+		private const int logoSpeedImpulse = 50;				// Импульс скорости
+#endif
+		private int currentLogoAngleDelta = 0;					// Текущий угол приращения поворота лого
 		private double currentHistogramAngle = 0.0;				// Текущий угол поворота гистограммы-бабочки
 		private uint logoHeight;								// Диаметр лого
 		private const int fillingOpacity = 15;					// Непрозрачность эффекта fadeout
@@ -262,7 +266,6 @@ namespace ESHQSetupStub
 			// Запуск рендеринга
 			if (vm.IsInited)
 				{
-				logoSpeedImpulse += 10;	// Из-за низкого FPS приходится ускорять
 				HardWorkExecutor hwe = new HardWorkExecutor (RenderVideo, "Total count of frames", "Rendering...");
 
 				// Без выхода в основной режим
@@ -429,29 +432,29 @@ namespace ESHQSetupStub
 					am.PlayAudio ();
 #endif
 					// Донастройка отрисовщика
-					if (cdp.TransparentLogo)
+					/*if (cdp.TransparentLogo)*/
 						{
 						logo[0].MakeTransparent (ConcurrentDrawLib.GetColorFromPalette (0));
 						gr[1].CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
 						}
 
-					// Перекрытие остатка лого при его отсутствии
-					if (!VisualizationModesChecker.ContainsLogo (cdp.VisualizationMode) &&
-						VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode) &&
-						(this.Height - cdp.SpectrogramHeight > 0))
-						{
-						mainLayer.Descriptor.FillRectangle (brushes[0], (this.Width - logo[1].Width) / 2, 0,
-							logo[1].Width, this.Height - cdp.SpectrogramHeight);
-						}
+						// Перекрытие остатка лого при его отсутствии
+						if (!VisualizationModesChecker.ContainsLogo (cdp.VisualizationMode) &&
+							VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode) &&
+							(this.Height - cdp.SpectrogramHeight > 0))
+							{
+							mainLayer.Descriptor.FillRectangle (brushes[0], (this.Width - logo[1].Width) / 2, 0,
+								logo[1].Width, this.Height - cdp.SpectrogramHeight);
+							}
 
-					logoFirstShowMade = true;
-					currentPhase++;
-					break;
+						logoFirstShowMade = true;
+						currentPhase++;
+						break;
 
 				// Основной режим
 				case Phases.Visualization:
-					DrawingVisualization ();
-					break;
+						DrawingVisualization ();
+						break;
 				}
 
 			// Отрисовка изображения
@@ -530,7 +533,7 @@ namespace ESHQSetupStub
 			{
 			// Торможение вращения
 			if (PushBrakes)
-				currentLogoAngleDelta = (currentLogoAngleDelta - logoIdleSpeed) / 2;
+				currentLogoAngleDelta = (7 * currentLogoAngleDelta - logoIdleSpeed) / 8;
 
 			// Отрисовка
 			gr[1].RotateTransform (currentLogoAngleDelta);
