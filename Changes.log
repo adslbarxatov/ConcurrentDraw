@@ -200,5 +200,6 @@ Version 1.25:
 • Decumulation speed's trackbar is more accurate now;
 • Other code improvements applied
 
-ToDo:
-x Fix cumulation jumps (decrease step) - no way for now;
+Version 1.25.10:
+• Settings management subsystem implemented; in further versions application
+  will be able to save sets of settings and select them from the list

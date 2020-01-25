@@ -431,30 +431,28 @@ namespace ESHQSetupStub
 #if AUDIO
 					am.PlayAudio ();
 #endif
-					// Донастройка отрисовщика
-					/*if (cdp.TransparentLogo)*/
+					// Донастройка отрисовщика (если установлен флаг прозрачности)
+					logo[0].MakeTransparent (ConcurrentDrawLib.GetColorFromPalette (0));
+					gr[1].CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+
+					// Перекрытие остатка лого при его отсутствии
+					if (!VisualizationModesChecker.ContainsLogo (cdp.VisualizationMode) &&
+						VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode) &&
+						(this.Height - cdp.SpectrogramHeight > 0))
 						{
-						logo[0].MakeTransparent (ConcurrentDrawLib.GetColorFromPalette (0));
-						gr[1].CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+						mainLayer.Descriptor.FillRectangle (brushes[0], (this.Width - logo[1].Width) / 2, 0,
+							logo[1].Width, this.Height - cdp.SpectrogramHeight);
 						}
 
-						// Перекрытие остатка лого при его отсутствии
-						if (!VisualizationModesChecker.ContainsLogo (cdp.VisualizationMode) &&
-							VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode) &&
-							(this.Height - cdp.SpectrogramHeight > 0))
-							{
-							mainLayer.Descriptor.FillRectangle (brushes[0], (this.Width - logo[1].Width) / 2, 0,
-								logo[1].Width, this.Height - cdp.SpectrogramHeight);
-							}
-
-						logoFirstShowMade = true;
-						currentPhase++;
-						break;
+					logoFirstShowMade = true;
+					currentLogoAngleDelta = -logoIdleSpeed;
+					currentPhase++;
+					break;
 
 				// Основной режим
 				case Phases.Visualization:
-						DrawingVisualization ();
-						break;
+					DrawingVisualization ();
+					break;
 				}
 
 			// Отрисовка изображения
@@ -569,7 +567,6 @@ namespace ESHQSetupStub
 
 			if (steps >= 170)
 				{
-				currentLogoAngleDelta = -logoIdleSpeed;
 				steps = 0;
 				currentPhase++;
 				}

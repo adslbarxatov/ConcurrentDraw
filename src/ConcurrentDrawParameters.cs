@@ -1,5 +1,5 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -11,11 +11,8 @@ namespace ESHQSetupStub
 	public partial class ConcurrentDrawParameters:Form
 		{
 		// Константы и переменные
-		private char[] splitter = new char[] { ';' };
 		private SupportedLanguages al = Localization.CurrentLanguage;
-
-		// Название параметра с настройками
-		private const string SettingsValueName = "";
+		private List<CDParametersSet> parameters = new List<CDParametersSet> ();
 
 		/// <summary>
 		/// Конструктор. Позволяет запросить параметры из реестра.
@@ -28,6 +25,10 @@ namespace ESHQSetupStub
 			// Инициализация
 			InitializeComponent ();
 
+			// Запрос стандартных настроек и балластное заполнение второго поля
+			parameters.Add (new CDParametersSet (true));
+			parameters.Add (new CDParametersSet (true));
+
 			// Настройка контролов
 
 			// Устройства
@@ -37,27 +38,23 @@ namespace ESHQSetupStub
 				DevicesCombo.Items.Add (Localization.GetText ("CDP_NoDevices", al));
 				DevicesCombo.Enabled = DevicesLabel.Enabled = false;
 				}
-			DevicesCombo.SelectedIndex = 0;			// По умолчанию - первое
-			deviceNumber = 0;
+			DevicesCombo.SelectedIndex = parameters[0].DeviceNumber;
 
 			// Палитра
 			SDPaletteCombo.Items.AddRange (ConcurrentDrawLib.AvailablePalettesNames);
-			SDPaletteCombo.SelectedIndex = 0;		// По умолчанию - первая
-			paletteNumber = 0;
+			SDPaletteCombo.SelectedIndex = parameters[0].PaletteNumber;
 
 			// Режим
 			for (int i = 0; i < VisualizationModesChecker.VisualizationModesCount; i++)
 				{
 				VisualizationCombo.Items.Add (((VisualizationModes)i).ToString ().Replace ('_', ' '));
 				}
-			visualizationMode = VisualizationModes.Butterfly_histogram;		// По умолчанию - бабочка
-			VisualizationCombo.SelectedIndex = (int)visualizationMode;
+			VisualizationCombo.SelectedIndex = (int)parameters[0].VisualizationMode;
 
 			// Высота спектрограммы
 			SDHeight.Minimum = VisHeight.Minimum = ConcurrentDrawLib.MinSpectrogramFrameHeight;
 			SDHeight.Maximum = ConcurrentDrawLib.MaxSpectrogramFrameHeight;
-			SDHeight.Value = 256;					// По умолчанию - 256 px
-			sdHeight = (uint)SDHeight.Value;
+			SDHeight.Value = parameters[0].SpectrogramHeight;
 
 			// Размеры визуализации 
 			VisWidth.Minimum = ConcurrentDrawLib.MinSpectrogramFrameWidth;
@@ -67,43 +64,41 @@ namespace ESHQSetupStub
 			VisWidth.Value = (int)(9 * VisWidth.Maximum / 16);
 			VisHeight.Value = (int)(9 * VisHeight.Maximum / 16);	// По умолчанию - (9 / 16) размера экрана
 
-			visualizationWidth = (uint)VisWidth.Value;
-			visualizationHeight = (uint)VisHeight.Value;
-
 			// Позиция визуализации
 			VisLeft.Maximum = ScreenWidth;
 			VisLeft.Value = ScreenWidth - VisWidth.Value;	// По умолчанию - верхняя правая четверть экрана
 			VisTop.Maximum = ScreenHeight;
 
-			visualizationLeft = (uint)VisLeft.Value;
-			visualizationTop = (uint)VisTop.Value;
-
 			// Параметры детектора битов (получаются из DLL)
-			BDLowEdge.Value = ConcurrentDrawLib.DefaultPeakEvaluationLowEdge;			// По умолчанию - 0 - 86 Hz, peak = 97%, FFTm = 40
-			BDHighEdge.Value = ConcurrentDrawLib.DefaultPeakEvaluationHighEdge;
-			BDLowLevel.Value = ConcurrentDrawLib.DefaultPeakEvaluationLowLevel;
-			BDFFTScaleMultiplier.Value = ConcurrentDrawLib.DefaultFFTScaleMultiplier;
+			BDLowEdge.Value = parameters[0].BeatsDetectorLowEdge;
+			BDHighEdge.Value = parameters[0].BeatsDetectorHighEdge;
+			BDLowLevel.Value = parameters[0].BeatsDetectorLowLevel;
+			BDFFTScaleMultiplier.Value = parameters[0].BeatsDetectorFFTScaleMultiplier;
 
 			// Плотность гистограммы
-			for (int i = 1; i <= 32; i *= 2)
+			for (int i = 1; i <= CDParametersSet.HistogramFFTValuesCountMinimum; i *= 2)
 				{
-				HistogramRangeCombo.Items.Add ("0 – " + (i * 22050.0 / 32.0).ToString () +
+				HistogramRangeCombo.Items.Add ("0 – " +
+					(i * 22050.0 / (double)CDParametersSet.HistogramFFTValuesCountMinimum).ToString () +
 					" " + Localization.GetText ("CDP_Hz", al));
 				}
-			histogramFFTValuesCountShift = HistogramRangeCombo.SelectedIndex = 2;			// По умолчанию - до 2,7 кГц
+			HistogramRangeCombo.SelectedIndex = (int)Math.Log (parameters[0].HistogramFFTValuesCount /
+				CDParametersSet.HistogramFFTValuesCountMinimum, 2.0);
 
 			// Кумулятивный эффект
-			CEDecumulationMultiplier.Value = 16;									// По умолчанию - 0,8
-			decumulationMultiplier = (uint)CEDecumulationMultiplier.Value;
-			CECumulationSpeed.Value = 70;										// По умолчанию - 70
-			cumulationSpeed = (uint)CECumulationSpeed.Value;
-			LogoHeightPercentage.Value = 30;									// По умолчанию - 30%
-			logoHeight = (uint)LogoHeightPercentage.Value;
+			CEDecumulationMultiplier.Maximum = (int)CDParametersSet.DecumulationMultiplierMaximum;
+			CEDecumulationMultiplier.Value = parameters[0].DecumulationMultiplier;
+
+			CECumulationSpeed.Value = parameters[0].CumulationSpeed;
+			LogoHeightPercentage.Value = parameters[0].LogoHeightPercentage;
 
 			// Скорость вращения гистограммы
-			histoRotSpeedArc = 0;							// По умолчанию - без вращения
-			HistoRotSpeedArc.Value = 0;
+			HistoRotSpeedArc.Value = parameters[0].HistoRotSpeedDelta;
 			HistoRotSpeed.Checked = true;
+
+			// Флаги
+			AlwaysOnTopFlag.Checked = parameters[0].AlwaysOnTop;
+			ShakeFlag.Checked = parameters[0].ShakeEffect;
 
 			// Язык интерфейса
 			for (int i = 0; i < Localization.AvailableLanguages; i++)
@@ -114,9 +109,10 @@ namespace ESHQSetupStub
 			bool requestRequired = GetSavedSettings ();
 
 			// Установка настроек
-			ConcurrentDrawLib.SetPeakEvaluationParameters ((byte)BDLowEdge.Value, (byte)BDHighEdge.Value,
-				(byte)BDLowLevel.Value, (byte)BDFFTScaleMultiplier.Value);
-			ConcurrentDrawLib.SetHistogramFFTValuesCount (this.HistogramFFTValuesCount);
+			ConcurrentDrawLib.SetPeakEvaluationParameters (parameters[1].BeatsDetectorLowEdge,
+				parameters[1].BeatsDetectorHighEdge, parameters[1].BeatsDetectorLowLevel,
+				parameters[1].BeatsDetectorFFTScaleMultiplier);
+			ConcurrentDrawLib.SetHistogramFFTValuesCount (parameters[1].HistogramFFTValuesCount);
 
 			// Запуск окна немедленно, ести требуется
 			BCancel.Enabled = !requestRequired;
@@ -127,83 +123,62 @@ namespace ESHQSetupStub
 		// Метод получает настройки из реестра; возвращает true, если настройки требуется ввести вручную
 		private bool GetSavedSettings ()
 			{
-			string settings = "";
-			try
-				{
-				settings = Registry.GetValue (ProgramDescription.AssemblySettingsKey, SettingsValueName, "").ToString ();
-				}
-			catch
-				{
-				}
-			if (settings == "")
+			// Переменные
+			bool req = false;
+
+			// Запрос сохранённых параметров
+			parameters[1] = new CDParametersSet (false);
+			if (parameters[1].InitFailure)
 				{
 				BHelp_Click (null, null);	// Справка на случай первого запуска
-				return true;
+				req = true;
 				}
 
 			// Разбор сохранённых настроек
-			string[] values = settings.Split (splitter, System.StringSplitOptions.RemoveEmptyEntries);
-
 			try
 				{
-				DevicesCombo.SelectedIndex = int.Parse (values[0]);
-				deviceNumber = (uint)DevicesCombo.SelectedIndex;
+				DevicesCombo.SelectedIndex = parameters[1].DeviceNumber;
+				SDPaletteCombo.SelectedIndex = parameters[1].PaletteNumber;
 
-				SDPaletteCombo.SelectedIndex = int.Parse (values[1]);
-				paletteNumber = (byte)SDPaletteCombo.SelectedIndex;
+				if ((uint)parameters[1].VisualizationMode >= VisualizationModesChecker.VisualizationModesCount)
+					parameters[1].VisualizationMode = VisualizationModes.Butterfly_histogram;
+				VisualizationCombo.SelectedIndex = (int)parameters[1].VisualizationMode;
 
-				visualizationMode = (VisualizationModes)int.Parse (values[2]);
-				if ((uint)visualizationMode >= VisualizationModesChecker.VisualizationModesCount)
-					visualizationMode = VisualizationModes.Butterfly_histogram;
-				VisualizationCombo.SelectedIndex = (int)visualizationMode;
+				VisWidth.Value = parameters[1].VisualizationWidth;
+				VisHeight.Value = parameters[1].VisualizationHeight;
+				VisLeft.Value = parameters[1].VisualizationLeft;
+				VisTop.Value = parameters[1].VisualizationTop;
 
-				VisWidth.Value = decimal.Parse (values[4]);
-				visualizationWidth = (uint)VisWidth.Value;
+				SDHeight.Value = parameters[1].SpectrogramHeight;		// Установка размеров окна определяет максимум SDHeight
 
-				VisHeight.Value = decimal.Parse (values[5]);
-				visualizationHeight = (uint)VisHeight.Value;
+				BDLowEdge.Value = parameters[1].BeatsDetectorLowEdge;
+				BDHighEdge.Value = parameters[1].BeatsDetectorHighEdge;
+				BDLowLevel.Value = parameters[1].BeatsDetectorLowLevel;
+				BDFFTScaleMultiplier.Value = parameters[1].BeatsDetectorFFTScaleMultiplier;
 
-				VisLeft.Value = decimal.Parse (values[6]);
-				visualizationLeft = (uint)VisLeft.Value;
+				AlwaysOnTopFlag.Checked = parameters[1].AlwaysOnTop;
+				HistogramRangeCombo.SelectedIndex = (int)Math.Log (parameters[1].HistogramFFTValuesCount /
+					CDParametersSet.HistogramFFTValuesCountMinimum, 2.0);
 
-				VisTop.Value = decimal.Parse (values[7]);
-				visualizationTop = (uint)VisTop.Value;
+				CEDecumulationMultiplier.Value = parameters[1].DecumulationMultiplier;
+				CECumulationSpeed.Value = parameters[1].CumulationSpeed;
+				LogoHeightPercentage.Value = parameters[1].LogoHeightPercentage;
 
-				SDHeight.Value = decimal.Parse (values[3]);		// Установка размеров окна определяет максимум SDHeight
-				sdHeight = (uint)SDHeight.Value;
-
-				uint bdSettings = uint.Parse (values[8]);
-				BDLowEdge.Value = (int)(bdSettings & 0xFF);
-				BDHighEdge.Value = (int)((bdSettings >> 8) & 0xFF);
-				BDLowLevel.Value = (int)((bdSettings >> 16) & 0xFF);
-				BDFFTScaleMultiplier.Value = (int)((bdSettings >> 24) & 0xFF);
-
-				alwaysOnTop = AlwaysOnTopFlag.Checked = (values[9] != "0");
-				histogramFFTValuesCountShift = HistogramRangeCombo.SelectedIndex = int.Parse (values[10]);
-
-				CEDecumulationMultiplier.Value = int.Parse (values[11]);
-				decumulationMultiplier = (uint)CEDecumulationMultiplier.Value;
-				CECumulationSpeed.Value = int.Parse (values[12]);
-				cumulationSpeed = (uint)CECumulationSpeed.Value;
-				LogoHeightPercentage.Value = int.Parse (values[13]);
-				logoHeight = (uint)LogoHeightPercentage.Value;
-
-				histoRotSpeedArc = int.Parse (values[14]);
-				if (histoRotSpeedArc < 0)
+				if (parameters[1].HistoRotSpeedDelta < 0)
 					HistoRotAccToBeats.Checked = true;
 				else
 					HistoRotSpeed.Checked = true;
-				HistoRotSpeedArc.Value = (decimal)Math.Abs (histoRotSpeedArc / 10.0);
+				HistoRotSpeedArc.Value = (decimal)Math.Abs (parameters[1].HistoRotSpeedDelta / 10.0);
 
-				shakeEffect = ShakeFlag.Checked = (values[15] != "0");
+				ShakeFlag.Checked = parameters[1].ShakeEffect;
 				}
 			catch
 				{
-				return true;
+				req = true;
 				}
 
 			// Успешно
-			return false;
+			return req;
 			}
 
 		// Применение языковой настройки к окну
@@ -276,40 +251,37 @@ namespace ESHQSetupStub
 			}
 
 		/// <summary>
-		/// Номер выбранного устройства
+		/// Возвращает номер выбранного устройства
 		/// </summary>
 		public uint DeviceNumber
 			{
 			get
 				{
-				return deviceNumber;
+				return parameters[1].DeviceNumber;
 				}
 			}
-		private uint deviceNumber;
 
 		/// <summary>
-		/// Номер выбранной палитры
+		/// Возвращает номер выбранной палитры
 		/// </summary>
 		public byte PaletteNumber
 			{
 			get
 				{
-				return paletteNumber;
+				return parameters[1].PaletteNumber;
 				}
 			}
-		private byte paletteNumber;
 
 		/// <summary>
-		/// Возвращает флаг, указывающий вариант спектрограммы
+		/// Возвращает режим визуализации
 		/// </summary>
 		public VisualizationModes VisualizationMode
 			{
 			get
 				{
-				return visualizationMode;
+				return parameters[1].VisualizationMode;
 				}
 			}
-		private VisualizationModes visualizationMode;
 
 		/// <summary>
 		/// Возвращает выбранную высоту изображения диаграммы
@@ -318,81 +290,56 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				if ((sdHeight & 0xFFFC) == sdHeight)
-					return sdHeight & 0xFFFC;		// Исправление, связанное с внутренней корректировкой высоты фрейма
-
-				return (sdHeight & 0xFFFC) + 4;		// (см. текст InitializeSpectrogramEx)
+				return parameters[1].SpectrogramHeight;
 				}
 			}
-		private uint sdHeight;
 
 		// Сохранение настроек
 		private void BOK_Click (object sender, System.EventArgs e)
 			{
 			// Закрепление настроек
-			deviceNumber = (uint)DevicesCombo.SelectedIndex;
-			paletteNumber = (byte)SDPaletteCombo.SelectedIndex;
-			visualizationMode = (VisualizationModes)VisualizationCombo.SelectedIndex;
-			sdHeight = (uint)SDHeight.Value;
+			parameters[1].DeviceNumber = (byte)DevicesCombo.SelectedIndex;
+			parameters[1].PaletteNumber = (byte)SDPaletteCombo.SelectedIndex;
+			parameters[1].VisualizationMode = (VisualizationModes)VisualizationCombo.SelectedIndex;
+			parameters[1].SpectrogramHeight = (uint)SDHeight.Value;
 
-			visualizationWidth = (uint)VisWidth.Value;
-			visualizationHeight = (uint)VisHeight.Value;
-			visualizationLeft = (uint)VisLeft.Value;
-			visualizationTop = (uint)VisTop.Value;
+			parameters[1].VisualizationWidth = (uint)VisWidth.Value;
+			parameters[1].VisualizationHeight = (uint)VisHeight.Value;
+			parameters[1].VisualizationLeft = (uint)VisLeft.Value;
+			parameters[1].VisualizationTop = (uint)VisTop.Value;
 
-			alwaysOnTop = AlwaysOnTopFlag.Checked;
-			histogramFFTValuesCountShift = HistogramRangeCombo.SelectedIndex;
+			parameters[1].AlwaysOnTop = AlwaysOnTopFlag.Checked;
+			parameters[1].HistogramFFTValuesCount = (uint)(Math.Pow (2.0, HistogramRangeCombo.SelectedIndex) *
+				CDParametersSet.HistogramFFTValuesCountMinimum);
 
-			decumulationMultiplier = (uint)CEDecumulationMultiplier.Value;
-			cumulationSpeed = (uint)CECumulationSpeed.Value;
-			logoHeight = (uint)LogoHeightPercentage.Value;
+			parameters[1].DecumulationMultiplier = (byte)CEDecumulationMultiplier.Value;
+			parameters[1].CumulationSpeed = (byte)CECumulationSpeed.Value;
+			parameters[1].LogoHeightPercentage = (byte)LogoHeightPercentage.Value;
 
 			if (HistoRotAccToBeats.Checked)
-				histoRotSpeedArc = (int)(-HistoRotSpeedArc.Value * 10);
+				parameters[1].HistoRotSpeedDelta = (int)(-HistoRotSpeedArc.Value * 10);
 			else
-				histoRotSpeedArc = (int)(HistoRotSpeedArc.Value * 10);
+				parameters[1].HistoRotSpeedDelta = (int)(HistoRotSpeedArc.Value * 10);
 
-			shakeEffect = ShakeFlag.Checked;
+			parameters[1].ShakeEffect = ShakeFlag.Checked;
+
+			parameters[1].BeatsDetectorFFTScaleMultiplier = (byte)BDFFTScaleMultiplier.Value;
+			parameters[1].BeatsDetectorHighEdge = (byte)BDHighEdge.Value;
+			parameters[1].BeatsDetectorLowEdge = (byte)BDLowEdge.Value;
+			parameters[1].BeatsDetectorLowLevel = (byte)BDLowLevel.Value;
 
 			// Сохранение
-			string settings = deviceNumber.ToString () + splitter[0].ToString () +
-				paletteNumber.ToString () + splitter[0].ToString () +
-				((uint)visualizationMode).ToString () + splitter[0].ToString () +
-				sdHeight.ToString () + splitter[0].ToString () +
-				visualizationWidth.ToString () + splitter[0].ToString () +
-				visualizationHeight.ToString () + splitter[0].ToString () +
-				visualizationLeft.ToString () + splitter[0].ToString () +
-				visualizationTop.ToString () + splitter[0].ToString () +
-
-				(((BDFFTScaleMultiplier.Value & 0xFF) << 24) | ((BDLowLevel.Value & 0xFF) << 16) |
-				((BDHighEdge.Value & 0xFF) << 8) | (BDLowEdge.Value & 0xFF)).ToString () + splitter[0].ToString () +
-
-				(alwaysOnTop ? "1" : "0") + splitter[0].ToString () +
-				histogramFFTValuesCountShift.ToString () + splitter[0].ToString () +
-				decumulationMultiplier.ToString () + splitter[0].ToString () +
-				cumulationSpeed.ToString () + splitter[0].ToString () +
-				logoHeight.ToString () + splitter[0].ToString () +
-				histoRotSpeedArc.ToString () + splitter[0].ToString () +
-
-				(shakeEffect ? "1" : "0");
-
-			try
-				{
-				Registry.SetValue (ProgramDescription.AssemblySettingsKey, SettingsValueName, settings);
-				}
-			catch
-				{
-				}
+			parameters[1].SaveSettings ();
 
 			// Установка параметров
+			ConcurrentDrawLib.SetPeakEvaluationParameters (parameters[1].BeatsDetectorLowEdge,
+				parameters[1].BeatsDetectorHighEdge, parameters[1].BeatsDetectorLowLevel,
 #if VIDEO
-			ConcurrentDrawLib.SetPeakEvaluationParameters ((byte)BDLowEdge.Value, (byte)BDHighEdge.Value,
-				(byte)BDLowLevel.Value, (byte)(3 * BDFFTScaleMultiplier.Value / 4));
+				(byte)(3 * parameters[1].BeatsDetectorFFTScaleMultiplier / 4));
 #else
-			ConcurrentDrawLib.SetPeakEvaluationParameters ((byte)BDLowEdge.Value, (byte)BDHighEdge.Value,
-				(byte)BDLowLevel.Value, (byte)BDFFTScaleMultiplier.Value);
+				parameters[1].BeatsDetectorFFTScaleMultiplier);
 #endif
-			ConcurrentDrawLib.SetHistogramFFTValuesCount (this.HistogramFFTValuesCount);
+			ConcurrentDrawLib.SetHistogramFFTValuesCount (parameters[1].HistogramFFTValuesCount);
 
 			// Завершение
 			BCancel.Enabled = true;
@@ -413,10 +360,9 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return visualizationWidth;
+				return parameters[1].VisualizationWidth;
 				}
 			}
-		private uint visualizationWidth;
 
 		/// <summary>
 		/// Возвращает высоту окна визуализации
@@ -425,10 +371,9 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return visualizationHeight;
+				return parameters[1].VisualizationHeight;
 				}
 			}
-		private uint visualizationHeight;
 
 		/// <summary>
 		/// Возвращает левый отступ окна визуализации
@@ -437,10 +382,9 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return visualizationLeft;
+				return parameters[1].VisualizationLeft;
 				}
 			}
-		private uint visualizationLeft;
 
 		/// <summary>
 		/// Возвращает верхний отступ окна визуализации
@@ -449,10 +393,9 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return visualizationTop;
+				return parameters[1].VisualizationTop;
 				}
 			}
-		private uint visualizationTop;
 
 		/// <summary>
 		/// Возвращает флаг, требующий расположения окна поверх остальных
@@ -461,10 +404,9 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return alwaysOnTop;
+				return parameters[1].AlwaysOnTop;
 				}
 			}
-		private bool alwaysOnTop = false;
 
 		// Изменение настроек детекции бита
 		private void BDLowEdge_ValueChanged (object sender, EventArgs e)
@@ -531,10 +473,9 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return 32u << histogramFFTValuesCountShift;
+				return parameters[1].HistogramFFTValuesCount;
 				}
 			}
-		private int histogramFFTValuesCountShift;
 
 		// Метод отображает быструю справку по использованию
 		private void BHelp_Click (object sender, EventArgs e)
@@ -616,28 +557,27 @@ namespace ESHQSetupStub
 			}
 
 		/// <summary>
-		/// Скорость ослабления кумулятивного эффекта
+		/// Возвращает скорость ослабления кумулятивного эффекта
 		/// </summary>
 		public uint DecumulationSpeed
 			{
 			get
 				{
-				return decumulationMultiplier * cumulationSpeed / (uint)CEDecumulationMultiplier.Maximum;
+				return (uint)parameters[1].DecumulationMultiplier * (uint)parameters[1].CumulationSpeed /
+					(uint)CEDecumulationMultiplier.Maximum;
 				}
 			}
-		private uint decumulationMultiplier;
 
 		/// <summary>
-		/// Скорость накопления кумулятивного эффекта
+		/// Возвращает скорость накопления кумулятивного эффекта
 		/// </summary>
 		public uint CumulationSpeed
 			{
 			get
 				{
-				return cumulationSpeed;
+				return parameters[1].CumulationSpeed;
 				}
 			}
-		private uint cumulationSpeed;
 
 		// Изменение настроек детекции бита
 		private void CESpeed_ValueChanged (object sender, EventArgs e)
@@ -666,16 +606,15 @@ namespace ESHQSetupStub
 			}
 
 		/// <summary>
-		/// Высота лого в процентах от высоты окна
+		/// Возвращает высоту лого в долях от высоты окна
 		/// </summary>
 		public double LogoHeight
 			{
 			get
 				{
-				return logoHeight / 100.0;
+				return parameters[1].LogoHeightPercentage / 100.0;
 				}
 			}
-		private uint logoHeight;
 
 		/// <summary>
 		/// Возвращает скорость изменения угла поворота гистограммы
@@ -684,7 +623,7 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return Math.Abs (histoRotSpeedArc / 10.0);
+				return Math.Abs (parameters[1].HistoRotSpeedDelta / 10.0);
 				}
 			}
 
@@ -695,10 +634,9 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return (histoRotSpeedArc < 0);
+				return (parameters[1].HistoRotSpeedDelta < 0);
 				}
 			}
-		private int histoRotSpeedArc;
 
 		/// <summary>
 		/// Возвращает флаг, указывающий на эффект тряски
@@ -707,9 +645,8 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return shakeEffect;
+				return parameters[1].ShakeEffect;
 				}
 			}
-		private bool shakeEffect = false;
 		}
 	}
