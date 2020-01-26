@@ -251,7 +251,7 @@
     <value>В соотв. с бит-детектором с импульсом:</value>
   </data>
   <data name="CDP_HistoRotGroup" xml:space="preserve">
-    <value>Вращение гистограмм</value>
+    <value>Вращение</value>
   </data>
   <data name="CDP_HistoRotSpeed" xml:space="preserve">
     <value>Исп. постоянное угловое приращение:</value>
@@ -267,5 +267,20 @@
   </data>
   <data name="CDP_GenericGroup" xml:space="preserve">
     <value>Основные</value>
+  </data>
+  <data name="CDP_ProfileLabel" xml:space="preserve">
+    <value>Профиль:</value>
+  </data>
+  <data name="CDP_ProfileDefault" xml:space="preserve">
+    <value>Стандартные настройки</value>
+  </data>
+  <data name="CDP_ProfileSaved" xml:space="preserve">
+    <value>Последние сохранённые настройки</value>
+  </data>
+  <data name="CDP_ProfileError" xml:space="preserve">
+    <value>Профиль с таким именем уже существует или имя незаполнено</value>
+  </data>
+  <data name="CDP_ProfileRemove" xml:space="preserve">
+    <value>Вы хотите удалить выбранный профиль?</value>
   </data>
 </root>

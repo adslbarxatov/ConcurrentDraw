@@ -314,7 +314,7 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 				(FP_MAX, FP_MAX - 2 * i, 0),
 				(FP_MAX - 2 * i, FP_HMAX - 2 * i, 0),
 				(FP_HMAX - 2 * i, 0, 0),
-				(FP_MAX - 4 * i / 5, FP_HMAX - i / 2, 0), 224)
+				(FP_MAX - 3 * i / 4, FP_AMAX - 3 * i / 4, FP_HMAX - i / 2), 224)
 			break;
 
 		// Море обратный
@@ -324,14 +324,34 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 				(0, FP_MAX - 2 * i, FP_MAX),
 				(0, FP_HMAX - 2 * i, FP_MAX - 2 * i),
 				(0, 0, FP_HMAX - 2 * i),
-				(0, FP_HMAX - i / 2, FP_MAX - 4 * i / 5), 224)
+				(FP_HMAX - i / 2, FP_AMAX - 3 * i / 4, FP_MAX - 3 * i / 4), 224)
+			break;
+
+		// Пурпурная
+		case 14:
+			FP_PALETTE (
+				(FP_MAX - 2 * i, FP_AMAX - 3 * i, FP_MAX),
+				(FP_HMAX - i, 0, FP_MAX),
+				(FP_QMAX, 0, FP_MAX - 2 * i),
+				(FP_QMAX - i, 0, FP_HMAX - 2 * i),
+				(FP_AMAX - 3 * i / 4, FP_HMAX - i / 2, FP_MAX - 3 * i / 4), 224)
+			break;
+
+		// Кровь обратная
+		case 15:
+			FP_PALETTE (
+				(FP_MAX, FP_AMAX - 3 * i, FP_AMAX - 3 * i),
+				(FP_MAX - 2 * i, 0, 0),
+				(FP_HMAX - i, 0, 0),
+				(FP_QMAX - i, 0, 0),
+				(FP_MAX - 3 * i / 4, FP_HMAX - i / 2, FP_HMAX - i / 2), 224)
 			break;
 
 		// Полиморфная и случайная
-		case 14:
-		case 15:
 		case 16:
 		case 17:
+		case 18:
+		case 19:
 			FillPalette_PolymorphRandom (PaletteNumber & 0x2 & polymorphResetNotRequired, PaletteNumber & 0x1);
 			AS->cdPolymorphUpdateCounter = PaletteNumber & 0x2;
 			break;
@@ -373,10 +393,12 @@ CD_API(schar *) GetPalettesNamesEx ()
 		"Lemon" NAMES_DELIMITER_S \
 		"Fire (reversed)" NAMES_DELIMITER_S \
 		"Sea (reversed)" NAMES_DELIMITER_S \
-		"Polymorph" NAMES_DELIMITER_S \
-		"Polymorph monocolor" NAMES_DELIMITER_S \
+		"Purple" NAMES_DELIMITER_S \
+		"Blood (reversed)" NAMES_DELIMITER_S \
 		"Random" NAMES_DELIMITER_S \
-		"Random monocolor" )
+		"Random monocolor" NAMES_DELIMITER_S \
+		"Polymorph" NAMES_DELIMITER_S \
+		"Polymorph monocolor" )
 
 	return PALETTES_NAMES;
 	}

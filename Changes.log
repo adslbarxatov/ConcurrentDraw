@@ -203,3 +203,8 @@ Version 1.25:
 Version 1.25.10:
 • Settings management subsystem implemented; in further versions application
   will be able to save sets of settings and select them from the list
+
+Version 1.26:
+• New pallettes got better fitting;
+• 'Purple' and 'Reversed blood' palettes added;
+• Settings profiling added: settings may be named and saved now

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.Collections.Generic;
 
 namespace ESHQSetupStub
 	{
@@ -347,6 +348,8 @@ namespace ESHQSetupStub
 				InitParametersSet (DefaultSetName);
 			else
 				InitParametersSet (SavedSetName);
+
+			GetSettingsNames ();
 			}
 
 		/// <summary>
@@ -501,6 +504,79 @@ namespace ESHQSetupStub
 			catch
 				{
 				}
+			}
+
+		/// <summary>
+		/// Метод возвращает список имён наборов настроек
+		/// </summary>
+		/// <returns>Список имён наборов настроек</returns>
+		public static string[] GetSettingsNames ()
+			{
+			// Получение ключа реестра
+			RegistryKey rk = null;
+			try
+				{
+				rk = Registry.LocalMachine.OpenSubKey
+					(ProgramDescription.AssemblySettingsKey.Replace (Registry.LocalMachine.Name + "\\", ""));
+				}
+			catch
+				{
+				}
+			if (rk == null)
+				return new string[] { };
+
+			// Получение списка
+			List<string> s = null;
+			try
+				{
+				s = new List<string> (rk.GetValueNames ());
+				}
+			catch
+				{
+				return new string[] { };
+				}
+			s.Remove ("");
+			s.Remove (Localization.LanguageValueName);
+
+			// Возврат
+			rk.Dispose ();
+			return s.ToArray ();
+			}
+
+		/// <summary>
+		/// Метод удаляет сохранённые настройки
+		/// </summary>
+		/// <param name="SetName">Удаляемый набор настроек</param>
+		public static void RemoveSettings (string SetName)
+			{
+			// Контроль
+			if ((SetName == null) || (SetName == "") || (SetName == Localization.LanguageValueName))
+				return;
+
+			// Получение ключа реестра
+			RegistryKey rk = null;
+			try
+				{
+				rk = Registry.LocalMachine.OpenSubKey
+					(ProgramDescription.AssemblySettingsKey.Replace (Registry.LocalMachine.Name + "\\", ""), true);
+				}
+			catch
+				{
+				}
+			if (rk == null)
+				return;
+
+			// Удаление
+			try
+				{
+				rk.DeleteValue (SetName);
+				}
+			catch
+				{
+				}
+
+			// Завершено
+			rk.Dispose ();
 			}
 		}
 	}

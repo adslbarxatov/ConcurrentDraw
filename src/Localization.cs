@@ -24,8 +24,10 @@ namespace ESHQSetupStub
 	/// </summary>
 	public static class Localization
 		{
-		// Название параметра
-		private const string LanguageValueName = "Language";
+		/// <summary>
+		/// Название параметра, хранящего текущий язык интерфейса
+		/// </summary>
+		public const string LanguageValueName = "Language";
 
 		/// <summary>
 		/// Количество доступных языков интерфейса
