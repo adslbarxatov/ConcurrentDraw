@@ -29,8 +29,8 @@
 /////////////////////////////////////////////////////
 // Константы
 #define BASS_VERSION				0x02040E00
-#define CD_VERSION					1,26,0,0
-#define CD_VERSION_S				"1.26.0.0"
+#define CD_VERSION					1,26,5,0
+#define CD_VERSION_S				"1.26.5.0"
 #define CD_PRODUCT					"ConcurrentDraw visualization tool's BASS adapter"
 #define CD_COMPANY					"RD AAOW"
 
@@ -168,6 +168,9 @@ CD_API(ulong) GetMasterPaletteColorEx (uchar Brightness);
 
 // Функция возвращает названия доступных палитр
 CD_API(schar *) GetPalettesNamesEx ();
+
+// Функция возвращает рекомендацию на сброс лого по признаку спецпалитр
+CD_API(uchar) PaletteRequiresResetEx (uchar PaletteNumber);
 
 // Функция возвращает ограничивающие размеры фреймов спектрограмм
 CD_API(udlong) GetSpectrogramFrameMetricsEx ();

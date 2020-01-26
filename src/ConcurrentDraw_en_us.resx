@@ -222,6 +222,7 @@ Use right mouse button to get to settings window later; double left click to cha
 At first application will start with recommended settings. But you can change:
 • Output device for audio data capturing (stereo mixer recommended);
 • Visualization mode (spectrogram, histogram, 'butterfly' or 'perspective' histogram, amplitude histogram);
+• Visualization palette;
 • Window size and placement (not less than 128 x 128 px and not more than 2048 x 1024 px);
 • Spectrogram and histogram height (between 128 and 512 px);
 • Histogram density (how many frequencies will be shown);
@@ -231,7 +232,7 @@ At first application will start with recommended settings. But you can change:
 • Logo size;
 • Cumulative effect parameters (background color filling);
 • Histogram rotation parameters;
-• Logo transparency and shake effect.
+• Visualization shake effect.
 
 Settings will be saved by pressing OK button. They can be changed anytime you need</value>
   </data>

@@ -11,8 +11,13 @@ namespace ESHQSetupStub
 	public partial class ConcurrentDrawParameters:Form
 		{
 		// Константы и переменные
-		private SupportedLanguages al = Localization.CurrentLanguage;
-		private List<CDParametersSet> parameters = new List<CDParametersSet> ();
+		private SupportedLanguages al = Localization.CurrentLanguage;				// Текущий язык интерфейса
+		private List<CDParametersSet> parameters = new List<CDParametersSet> ();	// Наборы сохранённых параметров
+
+		private const int defaultSettingsNumber = 0;
+		private const int savedSettingsNumber = 1;
+		private const int DSN = defaultSettingsNumber;
+		private const int SSN = savedSettingsNumber;
 
 		/// <summary>
 		/// Конструктор. Позволяет запросить параметры из реестра.
@@ -48,23 +53,23 @@ namespace ESHQSetupStub
 				DevicesCombo.Items.Add (Localization.GetText ("CDP_NoDevices", al));
 				DevicesCombo.Enabled = DevicesLabel.Enabled = false;
 				}
-			DevicesCombo.SelectedIndex = parameters[0].DeviceNumber;
+			DevicesCombo.SelectedIndex = parameters[DSN].DeviceNumber;
 
 			// Палитра
 			SDPaletteCombo.Items.AddRange (ConcurrentDrawLib.AvailablePalettesNames);
-			SDPaletteCombo.SelectedIndex = parameters[0].PaletteNumber;
+			SDPaletteCombo.SelectedIndex = parameters[DSN].PaletteNumber;
 
 			// Режим
 			for (int i = 0; i < VisualizationModesChecker.VisualizationModesCount; i++)
 				{
 				VisualizationCombo.Items.Add (((VisualizationModes)i).ToString ().Replace ('_', ' '));
 				}
-			VisualizationCombo.SelectedIndex = (int)parameters[0].VisualizationMode;
+			VisualizationCombo.SelectedIndex = (int)parameters[DSN].VisualizationMode;
 
 			// Высота спектрограммы
 			SDHeight.Minimum = VisHeight.Minimum = ConcurrentDrawLib.MinSpectrogramFrameHeight;
 			SDHeight.Maximum = ConcurrentDrawLib.MaxSpectrogramFrameHeight;
-			SDHeight.Value = parameters[0].SpectrogramHeight;
+			SDHeight.Value = parameters[DSN].SpectrogramHeight;
 
 			// Размеры визуализации 
 			VisWidth.Minimum = ConcurrentDrawLib.MinSpectrogramFrameWidth;
@@ -72,46 +77,45 @@ namespace ESHQSetupStub
 			VisHeight.Maximum = Math.Min (ScreenHeight, 1024);
 
 			VisWidth.Value = (int)(9 * VisWidth.Maximum / 16);
-			parameters[0].VisualizationWidth = (uint)VisWidth.Value;
+			parameters[DSN].VisualizationWidth = (uint)VisWidth.Value;
 			VisHeight.Value = (int)(9 * VisHeight.Maximum / 16);	// По умолчанию - (9 / 16) размера экрана
-			parameters[0].VisualizationHeight = (uint)VisHeight.Value;
+			parameters[DSN].VisualizationHeight = (uint)VisHeight.Value;
 
 			// Позиция визуализации
 			VisLeft.Maximum = ScreenWidth;
 			VisLeft.Value = ScreenWidth - VisWidth.Value;	// По умолчанию - верхняя правая четверть экрана
-			parameters[0].VisualizationLeft = (uint)VisLeft.Value;
+			parameters[DSN].VisualizationLeft = (uint)VisLeft.Value;
 			VisTop.Maximum = ScreenHeight;
 
 			// Параметры детектора битов (получаются из DLL)
-			BDLowEdge.Value = parameters[0].BeatsDetectorLowEdge;
-			BDHighEdge.Value = parameters[0].BeatsDetectorHighEdge;
-			BDLowLevel.Value = parameters[0].BeatsDetectorLowLevel;
-			BDFFTScaleMultiplier.Value = parameters[0].BeatsDetectorFFTScaleMultiplier;
+			BDLowEdge.Value = parameters[DSN].BeatsDetectorLowEdge;
+			BDHighEdge.Value = parameters[DSN].BeatsDetectorHighEdge;
+			BDLowLevel.Value = parameters[DSN].BeatsDetectorLowLevel;
+			BDFFTScaleMultiplier.Value = parameters[DSN].BeatsDetectorFFTScaleMultiplier;
 
 			// Плотность гистограммы
 			for (int i = 1; i <= CDParametersSet.HistogramFFTValuesCountMinimum; i *= 2)
 				{
 				HistogramRangeCombo.Items.Add ("0 – " +
-					(i * 22050.0 / (double)CDParametersSet.HistogramFFTValuesCountMinimum).ToString () +
-					" " + Localization.GetText ("CDP_Hz", al));
+					(i * 22050.0 / (double)CDParametersSet.HistogramFFTValuesCountMinimum).ToString ());
 				}
-			HistogramRangeCombo.SelectedIndex = (int)Math.Log (parameters[0].HistogramFFTValuesCount /
+			HistogramRangeCombo.SelectedIndex = (int)Math.Log (parameters[DSN].HistogramFFTValuesCount /
 				CDParametersSet.HistogramFFTValuesCountMinimum, 2.0);
 
 			// Кумулятивный эффект
 			CEDecumulationMultiplier.Maximum = (int)CDParametersSet.DecumulationMultiplierMaximum;
-			CEDecumulationMultiplier.Value = parameters[0].DecumulationMultiplier;
+			CEDecumulationMultiplier.Value = parameters[DSN].DecumulationMultiplier;
 
-			CECumulationSpeed.Value = parameters[0].CumulationSpeed;
-			LogoHeightPercentage.Value = parameters[0].LogoHeightPercentage;
+			CECumulationSpeed.Value = parameters[DSN].CumulationSpeed;
+			LogoHeightPercentage.Value = parameters[DSN].LogoHeightPercentage;
 
 			// Скорость вращения гистограммы
-			HistoRotSpeedArc.Value = parameters[0].HistoRotSpeedDelta;
+			HistoRotSpeedArc.Value = parameters[DSN].HistoRotSpeedDelta;
 			HistoRotSpeed.Checked = true;
 
 			// Флаги
-			AlwaysOnTopFlag.Checked = parameters[0].AlwaysOnTop;
-			ShakeFlag.Checked = parameters[0].ShakeEffect;
+			AlwaysOnTopFlag.Checked = parameters[DSN].AlwaysOnTop;
+			ShakeFlag.Checked = parameters[DSN].ShakeEffect;
 
 			// Язык интерфейса
 			for (int i = 0; i < Localization.AvailableLanguages; i++)
@@ -119,17 +123,17 @@ namespace ESHQSetupStub
 			LanguageCombo.SelectedIndex = (int)al;			// По умолчанию - язык системы или английский
 
 			// Запрос настроек
-			bool requestRequired = GetSettings (1);
+			bool requestRequired = GetSettings (SSN);
 
 			// Установка настроек
-			ConcurrentDrawLib.SetPeakEvaluationParameters (parameters[1].BeatsDetectorLowEdge,
-				parameters[1].BeatsDetectorHighEdge, parameters[1].BeatsDetectorLowLevel,
+			ConcurrentDrawLib.SetPeakEvaluationParameters (parameters[SSN].BeatsDetectorLowEdge,
+				parameters[SSN].BeatsDetectorHighEdge, parameters[SSN].BeatsDetectorLowLevel,
 #if VIDEO
-				(byte)(3 * parameters[1].BeatsDetectorFFTScaleMultiplier / 4));
+ (byte)(3 * parameters[SSN].BeatsDetectorFFTScaleMultiplier / 4));
 #else
- parameters[1].BeatsDetectorFFTScaleMultiplier);
+ parameters[SSN].BeatsDetectorFFTScaleMultiplier);
 #endif
-			ConcurrentDrawLib.SetHistogramFFTValuesCount (parameters[1].HistogramFFTValuesCount);
+			ConcurrentDrawLib.SetHistogramFFTValuesCount (parameters[SSN].HistogramFFTValuesCount);
 
 			// Запуск окна немедленно, ести требуется
 			BCancel.Enabled = !requestRequired;
@@ -147,7 +151,7 @@ namespace ESHQSetupStub
 			int psn = (int)ParametersSetNumber;
 
 			// Запрос сохранённых параметров
-			if (ParametersSetNumber == 1)
+			if (psn == SSN)
 				{
 				parameters[psn] = new CDParametersSet (false);
 				if (parameters[psn].InitFailure)
@@ -218,6 +222,7 @@ namespace ESHQSetupStub
 			PaletteLabel.Text = Localization.GetText ("CDP_PaletteLabel", al);
 			SGHGHeightLabel.Text = Localization.GetText ("CDP_SGHGHeightLabel", al);
 			HGRangeLabel.Text = Localization.GetText ("CDP_HGRangeLabel", al);
+			HzLabel.Text = Localization.GetText ("CDP_Hz", al);
 			LogoHeightLabel.Text = Localization.GetText ("CDP_LogoHeightLabel", al);
 
 			AlwaysOnTopFlag.Text = Localization.GetText ("CDP_AlwaysOnTopFlag", al);
@@ -242,8 +247,8 @@ namespace ESHQSetupStub
 			ShakeFlag.Text = Localization.GetText ("CDP_ShakeFlag", al);
 
 			ProfileLabel.Text = Localization.GetText ("CDP_ProfileLabel", al);
-			ProfileCombo.Items[0] = Localization.GetText ("CDP_ProfileDefault", al);
-			ProfileCombo.Items[1] = Localization.GetText ("CDP_ProfileSaved", al);
+			ProfileCombo.Items[DSN] = Localization.GetText ("CDP_ProfileDefault", al);
+			ProfileCombo.Items[SSN] = Localization.GetText ("CDP_ProfileSaved", al);
 			}
 
 		// Контроль наличия доступных устройств
@@ -259,12 +264,12 @@ namespace ESHQSetupStub
 				}
 
 			// Перезапрос настроек (если предыдущие были отменены)
-			ProfileCombo.SelectedIndex = 1;
+			ProfileCombo.SelectedIndex = SSN;
 			if (BCancel.Enabled)
-				GetSettings (1);
+				GetSettings (SSN);
 
-			// Отмена реинициализации, которая выставляется при загрузке
-			logoResetFlag = (SDPaletteCombo.SelectedIndex >= 10) && (SDPaletteCombo.SelectedIndex <= 13);
+			// Отмена реинициализации, которая выставляется при загрузке (кроме спецпалитр)
+			logoResetFlag = ConcurrentDrawLib.PaletteRequiresReset ((byte)SDPaletteCombo.SelectedIndex);
 			}
 
 		/// <summary>
@@ -285,7 +290,7 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return parameters[1].DeviceNumber;
+				return parameters[SSN].DeviceNumber;
 				}
 			}
 
@@ -296,7 +301,7 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return parameters[1].PaletteNumber;
+				return parameters[SSN].PaletteNumber;
 				}
 			}
 
@@ -307,7 +312,7 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return parameters[1].VisualizationMode;
+				return parameters[SSN].VisualizationMode;
 				}
 			}
 
@@ -318,7 +323,7 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return parameters[1].SpectrogramHeight;
+				return parameters[SSN].SpectrogramHeight;
 				}
 			}
 
@@ -326,13 +331,13 @@ namespace ESHQSetupStub
 		private void BOK_Click (object sender, System.EventArgs e)
 			{
 			// Закрепление настроек и сохранение
-			SetSettings (1, "");
+			SetSettings (SSN, "");
 
 			// Установка параметров
-			ConcurrentDrawLib.SetPeakEvaluationParameters (parameters[1].BeatsDetectorLowEdge,
-				parameters[1].BeatsDetectorHighEdge, parameters[1].BeatsDetectorLowLevel,
-				parameters[1].BeatsDetectorFFTScaleMultiplier);
-			ConcurrentDrawLib.SetHistogramFFTValuesCount (parameters[1].HistogramFFTValuesCount);
+			ConcurrentDrawLib.SetPeakEvaluationParameters (parameters[SSN].BeatsDetectorLowEdge,
+				parameters[SSN].BeatsDetectorHighEdge, parameters[SSN].BeatsDetectorLowLevel,
+				parameters[SSN].BeatsDetectorFFTScaleMultiplier);
+			ConcurrentDrawLib.SetHistogramFFTValuesCount (parameters[SSN].HistogramFFTValuesCount);
 
 			// Завершение
 			BCancel.Enabled = true;
@@ -387,7 +392,8 @@ namespace ESHQSetupStub
 		// Отмена настройки
 		private void BCancel_Click (object sender, System.EventArgs e)
 			{
-			logoResetFlag = false;	// Перерисовка при отмене бессмысленна
+			// Перерисовка при отмене бессмысленна (кроме спецпалитр)
+			logoResetFlag = ConcurrentDrawLib.PaletteRequiresReset ((byte)SDPaletteCombo.SelectedIndex);
 			this.Close ();
 			}
 
@@ -398,7 +404,7 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return parameters[1].VisualizationWidth;
+				return parameters[SSN].VisualizationWidth;
 				}
 			}
 
@@ -409,7 +415,7 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return parameters[1].VisualizationHeight;
+				return parameters[SSN].VisualizationHeight;
 				}
 			}
 
@@ -420,7 +426,7 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return parameters[1].VisualizationLeft;
+				return parameters[SSN].VisualizationLeft;
 				}
 			}
 
@@ -431,7 +437,7 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return parameters[1].VisualizationTop;
+				return parameters[SSN].VisualizationTop;
 				}
 			}
 
@@ -442,7 +448,7 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return parameters[1].AlwaysOnTop;
+				return parameters[SSN].AlwaysOnTop;
 				}
 			}
 
@@ -511,7 +517,7 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return parameters[1].HistogramFFTValuesCount;
+				return parameters[SSN].HistogramFFTValuesCount;
 				}
 			}
 
@@ -601,7 +607,7 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return (uint)parameters[1].DecumulationMultiplier * (uint)parameters[1].CumulationSpeed /
+				return (uint)parameters[SSN].DecumulationMultiplier * (uint)parameters[SSN].CumulationSpeed /
 					(uint)CEDecumulationMultiplier.Maximum;
 				}
 			}
@@ -613,7 +619,7 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return parameters[1].CumulationSpeed;
+				return parameters[SSN].CumulationSpeed;
 				}
 			}
 
@@ -650,7 +656,7 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return parameters[1].LogoHeightPercentage / 100.0;
+				return parameters[SSN].LogoHeightPercentage / 100.0;
 				}
 			}
 
@@ -661,7 +667,7 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return Math.Abs (parameters[1].HistoRotSpeedDelta / 10.0);
+				return Math.Abs (parameters[SSN].HistoRotSpeedDelta / 10.0);
 				}
 			}
 
@@ -672,7 +678,7 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return (parameters[1].HistoRotSpeedDelta < 0);
+				return (parameters[SSN].HistoRotSpeedDelta < 0);
 				}
 			}
 
@@ -683,20 +689,20 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return parameters[1].ShakeEffect;
+				return parameters[SSN].ShakeEffect;
 				}
 			}
 
 		// Выбор профиля
 		private void ProfileCombo_SelectedIndexChanged (object sender, EventArgs e)
 			{
-			RemoveProfile.Enabled = ((ProfileCombo.SelectedIndex != 0) && (ProfileCombo.SelectedIndex != 1));
+			RemoveProfile.Enabled = ((ProfileCombo.SelectedIndex != DSN) && (ProfileCombo.SelectedIndex != SSN));
 			}
 
 		// Запрос настроек из профиля
 		private void ApplyProfile_Click (object sender, EventArgs e)
 			{
-			GetSettings ((ProfileCombo.SelectedIndex < 0) ? 1 : (uint)ProfileCombo.SelectedIndex);
+			GetSettings ((ProfileCombo.SelectedIndex < 0) ? SSN : (uint)ProfileCombo.SelectedIndex);
 			}
 
 		// Сохранение набора настроек
@@ -723,7 +729,7 @@ namespace ESHQSetupStub
 		private void RemoveProfile_Click (object sender, EventArgs e)
 			{
 			// Контроль
-			if (ProfileCombo.SelectedIndex < 2)
+			if (ProfileCombo.SelectedIndex <= SSN)
 				return;
 
 			if (MessageBox.Show (Localization.GetText ("CDP_ProfileRemove", al), ProgramDescription.AssemblyTitle,
@@ -734,7 +740,7 @@ namespace ESHQSetupStub
 			CDParametersSet.RemoveSettings (ProfileCombo.Items[ProfileCombo.SelectedIndex].ToString ());
 			parameters.RemoveAt (ProfileCombo.SelectedIndex);
 			ProfileCombo.Items.RemoveAt (ProfileCombo.SelectedIndex);
-			ProfileCombo.SelectedIndex = 1;
+			ProfileCombo.SelectedIndex = SSN;
 			}
 		}
 	}

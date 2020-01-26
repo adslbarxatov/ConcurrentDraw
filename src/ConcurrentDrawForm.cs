@@ -19,8 +19,27 @@ namespace ESHQSetupStub
 	/// </summary>
 	public partial class ConcurrentDrawForm:Form
 		{
+		// Доступные фазы отрисовки
+		public enum VisualizationPhases
+			{
+			// Подготовка слоёв
+			LayersPrecache = 1,
+
+			// Вход лого
+			LogoInbound = 2,
+
+			// Вращение лого
+			LogoRotation = 3,
+
+			// Спецкоманды перед визуализацией
+			PreVisualization = 4,
+
+			// Визуализация
+			Visualization = 5
+			}
+
 		// Общие переменные и константы
-		private Phases currentPhase = Phases.LayersPrecache;	// Текущая фаза отрисовки
+		private VisualizationPhases currentPhase = VisualizationPhases.LayersPrecache;	// Текущая фаза отрисовки
 		private bool logoFirstShowMade = false;					// Флаг, указывающий на выполненное первое отображение лого
 		private uint steps = 0;									// Счётчик шагов отрисовки
 
@@ -105,25 +124,6 @@ namespace ESHQSetupStub
 		private int demoTextBrushNumber = 1;
 #endif
 #endif
-
-		// Фазы отрисовки
-		private enum Phases
-			{
-			// Подготовка слоёв
-			LayersPrecache = 1,
-
-			// Вход лого
-			LogoInbound = 2,
-
-			// Вращение лого
-			LogoRotation = 3,
-
-			// Спецкоманды перед визуализацией
-			PreVisualization = 4,
-
-			// Визуализация
-			Visualization = 5
-			}
 
 		/// <summary>
 		/// Конструктор. Инициализирует экземпляр отрисовщика
@@ -406,7 +406,7 @@ namespace ESHQSetupStub
 			switch (currentPhase)
 				{
 				// Создание фрагментов лого
-				case Phases.LayersPrecache:
+				case VisualizationPhases.LayersPrecache:
 #if AUDIO
 					TriggerRecord ();
 #endif
@@ -414,20 +414,20 @@ namespace ESHQSetupStub
 					break;
 
 				// Отрисовка фрагментов лого
-				case Phases.LogoInbound:
+				case VisualizationPhases.LogoInbound:
 					DrawingLogo ();
 					break;
 
 				// Вращение лого
-				case Phases.LogoRotation:
+				case VisualizationPhases.LogoRotation:
 					if (logoFirstShowMade)
-						currentPhase = Phases.PreVisualization;
+						currentPhase = VisualizationPhases.PreVisualization;
 
 					RotatingLogo ();
 					break;
 
 				// Спецкоманды
-				case Phases.PreVisualization:
+				case VisualizationPhases.PreVisualization:
 #if AUDIO
 					am.PlayAudio ();
 #endif
@@ -450,7 +450,7 @@ namespace ESHQSetupStub
 					break;
 
 				// Основной режим
-				case Phases.Visualization:
+				case VisualizationPhases.Visualization:
 					DrawingVisualization ();
 					break;
 				}
@@ -953,7 +953,7 @@ namespace ESHQSetupStub
 			logoHeight = (uint)(Math.Min (this.Width, this.Height) * cdp.LogoHeight);
 
 			// Перезапуск алгоритма таймера
-			currentPhase = Phases.LayersPrecache;
+			currentPhase = VisualizationPhases.LayersPrecache;
 			}
 		}
 	}

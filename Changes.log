@@ -208,3 +208,8 @@ Version 1.26:
 • New pallettes got better fitting;
 • 'Purple' and 'Reversed blood' palettes added;
 • Settings profiling added: settings may be named and saved now
+
+Version 1.26.5:
+• Some code requirements applied;
+• Random and polymorph palettes fix applied;
+• Some interface fixes applied

@@ -174,6 +174,11 @@ void FillPalette_PolymorphRandom (uchar Polymorph, uchar Monocolor)
 	}
 
 // Функция формирует палитру приложения
+#define FP_SPECIAL_PALETTES	case 16:\
+							case 17:\
+							case 18:\
+							case 19:
+
 CD_API(void) FillPaletteEx (uchar PaletteNumber)
 	{
 	// Установка параметров
@@ -348,10 +353,7 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 			break;
 
 		// Полиморфная и случайная
-		case 16:
-		case 17:
-		case 18:
-		case 19:
+		FP_SPECIAL_PALETTES
 			FillPalette_PolymorphRandom (PaletteNumber & 0x2 & polymorphResetNotRequired, PaletteNumber & 0x1);
 			AS->cdPolymorphUpdateCounter = PaletteNumber & 0x2;
 			break;
@@ -401,6 +403,19 @@ CD_API(schar *) GetPalettesNamesEx ()
 		"Polymorph monocolor" )
 
 	return PALETTES_NAMES;
+	}
+
+// Функция возвращает рекомендацию на сброс лого по признаку спецпалитр
+CD_API(uchar) PaletteRequiresResetEx (uchar PaletteNumber)
+	{
+	switch (PaletteNumber)
+		{
+		FP_SPECIAL_PALETTES
+			return 1;
+
+		default:
+			return 0;
+		}
 	}
 
 // Функция возвращает псевдослучайное число между Min и Max, включая границы

@@ -644,5 +644,20 @@ namespace ESHQSetupStub
 				return GetChannelLengthEx ();
 				}
 			}
+
+		/// <summary>
+		/// Функция возвращает рекомендацию на сброс лого по признаку спецпалитр
+		/// </summary>
+		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
+		private static extern Byte PaletteRequiresResetEx (Byte PaletteNumber);
+
+		/// <summary>
+		/// Метод возвращает рекомендацию на сброс лого по признаку спецпалитр
+		/// </summary>
+		/// <param name="PaletteNumber">Номер палитры</param>
+		public static bool PaletteRequiresReset (byte PaletteNumber)
+			{
+			return (PaletteRequiresResetEx (PaletteNumber) != 0);
+			}
 		}
 	}
