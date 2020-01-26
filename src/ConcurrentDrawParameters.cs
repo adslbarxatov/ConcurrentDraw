@@ -269,7 +269,7 @@ namespace ESHQSetupStub
 				GetSettings (SSN);
 
 			// Отмена реинициализации, которая выставляется при загрузке (кроме спецпалитр)
-			logoResetFlag = ConcurrentDrawLib.PaletteRequiresReset ((byte)SDPaletteCombo.SelectedIndex);
+			logoResetFlag = ConcurrentDrawLib.PaletteRequiresReset (parameters[SSN].PaletteNumber);
 			}
 
 		/// <summary>
@@ -393,7 +393,7 @@ namespace ESHQSetupStub
 		private void BCancel_Click (object sender, System.EventArgs e)
 			{
 			// Перерисовка при отмене бессмысленна (кроме спецпалитр)
-			logoResetFlag = ConcurrentDrawLib.PaletteRequiresReset ((byte)SDPaletteCombo.SelectedIndex);
+			logoResetFlag = ConcurrentDrawLib.PaletteRequiresReset (parameters[SSN].PaletteNumber);
 			this.Close ();
 			}
 
