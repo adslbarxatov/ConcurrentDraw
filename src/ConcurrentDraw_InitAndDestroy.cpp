@@ -89,7 +89,9 @@ CD_API(void) DestroySoundStreamEx ()
 	}
 
 // Функция инициализирует спектрограмму
-CD_API(sint) InitializeSpectrogramEx (uint FrameWidth, uint FrameHeight, uchar PaletteNumber, uchar SpectrogramMode)
+// Flags: b0 = double width
+CD_API(sint) InitializeSpectrogramEx (uint FrameWidth, uint FrameHeight, uchar PaletteNumber, 
+	uchar SpectrogramMode, uchar Flags)
 	{
 	// Контроль параметров
 	if ((FrameWidth < MINFRAMEWIDTH) || (FrameWidth > MAXFRAMEWIDTH) ||
@@ -111,6 +113,7 @@ CD_API(sint) InitializeSpectrogramEx (uint FrameWidth, uint FrameHeight, uchar P
 		AS->sgFrameHeight += 4;
 
 	AS->sgSpectrogramMode = SpectrogramMode;
+	AS->sgSpectrogramStep = 1 + (Flags & 0x1);
 
 	// Инициализация описателя
 	AS->sgBMPInfo.cd_bmpinfo.header.biSize = sizeof (BITMAPINFOHEADER);

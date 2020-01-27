@@ -116,6 +116,7 @@ namespace ESHQSetupStub
 			// Флаги
 			AlwaysOnTopFlag.Checked = parameters[DSN].AlwaysOnTop;
 			ShakeFlag.Checked = parameters[DSN].ShakeEffect;
+			SDDoubleWidthFlag.Checked = parameters[DSN].SpectrogramDoubleWidth;
 
 			// Язык интерфейса
 			for (int i = 0; i < Localization.AvailableLanguages; i++)
@@ -183,6 +184,7 @@ namespace ESHQSetupStub
 				BDLowLevel.Value = parameters[psn].BeatsDetectorLowLevel;
 				BDFFTScaleMultiplier.Value = parameters[psn].BeatsDetectorFFTScaleMultiplier;
 
+				SDDoubleWidthFlag.Checked = parameters[psn].SpectrogramDoubleWidth;
 				AlwaysOnTopFlag.Checked = parameters[psn].AlwaysOnTop;
 				HistogramRangeCombo.SelectedIndex = (int)Math.Log (parameters[psn].HistogramFFTValuesCount /
 					CDParametersSet.HistogramFFTValuesCountMinimum, 2.0);
@@ -225,6 +227,7 @@ namespace ESHQSetupStub
 			HzLabel.Text = Localization.GetText ("CDP_Hz", al);
 			LogoHeightLabel.Text = Localization.GetText ("CDP_LogoHeightLabel", al);
 
+			SDDoubleWidthFlag.Text = Localization.GetText ("CDP_SDDoubleWidthFlag", al);
 			AlwaysOnTopFlag.Text = Localization.GetText ("CDP_AlwaysOnTopFlag", al);
 
 			GenericTab.Text = Localization.GetText ("CDP_GenericGroup", al);
@@ -362,6 +365,7 @@ namespace ESHQSetupStub
 			parameters[psn].VisualizationLeft = (uint)VisLeft.Value;
 			parameters[psn].VisualizationTop = (uint)VisTop.Value;
 
+			parameters[psn].SpectrogramDoubleWidth = SDDoubleWidthFlag.Checked;
 			parameters[psn].AlwaysOnTop = AlwaysOnTopFlag.Checked;
 			parameters[psn].HistogramFFTValuesCount = (uint)(Math.Pow (2.0, HistogramRangeCombo.SelectedIndex) *
 				CDParametersSet.HistogramFFTValuesCountMinimum);
@@ -647,6 +651,7 @@ namespace ESHQSetupStub
 			CumulationTab.Enabled = RotationTab.Enabled = !VisualizationModesChecker.ContainsSGHGorWF (mode);
 
 			HGRangeLabel.Enabled = HistogramRangeCombo.Enabled = !VisualizationModesChecker.ContainsSGonly (mode);
+			SDDoubleWidthFlag.Enabled = VisualizationModesChecker.ContainsSGorWF (mode);
 			}
 
 		/// <summary>
@@ -741,6 +746,17 @@ namespace ESHQSetupStub
 			parameters.RemoveAt (ProfileCombo.SelectedIndex);
 			ProfileCombo.Items.RemoveAt (ProfileCombo.SelectedIndex);
 			ProfileCombo.SelectedIndex = SSN;
+			}
+
+		/// <summary>
+		/// Возвращает флаг, указывающий на двойную ширину спектрограммы
+		/// </summary>
+		public bool SpectrogramDoubleWidth
+			{
+			get
+				{
+				return parameters[SSN].SpectrogramDoubleWidth;
+				}
 			}
 		}
 	}

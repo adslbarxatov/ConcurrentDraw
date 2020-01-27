@@ -29,8 +29,8 @@
 /////////////////////////////////////////////////////
 // Константы
 #define BASS_VERSION				0x02040E00
-#define CD_VERSION					1,26,6,0
-#define CD_VERSION_S				"1.26.6.0"
+#define CD_VERSION					1,27,0,0
+#define CD_VERSION_S				"1.27.0.0"
 #define CD_PRODUCT					"ConcurrentDraw visualization tool's BASS adapter"
 #define CD_COMPANY					"RD AAOW"
 
@@ -66,15 +66,6 @@
 #define CD_TIMER_TPS				25
 
 /////////////////////////////////////////////////////
-// Пререквизиты таймера
-//#define SD_DOUBLE_WIDTH
-#ifdef SD_DOUBLE_WIDTH
-	#define SG_STEP 2				// Ширина шага спектрограммы
-#else
-	#define SG_STEP 1
-#endif
-
-/////////////////////////////////////////////////////
 // Структура-описатель заголовка BITMAP
 union CD_BITMAPINFO
 	{
@@ -103,6 +94,7 @@ struct CDSTATE
 	uint sgFrameHeight;
 	uint sgCurrentPosition;			// Текущая позиция на статичной спектрограмме
 	uchar sgSpectrogramMode;		// Режим спектрограммы (см. описание InitializeSpectrogramEx)
+	uchar sgSpectrogramStep;		// Шаг движения спектрограммы
 
 	float cdFFTScale;				// Масштаб значений FFT
 	uint cdHistogramFFTValuesCount;	// Количество значений FFT, используемых для гистограмм
@@ -148,7 +140,7 @@ CD_API(void) UpdateFFTDataEx ();
 
 // Функция инициализирует спектрограмму
 CD_API(sint) InitializeSpectrogramEx (uint FrameWidth, uint FrameHeight, 
-	uchar PaletteNumber, uchar SpectrogramMode);
+	uchar PaletteNumber, uchar SpectrogramMode, uchar Flags);
 
 // Функция удаляет активную спектрограмму
 CD_API(void) DestroySpectrogramEx ();

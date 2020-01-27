@@ -216,3 +216,8 @@ Version 1.26.5:
 
 Version 1.26.6:
 • Some code fixes applied
+
+Version 1.27:
+• Some 'application parameters' interface fixes applied;
+• Double width flag added for spectrogram mode;
+• Drawing initialization fix applied

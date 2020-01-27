@@ -54,7 +54,7 @@ CD_API(uchar) GetScaledAmplitudeEx (uint FrequencyLevel)
 void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWORD dw2)
 	{
 	// Переменные
-	uint y, x, v;
+	uint y, x, v, i;
 	ulong v2;
 
 	// Заполнение массива (если возможно)
@@ -88,19 +88,17 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 				// Получение значения
 				v = GetScaledAmplitudeEx (SD_SCALE * y / AS->sgFrameHeight + 1);
 
-				// Отрисовка
-				AS->sgBuffer[y * AS->sgFrameWidth + AS->sgCurrentPosition] =
-#ifdef SD_DOUBLE_WIDTH
-				AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + 1) % AS->sgFrameWidth] = 
-#endif
-				v;
+				// Отрисовка (делаем так, чтобы исключить лишнюю арифметику на первом шаге)
+				AS->sgBuffer[y * AS->sgFrameWidth + AS->sgCurrentPosition] = v;
+				for (i = 1; i < AS->sgSpectrogramStep; i++)
+					AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + i) % AS->sgFrameWidth] = v;
 
 				// Маркер
-				AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + SG_STEP) % AS->sgFrameWidth] = 255;
+				AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + i) % AS->sgFrameWidth] = 255;
 				}
 
 			// Движение маркера
-			AS->sgCurrentPosition = (AS->sgCurrentPosition + SG_STEP) % AS->sgFrameWidth;
+			AS->sgCurrentPosition = (AS->sgCurrentPosition + AS->sgSpectrogramStep) % AS->sgFrameWidth;
 			break;
 
 		// Движущаяся спектрограмма
@@ -108,23 +106,18 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 			for (y = 0; y < AS->sgFrameHeight; y++)
 				{
 				// Сдвиг изображения
-				for (x = 0; x < AS->sgFrameWidth - SG_STEP; x += SG_STEP)
+				for (x = 0; x < AS->sgFrameWidth - AS->sgSpectrogramStep; x += AS->sgSpectrogramStep)
 					{
-					AS->sgBuffer[y * AS->sgFrameWidth + x] = AS->sgBuffer[y * AS->sgFrameWidth + x + 1]
-#ifdef SD_DOUBLE_WIDTH
-					= AS->sgBuffer[y * AS->sgFrameWidth + x + 2]
-#endif
-					;
+					for (i = AS->sgSpectrogramStep; i > 0; i--)
+						AS->sgBuffer[y * AS->sgFrameWidth + x + i - 1] = AS->sgBuffer[y * AS->sgFrameWidth + x + i];
 					}
 
 				// Получение значения
 				v = GetScaledAmplitudeEx (SD_SCALE * y / AS->sgFrameHeight + 1);
 
 				// Отрисовка
-#ifdef SD_DOUBLE_WIDTH
-				AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - 2] = 
-#endif
-				AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - 1] = v;
+				for (i = 1; i <= AS->sgSpectrogramStep; i++)
+					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - i] = v;
 				}
 			break;
 
@@ -178,66 +171,65 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 				{
 				// Линии
 				for (y = 0; y < (AS->sgFrameHeight - v2) / 2; y++)
-					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgCurrentPosition] = 
-#ifdef SD_DOUBLE_WIDTH
-					AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + 1) % AS->sgFrameWidth] = 
-#endif
-					AS->cdBackgroundColorNumber;
+					{
+					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgCurrentPosition] = AS->cdBackgroundColorNumber;
+					for (i = 1; i < AS->sgSpectrogramStep; i++)
+						AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + i) % AS->sgFrameWidth] = 
+							AS->cdBackgroundColorNumber;
+					}
 
 				for (y = (AS->sgFrameHeight - v2) / 2; y < (AS->sgFrameHeight + v2) / 2; y++)
-					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgCurrentPosition] = 
-#ifdef SD_DOUBLE_WIDTH
-					AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + 1) % AS->sgFrameWidth] = 
-#endif
-					v;
+					{
+					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgCurrentPosition] = v;
+					for (i = 1; i < AS->sgSpectrogramStep; i++)
+						AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + i) % AS->sgFrameWidth] = v;
+					}
 
 				for (y = (AS->sgFrameHeight + v2) / 2; y < AS->sgFrameHeight; y++)
-					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgCurrentPosition] = 
-#ifdef SD_DOUBLE_WIDTH
-					AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + 1) % AS->sgFrameWidth] = 
-#endif
-					AS->cdBackgroundColorNumber;
+					{
+					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgCurrentPosition] = AS->cdBackgroundColorNumber;
+					for (i = 1; i < AS->sgSpectrogramStep; i++)
+						AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + i) % AS->sgFrameWidth] = 
+							AS->cdBackgroundColorNumber;
+					}
 
 				// Маркер
 				for (y = 0; y < AS->sgFrameHeight; y++)
-					AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + SG_STEP) % AS->sgFrameWidth] = 255;
+					AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + AS->sgSpectrogramStep) % AS->sgFrameWidth] = 255;
 
 				// Движение маркера
-				AS->sgCurrentPosition = (AS->sgCurrentPosition + SG_STEP) % AS->sgFrameWidth;
+				AS->sgCurrentPosition = (AS->sgCurrentPosition + AS->sgSpectrogramStep) % AS->sgFrameWidth;
 				}
 			else
 				{
 				for (y = 0; y < AS->sgFrameHeight; y++)
 					{
 					// Сдвиг изображения
-					for (x = 0; x < AS->sgFrameWidth - SG_STEP; x += SG_STEP)
+					for (x = 0; x < AS->sgFrameWidth - AS->sgSpectrogramStep; x += AS->sgSpectrogramStep)
 						{
-						AS->sgBuffer[y * AS->sgFrameWidth + x] = AS->sgBuffer[y * AS->sgFrameWidth + x + 1]
-#ifdef SD_DOUBLE_WIDTH
-						= AS->sgBuffer[y * AS->sgFrameWidth + x + 2]
-#endif
-						;
+						for (i = AS->sgSpectrogramStep; i > 0; i--)
+							AS->sgBuffer[y * AS->sgFrameWidth + x + i - 1] = AS->sgBuffer[y * AS->sgFrameWidth + x + i];
 						}
 					}
 
 				// Отрисовка
 				for (y = 0; y < (AS->sgFrameHeight - v2) / 2; y++)
-#ifdef SD_DOUBLE_WIDTH
-					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - 2] = 
-#endif
-					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - 1] = AS->cdBackgroundColorNumber;
+					{
+					for (i = 1; i <= AS->sgSpectrogramStep; i++)
+						AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - i] = AS->cdBackgroundColorNumber;
+					}
 
 				for (y = (AS->sgFrameHeight - v2) / 2; y < (AS->sgFrameHeight + v2) / 2; y++)
-#ifdef SD_DOUBLE_WIDTH
-					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - 2] = 
-#endif
-					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - 1] = v;
+					{
+					for (i = 1; i <= AS->sgSpectrogramStep; i++)					
+						AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - i] = v;
+					}
 
 				for (y = (AS->sgFrameHeight + v2) / 2; y < AS->sgFrameHeight; y++)
-#ifdef SD_DOUBLE_WIDTH
-					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - 2] = 
-#endif
-					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - 1] = AS->cdBackgroundColorNumber;
+					{
+					for (i = 1; i <= AS->sgSpectrogramStep; i++)
+						AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - i] = AS->cdBackgroundColorNumber;
+					}
 				}
 			break;
 		}

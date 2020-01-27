@@ -297,10 +297,11 @@ namespace ESHQSetupStub
 		/// <param name="FrameHeight">Высота изображения спектрограммы</param>
 		/// <param name="PaletteNumber">Номер палитры спектрограммы</param>
 		/// <param name="SpectrogramMode">Режим спектрограммы</param>
+		/// <param name="Flags">Флаги инициализации: b0 = double width</param>
 		/// <returns>0 в случае успеха или отрицательный код ошибки</returns>
 		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
 		private static extern Int16 InitializeSpectrogramEx (UInt16 FrameWidth, UInt16 FrameHeight,
-			Byte PaletteNumber, Byte SpectrogramMode);
+			Byte PaletteNumber, Byte SpectrogramMode, Byte Flags);
 
 		/// <summary>
 		/// Метод инициализирует спектрограмму
@@ -309,12 +310,13 @@ namespace ESHQSetupStub
 		/// <param name="FrameHeight">Высота изображения спектрограммы</param>
 		/// <param name="PaletteNumber">Номер палитры спектрограммы</param>
 		/// <param name="Mode">Режим спектрограммы</param>
+		/// <param name="DoubleWidth">Флаг двойной ширины спектрограммы</param>
 		/// <returns>Возвращает результат инициализации</returns>
 		public static SpectrogramInitializationErrors InitializeSpectrogram (uint FrameWidth, uint FrameHeight,
-			byte PaletteNumber, SpectrogramModes Mode)
+			byte PaletteNumber, SpectrogramModes Mode, bool DoubleWidth)
 			{
 			return (SpectrogramInitializationErrors)InitializeSpectrogramEx ((UInt16)FrameWidth, (UInt16)FrameHeight,
-				(Byte)PaletteNumber, (Byte)Mode);
+				(Byte)PaletteNumber, (Byte)Mode, (byte)(DoubleWidth ? 1 : 0));
 			}
 
 		/// <summary>

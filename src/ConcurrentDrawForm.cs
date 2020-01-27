@@ -20,7 +20,7 @@ namespace ESHQSetupStub
 	public partial class ConcurrentDrawForm:Form
 		{
 		// Доступные фазы отрисовки
-		public enum VisualizationPhases
+		private enum VisualizationPhases
 			{
 			// Подготовка слоёв
 			LayersPrecache = 1,
@@ -175,6 +175,15 @@ namespace ESHQSetupStub
 			sgAttributes[1] = new ImageAttributes ();
 			sgAttributes[1].SetColorMatrix (colorMatrix[1], ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
 
+			// Формирование кистей
+			brushes.Add (new SolidBrush (ConcurrentDrawLib.GetColorFromPalette (0)));			// Фон
+			brushes.Add (new SolidBrush (ConcurrentDrawLib.GetMasterPaletteColor ()));			// Лого и beat-детектор
+			brushes.Add (new SolidBrush (Color.FromArgb (fillingOpacity, brushes[0].Color)));	// Fade out
+
+			// Начальная инициализация слоёв (первый кадр)
+			this.BackColor = brushes[0].Color;
+			mainLayer.Descriptor.FillRectangle (brushes[0], 0, 0, this.Width, this.Height);
+
 			// Инициализация видеопотока
 #if VIDEO
 			SFVideo.Title = "Select placement of new video file";
@@ -246,11 +255,6 @@ namespace ESHQSetupStub
 				gr.Add (Graphics.FromHwnd (this.Handle));
 				}
 				ResetLogo ();
-
-				// Формирование кистей
-				brushes.Add (new SolidBrush (ConcurrentDrawLib.GetColorFromPalette (0)));			// Фон
-				brushes.Add (new SolidBrush (ConcurrentDrawLib.GetMasterPaletteColor ()));			// Лого и beat-детектор
-				brushes.Add (new SolidBrush (Color.FromArgb (fillingOpacity, brushes[0].Color)));	// Fade out
 
 #if VIDEO
 			// Подготовка параметров
@@ -374,7 +378,8 @@ namespace ESHQSetupStub
 
 			// Запуск спектрограммы, если требуется
 			switch (ConcurrentDrawLib.InitializeSpectrogram ((uint)this.Width, cdp.SpectrogramHeight,
-				cdp.PaletteNumber, VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode)))
+				cdp.PaletteNumber, VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode),
+				cdp.SpectrogramDoubleWidth))
 				{
 				case SpectrogramInitializationErrors.InitOK:
 					break;
@@ -789,8 +794,7 @@ namespace ESHQSetupStub
 		// Создание и подготовка слоёв и лого
 		private void PrepareLayers ()
 			{
-			// Подготовка слоёв
-			this.BackColor = brushes[0].Color;
+			// Сброс главного слоя
 			mainLayer.Descriptor.FillRectangle (brushes[0], 0, 0, this.Width, this.Height);
 
 			// Инициализация лого
@@ -877,7 +881,8 @@ namespace ESHQSetupStub
 					{
 					// Пересоздание спектрограммы / гистограммы
 					ConcurrentDrawLib.InitializeSpectrogram ((uint)this.Width, cdp.SpectrogramHeight,
-						cdp.PaletteNumber, VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode));
+						cdp.PaletteNumber, VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode),
+						cdp.SpectrogramDoubleWidth);
 					}
 
 				brushes[0].Color = ConcurrentDrawLib.GetColorFromPalette (0);

@@ -290,7 +290,7 @@ namespace ESHQSetupStub
 		private byte beatsDetectorLowEdge = ConcurrentDrawLib.DefaultPeakEvaluationLowEdge;
 
 		/// <summary>
-		/// Возвращает верхнюю границу диапазона детекции битов
+		/// Возвращает или задаёт верхнюю границу диапазона детекции битов
 		/// </summary>
 		public byte BeatsDetectorHighEdge
 			{
@@ -322,7 +322,7 @@ namespace ESHQSetupStub
 		private byte beatsDetectorLowLevel = ConcurrentDrawLib.DefaultPeakEvaluationLowLevel;
 
 		/// <summary>
-		/// Возвращает множитель амплитуды детектора битов
+		/// Возвращает или задаёт множитель амплитуды детектора битов
 		/// </summary>
 		public byte BeatsDetectorFFTScaleMultiplier
 			{
@@ -336,6 +336,22 @@ namespace ESHQSetupStub
 				}
 			}
 		private byte beatsDetectorFFTScaleMultiplier = ConcurrentDrawLib.DefaultFFTScaleMultiplier;
+
+		/// <summary>
+		/// Возвращает или задаёт флаг двойной ширины спектрограммы
+		/// </summary>
+		public bool SpectrogramDoubleWidth
+			{
+			get
+				{
+				return spectrogramDoubleWidth;
+				}
+			set
+				{
+				spectrogramDoubleWidth = value;
+				}
+			}
+		private bool spectrogramDoubleWidth = false;
 
 		/// <summary>
 		/// Конструктор. Инициализирует экземпляр настройками по умолчанию
@@ -411,13 +427,9 @@ namespace ESHQSetupStub
 				visualizationTop = uint.Parse (values[7]);
 				spectrogramHeight = uint.Parse (values[3]);		// Установка размеров окна определяет максимум SDHeight
 
-				/*uint bdSettings = uint.Parse (values[8]);
-				beatsDetectorLowEdge = (byte)(bdSettings & 0xFF);
-				beatsDetectorHighEdge = (byte)((bdSettings >> 8) & 0xFF);
-				beatsDetectorLowLevel = (byte)((bdSettings >> 16) & 0xFF);
-				beatsDetectorFFTScaleMultiplier = (byte)((bdSettings >> 24) & 0xFF);*/
-
+				spectrogramDoubleWidth = (values[8] != "0");
 				alwaysOnTop = (values[9] != "0");
+
 				histogramFFTValuesCount = uint.Parse (values[10]);
 				decumulationMultiplier = byte.Parse (values[11]);
 				cumulationSpeed = byte.Parse (values[12]);
@@ -473,9 +485,9 @@ namespace ESHQSetupStub
 				visualizationLeft.ToString () + splitter[0].ToString () +
 				visualizationTop.ToString () + splitter[0].ToString () +
 
-				"NotUsed" + splitter[0].ToString () +
-
+				(spectrogramDoubleWidth ? "SDW" : "0") + splitter[0].ToString () +
 				(alwaysOnTop ? "AOT" : "0") + splitter[0].ToString () +
+
 				histogramFFTValuesCount.ToString () + splitter[0].ToString () +
 				decumulationMultiplier.ToString () + splitter[0].ToString () +
 				cumulationSpeed.ToString () + splitter[0].ToString () +

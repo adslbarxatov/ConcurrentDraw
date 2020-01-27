@@ -284,4 +284,7 @@
   <data name="CDP_ProfileRemove" xml:space="preserve">
     <value>Вы хотите удалить выбранный профиль?</value>
   </data>
+  <data name="CDP_SDDoubleWidthFlag" xml:space="preserve">
+    <value>2x ширина</value>
+  </data>
 </root>
