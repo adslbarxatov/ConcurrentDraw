@@ -4,16 +4,28 @@
 // Функция запрашивает данные из канала считывания
 float *GetDataFromStreamEx ()
 	{
-	// Контроль
+	// Отмена выгрузки при закрытом канале
 	if (!AS->cdChannel)
 		return NULL;
 
-	// Получение
-	if (BASS_ChannelGetData (AS->cdChannel, &AS->cdFFT, BASS_DATA_AVAILABLE) < FFT_VALUES_COUNT)
+	// Получение (защищённый вариант)
+	/*if (BASS_ChannelGetData (AS->cdChannel, &AS->cdFFT, BASS_DATA_AVAILABLE) < FFT_VALUES_COUNT)
 		return NULL;
 
 	if (BASS_ChannelGetData (AS->cdChannel, &AS->cdFFT, FFT_MODE) < 0)
 		return NULL;
+	/**/
+
+	// Получение (вариант предельной выгрузки)
+	if (BASS_ChannelGetData (AS->cdChannel, &AS->cdFFT, BASS_DATA_AVAILABLE) < FFT_VALUES_COUNT)
+	// Этот вызов призван отсекать заполнение массива FFT неполными (на рисунке – дырявыми) сетами.
+	// Однако отменять обновление фрейма здесь, как это было ранее, нет смысла: задвоенные сеты
+	// выглядят куда лучше движущегося рывками изображения.
+	// К тому же эта отсечка сильно тормозила обновление полиморфных палитр
+		return AS->cdFFT;
+	
+	BASS_ChannelGetData (AS->cdChannel, &AS->cdFFT, FFT_MODE);	// Сколько выгрузит, столько и отрисуем
+	/**/
 
 	return AS->cdFFT;
 	}
@@ -32,8 +44,8 @@ CD_API(uchar) GetScaledAmplitudeEx (uint FrequencyLevel)
 	v = (uint)(sqrt (AS->cdFFT[FrequencyLevel]) * AS->cdFFTScale);
 
 	// Вписывание в диапазон (uchar)
-	if (v > CD_BMPINFO_COLORS_COUNT - 1)
-		v = CD_BMPINFO_COLORS_COUNT - 1;
+	if (v > CD_BMPINFO_MAXCOLOR)
+		v = CD_BMPINFO_MAXCOLOR;
 
 	// Пересчёт пика
 	if ((AS->cdFFTPeakEvLowEdge | AS->cdFFTPeakEvHighEdge) == 0)	// Состояние отключения
@@ -94,7 +106,7 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 					AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + i) % AS->sgFrameWidth] = v;
 
 				// Маркер
-				AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + i) % AS->sgFrameWidth] = 255;
+				AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + i) % AS->sgFrameWidth] = CD_BMPINFO_MAXCOLOR;
 				}
 
 			// Движение маркера
@@ -195,7 +207,8 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 
 				// Маркер
 				for (y = 0; y < AS->sgFrameHeight; y++)
-					AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + AS->sgSpectrogramStep) % AS->sgFrameWidth] = 255;
+					AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + AS->sgSpectrogramStep) % 
+						AS->sgFrameWidth] = CD_BMPINFO_MAXCOLOR;
 
 				// Движение маркера
 				AS->sgCurrentPosition = (AS->sgCurrentPosition + AS->sgSpectrogramStep) % AS->sgFrameWidth;

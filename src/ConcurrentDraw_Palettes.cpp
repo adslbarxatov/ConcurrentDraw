@@ -5,7 +5,7 @@
 #define FP_QMAX		64
 #define FP_HMAX		128
 #define FP_AMAX		192
-#define FP_MAX		255
+#define FP_MAX		CD_BMPINFO_MAXCOLOR
 
 // Макроподстановки
 #define FP_PALETTE(a,b,c,d,m,g)	for (i = 0; i < FP_QMAX; i++) {\
@@ -33,9 +33,9 @@
 									if (member < limit) member = limit;
 #define FPPR_ENLIGHT	while ((AS->cdPolymorphColors[3].rgbRed + AS->cdPolymorphColors[3].rgbGreen +\
 							AS->cdPolymorphColors[3].rgbBlue) < FPPR_CLR_MIN_SUMMA) {\
-							AS->cdPolymorphColors[3].rgbRed += ((AS->cdPolymorphColors[3].rgbRed < 255) ? 1 : 0);\
-							AS->cdPolymorphColors[3].rgbGreen += ((AS->cdPolymorphColors[3].rgbGreen < 255) ? 1 : 0);\
-							AS->cdPolymorphColors[3].rgbBlue += ((AS->cdPolymorphColors[3].rgbBlue < 255) ? 1 : 0); }
+							AS->cdPolymorphColors[3].rgbRed += ((AS->cdPolymorphColors[3].rgbRed < CD_BMPINFO_MAXCOLOR) ? 1 : 0);\
+							AS->cdPolymorphColors[3].rgbGreen += ((AS->cdPolymorphColors[3].rgbGreen < CD_BMPINFO_MAXCOLOR) ? 1 : 0);\
+							AS->cdPolymorphColors[3].rgbBlue += ((AS->cdPolymorphColors[3].rgbBlue < CD_BMPINFO_MAXCOLOR) ? 1 : 0); }
 
 // Функции, инициализирующие палитры
 #define FPPR_RND_LIMIT		10
@@ -53,23 +53,6 @@ void FillPalette_PolymorphRandom (uchar Polymorph, uchar Monocolor)
 		if (Monocolor)
 			{
 			// Смещение
-			/*AS->cdPolymorphColors[3].rgbRed += GetRandomValue (-FPPR_RND_LIMIT, FPPR_RND_LIMIT);
-			if (AS->cdPolymorphColors[3].rgbRed < FPPR_RND_LIMIT)
-				AS->cdPolymorphColors[3].rgbRed = FP_MAX;
-			if (AS->cdPolymorphColors[3].rgbRed < FPPR_CLR_MIN_MONO)
-				AS->cdPolymorphColors[3].rgbRed = FPPR_CLR_MIN_MONO;
-
-			AS->cdPolymorphColors[3].rgbGreen += GetRandomValue (-FPPR_RND_LIMIT, FPPR_RND_LIMIT);
-			if (AS->cdPolymorphColors[3].rgbGreen < FPPR_RND_LIMIT)
-				AS->cdPolymorphColors[3].rgbGreen = FP_MAX;
-			if (AS->cdPolymorphColors[3].rgbGreen < FPPR_CLR_MIN_MONO)
-				AS->cdPolymorphColors[3].rgbGreen = FPPR_CLR_MIN_MONO;
-
-			AS->cdPolymorphColors[3].rgbBlue += GetRandomValue (-FPPR_RND_LIMIT, FPPR_RND_LIMIT);
-			if (AS->cdPolymorphColors[3].rgbBlue < FPPR_RND_LIMIT)
-				AS->cdPolymorphColors[3].rgbBlue = FP_MAX;
-			if (AS->cdPolymorphColors[3].rgbBlue < FPPR_CLR_MIN_MONO)
-				AS->cdPolymorphColors[3].rgbBlue = FPPR_CLR_MIN_MONO;*/
 			FPPR_UPDATE (AS->cdPolymorphColors[3].rgbRed, FPPR_CLR_MIN_MONO);
 			FPPR_UPDATE (AS->cdPolymorphColors[3].rgbGreen, FPPR_CLR_MIN_MONO);
 			FPPR_UPDATE (AS->cdPolymorphColors[3].rgbBlue, FPPR_CLR_MIN_MONO);
@@ -90,23 +73,6 @@ void FillPalette_PolymorphRandom (uchar Polymorph, uchar Monocolor)
 			{
 			for (i = 1; i < 4; i++)
 				{
-				/*AS->cdPolymorphColors[i].rgbRed += GetRandomValue (-FPPR_RND_LIMIT, FPPR_RND_LIMIT);
-				if (AS->cdPolymorphColors[i].rgbRed < FPPR_RND_LIMIT)
-					AS->cdPolymorphColors[i].rgbRed = FP_MAX;
-				if (AS->cdPolymorphColors[i].rgbRed < FPPR_CLR_MIN_POLY)
-					AS->cdPolymorphColors[i].rgbRed = FPPR_CLR_MIN_POLY;
-
-				AS->cdPolymorphColors[i].rgbGreen += GetRandomValue (-FPPR_RND_LIMIT, FPPR_RND_LIMIT);
-				if (AS->cdPolymorphColors[i].rgbGreen < FPPR_RND_LIMIT)
-					AS->cdPolymorphColors[i].rgbGreen = FP_MAX;
-				if (AS->cdPolymorphColors[i].rgbGreen < FPPR_CLR_MIN_POLY)
-					AS->cdPolymorphColors[i].rgbGreen = FPPR_CLR_MIN_POLY;
-
-				AS->cdPolymorphColors[i].rgbBlue += GetRandomValue (-FPPR_RND_LIMIT, FPPR_RND_LIMIT);
-				if (AS->cdPolymorphColors[i].rgbBlue < FPPR_RND_LIMIT)
-					AS->cdPolymorphColors[i].rgbBlue = FP_MAX;
-				if (AS->cdPolymorphColors[i].rgbBlue < FPPR_CLR_MIN_POLY)
-					AS->cdPolymorphColors[i].rgbBlue = FPPR_CLR_MIN_POLY;*/
 				FPPR_UPDATE (AS->cdPolymorphColors[i].rgbRed, FPPR_CLR_MIN_POLY);
 				FPPR_UPDATE (AS->cdPolymorphColors[i].rgbGreen, FPPR_CLR_MIN_POLY);
 				FPPR_UPDATE (AS->cdPolymorphColors[i].rgbBlue, FPPR_CLR_MIN_POLY);
