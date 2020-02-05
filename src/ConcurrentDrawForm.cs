@@ -62,6 +62,7 @@ namespace ESHQSetupStub
 		private const int logoSpeedImpulse = 50;				// Импульс скорости
 #endif
 		private int currentLogoAngleDelta = 0;					// Текущий угол приращения поворота лого
+		private int currentLogoAngle = 0;						// Текущий угол поворота лого (для бит-детектора)
 		private double currentHistogramAngle = 0.0;				// Текущий угол поворота гистограммы-бабочки
 		private uint logoHeight;								// Диаметр лого
 		private const int fillingOpacity = 15;					// Непрозрачность эффекта fadeout
@@ -540,6 +541,7 @@ namespace ESHQSetupStub
 
 			// Отрисовка
 			gr[1].RotateTransform (currentLogoAngleDelta);
+			currentLogoAngle = (currentLogoAngle + currentLogoAngleDelta / 3) % 360;
 			gr[1].DrawImage (logo[0], -3 * logoHeight / 5, -3 * logoHeight / 5);
 
 			// Перекрытие старой отрисовки (необходимо из-за прозрачности лого)
@@ -611,7 +613,7 @@ namespace ESHQSetupStub
 			{
 			// Обработка кумулятивного значения
 			uint oldCC = cumulativeCounter;
-			if (cdp.DecumulationSpeed != 0)
+			if (cdp.DecumulationSpeed != cdp.CumulationSpeed)
 				{
 				if (cumulativeCounter > cdp.DecumulationSpeed)
 					cumulativeCounter -= cdp.DecumulationSpeed;
@@ -645,8 +647,8 @@ namespace ESHQSetupStub
 
 			if (currentHistogramAngle > 360.0)
 				currentHistogramAngle -= 360.0;
-			if (currentHistogramAngle < 0.0)
-				currentHistogramAngle += 360.0;
+			/*if (currentHistogramAngle < 0.0)	// Такого не бывает, т.к. cdp.HistoRotSpeedDelta >= 0
+				currentHistogramAngle += 360.0;*/
 
 			// Отрисовка
 			if (VisualizationModesChecker.IsPerspective (cdp.VisualizationMode))
@@ -735,13 +737,15 @@ namespace ESHQSetupStub
 				if (peak > peakTrigger)
 					currentLogoAngleDelta = -logoSpeedImpulse;
 				p = new Pen (ConcurrentDrawLib.GetMasterPaletteColor (peak), logoHeight / 50);
-				rad = 500 * logo[1].Height / (1500 - peak);
+				rad = 400 * logo[1].Height / (1200 - peak);
 
-				mainLayer.Descriptor.DrawEllipse (p, (this.Width - rad) / 2,
+				for (int i = 0; i < 2; i++)
+					mainLayer.Descriptor.DrawArc (p,
 
-					((VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode) ? logo[1].Height : this.Height) - rad) / 2,
+						(this.Width - rad) / 2,
+						((VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode) ? logo[1].Height : this.Height) - rad) / 2,
 
-					rad, rad);
+						rad, rad, currentLogoAngle + i * 180, 3 * currentLogoAngleDelta);
 
 				p.Dispose ();
 				}

@@ -226,3 +226,9 @@ Version 1.27.2r:
 • Runtime FFT data extractor fixed. Now it will not skip updating frames if
   there is not enough data in audio buffer. This will make spectrogram movement
   smoother. It will also fix the update step of random / polymorph palettes
+
+Version 1.28:
+• Bit detector presentation updated;
+• Some redundant code removed;
+• Cumulative effect 'turn off' state moved to the maximum of decumulation
+  speed's trackbar (it's more correct)

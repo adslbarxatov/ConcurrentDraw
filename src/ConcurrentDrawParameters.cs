@@ -630,7 +630,7 @@ namespace ESHQSetupStub
 		// Изменение настроек детекции бита
 		private void CESpeed_ValueChanged (object sender, EventArgs e)
 			{
-			if (CEDecumulationMultiplier.Value == 0)
+			if (CEDecumulationMultiplier.Value == CEDecumulationMultiplier.Maximum)
 				{
 				CESettings.Text = Localization.GetText ("CDP_CENo", al);
 				}
