@@ -170,7 +170,7 @@
   <data name="CDP_CESettingsText" xml:space="preserve">
     <value>Скорость накопления: {0:S}
 Множитель скорости ослабления: {1:S}
-(0 = без эффекта накопления)</value>
+(1 – без эффекта накопления)</value>
   </data>
   <data name="CDP_CumulationGroup" xml:space="preserve">
     <value>Кумулятивный эффект</value>
@@ -286,5 +286,13 @@
   </data>
   <data name="CDP_SDDoubleWidthFlag" xml:space="preserve">
     <value>2x ширина</value>
+  </data>
+  <data name="CDP_LogoGroup" xml:space="preserve">
+    <value>Лого</value>
+  </data>
+  <data name="CDP_LogoCenterText" xml:space="preserve">
+    <value>Расположение центра лого:
+X = {0:S}; Y = {1:S}
+(0 – слева (сверху), 1 – справа (снизу), 0.5 – по центру)</value>
   </data>
 </root>

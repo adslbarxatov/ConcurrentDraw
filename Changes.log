@@ -232,3 +232,9 @@ Version 1.28:
 • Some redundant code removed;
 • Cumulative effect 'turn off' state moved to the maximum of decumulation
   speed's trackbar (it's more correct)
+
+Version 1.29:
+• Logo placement now can be specified manually;
+• Logo's maximum size increased to 100%;
+• Some settings interface's bugs fixed;
+• Additional graphic objects from FullSilence assembly included (experimentally)

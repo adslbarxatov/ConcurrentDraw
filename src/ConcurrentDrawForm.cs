@@ -59,12 +59,13 @@ namespace ESHQSetupStub
 #if VIDEO
 		private const int logoSpeedImpulse = 65;				// Импульс скорости
 #else
-		private const int logoSpeedImpulse = 50;				// Импульс скорости
+		private const int logoSpeedImpulse = 50;
 #endif
 		private int currentLogoAngleDelta = 0;					// Текущий угол приращения поворота лого
 		private int currentLogoAngle = 0;						// Текущий угол поворота лого (для бит-детектора)
 		private double currentHistogramAngle = 0.0;				// Текущий угол поворота гистограммы-бабочки
-		private uint logoHeight;								// Диаметр лого
+		private uint logoHeight,								// Диаметр лого
+			logoCenterX, logoCenterY;							// Координаты центра лого
 		private const int fillingOpacity = 15;					// Непрозрачность эффекта fadeout
 
 		private byte peak;										// Пиковое значение для расчёта битовых порогов
@@ -78,6 +79,12 @@ namespace ESHQSetupStub
 		private const double butterflyDensity = 2.75;			// Плотность гистограммы-бабочки
 		private const double perspectiveDensity = 3.6;			// Плотность гистограммы-перспективы
 		// (даёт полный угол чуть более 90°; 90° <=> 2.84; 80° <=> 3.2)
+
+#if OBJECTS
+		private List<ILogoDrawerObject> objects = new List<ILogoDrawerObject> ();	// Визуальные объекты
+		private LogoDrawerObjectMetrics objectsMetrics;			// Метрики генерируемых объектов
+		private LogoDrawerLayer objectsLayer;					// Слой визуальных объектов
+#endif
 
 		private int rad, amp;									// Вспомогательные переменные
 		private double angle1, angle2;
@@ -461,7 +468,7 @@ namespace ESHQSetupStub
 					break;
 				}
 
-			// Отрисовка изображения
+			// Отрисовка изображения и объектов
 			DrawFrame ();
 			}
 
@@ -506,12 +513,69 @@ namespace ESHQSetupStub
 			}
 #endif
 
+#if OBJECTS
+		// Отрисовка визуальных объектов
+		private void DrawObjects ()
+			{
+			// Затенение предыдущих элементов
+			if (!objectsMetrics.KeepTracks || (objectsLayer == null))
+				{
+				if (objectsLayer != null)
+					objectsLayer.Dispose ();
+				objectsLayer = new LogoDrawerLayer (0, 0, (uint)this.Width, (uint)this.Height);
+				}
+
+			// Отрисовка объектов со смещением
+			uint cumulation = cumulativeCounter / cumulationDivisor;
+			for (int i = 0; i < objects.Count; i++)
+				{
+				objects[i].Move (objectsMetrics.Acceleration, objectsMetrics.Enlarging);
+
+				if (!objects[i].IsInited)
+					{
+					objects[i].Dispose ();
+
+					// Обновление зависимых параметров
+					objectsMetrics.MaxSpeed = cumulation + 3;
+					objectsMetrics.MinSpeed = objectsMetrics.MaxSpeed / 100;
+					objectsMetrics.MaxSize = objectsMetrics.MinSize + objectsMetrics.MaxSpeed / 7;
+					objectsMetrics.PolygonsSidesCount = (byte)rnd.Next (5, 8);
+
+					switch (objectsMetrics.ObjectsType)
+						{
+						default:
+						//case LogoDrawerObjectTypes.Pictures:
+						//case LogoDrawerObjectTypes.RotatingPictures:
+						case LogoDrawerObjectTypes.Spheres:
+							objects[i] = new LogoDrawerSphere ((uint)this.Width, (uint)this.Height, rnd, objectsMetrics);
+							break;
+
+						case LogoDrawerObjectTypes.Polygons:
+						case LogoDrawerObjectTypes.Stars:
+						case LogoDrawerObjectTypes.RotatingPolygons:
+						case LogoDrawerObjectTypes.RotatingStars:
+							objects[i] = new LogoDrawerSquare ((uint)this.Width, (uint)this.Height, rnd, objectsMetrics);
+							break;
+
+						case LogoDrawerObjectTypes.Letters:
+						case LogoDrawerObjectTypes.RotatingLetters:
+							objects[i] = new LogoDrawerLetter ((uint)this.Width, (uint)this.Height, rnd, objectsMetrics);
+							break;
+						}
+					}
+
+				objectsLayer.Descriptor.DrawImage (objects[i].Image, objects[i].X - objects[i].Image.Width / 2,
+					objects[i].Y - objects[i].Image.Height / 2);
+				}
+			}
+#endif
+
 		// Метод отрисовывает сформированный кадр
 		private void DrawFrame ()
 			{
 			if (cdp.ShakeEffect)
 				{
-				amp = (int)((logoHeight * peak) >> 14);
+				amp = mainLayer.Layer.Width * peak / 0xA000;
 
 				gr[0].DrawImage (mainLayer.Layer, mainLayer.Left + rnd.Next (-amp, amp),
 					mainLayer.Top + rnd.Next (-amp, amp));
@@ -561,8 +625,8 @@ namespace ESHQSetupStub
 				}
 
 			// Отрисовка лого
-			mainLayer.Descriptor.DrawImage (logo[1], (this.Width - logo[1].Width) / 2,
-				(VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode) ? 0 : (this.Height - logo[1].Height) / 2));
+			mainLayer.Descriptor.DrawImage (logo[1], logoCenterX - logo[1].Width / 2,
+				logoCenterY - logo[1].Height / 2);
 			}
 
 		// Первичное вращение лого
@@ -590,8 +654,8 @@ namespace ESHQSetupStub
 				logoHeight - 2 * steps, logoHeight + 2 * steps);
 
 			// Отрисовка
-			mainLayer.Descriptor.DrawImage (logo[0], (this.Width - logo[0].Width) / 2,
-				(VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode) ? 0 : (this.Height - logo[0].Height) / 2));
+			mainLayer.Descriptor.DrawImage (logo[0], logoCenterX - logo[0].Width / 2,
+				logoCenterY - logo[0].Height / 2);
 
 			steps++;
 			if (steps >= logoHeight / 27)
@@ -647,8 +711,6 @@ namespace ESHQSetupStub
 
 			if (currentHistogramAngle > 360.0)
 				currentHistogramAngle -= 360.0;
-			/*if (currentHistogramAngle < 0.0)	// Такого не бывает, т.к. cdp.HistoRotSpeedDelta >= 0
-				currentHistogramAngle += 360.0;*/
 
 			// Отрисовка
 			if (VisualizationModesChecker.IsPerspective (cdp.VisualizationMode))
@@ -671,14 +733,14 @@ namespace ESHQSetupStub
 					angle2 = ArcToRad (currentHistogramAngle);
 
 					// Расчёт координат
-					histoX[0] = (int)(this.Width / 2 + rad * Math.Cos (angle2 + angle1));
-					histoX[1] = this.Width - histoX[0];
-					histoX[2] = (int)(this.Width / 2 + rad * Math.Cos (angle2 - angle1));
-					histoX[3] = this.Width - histoX[2];
-					histoY[0] = (int)(this.Height / 2 + rad * Math.Sin (angle2 + angle1));
-					histoY[1] = this.Height - histoY[0];
-					histoY[2] = (int)(this.Height / 2 + rad * Math.Sin (angle2 - angle1));
-					histoY[3] = this.Height - histoY[2];
+					histoX[0] = (int)(logoCenterX + rad * Math.Cos (angle2 + angle1));
+					histoX[1] = 2 * (int)logoCenterX - histoX[0];
+					histoX[2] = (int)(logoCenterX + rad * Math.Cos (angle2 - angle1));
+					histoX[3] = 2 * (int)logoCenterX - histoX[2];
+					histoY[0] = (int)(logoCenterY + rad * Math.Sin (angle2 + angle1));
+					histoY[1] = 2 * (int)logoCenterY - histoY[0];
+					histoY[2] = (int)(logoCenterY + rad * Math.Sin (angle2 - angle1));
+					histoY[3] = 2 * (int)logoCenterY - histoY[2];
 					}
 				else
 					{
@@ -692,14 +754,14 @@ namespace ESHQSetupStub
 					angle2 = ArcToRad (currentHistogramAngle + 90);
 
 					// Координаты
-					histoX[0] = (int)(this.Width / 2 + rad * Math.Cos (angle2 + angle1));
-					histoX[1] = (int)(this.Width / 2 + logoHeight * Math.Cos (angle2) / 20);
-					histoX[2] = this.Width - histoX[0];
-					histoX[3] = this.Width - histoX[1];
-					histoY[0] = (int)(this.Height / 2 + rad * Math.Sin (angle2 + angle1));
-					histoY[1] = (int)(this.Height / 2 + logoHeight * Math.Sin (angle2) / 20);
-					histoY[2] = this.Height - histoY[0];
-					histoY[3] = this.Height - histoY[1];
+					histoX[0] = (int)(logoCenterX + rad * Math.Cos (angle2 + angle1));
+					histoX[1] = (int)(logoCenterX + logoHeight * Math.Cos (angle2) / 20);
+					histoX[2] = 2 * (int)logoCenterX - histoX[0];
+					histoX[3] = 2 * (int)logoCenterX - histoX[1];
+					histoY[0] = (int)(logoCenterY + rad * Math.Sin (angle2 + angle1));
+					histoY[1] = (int)(logoCenterY + logoHeight * Math.Sin (angle2) / 20);
+					histoY[2] = 2 * (int)logoCenterY - histoY[0];
+					histoY[3] = 2 * (int)logoCenterY - histoY[1];
 					}
 
 				// Рисуем
@@ -718,6 +780,12 @@ namespace ESHQSetupStub
 			// Ручное обновление кадра при записи
 			if (vm.IsInited || (OFAudio.FileName != ""))
 				ConcurrentDrawLib.UpdateFFTData ();
+#endif
+
+#if OBJECTS
+			// Отрисовка объектов
+			DrawObjects ();
+			mainLayer.Descriptor.DrawImage (objectsLayer.Layer, 0, 0);
 #endif
 
 			// Запрос пикового значения
@@ -740,12 +808,13 @@ namespace ESHQSetupStub
 				rad = 400 * logo[1].Height / (1200 - peak);
 
 				for (int i = 0; i < 2; i++)
-					mainLayer.Descriptor.DrawArc (p,
-
-						(this.Width - rad) / 2,
-						((VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode) ? logo[1].Height : this.Height) - rad) / 2,
-
+#if VIDEO
+					mainLayer.Descriptor.DrawArc (p, logoCenterX - rad / 2, logoCenterY - rad / 2,
+						rad, rad, currentLogoAngle + i * 180, 30 * currentLogoAngleDelta / 13);
+#else
+					mainLayer.Descriptor.DrawArc (p, logoCenterX - rad / 2, logoCenterY - rad / 2,
 						rad, rad, currentLogoAngle + i * 180, 3 * currentLogoAngleDelta);
+#endif
 
 				p.Dispose ();
 				}
@@ -958,11 +1027,36 @@ namespace ESHQSetupStub
 
 			currentHistogramAngle = 0;
 
-			// Установка главного расчётного размера
+			// Установка главного расчётного размера и координат лого
 			logoHeight = (uint)(Math.Min (this.Width, this.Height) * cdp.LogoHeight);
+			logoCenterX = (uint)(this.Width * cdp.LogoCenterX);
+			logoCenterY = (uint)(this.Height * cdp.LogoCenterY);
 
 			// Перезапуск алгоритма таймера
 			currentPhase = VisualizationPhases.LayersPrecache;
+
+#if OBJECTS
+			// Обновление метрик графических объектов
+			objectsMetrics.Acceleration = false;
+			objectsMetrics.AsStars = true;
+			objectsMetrics.Enlarging = 0;
+			objectsMetrics.KeepTracks = false;
+			objectsMetrics.MaxRed = ConcurrentDrawLib.GetColorFromPalette (255).R;
+			objectsMetrics.MaxGreen = ConcurrentDrawLib.GetColorFromPalette (255).G;
+			objectsMetrics.MaxBlue = ConcurrentDrawLib.GetColorFromPalette (255).B;
+			objectsMetrics.MinRed = ConcurrentDrawLib.GetColorFromPalette (224).R;
+			objectsMetrics.MinGreen = ConcurrentDrawLib.GetColorFromPalette (224).G;
+			objectsMetrics.MinBlue = ConcurrentDrawLib.GetColorFromPalette (224).B;
+			objectsMetrics.MinSize = logoHeight / 50;
+			objectsMetrics.ObjectsCount = 10;
+			objectsMetrics.ObjectsType = LogoDrawerObjectTypes.RotatingStars;
+			objectsMetrics.Rotation = true;
+			objectsMetrics.StartupPosition = LogoDrawerObjectStartupPositions.RightBottom;
+			objectsMetrics.MaxSpeedFluctuation = 0;
+
+			for (int i = 0; i < objectsMetrics.ObjectsCount; i++)
+				objects.Add (new LogoDrawerLetter (0, 0, null, objectsMetrics));
+#endif
 			}
 		}
 	}

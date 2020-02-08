@@ -347,7 +347,7 @@ CD_API(ulong) GetMasterPaletteColorEx (uchar Brightness)
 // Функция возвращает названия доступных палитр
 CD_API(schar *) GetPalettesNamesEx ()
 	{
-	#define PALETTES_NAMES	("Default (Adobe Audition)" NAMES_DELIMITER_S \
+	#define PALETTES_NAMES	("Adobe Audition" NAMES_DELIMITER_S \
 		"Sea" NAMES_DELIMITER_S \
 		"Fire" NAMES_DELIMITER_S \
 		"Grey" NAMES_DELIMITER_S \

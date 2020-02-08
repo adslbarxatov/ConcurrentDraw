@@ -441,6 +441,9 @@ namespace ESHQSetupStub
 				beatsDetectorHighEdge = byte.Parse (values[17]);
 				beatsDetectorLowLevel = byte.Parse (values[18]);
 				beatsDetectorFFTScaleMultiplier = byte.Parse (values[19]);
+
+				logoCenterX = uint.Parse (values[20]);
+				logoCenterY = uint.Parse (values[21]);
 				}
 			catch
 				{
@@ -499,7 +502,10 @@ namespace ESHQSetupStub
 				beatsDetectorLowEdge.ToString () + splitter[0].ToString () +
 				beatsDetectorHighEdge.ToString () + splitter[0].ToString () +
 				beatsDetectorLowLevel.ToString () + splitter[0].ToString () +
-				beatsDetectorFFTScaleMultiplier.ToString ();
+				beatsDetectorFFTScaleMultiplier.ToString () + splitter[0].ToString () +
+
+				logoCenterX.ToString () + splitter[0].ToString () +
+				logoCenterY.ToString ();
 
 			// Запись
 			try
@@ -590,5 +596,37 @@ namespace ESHQSetupStub
 			// Завершено
 			rk.Dispose ();
 			}
+
+		/// <summary>
+		/// Возвращает или задаёт относительную абсциссу центра поля отрисовки лого
+		/// </summary>
+		public uint LogoCenterX
+			{
+			get
+				{
+				return logoCenterX;
+				}
+			set
+				{
+				logoCenterX = value;
+				}
+			}
+		private uint logoCenterX = 50;
+
+		/// <summary>
+		/// Возвращает или задаёт относительную ординату центра поля отрисовки лого
+		/// </summary>
+		public uint LogoCenterY
+			{
+			get
+				{
+				return logoCenterY;
+				}
+			set
+				{
+				logoCenterY = value;
+				}
+			}
+		private uint logoCenterY = 50;
 		}
 	}

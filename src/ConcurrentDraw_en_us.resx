@@ -170,7 +170,7 @@ FFT scale multiplier: {3:D}</value>
   <data name="CDP_CESettingsText" xml:space="preserve">
     <value>Cumulation speed: {0:S}
 Fade out speed multiplier: {1:S}
-(0 = no cumulative effect)</value>
+(1 – no cumulative effect)</value>
   </data>
   <data name="CDP_CumulationGroup" xml:space="preserve">
     <value>Cumulative effect</value>
@@ -286,5 +286,13 @@ Settings will be saved by pressing OK button. They can be changed anytime you ne
   </data>
   <data name="CDP_SDDoubleWidthFlag" xml:space="preserve">
     <value>2x width</value>
+  </data>
+  <data name="CDP_LogoGroup" xml:space="preserve">
+    <value>Logo</value>
+  </data>
+  <data name="CDP_LogoCenterText" xml:space="preserve">
+    <value>Logo center placement:
+X = {0:S}; Y = {1:S}
+(0 – left (top), 1 – right (bottom), 0.5 – center)</value>
   </data>
 </root>

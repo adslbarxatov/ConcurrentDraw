@@ -191,7 +191,10 @@ namespace ESHQSetupStub
 
 				CEDecumulationMultiplier.Value = parameters[psn].DecumulationMultiplier;
 				CECumulationSpeed.Value = parameters[psn].CumulationSpeed;
+
 				LogoHeightPercentage.Value = parameters[psn].LogoHeightPercentage;
+				LogoCenterXTrack.Value = (int)parameters[psn].LogoCenterX;
+				LogoCenterYTrack.Value = (int)parameters[psn].LogoCenterY;
 
 				if (parameters[psn].HistoRotSpeedDelta < 0)
 					HistoRotAccToBeats.Checked = true;
@@ -231,19 +234,19 @@ namespace ESHQSetupStub
 			AlwaysOnTopFlag.Text = Localization.GetText ("CDP_AlwaysOnTopFlag", al);
 
 			GenericTab.Text = Localization.GetText ("CDP_GenericGroup", al);
+			LogoTab.Text = Localization.GetText ("CDP_LogoGroup", al);
 			BeatsTab.Text = Localization.GetText ("CDP_BeatsGroup", al);
+			RotationTab.Text = Localization.GetText ("CDP_HistoRotGroup", al);
+			CumulationTab.Text = Localization.GetText ("CDP_CumulationGroup", al);
 
 			BOK.Text = Localization.GetText ("CDP_OK", al);
 			BCancel.Text = Localization.GetText ("CDP_Cancel", al);
 			LanguageLabel.Text = Localization.GetText ("CDP_LanguageLabel", al);
 
 			BDLowEdge_ValueChanged (BDLowEdge, null);
-
-			CumulationTab.Text = Localization.GetText ("CDP_CumulationGroup", al);
-
 			CESpeed_ValueChanged (null, null);
+			LogoCenterXTrack_ValueChanged (null, null);
 
-			RotationTab.Text = Localization.GetText ("CDP_HistoRotGroup", al);
 			HistoRotAccToBeats.Text = Localization.GetText ("CDP_HistoRotAccToBeats", al);
 			HistoRotSpeed.Text = Localization.GetText ("CDP_HistoRotSpeed", al);
 
@@ -373,6 +376,8 @@ namespace ESHQSetupStub
 			parameters[psn].DecumulationMultiplier = (byte)CEDecumulationMultiplier.Value;
 			parameters[psn].CumulationSpeed = (byte)CECumulationSpeed.Value;
 			parameters[psn].LogoHeightPercentage = (byte)LogoHeightPercentage.Value;
+			parameters[psn].LogoCenterX = (uint)LogoCenterXTrack.Value;
+			parameters[psn].LogoCenterY = (uint)LogoCenterYTrack.Value;
 
 			if (HistoRotAccToBeats.Checked)
 				parameters[psn].HistoRotSpeedDelta = (int)(-HistoRotSpeedArc.Value * 10);
@@ -652,6 +657,9 @@ namespace ESHQSetupStub
 
 			HGRangeLabel.Enabled = HistogramRangeCombo.Enabled = !VisualizationModesChecker.ContainsSGonly (mode);
 			SDDoubleWidthFlag.Enabled = VisualizationModesChecker.ContainsSGorWF (mode);
+
+			LogoHeightPercentage.Enabled = LogoCenterXTrack.Enabled = LogoCenterYTrack.Enabled =
+				LogoCenterLabel.Enabled = VisualizationModesChecker.ContainsLogo (mode);
 			}
 
 		/// <summary>
@@ -662,6 +670,28 @@ namespace ESHQSetupStub
 			get
 				{
 				return parameters[SSN].LogoHeightPercentage / 100.0;
+				}
+			}
+
+		/// <summary>
+		/// Возвращает относительную абсиссу центра лого
+		/// </summary>
+		public double LogoCenterX
+			{
+			get
+				{
+				return parameters[SSN].LogoCenterX / 100.0;
+				}
+			}
+
+		/// <summary>
+		/// Возвращает относительную ординату центра лого
+		/// </summary>
+		public double LogoCenterY
+			{
+			get
+				{
+				return parameters[SSN].LogoCenterY / 100.0;
 				}
 			}
 
@@ -757,6 +787,14 @@ namespace ESHQSetupStub
 				{
 				return parameters[SSN].SpectrogramDoubleWidth;
 				}
+			}
+
+		// Изменение координат центра лого
+		private void LogoCenterXTrack_ValueChanged (object sender, EventArgs e)
+			{
+			LogoCenterLabel.Text = string.Format (Localization.GetText ("CDP_LogoCenterText", al),
+				(LogoCenterXTrack.Value / 100.0).ToString (), (LogoCenterYTrack.Value / 100.0).ToString ());
+			logoResetFlag = true;
 			}
 		}
 	}
