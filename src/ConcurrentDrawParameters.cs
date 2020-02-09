@@ -194,7 +194,7 @@ namespace ESHQSetupStub
 
 				LogoHeightPercentage.Value = parameters[psn].LogoHeightPercentage;
 				LogoCenterXTrack.Value = (int)parameters[psn].LogoCenterX;
-				LogoCenterYTrack.Value = (int)parameters[psn].LogoCenterY;
+				LogoCenterYTrack.Value = (int)(LogoCenterYTrack.Maximum - parameters[psn].LogoCenterY);
 
 				if (parameters[psn].HistoRotSpeedDelta < 0)
 					HistoRotAccToBeats.Checked = true;
@@ -229,6 +229,7 @@ namespace ESHQSetupStub
 			HGRangeLabel.Text = Localization.GetText ("CDP_HGRangeLabel", al);
 			HzLabel.Text = Localization.GetText ("CDP_Hz", al);
 			LogoHeightLabel.Text = Localization.GetText ("CDP_LogoHeightLabel", al);
+			LogoCenterButton.Text = Localization.GetText ("CDP_LogoCenterButton", al);
 
 			SDDoubleWidthFlag.Text = Localization.GetText ("CDP_SDDoubleWidthFlag", al);
 			AlwaysOnTopFlag.Text = Localization.GetText ("CDP_AlwaysOnTopFlag", al);
@@ -377,7 +378,7 @@ namespace ESHQSetupStub
 			parameters[psn].CumulationSpeed = (byte)CECumulationSpeed.Value;
 			parameters[psn].LogoHeightPercentage = (byte)LogoHeightPercentage.Value;
 			parameters[psn].LogoCenterX = (uint)LogoCenterXTrack.Value;
-			parameters[psn].LogoCenterY = (uint)LogoCenterYTrack.Value;
+			parameters[psn].LogoCenterY = (uint)(LogoCenterYTrack.Maximum - LogoCenterYTrack.Value);
 
 			if (HistoRotAccToBeats.Checked)
 				parameters[psn].HistoRotSpeedDelta = (int)(-HistoRotSpeedArc.Value * 10);
@@ -793,8 +794,28 @@ namespace ESHQSetupStub
 		private void LogoCenterXTrack_ValueChanged (object sender, EventArgs e)
 			{
 			LogoCenterLabel.Text = string.Format (Localization.GetText ("CDP_LogoCenterText", al),
-				(LogoCenterXTrack.Value / 100.0).ToString (), (LogoCenterYTrack.Value / 100.0).ToString ());
+				LogoHeightPercentage.Value.ToString (),
+				(LogoCenterXTrack.Value / 100.0).ToString (),
+				((LogoCenterYTrack.Maximum - LogoCenterYTrack.Value) / 100.0).ToString ());
 			logoResetFlag = true;
+			}
+
+		// Выравнивание по центру
+		private void LogoCenterButton_Click (object sender, EventArgs e)
+			{
+			LogoCenterXTrack.Value = LogoCenterXTrack.Maximum / 2;
+			LogoCenterYTrack.Value = LogoCenterYTrack.Maximum / 2;
+			}
+
+		/// <summary>
+		/// Возвращает текущий язык интерфейса
+		/// </summary>
+		public SupportedLanguages CurrentInterfaceLanguage
+			{
+			get
+				{
+				return al;
+				}
 			}
 		}
 	}

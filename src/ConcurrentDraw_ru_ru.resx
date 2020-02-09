@@ -246,7 +246,9 @@
     <value>В системе отсутствуют совместимые устройства аудиовывода</value>
   </data>
   <data name="CDP_LogoHeightLabel" xml:space="preserve">
-    <value>Высота лого:</value>
+    <value>Высота:
+
+Позиция:</value>
   </data>
   <data name="CDP_HistoRotAccToBeats" xml:space="preserve">
     <value>В соотв. с бит-детектором с импульсом:</value>
@@ -291,8 +293,13 @@
     <value>Лого</value>
   </data>
   <data name="CDP_LogoCenterText" xml:space="preserve">
-    <value>Расположение центра лого:
-X = {0:S}; Y = {1:S}
-(0 – слева (сверху), 1 – справа (снизу), 0.5 – по центру)</value>
+    <value>Высота: {0:S}%
+
+Расположение центра: X = {1:S}; Y = {2:S}
+(0 – слева (сверху), 1 – справа (снизу),
+0.5 – по центру)</value>
+  </data>
+  <data name="CDP_LogoCenterButton" xml:space="preserve">
+    <value>По центру</value>
   </data>
 </root>

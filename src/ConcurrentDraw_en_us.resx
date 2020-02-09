@@ -246,7 +246,9 @@ Settings will be saved by pressing OK button. They can be changed anytime you ne
     <value>No compatible audio output devices found on your system</value>
   </data>
   <data name="CDP_LogoHeightLabel" xml:space="preserve">
-    <value>Logo height:</value>
+    <value>Height:
+
+Placement:</value>
   </data>
   <data name="CDP_HistoRotAccToBeats" xml:space="preserve">
     <value>Acc. to beats detector with angle impulse:</value>
@@ -291,8 +293,12 @@ Settings will be saved by pressing OK button. They can be changed anytime you ne
     <value>Logo</value>
   </data>
   <data name="CDP_LogoCenterText" xml:space="preserve">
-    <value>Logo center placement:
-X = {0:S}; Y = {1:S}
+    <value>Height: {0:S}%
+
+Center placement: X = {1:S}; Y = {2:S}
 (0 – left (top), 1 – right (bottom), 0.5 – center)</value>
+  </data>
+  <data name="CDP_LogoCenterButton" xml:space="preserve">
+    <value>Center</value>
   </data>
 </root>

@@ -4,9 +4,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 
-#if AUDIO
-using System.Runtime.InteropServices;
-#endif
 #if VIDEO
 using System.ComponentModel;
 #endif
@@ -42,9 +39,8 @@ namespace ESHQSetupStub
 		private VisualizationPhases currentPhase = VisualizationPhases.LayersPrecache;	// Текущая фаза отрисовки
 		private bool logoFirstShowMade = false;					// Флаг, указывающий на выполненное первое отображение лого
 		private uint steps = 0;									// Счётчик шагов отрисовки
-
+		private Random rnd = new Random ();						// ГПСЧ
 		private ConcurrentDrawParameters cdp;					// Параметры работы программы
-		private SupportedLanguages al = Localization.CurrentLanguage;		// Язык интерфейса приложения
 
 		// Графика
 		private LogoDrawerLayer mainLayer;						// Базовый слой изображения
@@ -55,25 +51,32 @@ namespace ESHQSetupStub
 		private List<SolidBrush> brushes = new List<SolidBrush> ();
 		private List<Bitmap> logo = new List<Bitmap> ();
 
+		// Бит-детектор
 		private const int logoIdleSpeed = 2;					// Наименьшая скорость вращения лого
 #if VIDEO
 		private const int logoSpeedImpulse = 65;				// Импульс скорости
 #else
 		private const int logoSpeedImpulse = 50;
 #endif
-		private int currentLogoAngleDelta = 0;					// Текущий угол приращения поворота лого
-		private int currentLogoAngle = 0;						// Текущий угол поворота лого (для бит-детектора)
+		private const float beatsDetAngleMultiplier =
+			150.0f / logoSpeedImpulse;							// Множитель для расчёта угла дуги бит-детектора
+
+		// Лого
+		private int currentLogoAngleDelta = 0,					// Текущий угол приращения поворота лого
+			currentLogoAngle = 0;								// Текущий угол поворота лого (для бит-детектора)
 		private double currentHistogramAngle = 0.0;				// Текущий угол поворота гистограммы-бабочки
 		private uint logoHeight,								// Диаметр лого
 			logoCenterX, logoCenterY;							// Координаты центра лого
 		private const int fillingOpacity = 15;					// Непрозрачность эффекта fadeout
 
+		// Кумулятивный эффект
 		private byte peak;										// Пиковое значение для расчёта битовых порогов
 		private const byte peakTrigger = 0xF0;					// Значение пика, превышение которого является триггером
-		private uint cumulativeCounter;							// Накопитель, обеспечивающий изменение фона
+		private uint cumulationCounter;							// Накопитель, обеспечивающий изменение фона
 		private const uint cumulationDivisor = 100,				// Границы накопителя
 			cumulationLimit = 255 * cumulationDivisor;
 
+		// Метрики гистограмм
 		private int[] histoX = new int[4],
 			histoY = new int[4];								// Координаты линий гистограммы
 		private const double butterflyDensity = 2.75;			// Плотность гистограммы-бабочки
@@ -81,42 +84,28 @@ namespace ESHQSetupStub
 		// (даёт полный угол чуть более 90°; 90° <=> 2.84; 80° <=> 3.2)
 
 #if OBJECTS
+		// Дополнительные графические объекты
 		private List<ILogoDrawerObject> objects = new List<ILogoDrawerObject> ();	// Визуальные объекты
 		private LogoDrawerObjectMetrics objectsMetrics;			// Метрики генерируемых объектов
 		private LogoDrawerLayer objectsLayer;					// Слой визуальных объектов
 #endif
 
-		private int rad, amp;									// Вспомогательные переменные
+		// Вспомогательные переменные
+		private int rad, amp;
 		private double angle1, angle2;
 		private Bitmap firstBMP;
 		private Pen p;
-		private Random rnd = new Random ();
 
-		// Аудио
-#if AUDIO
-		AudioManager am = new AudioManager (Application .StartupPath + "\\5.wav", false);
 
-		// Эта конструкция имитирует нажатие клавиши, запускающей и останавливающей запись
-		[DllImport ("user32.dll")]
-		private static extern void keybd_event (byte vk, byte scan, int flags, int extrainfo);
-
-		private void TriggerRecord ()
-			{
-			keybd_event ((byte)Keys.Add, 0, 0, 0);
-			keybd_event ((byte)Keys.Add, 0, 2, 0);
-			}
-#endif
-
-		// Видео
 #if VIDEO
-		private const double fps = 23.4375;
-		// Частота кадров видео 
+		// Видео
+		private const double fps = 23.4375;						// Частота кадров видео 
 		// определена по аудио как (48000 Hz * 2 ch * 16 bps) / (8 * sizeof (float) * 2048 fftv)
 
 		private VideoManager vm = new VideoManager ();			// Видеофайл (балластная инициализация)
 		private AudioManager amv;								// Аудиодорожка видео
-		private bool allowDemoText = false;						// Флаг разрешения отрисовки текстовых подписей
-		private const uint fadeOutLength = 40;					// Длина эффекта fade out
+		private bool allowDemoText = false;						// Флаг фазы отрисовки текстовых подписей
+		private const uint fadeOutLength = 40;					// Длина эффекта fade out в кадрах
 		private Bitmap secondBMP;								// Отрисовочный кадр
 
 #if DEMO_TEXT
@@ -168,7 +157,7 @@ namespace ESHQSetupStub
 			this.Left = (int)cdp.VisualizationLeft;
 			this.Top = (int)cdp.VisualizationTop;
 			this.TopMost = cdp.AlwaysOnTop;
-			cumulativeCounter = cdp.CumulationSpeed;
+			cumulationCounter = cdp.CumulationSpeed;
 
 			// Подготовка к отрисовке
 			mainLayer = new LogoDrawerLayer (0, 0, (uint)this.Width, (uint)this.Height);
@@ -309,31 +298,31 @@ namespace ESHQSetupStub
 				{
 				case SoundStreamInitializationErrors.BASS_ERROR_ALREADY:
 				case SoundStreamInitializationErrors.BASS_ERROR_BUSY:
-					err = Localization.GetText ("BASS_ERROR_BUSY", al);
+					err = Localization.GetText ("BASS_ERROR_BUSY", cdp.CurrentInterfaceLanguage);
 					break;
 
 				case SoundStreamInitializationErrors.BASS_ERROR_NOTAVAIL:
-					err = Localization.GetText ("BASS_ERROR_NOTAVAIL", al);
+					err = Localization.GetText ("BASS_ERROR_NOTAVAIL", cdp.CurrentInterfaceLanguage);
 					break;
 
 				case SoundStreamInitializationErrors.BASS_ERROR_DEVICE:
-					err = Localization.GetText ("BASS_ERROR_DEVICE", al);
+					err = Localization.GetText ("BASS_ERROR_DEVICE", cdp.CurrentInterfaceLanguage);
 					break;
 
 				case SoundStreamInitializationErrors.BASS_ERROR_DRIVER:
-					err = Localization.GetText ("BASS_ERROR_DRIVER", al);
+					err = Localization.GetText ("BASS_ERROR_DRIVER", cdp.CurrentInterfaceLanguage);
 					break;
 
 				case SoundStreamInitializationErrors.BASS_ERROR_DX:
-					err = Localization.GetText ("BASS_ERROR_DX", al);
+					err = Localization.GetText ("BASS_ERROR_DX", cdp.CurrentInterfaceLanguage);
 					break;
 
 				case SoundStreamInitializationErrors.BASS_ERROR_FORMAT:
-					err = Localization.GetText ("BASS_ERROR_FORMAT", al);
+					err = Localization.GetText ("BASS_ERROR_FORMAT", cdp.CurrentInterfaceLanguage);
 					break;
 
 				case SoundStreamInitializationErrors.BASS_ERROR_MEM:
-					err = Localization.GetText ("BASS_ERROR_MEM", al);
+					err = Localization.GetText ("BASS_ERROR_MEM", cdp.CurrentInterfaceLanguage);
 					break;
 
 				default:
@@ -344,7 +333,7 @@ namespace ESHQSetupStub
 				case SoundStreamInitializationErrors.BASS_ERROR_NO3D:
 				case SoundStreamInitializationErrors.BASS_ERROR_UNKNOWN:
 					// Возникает при выборе стереомикшера при включённом микрофоне (почему-то)
-					err = Localization.GetText ("DeviceBehaviorIsInvalid", al);
+					err = Localization.GetText ("DeviceBehaviorIsInvalid", cdp.CurrentInterfaceLanguage);
 					result = 1;		// Запросить настройку приложения
 					break;
 
@@ -353,17 +342,19 @@ namespace ESHQSetupStub
 					throw new Exception ("Application failure. Debug required at point 2");
 
 				case SoundStreamInitializationErrors.BASS_InvalidDLLVersion:
-					err = string.Format (Localization.GetText ("LibraryIsIncompatible", al),
+					err = string.Format (Localization.GetText ("LibraryIsIncompatible", cdp.CurrentInterfaceLanguage),
 						ProgramDescription.AssemblyRequirements[1]);
 					break;
 
 				case SoundStreamInitializationErrors.BASS_ERROR_FILEOPEN:
-					err = string.Format (Localization.GetText ("BASS_ERROR_FILEOPEN", al), OFAudio.FileName);
+					err = string.Format (Localization.GetText ("BASS_ERROR_FILEOPEN", cdp.CurrentInterfaceLanguage),
+						OFAudio.FileName);
 					break;
 
 				case SoundStreamInitializationErrors.BASS_ERROR_FILEFORM:
 				case SoundStreamInitializationErrors.BASS_ERROR_CODEC:
-					err = string.Format (Localization.GetText ("BASS_ERROR_CODEC", al), OFAudio.FileName);
+					err = string.Format (Localization.GetText ("BASS_ERROR_CODEC", cdp.CurrentInterfaceLanguage),
+						OFAudio.FileName);
 					break;
 
 				case SoundStreamInitializationErrors.BASS_OK:
@@ -393,7 +384,7 @@ namespace ESHQSetupStub
 					break;
 
 				case SpectrogramInitializationErrors.NotEnoughMemory:
-					err = Localization.GetText ("BASS_ERROR_MEM", al);
+					err = Localization.GetText ("BASS_ERROR_MEM", cdp.CurrentInterfaceLanguage);
 					break;
 
 				default:
@@ -420,9 +411,6 @@ namespace ESHQSetupStub
 				{
 				// Создание фрагментов лого
 				case VisualizationPhases.LayersPrecache:
-#if AUDIO
-					TriggerRecord ();
-#endif
 					PrepareLayers ();
 					break;
 
@@ -441,9 +429,6 @@ namespace ESHQSetupStub
 
 				// Спецкоманды
 				case VisualizationPhases.PreVisualization:
-#if AUDIO
-					am.PlayAudio ();
-#endif
 					// Донастройка отрисовщика (если установлен флаг прозрачности)
 					logo[0].MakeTransparent (ConcurrentDrawLib.GetColorFromPalette (0));
 					gr[1].CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
@@ -468,7 +453,7 @@ namespace ESHQSetupStub
 					break;
 				}
 
-			// Отрисовка изображения и объектов
+			// Отрисовка изображения
 			DrawFrame ();
 			}
 
@@ -526,7 +511,12 @@ namespace ESHQSetupStub
 				}
 
 			// Отрисовка объектов со смещением
-			uint cumulation = cumulativeCounter / cumulationDivisor;
+			uint cumulation;
+			if (VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode))
+				cumulation = 255;
+			else
+				cumulation = cumulationCounter / cumulationDivisor;
+
 			for (int i = 0; i < objects.Count; i++)
 				{
 				objects[i].Move (objectsMetrics.Acceleration, objectsMetrics.Enlarging);
@@ -536,8 +526,8 @@ namespace ESHQSetupStub
 					objects[i].Dispose ();
 
 					// Обновление зависимых параметров
-					objectsMetrics.MaxSpeed = cumulation + 3;
-					objectsMetrics.MinSpeed = objectsMetrics.MaxSpeed / 100;
+					objectsMetrics.MinSpeed = objectsMetrics.MaxSpeed = cumulation + 3;
+					//objectsMetrics.MinSpeed = objectsMetrics.MaxSpeed / 100;
 					objectsMetrics.MaxSize = objectsMetrics.MinSize + objectsMetrics.MaxSpeed / 7;
 					objectsMetrics.PolygonsSidesCount = (byte)rnd.Next (5, 8);
 
@@ -610,8 +600,11 @@ namespace ESHQSetupStub
 
 			// Перекрытие старой отрисовки (необходимо из-за прозрачности лого)
 			if (VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode) && (this.Height - cdp.SpectrogramHeight > 0))
-				mainLayer.Descriptor.FillRectangle (brushes[0], (this.Width - logo[1].Width) / 2, 0,
-					logo[1].Width, this.Height - cdp.SpectrogramHeight);
+#if OBJECTS
+				mainLayer.Descriptor.FillRectangle (brushes[2], 0, 0, this.Width, this.Height - cdp.SpectrogramHeight);
+#else
+				mainLayer.Descriptor.FillRectangle (brushes[0], 0, 0, this.Width, this.Height - cdp.SpectrogramHeight);
+#endif
 
 			// Обработка режима "только лого"
 			if (cdp.VisualizationMode == VisualizationModes.Logo_only)
@@ -620,13 +613,12 @@ namespace ESHQSetupStub
 				for (uint i = 0; i < 256; i++)
 					ConcurrentDrawLib.GetScaledAmplitude (i);
 
-				mainLayer.Descriptor.FillRectangle (brushes[0], (this.Width - logo[1].Width) / 2, (this.Height - logo[1].Height) / 2,
+				mainLayer.Descriptor.FillRectangle (brushes[0], logoCenterX - logo[1].Width / 2, logoCenterY - logo[1].Height / 2,
 					logo[1].Width, logo[1].Height);
 				}
 
 			// Отрисовка лого
-			mainLayer.Descriptor.DrawImage (logo[1], logoCenterX - logo[1].Width / 2,
-				logoCenterY - logo[1].Height / 2);
+			mainLayer.Descriptor.DrawImage (logo[1], logoCenterX - logo[1].Width / 2, logoCenterY - logo[1].Height / 2);
 			}
 
 		// Первичное вращение лого
@@ -676,23 +668,23 @@ namespace ESHQSetupStub
 		private void DrawButterflyAndPerspective ()
 			{
 			// Обработка кумулятивного значения
-			uint oldCC = cumulativeCounter;
+			uint oldCC = cumulationCounter;
 			if (cdp.DecumulationSpeed != cdp.CumulationSpeed)
 				{
-				if (cumulativeCounter > cdp.DecumulationSpeed)
-					cumulativeCounter -= cdp.DecumulationSpeed;
-				if ((peak > peakTrigger) && (cumulativeCounter < cumulationLimit))
-					cumulativeCounter += cdp.CumulationSpeed;
+				if (cumulationCounter > cdp.DecumulationSpeed)
+					cumulationCounter -= cdp.DecumulationSpeed;
+				if ((peak > peakTrigger) && (cumulationCounter < cumulationLimit))
+					cumulationCounter += cdp.CumulationSpeed;
 				}
-			else if (cumulativeCounter != 0)
+			else if (cumulationCounter != 0)
 				{
-				cumulativeCounter = 0;
+				cumulationCounter = 0;
 				}
 
-			if ((cumulativeCounter / cumulationDivisor) != (oldCC / cumulationDivisor))
+			if ((cumulationCounter / cumulationDivisor) != (oldCC / cumulationDivisor))	// Целочисленное деление обязательно
 				{
 				brushes[2].Color = Color.FromArgb (fillingOpacity,
-					ConcurrentDrawLib.GetMasterPaletteColor ((byte)(cumulativeCounter / cumulationDivisor)));
+					ConcurrentDrawLib.GetMasterPaletteColor ((byte)(cumulationCounter / cumulationDivisor)));
 				}
 
 			// Затенение изображения / кумулятивный эффект
@@ -746,7 +738,7 @@ namespace ESHQSetupStub
 					{
 					// Кисть
 					p = new Pen (Color.FromArgb (90, ConcurrentDrawLib.GetColorFromPalette ((byte)(3 * amp / 4))),
-						logoHeight / ((i > 252) ? 100 : 50));
+						logoHeight / ((i > 252) ? 100 : 50));	// Костыль для обхода шва на перспективе
 
 					// Углы
 					// (двойная длина дуги для того же количества линий)
@@ -808,13 +800,8 @@ namespace ESHQSetupStub
 				rad = 400 * logo[1].Height / (1200 - peak);
 
 				for (int i = 0; i < 2; i++)
-#if VIDEO
 					mainLayer.Descriptor.DrawArc (p, logoCenterX - rad / 2, logoCenterY - rad / 2,
-						rad, rad, currentLogoAngle + i * 180, 30 * currentLogoAngleDelta / 13);
-#else
-					mainLayer.Descriptor.DrawArc (p, logoCenterX - rad / 2, logoCenterY - rad / 2,
-						rad, rad, currentLogoAngle + i * 180, 3 * currentLogoAngleDelta);
-#endif
+						rad, rad, currentLogoAngle + i * 180, currentLogoAngleDelta * beatsDetAngleMultiplier);
 
 				p.Dispose ();
 				}
@@ -885,10 +872,6 @@ namespace ESHQSetupStub
 			// Остановка всех отрисовок
 			ExtendedTimer.Enabled = false;
 			ConcurrentDrawLib.DestroySoundStream ();
-#if AUDIO
-			am.StopAudio ();
-			am.Dispose ();
-#endif
 
 			// Сброс ресурсов
 			for (int i = 0; i < brushes.Count; i++)
@@ -909,6 +892,11 @@ namespace ESHQSetupStub
 				firstBMP.Dispose ();
 			if (cdp != null)
 				cdp.Dispose ();
+
+#if OBJECTS
+			if (objectsLayer != null)
+				objectsLayer.Dispose ();
+#endif
 
 #if VIDEO
 			if (secondBMP != null)
@@ -1038,7 +1026,7 @@ namespace ESHQSetupStub
 #if OBJECTS
 			// Обновление метрик графических объектов
 			objectsMetrics.Acceleration = false;
-			objectsMetrics.AsStars = true;
+			objectsMetrics.AsStars = false;
 			objectsMetrics.Enlarging = 0;
 			objectsMetrics.KeepTracks = false;
 			objectsMetrics.MaxRed = ConcurrentDrawLib.GetColorFromPalette (255).R;
@@ -1048,10 +1036,10 @@ namespace ESHQSetupStub
 			objectsMetrics.MinGreen = ConcurrentDrawLib.GetColorFromPalette (224).G;
 			objectsMetrics.MinBlue = ConcurrentDrawLib.GetColorFromPalette (224).B;
 			objectsMetrics.MinSize = logoHeight / 50;
-			objectsMetrics.ObjectsCount = 10;
-			objectsMetrics.ObjectsType = LogoDrawerObjectTypes.RotatingStars;
+			objectsMetrics.ObjectsCount = 15;
+			objectsMetrics.ObjectsType = LogoDrawerObjectTypes.Polygons;
 			objectsMetrics.Rotation = true;
-			objectsMetrics.StartupPosition = LogoDrawerObjectStartupPositions.RightBottom;
+			objectsMetrics.StartupPosition = LogoDrawerObjectStartupPositions.CenterRandom;
 			objectsMetrics.MaxSpeedFluctuation = 0;
 
 			for (int i = 0; i < objectsMetrics.ObjectsCount; i++)

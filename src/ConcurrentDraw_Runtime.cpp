@@ -8,14 +8,6 @@ float *GetDataFromStreamEx ()
 	if (!AS->cdChannel)
 		return NULL;
 
-	// Получение (защищённый вариант)
-	/*if (BASS_ChannelGetData (AS->cdChannel, &AS->cdFFT, BASS_DATA_AVAILABLE) < FFT_VALUES_COUNT)
-		return NULL;
-
-	if (BASS_ChannelGetData (AS->cdChannel, &AS->cdFFT, FFT_MODE) < 0)
-		return NULL;
-	/**/
-
 	// Получение (вариант предельной выгрузки)
 	if (BASS_ChannelGetData (AS->cdChannel, &AS->cdFFT, BASS_DATA_AVAILABLE) < FFT_VALUES_COUNT)
 	// Этот вызов призван отсекать заполнение массива FFT неполными (на рисунке – дырявыми) сетами.
@@ -25,7 +17,6 @@ float *GetDataFromStreamEx ()
 		return AS->cdFFT;
 	
 	BASS_ChannelGetData (AS->cdChannel, &AS->cdFFT, FFT_MODE);	// Сколько выгрузит, столько и отрисуем
-	/**/
 
 	return AS->cdFFT;
 	}
