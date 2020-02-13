@@ -16,9 +16,9 @@ namespace ESHQSetupStub
 			InitializeComponent ();
 
 			// Настройка контролов
-			this.BackgroundImage = Properties.Resources.ConcurrentDraw;
-			this.Width = Properties.Resources.ConcurrentDraw.Width;
-			this.Height = Properties.Resources.ConcurrentDraw.Height;
+			this.BackgroundImage = Properties.CDResources.ConcurrentDraw;
+			this.Width = Properties.CDResources.ConcurrentDraw.Width;
+			this.Height = Properties.CDResources.ConcurrentDraw.Height;
 
 			AboutLabel.Text = ProgramDescription.AssemblyTitle + "\n\n" + ProgramDescription.AssemblyDescription + "\n" +
 				"by " + ProgramDescription.AssemblyCopyright + "\nUpdated: " + ProgramDescription.AssemblyLastUpdate;

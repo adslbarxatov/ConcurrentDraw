@@ -661,6 +661,10 @@ namespace ESHQSetupStub
 
 			LogoHeightPercentage.Enabled = LogoCenterXTrack.Enabled = LogoCenterYTrack.Enabled =
 				LogoCenterLabel.Enabled = VisualizationModesChecker.ContainsLogo (mode);
+
+			LogoCenterXTrack.Enabled = LogoCenterYTrack.Enabled =
+				LogoCenterXTrack.Visible = LogoCenterYTrack.Visible = !VisualizationModesChecker.IsPerspective (mode);
+			LogoCenterXTrack_ValueChanged (null, null);
 			}
 
 		/// <summary>
@@ -681,6 +685,9 @@ namespace ESHQSetupStub
 			{
 			get
 				{
+				if (VisualizationModesChecker.IsPerspective (parameters[SSN].VisualizationMode))
+					return 0.5;	// Принудительная центровка
+
 				return parameters[SSN].LogoCenterX / 100.0;
 				}
 			}
@@ -692,6 +699,9 @@ namespace ESHQSetupStub
 			{
 			get
 				{
+				if (VisualizationModesChecker.IsPerspective (parameters[SSN].VisualizationMode))
+					return 0.5;	// Принудительная центровка
+
 				return parameters[SSN].LogoCenterY / 100.0;
 				}
 			}
@@ -795,8 +805,8 @@ namespace ESHQSetupStub
 			{
 			LogoCenterLabel.Text = string.Format (Localization.GetText ("CDP_LogoCenterText", al),
 				LogoHeightPercentage.Value.ToString (),
-				(LogoCenterXTrack.Value / 100.0).ToString (),
-				((LogoCenterYTrack.Maximum - LogoCenterYTrack.Value) / 100.0).ToString ());
+				LogoCenterXTrack.Enabled ? (LogoCenterXTrack.Value / 100.0).ToString () : "0.5",
+				LogoCenterYTrack.Enabled ? ((LogoCenterYTrack.Maximum - LogoCenterYTrack.Value) / 100.0).ToString () : "0.5");
 			logoResetFlag = true;
 			}
 

@@ -44,8 +44,8 @@ namespace ESHQSetupStub
 
 		// Графика
 		private LogoDrawerLayer mainLayer;						// Базовый слой изображения
-		private ColorMatrix[] colorMatrix = new ColorMatrix[2];				// Полупрозрачные цветовые матрицы для спектрограмм
-		private ImageAttributes[] sgAttributes = new ImageAttributes[2];	// Атрибуты изображений спектрограмм
+		private ColorMatrix[] colorMatrix = new ColorMatrix[3];				// Полупрозрачные цветовые матрицы для спектрограмм
+		private ImageAttributes[] sgAttributes = new ImageAttributes[3];	// Атрибуты изображений спектрограмм
 
 		private List<Graphics> gr = new List<Graphics> ();		// Объекты-отрисовщики
 		private List<SolidBrush> brushes = new List<SolidBrush> ();
@@ -96,7 +96,6 @@ namespace ESHQSetupStub
 		private Bitmap firstBMP;
 		private Pen p;
 
-
 #if VIDEO
 		// Видео
 		private const double fps = 23.4375;						// Частота кадров видео 
@@ -104,21 +103,23 @@ namespace ESHQSetupStub
 
 		private VideoManager vm = new VideoManager ();			// Видеофайл (балластная инициализация)
 		private AudioManager amv;								// Аудиодорожка видео
-		private bool allowDemoText = false;						// Флаг фазы отрисовки текстовых подписей
 		private const uint fadeOutLength = 40;					// Длина эффекта fade out в кадрах
 		private Bitmap secondBMP;								// Отрисовочный кадр
+		private List<Bitmap> backgrounds = new List<Bitmap> ();	// Фоновые фреймы (если представлены)
+		private int backgroundsCounter = 0;						// Текущий фрейм видеофона
 
-#if DEMO_TEXT
-		private Font[] demoFonts = new Font[2];					// Объекты поддержки текстовых подписей на рендере
-		private string[] demoNames = new string[] { "Seraphim Project", 
-			//"Пусть сияет огонь",
-			"Парус",
-			//"В отражении кривых зеркал",
-			//"Под гнётом войны",
-			//"Средь тёмных улиц"
+#if SUBTITLES
+		private bool showSubtitlesNow = false;					// Флаг фазы отрисовки текстовых подписей
+
+		private Font[] subtitlesFonts = new Font[2];			// Объекты поддержки текстовых подписей на рендере
+		private string[] subtitles = new string[] 
+			{ 
+			"Density & Time",	// Исполнитель
+			"CHALLENGE"			// Название трека
 			};
-		private SizeF[] demoSizes = new SizeF[2];
-		private int demoTextBrushNumber = 1;
+		private SizeF[] subtitlesSizes = new SizeF[2];
+		private int subtitlesBrushNumber = 1;
+		private bool subtitlesRightAlign = false;
 #endif
 #endif
 
@@ -163,14 +164,17 @@ namespace ESHQSetupStub
 			mainLayer = new LogoDrawerLayer (0, 0, (uint)this.Width, (uint)this.Height);
 
 			colorMatrix[0] = new ColorMatrix ();
-			colorMatrix[0].Matrix33 = 0.9f;
+			colorMatrix[0].Matrix33 = 0.9f;						// Спектрограмма
 			colorMatrix[1] = new ColorMatrix ();
-			colorMatrix[1].Matrix33 = 0.5f;
+			colorMatrix[1].Matrix33 = 0.5f;						// Простая гистограмма
+			colorMatrix[2] = new ColorMatrix ();
+			colorMatrix[2].Matrix33 = fillingOpacity / 50.0f;	// Фоновое изображение
 
-			sgAttributes[0] = new ImageAttributes ();
-			sgAttributes[0].SetColorMatrix (colorMatrix[0], ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
-			sgAttributes[1] = new ImageAttributes ();
-			sgAttributes[1].SetColorMatrix (colorMatrix[1], ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+			for (int i = 0; i < colorMatrix.Length; i++)
+				{
+				sgAttributes[i] = new ImageAttributes ();
+				sgAttributes[i].SetColorMatrix (colorMatrix[i], ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+				}
 
 			// Формирование кистей
 			brushes.Add (new SolidBrush (ConcurrentDrawLib.GetColorFromPalette (0)));			// Фон
@@ -181,27 +185,75 @@ namespace ESHQSetupStub
 			this.BackColor = brushes[0].Color;
 			mainLayer.Descriptor.FillRectangle (brushes[0], 0, 0, this.Width, this.Height);
 
-			// Инициализация видеопотока
+
 #if VIDEO
+			// Настройка диалогов
 			SFVideo.Title = "Select placement of new video file";
-			SFVideo.Filter = "Audio-Video Interchange video format (*.avi)|*.avi";
-#if DEMO_TEXT
-			SFVideo.FileName = demoNames[1] + ".avi";
+			SFVideo.Filter = "Audio-Video Interchange video format|*.avi";
+#if SUBTITLES
+			SFVideo.FileName = subtitles[1] + ".avi";
 #else
 			SFVideo.FileName = "NewVideo.avi";
 #endif
 			OFAudio.Title = "Select audio file for rendering";
-			OFAudio.Filter = "Windows PCM audio files (*.wav)|*.wav";
+			OFAudio.Filter = "Windows PCM audio files|*.wav";
 
+			OFBackground.Title = "Select background file for rendering";
+			OFBackground.Filter = "Image files|*.bmp;*.png;*.jp*|" + SFVideo.Filter;
+
+			// Инициализация фона
+			if ((MessageBox.Show ("Load background file?", ProgramDescription.AssemblyTitle, MessageBoxButtons.YesNo,
+				MessageBoxIcon.Question) == DialogResult.Yes) && (OFBackground.ShowDialog () == DialogResult.OK))
+				{
+				switch (OFBackground.FilterIndex)
+					{
+					// Статичный фрейм
+					case 1:
+						try
+							{
+							secondBMP = (Bitmap)Bitmap.FromFile (OFBackground.FileName);
+							backgrounds.Add ((Bitmap)secondBMP.Clone ());
+							secondBMP.Dispose ();
+							}
+						catch
+							{
+							MessageBox.Show ("Failed to load background image", ProgramDescription.AssemblyTitle,
+								 MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+							}
+						break;
+
+					// Видеофайл
+					case 2:
+						vm = new VideoManager (OFBackground.FileName);
+
+						if (!vm.IsOpened)
+							{
+							MessageBox.Show ("Failed to load background video", ProgramDescription.AssemblyTitle,
+								 MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+							break;
+							}
+
+						// Считывание кадров
+						for (uint i = 0; i < vm.FramesCount; i++)
+							backgrounds.Add (vm.GetFrame (i));
+
+						// Завершение
+						vm.Dispose ();
+						break;
+					}
+				}
+
+			// Инициализация видеопотока
 			switch (MessageBox.Show ("Write frames to AVI ('No' opens audio only)?", ProgramDescription.AssemblyTitle,
-				MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button3))
+				MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question))
 				{
 				case DialogResult.Yes:
+				case DialogResult.OK:
 					if ((SFVideo.ShowDialog () == DialogResult.OK) && (OFAudio.ShowDialog () == DialogResult.OK))
 						{
 						vm = new VideoManager (SFVideo.FileName, fps, mainLayer.Layer, true);
 
-						if (!vm.IsInited)
+						if (!vm.IsCreated)
 							{
 							MessageBox.Show ("Failed to initialize AVI stream", ProgramDescription.AssemblyTitle,
 								 MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
@@ -224,9 +276,10 @@ namespace ESHQSetupStub
 					this.Close ();
 					return;
 				}
+
 #endif
 
-			// Запуск аудиоканала
+			// Запуск аудиозахвата
 			switch (InitializeAudioStream ())
 				{
 				case 1:
@@ -241,7 +294,7 @@ namespace ESHQSetupStub
 
 			// Настройка окна
 #if VIDEO
-			if (vm.IsInited)
+			if (vm.IsCreated)
 				{
 				secondBMP = new Bitmap (this.Width, this.Height);
 				gr.Add (Graphics.FromImage (secondBMP));
@@ -255,17 +308,15 @@ namespace ESHQSetupStub
 
 #if VIDEO
 			// Подготовка параметров
-#if DEMO_TEXT
-			demoFonts[0] = new Font ("a_GroticNr", this.Width / 55, FontStyle.Bold);
-			demoFonts[1] = new Font ("a_GroticNr", this.Width / 45, FontStyle.Bold);
-			for (int i = 0; i < demoNames.Length; i++)
-				{
-				demoSizes[i] = gr[0].MeasureString (demoNames[i], demoFonts[i]);
-				}
+#if SUBTITLES
+			subtitlesFonts[0] = new Font ("a_GroticNr", this.Width / 55, FontStyle.Bold);
+			subtitlesFonts[1] = new Font ("a_GroticNr", this.Width / 45, FontStyle.Bold);
+			for (int i = 0; i < subtitles.Length; i++)
+				subtitlesSizes[i] = gr[0].MeasureString (subtitles[i], subtitlesFonts[i]);
 #endif
 
 			// Запуск рендеринга
-			if (vm.IsInited)
+			if (vm.IsCreated)
 				{
 				HardWorkExecutor hwe = new HardWorkExecutor (RenderVideo, "Total count of frames", "Rendering...");
 
@@ -289,7 +340,7 @@ namespace ESHQSetupStub
 			int result = -1;
 			SoundStreamInitializationErrors ssie;
 #if VIDEO
-			if (vm.IsInited || (OFAudio.FileName != ""))
+			if (vm.IsCreated || (OFAudio.FileName != ""))
 				ssie = ConcurrentDrawLib.InitializeSoundStream (OFAudio.FileName);
 			else
 #endif
@@ -470,8 +521,8 @@ namespace ESHQSetupStub
 				// Отрисовка
 				ExtendedTimer_Tick (null, null);
 
-#if DEMO_TEXT
-				allowDemoText = (i >= 375) && (i <= 525);
+#if SUBTITLES
+				showSubtitlesNow = (i >= 375) && (i <= 525);
 #endif
 
 				// Возврат прогресса
@@ -526,9 +577,9 @@ namespace ESHQSetupStub
 					objects[i].Dispose ();
 
 					// Обновление зависимых параметров
-					objectsMetrics.MinSpeed = objectsMetrics.MaxSpeed = cumulation + 3;
-					//objectsMetrics.MinSpeed = objectsMetrics.MaxSpeed / 100;
-					objectsMetrics.MaxSize = objectsMetrics.MinSize + objectsMetrics.MaxSpeed / 7;
+					objectsMetrics.MaxSpeed = 10 + cumulation;
+					objectsMetrics.MinSpeed = 3;
+					objectsMetrics.MaxSize = 5 + cumulation / 12;
 					objectsMetrics.PolygonsSidesCount = (byte)rnd.Next (5, 8);
 
 					switch (objectsMetrics.ObjectsType)
@@ -577,7 +628,7 @@ namespace ESHQSetupStub
 
 			// Отрисовка
 #if VIDEO
-			if (vm.IsInited)
+			if (vm.IsCreated)
 				{
 				firstBMP = (Bitmap)secondBMP.Clone ();
 				vm.AddFrame (firstBMP);
@@ -599,11 +650,25 @@ namespace ESHQSetupStub
 			gr[1].DrawImage (logo[0], -3 * logoHeight / 5, -3 * logoHeight / 5);
 
 			// Перекрытие старой отрисовки (необходимо из-за прозрачности лого)
+#if VIDEO
+			if (backgrounds.Count > 0)
+				{
+				mainLayer.Descriptor.DrawImage (backgrounds[backgroundsCounter],
+					new Rectangle (0, 0, this.Width, this.Height),
+					0, 0, backgrounds[backgroundsCounter].Width, backgrounds[backgroundsCounter].Height,
+					GraphicsUnit.Pixel, sgAttributes[2]);
+
+				if (++backgroundsCounter >= backgrounds.Count)
+					backgroundsCounter = 0;
+				}
+			else
+#endif
+
 			if (VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode) && (this.Height - cdp.SpectrogramHeight > 0))
 #if OBJECTS
 				mainLayer.Descriptor.FillRectangle (brushes[2], 0, 0, this.Width, this.Height - cdp.SpectrogramHeight);
 #else
-				mainLayer.Descriptor.FillRectangle (brushes[0], 0, 0, this.Width, this.Height - cdp.SpectrogramHeight);
+					mainLayer.Descriptor.FillRectangle (brushes[0], 0, 0, this.Width, this.Height - cdp.SpectrogramHeight);
 #endif
 
 			// Обработка режима "только лого"
@@ -688,13 +753,30 @@ namespace ESHQSetupStub
 				}
 
 			// Затенение изображения / кумулятивный эффект
+#if VIDEO
+			if (backgrounds.Count == 0)
+#endif
 			mainLayer.Descriptor.FillRectangle (brushes[2], 0, 0, mainLayer.Layer.Width, mainLayer.Layer.Height);
+#if VIDEO
+			else
+				{
+				mainLayer.Descriptor.DrawImage (backgrounds[backgroundsCounter],
+								new Rectangle (0, 0, this.Width, this.Height),
+								0, 0, backgrounds[backgroundsCounter].Width, backgrounds[backgroundsCounter].Height,
+								GraphicsUnit.Pixel, sgAttributes[2]);
+
+				if (++backgroundsCounter >= backgrounds.Count)
+					backgroundsCounter = 0;
+				}
+#endif
 
 			// Обработка вращения гистограммы
 			if (cdp.HistoRotAccordingToBeats)
 				{
 				if (currentLogoAngleDelta < -logoIdleSpeed)
+					{
 					currentHistogramAngle -= (cdp.HistoRotSpeedDelta * currentLogoAngleDelta / logoSpeedImpulse);
+					}
 				}
 			else
 				{
@@ -770,7 +852,7 @@ namespace ESHQSetupStub
 			{
 #if VIDEO
 			// Ручное обновление кадра при записи
-			if (vm.IsInited || (OFAudio.FileName != ""))
+			if (vm.IsCreated || (OFAudio.FileName != ""))
 				ConcurrentDrawLib.UpdateFFTData ();
 #endif
 
@@ -833,14 +915,16 @@ namespace ESHQSetupStub
 				firstBMP.Dispose ();
 				}
 
-#if DEMO_TEXT
+#if SUBTITLES
 			// Отрисовка текстовых подписей
-			if (allowDemoText)
+			if (showSubtitlesNow)
 				{
-				mainLayer.Descriptor.DrawString (demoNames[0], demoFonts[0], brushes[demoTextBrushNumber],
-					this.Width - demoSizes[0].Width - 50, this.Height - demoSizes[0].Height - demoSizes[1].Height - 30);
-				mainLayer.Descriptor.DrawString (demoNames[1], demoFonts[1], brushes[demoTextBrushNumber],
-					this.Width - demoSizes[1].Width - 50, this.Height - demoSizes[1].Height - 30);
+				mainLayer.Descriptor.DrawString (subtitles[0], subtitlesFonts[0], brushes[subtitlesBrushNumber],
+					(subtitlesRightAlign ? (this.Width - subtitlesSizes[0].Width - 50) : 50),
+					this.Height - subtitlesSizes[0].Height - subtitlesSizes[1].Height - 30);
+				mainLayer.Descriptor.DrawString (subtitles[1], subtitlesFonts[1], brushes[subtitlesBrushNumber],
+					(subtitlesRightAlign ? (this.Width - subtitlesSizes[1].Width - 50) : 50),
+					this.Height - subtitlesSizes[1].Height - 30);
 				}
 #endif
 			}
@@ -901,6 +985,10 @@ namespace ESHQSetupStub
 #if VIDEO
 			if (secondBMP != null)
 				secondBMP.Dispose ();
+
+			for (int i = 0; i < backgrounds.Count; i++)
+				backgrounds[i].Dispose ();
+			backgrounds.Clear ();
 
 			// Попытка добавления аудио
 			amv = new AudioManager (SFVideo.FileName.Substring (0, SFVideo.FileName.Length - 4) + ".wav", false);
@@ -966,6 +1054,7 @@ namespace ESHQSetupStub
 
 				if (mainLayer != null)
 					mainLayer.Dispose ();
+
 				if (gr[0] != null)
 					{
 					gr[0].Dispose ();
@@ -1009,6 +1098,12 @@ namespace ESHQSetupStub
 				gr.RemoveAt (1);
 				}
 
+#if OBJECTS
+			for (int i = 0; i < objects.Count; i++)
+				objects[i].Dispose ();
+			objects.Clear ();
+#endif
+
 			for (int i = 0; i < logo.Count; i++)
 				logo[i].Dispose ();
 			logo.Clear ();
@@ -1026,7 +1121,7 @@ namespace ESHQSetupStub
 #if OBJECTS
 			// Обновление метрик графических объектов
 			objectsMetrics.Acceleration = false;
-			objectsMetrics.AsStars = false;
+			objectsMetrics.AsStars = true;
 			objectsMetrics.Enlarging = 0;
 			objectsMetrics.KeepTracks = false;
 			objectsMetrics.MaxRed = ConcurrentDrawLib.GetColorFromPalette (255).R;
@@ -1035,12 +1130,12 @@ namespace ESHQSetupStub
 			objectsMetrics.MinRed = ConcurrentDrawLib.GetColorFromPalette (224).R;
 			objectsMetrics.MinGreen = ConcurrentDrawLib.GetColorFromPalette (224).G;
 			objectsMetrics.MinBlue = ConcurrentDrawLib.GetColorFromPalette (224).B;
-			objectsMetrics.MinSize = logoHeight / 50;
+			objectsMetrics.MinSize = 1;
 			objectsMetrics.ObjectsCount = 15;
-			objectsMetrics.ObjectsType = LogoDrawerObjectTypes.Polygons;
+			objectsMetrics.ObjectsType = LogoDrawerObjectTypes.RotatingStars;
 			objectsMetrics.Rotation = true;
-			objectsMetrics.StartupPosition = LogoDrawerObjectStartupPositions.CenterRandom;
-			objectsMetrics.MaxSpeedFluctuation = 0;
+			objectsMetrics.StartupPosition = LogoDrawerObjectStartupPositions.Right;
+			objectsMetrics.MaxSpeedFluctuation = 2;
 
 			for (int i = 0; i < objectsMetrics.ObjectsCount; i++)
 				objects.Add (new LogoDrawerLetter (0, 0, null, objectsMetrics));
