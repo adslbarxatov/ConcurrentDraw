@@ -654,7 +654,7 @@ namespace ESHQSetupStub
 			VisualizationModes mode = (VisualizationModes)VisualizationCombo.SelectedIndex;
 
 			SGHGHeightLabel.Enabled = SDHeight.Enabled = VisualizationModesChecker.ContainsSGHGorWF (mode);
-			CumulationTab.Enabled = RotationTab.Enabled = !VisualizationModesChecker.ContainsSGHGorWF (mode);
+			RotationTab.Enabled = !VisualizationModesChecker.ContainsSGHGorWF (mode);
 
 			HGRangeLabel.Enabled = HistogramRangeCombo.Enabled = !VisualizationModesChecker.ContainsSGonly (mode);
 			SDDoubleWidthFlag.Enabled = VisualizationModesChecker.ContainsSGorWF (mode);

@@ -97,6 +97,13 @@ namespace ESHQSetupStub
 		private Pen p;
 
 #if VIDEO
+		// Субтитры
+		private bool showSubtitlesNow = false;					// Флаг фазы отрисовки текстовых подписей
+		private Font[] subtitlesFonts = new Font[2];			// Объекты поддержки текстовых подписей на рендере
+		private SizeF[] subtitlesSizes = new SizeF[2];
+		private int subtitlesBrushNumber = 1;					// Номер кисти субтитров
+		private bool subtitlesRightAlign = false;				// Выравнивание субтитров
+
 		// Видео
 		private const double fps = 23.4375;						// Частота кадров видео 
 		// определена по аудио как (48000 Hz * 2 ch * 16 bps) / (8 * sizeof (float) * 2048 fftv)
@@ -108,19 +115,7 @@ namespace ESHQSetupStub
 		private List<Bitmap> backgrounds = new List<Bitmap> ();	// Фоновые фреймы (если представлены)
 		private int backgroundsCounter = 0;						// Текущий фрейм видеофона
 
-#if SUBTITLES
-		private bool showSubtitlesNow = false;					// Флаг фазы отрисовки текстовых подписей
-
-		private Font[] subtitlesFonts = new Font[2];			// Объекты поддержки текстовых подписей на рендере
-		private string[] subtitles = new string[] 
-			{ 
-			"Density & Time",	// Исполнитель
-			"CHALLENGE"			// Название трека
-			};
-		private SizeF[] subtitlesSizes = new SizeF[2];
-		private int subtitlesBrushNumber = 1;
-		private bool subtitlesRightAlign = false;
-#endif
+		private ParametersPicker pp = new ParametersPicker (false);		// Параметры рендеринга
 #endif
 
 		/// <summary>
@@ -187,14 +182,15 @@ namespace ESHQSetupStub
 
 
 #if VIDEO
+			// Запрос параметров рендеринга
+			this.TopMost = false;
+			pp.ShowDialog ();
+
 			// Настройка диалогов
 			SFVideo.Title = "Select placement of new video file";
 			SFVideo.Filter = "Audio-Video Interchange video format|*.avi";
-#if SUBTITLES
-			SFVideo.FileName = subtitles[1] + ".avi";
-#else
-			SFVideo.FileName = "NewVideo.avi";
-#endif
+			SFVideo.FileName = pp.SubtitlesStrings[0] + ".avi";
+
 			OFAudio.Title = "Select audio file for rendering";
 			OFAudio.Filter = "Windows PCM audio files|*.wav";
 
@@ -202,8 +198,7 @@ namespace ESHQSetupStub
 			OFBackground.Filter = "Image files|*.bmp;*.png;*.jp*|" + SFVideo.Filter;
 
 			// Инициализация фона
-			if ((MessageBox.Show ("Load background file?", ProgramDescription.AssemblyTitle, MessageBoxButtons.YesNo,
-				MessageBoxIcon.Question) == DialogResult.Yes) && (OFBackground.ShowDialog () == DialogResult.OK))
+			if (pp.LoadBackground && (OFBackground.ShowDialog () == DialogResult.OK))
 				{
 				switch (OFBackground.FilterIndex)
 					{
@@ -244,37 +239,30 @@ namespace ESHQSetupStub
 				}
 
 			// Инициализация видеопотока
-			switch (MessageBox.Show ("Write frames to AVI ('No' opens audio only)?", ProgramDescription.AssemblyTitle,
-				MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question))
+			if (pp.WriteFramesToAVI)
 				{
-				case DialogResult.Yes:
-				case DialogResult.OK:
-					if ((SFVideo.ShowDialog () == DialogResult.OK) && (OFAudio.ShowDialog () == DialogResult.OK))
+				if ((SFVideo.ShowDialog () == DialogResult.OK) && (OFAudio.ShowDialog () == DialogResult.OK))
+					{
+					vm = new VideoManager (SFVideo.FileName, fps, mainLayer.Layer, true);
+
+					if (!vm.IsCreated)
 						{
-						vm = new VideoManager (SFVideo.FileName, fps, mainLayer.Layer, true);
-
-						if (!vm.IsCreated)
-							{
-							MessageBox.Show ("Failed to initialize AVI stream", ProgramDescription.AssemblyTitle,
-								 MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-							this.Close ();
-							return;
-							}
-						else
-							{
-							this.TopMost = false;
-							}
+						MessageBox.Show ("Failed to initialize AVI stream", ProgramDescription.AssemblyTitle,
+							 MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+						this.Close ();
+						return;
 						}
-					break;
-
-				case DialogResult.No:
-					if (OFAudio.ShowDialog () != DialogResult.OK)
-						OFAudio.FileName = "";
-					break;
-
-				case DialogResult.Cancel:
+					}
+				else
+					{
 					this.Close ();
 					return;
+					}
+				}
+			else
+				{
+				if (OFAudio.ShowDialog () != DialogResult.OK)
+					OFAudio.FileName = "";
 				}
 
 #endif
@@ -308,12 +296,10 @@ namespace ESHQSetupStub
 
 #if VIDEO
 			// Подготовка параметров
-#if SUBTITLES
 			subtitlesFonts[0] = new Font ("a_GroticNr", this.Width / 55, FontStyle.Bold);
 			subtitlesFonts[1] = new Font ("a_GroticNr", this.Width / 45, FontStyle.Bold);
-			for (int i = 0; i < subtitles.Length; i++)
-				subtitlesSizes[i] = gr[0].MeasureString (subtitles[i], subtitlesFonts[i]);
-#endif
+			for (int i = 0; i < pp.SubtitlesStrings.Length; i++)
+				subtitlesSizes[i] = gr[0].MeasureString (pp.SubtitlesStrings[i], subtitlesFonts[i]);
 
 			// Запуск рендеринга
 			if (vm.IsCreated)
@@ -521,9 +507,7 @@ namespace ESHQSetupStub
 				// Отрисовка
 				ExtendedTimer_Tick (null, null);
 
-#if SUBTITLES
 				showSubtitlesNow = (i >= 375) && (i <= 525);
-#endif
 
 				// Возврат прогресса
 				((BackgroundWorker)sender).ReportProgress ((int)HardWorkExecutor.ProgressBarSize * i / (int)length,
@@ -649,37 +633,12 @@ namespace ESHQSetupStub
 			currentLogoAngle = (currentLogoAngle + currentLogoAngleDelta / 3) % 360;
 			gr[1].DrawImage (logo[0], -3 * logoHeight / 5, -3 * logoHeight / 5);
 
-			// Перекрытие старой отрисовки (необходимо из-за прозрачности лого)
-#if VIDEO
-			if (backgrounds.Count > 0)
-				{
-				mainLayer.Descriptor.DrawImage (backgrounds[backgroundsCounter],
-					new Rectangle (0, 0, this.Width, this.Height),
-					0, 0, backgrounds[backgroundsCounter].Width, backgrounds[backgroundsCounter].Height,
-					GraphicsUnit.Pixel, sgAttributes[2]);
-
-				if (++backgroundsCounter >= backgrounds.Count)
-					backgroundsCounter = 0;
-				}
-			else
-#endif
-
-			if (VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode) && (this.Height - cdp.SpectrogramHeight > 0))
-#if OBJECTS
-				mainLayer.Descriptor.FillRectangle (brushes[2], 0, 0, this.Width, this.Height - cdp.SpectrogramHeight);
-#else
-					mainLayer.Descriptor.FillRectangle (brushes[0], 0, 0, this.Width, this.Height - cdp.SpectrogramHeight);
-#endif
-
 			// Обработка режима "только лого"
 			if (cdp.VisualizationMode == VisualizationModes.Logo_only)
 				{
 				// Ручной перебор амплитуд для поддержки бит-детектора
 				for (uint i = 0; i < 256; i++)
 					ConcurrentDrawLib.GetScaledAmplitude (i);
-
-				mainLayer.Descriptor.FillRectangle (brushes[0], logoCenterX - logo[1].Width / 2, logoCenterY - logo[1].Height / 2,
-					logo[1].Width, logo[1].Height);
 				}
 
 			// Отрисовка лого
@@ -729,11 +688,12 @@ namespace ESHQSetupStub
 				}
 			}
 
-		// Метод отрисовывает гистограммы «бабочка» и «перспектива»
-		private void DrawButterflyAndPerspective ()
+		// Метод обрабатывает кумулятивный эффект и затенение изображения
+		private void ApplyCumulativeEffect (bool MaxFilling)
 			{
 			// Обработка кумулятивного значения
 			uint oldCC = cumulationCounter;
+
 			if (cdp.DecumulationSpeed != cdp.CumulationSpeed)
 				{
 				if (cumulationCounter > cdp.DecumulationSpeed)
@@ -748,16 +708,27 @@ namespace ESHQSetupStub
 
 			if ((cumulationCounter / cumulationDivisor) != (oldCC / cumulationDivisor))	// Целочисленное деление обязательно
 				{
-				brushes[2].Color = Color.FromArgb (fillingOpacity,
+				brushes[2].Color = Color.FromArgb (fillingOpacity * (MaxFilling ? 6 : 1),
 					ConcurrentDrawLib.GetMasterPaletteColor ((byte)(cumulationCounter / cumulationDivisor)));
 				}
 
 			// Затенение изображения / кумулятивный эффект
 #if VIDEO
 			if (backgrounds.Count == 0)
+				{
 #endif
-			mainLayer.Descriptor.FillRectangle (brushes[2], 0, 0, mainLayer.Layer.Width, mainLayer.Layer.Height);
+			if (VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode))
+				{
+				if (this.Height - cdp.SpectrogramHeight > 0)
+					mainLayer.Descriptor.FillRectangle (brushes[2], 0, 0, mainLayer.Layer.Width,
+						mainLayer.Layer.Height - cdp.SpectrogramHeight);
+				}
+			else
+				{
+				mainLayer.Descriptor.FillRectangle (brushes[2], 0, 0, mainLayer.Layer.Width, mainLayer.Layer.Height);
+				}
 #if VIDEO
+				}
 			else
 				{
 				mainLayer.Descriptor.DrawImage (backgrounds[backgroundsCounter],
@@ -769,6 +740,13 @@ namespace ESHQSetupStub
 					backgroundsCounter = 0;
 				}
 #endif
+			}
+
+		// Метод отрисовывает гистограммы «бабочка» и «перспектива»
+		private void DrawButterflyAndPerspective ()
+			{
+			// Затенение и кумулятивный эффект
+			ApplyCumulativeEffect (VisualizationModesChecker.IsPerspective (cdp.VisualizationMode));
 
 			// Обработка вращения гистограммы
 			if (cdp.HistoRotAccordingToBeats)
@@ -869,6 +847,11 @@ namespace ESHQSetupStub
 			if (VisualizationModesChecker.IsButterfly (cdp.VisualizationMode))
 				DrawButterflyAndPerspective ();
 
+			// Затенение и кумулятивный эффект для остальных режимов
+			if (VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode) ||
+				(cdp.VisualizationMode == VisualizationModes.Logo_only))
+				ApplyCumulativeEffect (true);
+
 			// Отрисовка лого при необходимости
 			if (VisualizationModesChecker.ContainsLogo (cdp.VisualizationMode))
 				{
@@ -915,16 +898,18 @@ namespace ESHQSetupStub
 				firstBMP.Dispose ();
 				}
 
-#if SUBTITLES
+#if VIDEO
 			// Отрисовка текстовых подписей
 			if (showSubtitlesNow)
 				{
-				mainLayer.Descriptor.DrawString (subtitles[0], subtitlesFonts[0], brushes[subtitlesBrushNumber],
-					(subtitlesRightAlign ? (this.Width - subtitlesSizes[0].Width - 50) : 50),
-					this.Height - subtitlesSizes[0].Height - subtitlesSizes[1].Height - 30);
-				mainLayer.Descriptor.DrawString (subtitles[1], subtitlesFonts[1], brushes[subtitlesBrushNumber],
-					(subtitlesRightAlign ? (this.Width - subtitlesSizes[1].Width - 50) : 50),
-					this.Height - subtitlesSizes[1].Height - 30);
+				if (pp.SubtitlesStrings[0] != "")
+					mainLayer.Descriptor.DrawString (pp.SubtitlesStrings[0], subtitlesFonts[0], brushes[subtitlesBrushNumber],
+						(subtitlesRightAlign ? (this.Width - subtitlesSizes[0].Width - 50) : 50),
+						this.Height - subtitlesSizes[0].Height - subtitlesSizes[1].Height - 30);
+				if (pp.SubtitlesStrings[1] != "")
+					mainLayer.Descriptor.DrawString (pp.SubtitlesStrings[1], subtitlesFonts[1], brushes[subtitlesBrushNumber],
+						(subtitlesRightAlign ? (this.Width - subtitlesSizes[1].Width - 50) : 50),
+						this.Height - subtitlesSizes[1].Height - 30);
 				}
 #endif
 			}

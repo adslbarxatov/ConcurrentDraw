@@ -229,7 +229,7 @@ At first application will start with recommended settings. But you can change:
 • Frequencies range and amplitude (loudness) threshold for beats detector;
 • FFT scale multiplier (contrast) for spectrogram and histogram;
 • 'Always on top' window state (turns off when settings window is active);
-• Logo size;
+• Logo size and placement;
 • Cumulative effect parameters (background color filling);
 • Histogram rotation parameters;
 • Visualization shake effect.
