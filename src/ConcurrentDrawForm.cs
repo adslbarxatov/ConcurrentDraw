@@ -6,6 +6,7 @@ using System.Windows.Forms;
 
 #if VIDEO
 using System.ComponentModel;
+using System.IO;
 #endif
 
 // Классы
@@ -67,7 +68,8 @@ namespace ESHQSetupStub
 		private double currentHistogramAngle = 0.0;				// Текущий угол поворота гистограммы-бабочки
 		private uint logoHeight,								// Диаметр лого
 			logoCenterX, logoCenterY;							// Координаты центра лого
-		private const int fillingOpacity = 15;					// Непрозрачность эффекта fadeout
+		private const int fillingOpacity = 15;					// Непрозрачность кумулятивного эффекта и эффекта fadeout
+		private bool firstFilling = true;						// Флаг, указывающий на необходимость инициализации кисти фона
 
 		// Кумулятивный эффект
 		private byte peak;										// Пиковое значение для расчёта битовых порогов
@@ -102,7 +104,6 @@ namespace ESHQSetupStub
 		private Font[] subtitlesFonts = new Font[2];			// Объекты поддержки текстовых подписей на рендере
 		private SizeF[] subtitlesSizes = new SizeF[2];
 		private int subtitlesBrushNumber = 1;					// Номер кисти субтитров
-		private bool subtitlesRightAlign = false;				// Выравнивание субтитров
 
 		// Видео
 		private const double fps = 23.4375;						// Частота кадров видео 
@@ -174,7 +175,7 @@ namespace ESHQSetupStub
 			// Формирование кистей
 			brushes.Add (new SolidBrush (ConcurrentDrawLib.GetColorFromPalette (0)));			// Фон
 			brushes.Add (new SolidBrush (ConcurrentDrawLib.GetMasterPaletteColor ()));			// Лого и beat-детектор
-			brushes.Add (new SolidBrush (Color.FromArgb (fillingOpacity, brushes[0].Color)));	// Fade out
+			brushes.Add (new SolidBrush (Color.FromArgb (fillingOpacity, brushes[0].Color)));	// Fade out (переопределяется далее)
 
 			// Начальная инициализация слоёв (первый кадр)
 			this.BackColor = brushes[0].Color;
@@ -189,13 +190,13 @@ namespace ESHQSetupStub
 			// Настройка диалогов
 			SFVideo.Title = "Select placement of new video file";
 			SFVideo.Filter = "Audio-Video Interchange video format|*.avi";
-			SFVideo.FileName = pp.SubtitlesStrings[0] + ".avi";
+			SFVideo.FileName = pp.SubtitlesStrings[1] + ".avi";
 
 			OFAudio.Title = "Select audio file for rendering";
 			OFAudio.Filter = "Windows PCM audio files|*.wav";
 
 			OFBackground.Title = "Select background file for rendering";
-			OFBackground.Filter = "Image files|*.bmp;*.png;*.jp*|" + SFVideo.Filter;
+			OFBackground.Filter = "Image file|*.png|Image files set, including this one|*.png|" + SFVideo.Filter;
 
 			// Инициализация фона
 			if (pp.LoadBackground && (OFBackground.ShowDialog () == DialogResult.OK))
@@ -217,8 +218,41 @@ namespace ESHQSetupStub
 							}
 						break;
 
-					// Видеофайл
+					// Набор статичных фреймов
 					case 2:
+						// Запрос списка
+						string[] files = null;
+
+						try
+							{
+							files = Directory.GetFiles (Path.GetDirectoryName (OFBackground.FileName),
+								"*.png", SearchOption.TopDirectoryOnly);
+							}
+						catch
+							{
+							MessageBox.Show ("Failed to load background images set", ProgramDescription.AssemblyTitle,
+								 MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+							break;
+							}
+
+						// Загрузка фреймов
+						for (int i = 0; i < files.Length; i++)
+							{
+							try
+								{
+								secondBMP = (Bitmap)Bitmap.FromFile (files[i]);
+								backgrounds.Add ((Bitmap)secondBMP.Clone ());
+								secondBMP.Dispose ();
+								}
+							catch
+								{
+								// Пропускаем
+								}
+							}
+						break;
+
+					// Видеофайл
+					case 3:
 						vm = new VideoManager (OFBackground.FileName);
 
 						if (!vm.IsOpened)
@@ -292,7 +326,7 @@ namespace ESHQSetupStub
 				{
 				gr.Add (Graphics.FromHwnd (this.Handle));
 				}
-				ResetLogo ();
+			ResetLogo ();
 
 #if VIDEO
 			// Подготовка параметров
@@ -312,11 +346,11 @@ namespace ESHQSetupStub
 				}
 			else
 #endif
-				// Запуск таймера
-					{
-					ExtendedTimer.Enabled = true;
-					}
-					this.Activate ();
+			// Запуск таймера
+				{
+				ExtendedTimer.Enabled = true;
+				}
+			this.Activate ();
 			}
 
 		// Метод инициализирует аудиоканал
@@ -330,7 +364,7 @@ namespace ESHQSetupStub
 				ssie = ConcurrentDrawLib.InitializeSoundStream (OFAudio.FileName);
 			else
 #endif
-			ssie = ConcurrentDrawLib.InitializeSoundStream (cdp.DeviceNumber);
+				ssie = ConcurrentDrawLib.InitializeSoundStream (cdp.DeviceNumber);
 			switch (ssie)
 				{
 				case SoundStreamInitializationErrors.BASS_ERROR_ALREADY:
@@ -561,9 +595,9 @@ namespace ESHQSetupStub
 					objects[i].Dispose ();
 
 					// Обновление зависимых параметров
-					objectsMetrics.MaxSpeed = 10 + cumulation;
-					objectsMetrics.MinSpeed = 3;
-					objectsMetrics.MaxSize = 5 + cumulation / 12;
+					objectsMetrics.MaxSpeed = objectsMetrics.MinSpeed = 5 + cumulation;
+					//objectsMetrics.MinSpeed = 3;
+					objectsMetrics.MaxSize = 3;	//+cumulation / 10;
 					objectsMetrics.PolygonsSidesCount = (byte)rnd.Next (5, 8);
 
 					switch (objectsMetrics.ObjectsType)
@@ -706,7 +740,8 @@ namespace ESHQSetupStub
 				cumulationCounter = 0;
 				}
 
-			if ((cumulationCounter / cumulationDivisor) != (oldCC / cumulationDivisor))	// Целочисленное деление обязательно
+			if (((cumulationCounter / cumulationDivisor) != (oldCC / cumulationDivisor)) ||	// Целочисленное деление обязательно
+				firstFilling)	// Отвечает за правильное применение фона при старте программы
 				{
 				brushes[2].Color = Color.FromArgb (fillingOpacity * (MaxFilling ? 6 : 1),
 					ConcurrentDrawLib.GetMasterPaletteColor ((byte)(cumulationCounter / cumulationDivisor)));
@@ -714,19 +749,19 @@ namespace ESHQSetupStub
 
 			// Затенение изображения / кумулятивный эффект
 #if VIDEO
-			if (backgrounds.Count == 0)
+			if ((backgrounds.Count == 0) || firstFilling)
 				{
 #endif
-			if (VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode))
-				{
-				if (this.Height - cdp.SpectrogramHeight > 0)
-					mainLayer.Descriptor.FillRectangle (brushes[2], 0, 0, mainLayer.Layer.Width,
-						mainLayer.Layer.Height - cdp.SpectrogramHeight);
-				}
-			else
-				{
-				mainLayer.Descriptor.FillRectangle (brushes[2], 0, 0, mainLayer.Layer.Width, mainLayer.Layer.Height);
-				}
+				if (VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode))
+					{
+					if (this.Height - cdp.SpectrogramHeight > 0)
+						mainLayer.Descriptor.FillRectangle (brushes[2], 0, 0, mainLayer.Layer.Width,
+							mainLayer.Layer.Height - cdp.SpectrogramHeight);
+					}
+				else
+					{
+					mainLayer.Descriptor.FillRectangle (brushes[2], 0, 0, mainLayer.Layer.Width, mainLayer.Layer.Height);
+					}
 #if VIDEO
 				}
 			else
@@ -740,6 +775,10 @@ namespace ESHQSetupStub
 					backgroundsCounter = 0;
 				}
 #endif
+
+			// Завершение
+			if (firstFilling)
+				firstFilling = false;
 			}
 
 		// Метод отрисовывает гистограммы «бабочка» и «перспектива»
@@ -904,11 +943,11 @@ namespace ESHQSetupStub
 				{
 				if (pp.SubtitlesStrings[0] != "")
 					mainLayer.Descriptor.DrawString (pp.SubtitlesStrings[0], subtitlesFonts[0], brushes[subtitlesBrushNumber],
-						(subtitlesRightAlign ? (this.Width - subtitlesSizes[0].Width - 50) : 50),
+						(pp.RightStringsAlignment ? (this.Width - subtitlesSizes[0].Width - 50) : 50),
 						this.Height - subtitlesSizes[0].Height - subtitlesSizes[1].Height - 30);
 				if (pp.SubtitlesStrings[1] != "")
 					mainLayer.Descriptor.DrawString (pp.SubtitlesStrings[1], subtitlesFonts[1], brushes[subtitlesBrushNumber],
-						(subtitlesRightAlign ? (this.Width - subtitlesSizes[1].Width - 50) : 50),
+						(pp.RightStringsAlignment ? (this.Width - subtitlesSizes[1].Width - 50) : 50),
 						this.Height - subtitlesSizes[1].Height - 30);
 				}
 #endif
@@ -1106,7 +1145,7 @@ namespace ESHQSetupStub
 #if OBJECTS
 			// Обновление метрик графических объектов
 			objectsMetrics.Acceleration = false;
-			objectsMetrics.AsStars = true;
+			objectsMetrics.AsStars = false;
 			objectsMetrics.Enlarging = 0;
 			objectsMetrics.KeepTracks = false;
 			objectsMetrics.MaxRed = ConcurrentDrawLib.GetColorFromPalette (255).R;
@@ -1117,9 +1156,9 @@ namespace ESHQSetupStub
 			objectsMetrics.MinBlue = ConcurrentDrawLib.GetColorFromPalette (224).B;
 			objectsMetrics.MinSize = 1;
 			objectsMetrics.ObjectsCount = 15;
-			objectsMetrics.ObjectsType = LogoDrawerObjectTypes.RotatingStars;
+			objectsMetrics.ObjectsType = LogoDrawerObjectTypes.RotatingPolygons;
 			objectsMetrics.Rotation = true;
-			objectsMetrics.StartupPosition = LogoDrawerObjectStartupPositions.Right;
+			objectsMetrics.StartupPosition = LogoDrawerObjectStartupPositions.CenterRandom;
 			objectsMetrics.MaxSpeedFluctuation = 2;
 
 			for (int i = 0; i < objectsMetrics.ObjectsCount; i++)

@@ -163,32 +163,37 @@ namespace ESHQSetupStub
 		/// <summary>
 		/// Статичная спектрограмма с курсором
 		/// </summary>
-		StaticSpectrogram = 1,
+		StaticSpectrogram,
 
 		/// <summary>
 		/// Движущаяся спектрограмма
 		/// </summary>
-		MovingSpectrogram = 2,
+		MovingSpectrogram,
+
+		/// <summary>
+		/// Симметричная вижущаяся спектрограмма
+		/// </summary>
+		SymmetricMovingSpectrogram,
 
 		/// <summary>
 		/// Гистограмма
 		/// </summary>
-		Histogram = 3,
+		Histogram,
 
 		/// <summary>
 		/// Симметричная гистограмма
 		/// </summary>
-		SymmetricHistogram = 4,
+		SymmetricHistogram,
 
 		/// <summary>
 		/// Статичная волновая форма
 		/// </summary>
-		StaticAmplitude = 5,
+		StaticAmplitude,
 
 		/// <summary>
 		/// Движущаяся волновая форма
 		/// </summary>
-		MovingAmplitude = 6
+		MovingAmplitude
 		}
 
 	/// <summary>

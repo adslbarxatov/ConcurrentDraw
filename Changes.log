@@ -254,3 +254,10 @@ Version 1.30.2:
 • Cumulative effect opened for spectrograms and histograms;
 • Fadeout effect's code reviewed;
 • Renderer's code reviewed
+
+Version 1.31:
+• Added ability to render separated PNG frames as video background
+
+Version 1.31.1:
+• Runtime updater's code reviewed;
+• Symmetric moving spectrogram mode added

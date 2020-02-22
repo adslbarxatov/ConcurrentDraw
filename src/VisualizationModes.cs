@@ -13,82 +13,92 @@
 		/// <summary>
 		/// Движущаяся спектрограмма со встроенным лого
 		/// </summary>
-		Moving_spectrogram = 1,
+		Moving_spectrogram,
+
+		/// <summary>
+		/// Симметричная движущаяся спектрограмма со встроенным лого
+		/// </summary>
+		Symmetric_moving_spectrogram,
 
 		/// <summary>
 		/// Гистограмма со встроенным лого
 		/// </summary>
-		Histogram = 2,
+		Histogram,
 
 		/// <summary>
 		/// Симметричная гистограмма со встроенным лого
 		/// </summary>
-		Symmetric_histogram = 3,
+		Symmetric_histogram,
 
 		/// <summary>
 		/// Гистограмма «бабочка» со встроенным лого
 		/// </summary>
-		Butterfly_histogram = 4,
+		Butterfly_histogram,
 
 		/// <summary>
 		/// Гистограмма-перспектива со встроенным лого
 		/// </summary>
-		Perspective_histogram = 5,
+		Perspective_histogram,
 
 		/// <summary>
 		/// Статичная амплитудная с курсором со встроенным лого
 		/// </summary>
-		Static_amplitude = 6,
+		Static_amplitude,
 
 		/// <summary>
 		/// Движущаяся амплитудная со встроенным лого
 		/// </summary>
-		Moving_amplitude = 7,
+		Moving_amplitude,	// 8
 
 		/// <summary>
 		/// Статичная спектрограмма с курсором без лого
 		/// </summary>
-		Static_spectrogram_without_logo = 8,
+		Static_spectrogram_without_logo,
 
 		/// <summary>
 		/// Движущаяся спектрограмма без лого
 		/// </summary>
-		Moving_spectrogram_without_logo = 9,
+		Moving_spectrogram_without_logo,
+
+		/// <summary>
+		/// Симметричная движущаяся спектрограмма без лого
+		/// </summary>
+		Symmetric_moving_spectrogram_without_logo,
 
 		/// <summary>
 		/// Гистограмма без лого
 		/// </summary>
-		Histogram_without_logo = 10,
+		Histogram_without_logo,
 
 		/// <summary>
 		/// Симметричная гистограмма без лого
 		/// </summary>
-		Symmetric_histogram_without_logo = 11,
+		Symmetric_histogram_without_logo,
 
 		/// <summary>
 		/// Гистограмма «бабочка» без лого
 		/// </summary>
-		Butterfly_histogram_without_logo = 12,
+		Butterfly_histogram_without_logo,
 
 		/// <summary>
 		/// Гистограмма-перспектива без лого
 		/// </summary>
-		Perspective_histogram_without_logo = 13,
+		Perspective_histogram_without_logo,
 
 		/// <summary>
 		/// Статичная амплитудная с курсором без лого
 		/// </summary>
-		Static_amplitude_without_logo = 14,
+		Static_amplitude_without_logo,
 
 		/// <summary>
 		/// Движущаяся амплитудная без лого
 		/// </summary>
-		Moving_amplitude_without_logo = 15,
+		Moving_amplitude_without_logo,
 
 		/// <summary>
 		/// Только лого 
 		/// </summary>
-		Logo_only = 16
+		Logo_only	// 18
 		}
 
 	/// <summary>
@@ -100,9 +110,9 @@
 		/// Количество доступных режимов визуализации
 		/// </summary>
 #if ALL_MODES
-		public const uint VisualizationModesCount = 17;
+		public const uint VisualizationModesCount = 19;
 #else
-		public const uint VisualizationModesCount = 8;
+		public const uint VisualizationModesCount = 9;
 #endif
 
 		/// <summary>
@@ -132,6 +142,10 @@
 				case VisualizationModes.Moving_spectrogram_without_logo:
 				case VisualizationModes.Moving_spectrogram:
 					return SpectrogramModes.MovingSpectrogram;
+
+				case VisualizationModes.Symmetric_moving_spectrogram_without_logo:
+				case VisualizationModes.Symmetric_moving_spectrogram:
+					return SpectrogramModes.SymmetricMovingSpectrogram;
 
 				case VisualizationModes.Histogram_without_logo:
 				case VisualizationModes.Histogram:
@@ -172,7 +186,8 @@
 		public static bool ContainsSGonly (VisualizationModes Mode)
 			{
 			return (VisualizationModeToSpectrogramMode (Mode) == SpectrogramModes.MovingSpectrogram) ||
-				(VisualizationModeToSpectrogramMode (Mode) == SpectrogramModes.StaticSpectrogram);
+				(VisualizationModeToSpectrogramMode (Mode) == SpectrogramModes.StaticSpectrogram) ||
+				(VisualizationModeToSpectrogramMode (Mode) == SpectrogramModes.SymmetricMovingSpectrogram);
 			}
 
 		/// <summary>

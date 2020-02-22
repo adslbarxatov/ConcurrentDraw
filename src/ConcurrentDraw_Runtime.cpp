@@ -53,13 +53,194 @@ CD_API(uchar) GetScaledAmplitudeEx (uint FrequencyLevel)
 	return v;
 	}
 
+// Функции, отрисовывающие отдельные виды спектрограм
+void DrawSpectrogram (uchar Mode)
+	{
+	uint i, v, y;
+	sint x;
+
+	for (y = 0; y < AS->sgFrameHeight; y++)
+		{
+		// Получение значения
+		v = GetScaledAmplitudeEx (SD_SCALE * y / AS->sgFrameHeight + 1);
+
+		switch (Mode)
+			{
+			// Движущаяся симметричная
+			case 2:
+				//break;
+				// Сдвиг изображения
+				for (x = AS->sgFrameWidth - 4 * AS->sgSpectrogramStep; x >= 0 ; x -= 2 * AS->sgSpectrogramStep)
+					{
+					for (i = AS->sgSpectrogramStep; i > 0; i--)
+						AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth + x) / 2 + i] = 
+							AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth - x) / 2 - i] = 
+							AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth + x) / 2];
+					}
+
+				// Отрисовка
+				AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth / 2] = v;
+				break;
+
+			// Движущаяся
+			case 1:
+				// Сдвиг изображения
+				for (x = 0; x < AS->sgFrameWidth - AS->sgSpectrogramStep; x += AS->sgSpectrogramStep)
+					{
+					for (i = AS->sgSpectrogramStep; i > 0; i--)
+						AS->sgBuffer[y * AS->sgFrameWidth + x + i - 1] = AS->sgBuffer[y * AS->sgFrameWidth + x + i];
+					}
+
+				// Отрисовка
+				for (i = 1; i <= AS->sgSpectrogramStep; i++)
+					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - i] = v;
+				break;
+
+			// Статичная
+			case 0:
+			default:
+				// Отрисовка (делаем так, чтобы исключить лишнюю арифметику на первом шаге)
+				AS->sgBuffer[y * AS->sgFrameWidth + AS->sgCurrentPosition] = v;
+				for (i = 1; i < AS->sgSpectrogramStep; i++)
+					AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + i) % AS->sgFrameWidth] = v;
+
+				// Маркер
+				AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + i) % AS->sgFrameWidth] = CD_BMPINFO_MAXCOLOR;
+
+				break;
+			}
+		}
+
+	// Движение маркера
+	if (Mode == 0)
+		AS->sgCurrentPosition = (AS->sgCurrentPosition + AS->sgSpectrogramStep) % AS->sgFrameWidth;
+	}
+
+void DrawHistogram (uchar Symmetric)
+	{
+	uint v, x, y;
+
+	for (x = 0; x < AS->sgFrameWidth; x++)
+		{
+		// Получение значения
+		v = GetScaledAmplitudeEx (AS->cdHistogramFFTValuesCount * (ulong)x / AS->sgFrameWidth);
+
+		// Перемасштабирование
+		v = AS->sgFrameHeight * (ulong)v / CD_BMPINFO_COLORS_COUNT;	
+
+		// Симметричная
+		if (Symmetric)
+			{
+			for (y = 0; y < v; y++)
+				AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth + x) / 2] =
+				AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth - x) / 2] = CD_HISTO_BAR;	// Обрезаем края палитр
+
+			for (y = v; y < AS->sgFrameHeight; y++)
+				AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth + x) / 2] =
+				AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth - x) / 2] = AS->cdBackgroundColorNumber;
+			}
+		// Простая
+		else
+			{
+			for (y = 0; y < v; y++)
+				AS->sgBuffer[y * AS->sgFrameWidth + x] = CD_HISTO_BAR;	// Обрезаем края палитр
+
+			for (y = v; y < AS->sgFrameHeight; y++)
+				AS->sgBuffer[y * AS->sgFrameWidth + x] = AS->cdBackgroundColorNumber;
+			}
+		}
+	}
+
+void DrawAmplitudes (uchar Moving)
+	{
+	// Переменные
+	uint i, v, x, y;
+	ulong v2;
+
+	for (x = v2 = 0; x < AS->cdHistogramFFTValuesCount; x++)
+		{
+		// Получение значения
+		v = GetScaledAmplitudeEx (x);
+		v2 += v * v;
+		}
+
+	// Перемасштабирование
+	v2 = sqrt(v2 / AS->cdHistogramFFTValuesCount);
+	v = v2;
+	v2 = AS->sgFrameHeight * (ulong)v2 / CD_BMPINFO_COLORS_COUNT;
+
+	// Статичная
+	if (!Moving)
+		{
+		// Линии
+		for (y = 0; y < (AS->sgFrameHeight - v2) / 2; y++)
+			{
+			AS->sgBuffer[y * AS->sgFrameWidth + AS->sgCurrentPosition] = AS->cdBackgroundColorNumber;
+			for (i = 1; i < AS->sgSpectrogramStep; i++)
+				AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + i) % AS->sgFrameWidth] = 
+					AS->cdBackgroundColorNumber;
+			}
+		
+		for (y = (AS->sgFrameHeight - v2) / 2; y < (AS->sgFrameHeight + v2) / 2; y++)
+			{
+			AS->sgBuffer[y * AS->sgFrameWidth + AS->sgCurrentPosition] = v;
+			for (i = 1; i < AS->sgSpectrogramStep; i++)
+				AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + i) % AS->sgFrameWidth] = v;
+			}
+
+		for (y = (AS->sgFrameHeight + v2) / 2; y < AS->sgFrameHeight; y++)
+			{
+			AS->sgBuffer[y * AS->sgFrameWidth + AS->sgCurrentPosition] = AS->cdBackgroundColorNumber;
+			for (i = 1; i < AS->sgSpectrogramStep; i++)
+				AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + i) % AS->sgFrameWidth] = 
+					AS->cdBackgroundColorNumber;
+			}
+
+		// Маркер
+		for (y = 0; y < AS->sgFrameHeight; y++)
+			AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + AS->sgSpectrogramStep) % 
+				AS->sgFrameWidth] = CD_BMPINFO_MAXCOLOR;
+
+		// Движение маркера
+		AS->sgCurrentPosition = (AS->sgCurrentPosition + AS->sgSpectrogramStep) % AS->sgFrameWidth;
+		}
+	// Движущаяся
+	else
+		{
+		for (y = 0; y < AS->sgFrameHeight; y++)
+			{
+			// Сдвиг изображения
+			for (x = 0; x < AS->sgFrameWidth - AS->sgSpectrogramStep; x += AS->sgSpectrogramStep)
+				{
+				for (i = AS->sgSpectrogramStep; i > 0; i--)
+					AS->sgBuffer[y * AS->sgFrameWidth + x + i - 1] = AS->sgBuffer[y * AS->sgFrameWidth + x + i];
+				}
+			}
+
+		// Отрисовка
+		for (y = 0; y < (AS->sgFrameHeight - v2) / 2; y++)
+			{
+			for (i = 1; i <= AS->sgSpectrogramStep; i++)
+				AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - i] = AS->cdBackgroundColorNumber;
+			}
+
+		for (y = (AS->sgFrameHeight - v2) / 2; y < (AS->sgFrameHeight + v2) / 2; y++)
+			{
+			for (i = 1; i <= AS->sgSpectrogramStep; i++)					
+				AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - i] = v;
+			}
+
+		for (y = (AS->sgFrameHeight + v2) / 2; y < AS->sgFrameHeight; y++)
+			{
+			for (i = 1; i <= AS->sgSpectrogramStep; i++)
+				AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - i] = AS->cdBackgroundColorNumber;
+			}
+		}
+	}
+
 // Функция-таймер перерисовки спектрограммы
 void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWORD dw2)
 	{
-	// Переменные
-	uint y, x, v, i;
-	ulong v2;
-
 	// Заполнение массива (если возможно)
 	if (!GetDataFromStreamEx ())
 		return;
@@ -71,9 +252,7 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 	if (AS->cdPolymorphUpdateCounter != 0)	// Нулевое значение используется как блокировка
 		{
 		if (AS->cdPolymorphUpdateCounter++ >= POLYMORPH_UPDATE_PAUSE)
-			{
 			FillPaletteEx (AS->cdCurrentPalette);
-			}
 		}
 
 	// Обновление спектрограммы, если требуется
@@ -84,157 +263,23 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 		case 0:
 			break;
 
-		// Статичная спектрограмма с курсором
+		// Статичная спектрограмма с курсором и движущаяся спектрограмма
 		case 1:
-			for (y = 0; y < AS->sgFrameHeight; y++)
-				{
-				// Получение значения
-				v = GetScaledAmplitudeEx (SD_SCALE * y / AS->sgFrameHeight + 1);
-
-				// Отрисовка (делаем так, чтобы исключить лишнюю арифметику на первом шаге)
-				AS->sgBuffer[y * AS->sgFrameWidth + AS->sgCurrentPosition] = v;
-				for (i = 1; i < AS->sgSpectrogramStep; i++)
-					AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + i) % AS->sgFrameWidth] = v;
-
-				// Маркер
-				AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + i) % AS->sgFrameWidth] = CD_BMPINFO_MAXCOLOR;
-				}
-
-			// Движение маркера
-			AS->sgCurrentPosition = (AS->sgCurrentPosition + AS->sgSpectrogramStep) % AS->sgFrameWidth;
-			break;
-
-		// Движущаяся спектрограмма
 		case 2:
-			for (y = 0; y < AS->sgFrameHeight; y++)
-				{
-				// Сдвиг изображения
-				for (x = 0; x < AS->sgFrameWidth - AS->sgSpectrogramStep; x += AS->sgSpectrogramStep)
-					{
-					for (i = AS->sgSpectrogramStep; i > 0; i--)
-						AS->sgBuffer[y * AS->sgFrameWidth + x + i - 1] = AS->sgBuffer[y * AS->sgFrameWidth + x + i];
-					}
-
-				// Получение значения
-				v = GetScaledAmplitudeEx (SD_SCALE * y / AS->sgFrameHeight + 1);
-
-				// Отрисовка
-				for (i = 1; i <= AS->sgSpectrogramStep; i++)
-					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - i] = v;
-				}
+		case 3:
+			DrawSpectrogram (AS->sgSpectrogramMode - 1);
 			break;
 
 		// Гистограмма и симметричная гистограмма
-		case 3:
 		case 4:
-			for (x = 0; x < AS->sgFrameWidth; x++)
-				{
-				// Получение значения
-				v = GetScaledAmplitudeEx (AS->cdHistogramFFTValuesCount * (ulong)x / AS->sgFrameWidth);
-
-				// Перемасштабирование
-				v = AS->sgFrameHeight * (ulong)v / CD_BMPINFO_COLORS_COUNT;	
-
-				if (AS->sgSpectrogramMode == 3)
-					{
-					for (y = 0; y < v; y++)
-						AS->sgBuffer[y * AS->sgFrameWidth + x] = CD_HISTO_BAR;	// Обрезаем края палитр
-					for (y = v; y < AS->sgFrameHeight; y++)
-						AS->sgBuffer[y * AS->sgFrameWidth + x] = AS->cdBackgroundColorNumber;
-					}
-				else
-					{
-					for (y = 0; y < v; y++)
-						AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth + x) / 2] =
-						AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth - x) / 2] = CD_HISTO_BAR;	// Обрезаем края палитр
-
-					for (y = v; y < AS->sgFrameHeight; y++)
-						AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth + x) / 2] =
-						AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth - x) / 2] = AS->cdBackgroundColorNumber;
-					}
-				}
+		case 5:
+			DrawHistogram (AS->sgSpectrogramMode - 4);
 			break;
 
 		// Статичная и движущаяся амплитудная
-		case 5:
 		case 6:
-			for (x = v2 = 0; x < AS->cdHistogramFFTValuesCount; x++)
-				{
-				// Получение значения
-				v = GetScaledAmplitudeEx (x);
-				v2 += v * v;
-				}
-
-			// Перемасштабирование
-			v2 = sqrt(v2 / AS->cdHistogramFFTValuesCount);
-			v = v2;
-			v2 = AS->sgFrameHeight * (ulong)v2 / CD_BMPINFO_COLORS_COUNT;
-
-			if (AS->sgSpectrogramMode == 5)
-				{
-				// Линии
-				for (y = 0; y < (AS->sgFrameHeight - v2) / 2; y++)
-					{
-					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgCurrentPosition] = AS->cdBackgroundColorNumber;
-					for (i = 1; i < AS->sgSpectrogramStep; i++)
-						AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + i) % AS->sgFrameWidth] = 
-							AS->cdBackgroundColorNumber;
-					}
-
-				for (y = (AS->sgFrameHeight - v2) / 2; y < (AS->sgFrameHeight + v2) / 2; y++)
-					{
-					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgCurrentPosition] = v;
-					for (i = 1; i < AS->sgSpectrogramStep; i++)
-						AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + i) % AS->sgFrameWidth] = v;
-					}
-
-				for (y = (AS->sgFrameHeight + v2) / 2; y < AS->sgFrameHeight; y++)
-					{
-					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgCurrentPosition] = AS->cdBackgroundColorNumber;
-					for (i = 1; i < AS->sgSpectrogramStep; i++)
-						AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + i) % AS->sgFrameWidth] = 
-							AS->cdBackgroundColorNumber;
-					}
-
-				// Маркер
-				for (y = 0; y < AS->sgFrameHeight; y++)
-					AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + AS->sgSpectrogramStep) % 
-						AS->sgFrameWidth] = CD_BMPINFO_MAXCOLOR;
-
-				// Движение маркера
-				AS->sgCurrentPosition = (AS->sgCurrentPosition + AS->sgSpectrogramStep) % AS->sgFrameWidth;
-				}
-			else
-				{
-				for (y = 0; y < AS->sgFrameHeight; y++)
-					{
-					// Сдвиг изображения
-					for (x = 0; x < AS->sgFrameWidth - AS->sgSpectrogramStep; x += AS->sgSpectrogramStep)
-						{
-						for (i = AS->sgSpectrogramStep; i > 0; i--)
-							AS->sgBuffer[y * AS->sgFrameWidth + x + i - 1] = AS->sgBuffer[y * AS->sgFrameWidth + x + i];
-						}
-					}
-
-				// Отрисовка
-				for (y = 0; y < (AS->sgFrameHeight - v2) / 2; y++)
-					{
-					for (i = 1; i <= AS->sgSpectrogramStep; i++)
-						AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - i] = AS->cdBackgroundColorNumber;
-					}
-
-				for (y = (AS->sgFrameHeight - v2) / 2; y < (AS->sgFrameHeight + v2) / 2; y++)
-					{
-					for (i = 1; i <= AS->sgSpectrogramStep; i++)					
-						AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - i] = v;
-					}
-
-				for (y = (AS->sgFrameHeight + v2) / 2; y < AS->sgFrameHeight; y++)
-					{
-					for (i = 1; i <= AS->sgSpectrogramStep; i++)
-						AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - i] = AS->cdBackgroundColorNumber;
-					}
-				}
+		case 7:
+			DrawAmplitudes (AS->sgSpectrogramMode - 6);
 			break;
 		}
 
