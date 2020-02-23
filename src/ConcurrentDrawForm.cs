@@ -37,7 +37,8 @@ namespace ESHQSetupStub
 			}
 
 		// Общие переменные и константы
-		private VisualizationPhases currentPhase = VisualizationPhases.LayersPrecache;	// Текущая фаза отрисовки
+		private VisualizationPhases currentPhase =
+			VisualizationPhases.LayersPrecache;					// Текущая фаза отрисовки
 		private bool logoFirstShowMade = false;					// Флаг, указывающий на выполненное первое отображение лого
 		private uint steps = 0;									// Счётчик шагов отрисовки
 		private Random rnd = new Random ();						// ГПСЧ
@@ -45,8 +46,10 @@ namespace ESHQSetupStub
 
 		// Графика
 		private LogoDrawerLayer mainLayer;						// Базовый слой изображения
-		private ColorMatrix[] colorMatrix = new ColorMatrix[3];				// Полупрозрачные цветовые матрицы для спектрограмм
-		private ImageAttributes[] sgAttributes = new ImageAttributes[3];	// Атрибуты изображений спектрограмм
+		private ColorMatrix[] colorMatrix =
+			new ColorMatrix[3];									// Полупрозрачные цветовые матрицы для спектрограмм
+		private ImageAttributes[] sgAttributes =
+			new ImageAttributes[3];								// Атрибуты изображений спектрограмм
 
 		private List<Graphics> gr = new List<Graphics> ();		// Объекты-отрисовщики
 		private List<SolidBrush> brushes = new List<SolidBrush> ();
@@ -55,7 +58,7 @@ namespace ESHQSetupStub
 		// Бит-детектор
 		private const int logoIdleSpeed = 2;					// Наименьшая скорость вращения лого
 #if VIDEO
-		private const int logoSpeedImpulse = 65;				// Импульс скорости
+		private const int logoSpeedImpulse = 65;				// Импульс скорости при пиковом значении
 #else
 		private const int logoSpeedImpulse = 50;
 #endif
@@ -66,28 +69,28 @@ namespace ESHQSetupStub
 		private int currentLogoAngleDelta = 0,					// Текущий угол приращения поворота лого
 			currentLogoAngle = 0;								// Текущий угол поворота лого (для бит-детектора)
 		private double currentHistogramAngle = 0.0;				// Текущий угол поворота гистограммы-бабочки
-		private uint logoHeight,								// Диаметр лого
-			logoCenterX, logoCenterY;							// Координаты центра лого
+		private uint logoHeight,								// Текущий диаметр лого
+			logoCenterX, logoCenterY;							// Текущие координаты центра лого
 		private const int fillingOpacity = 15;					// Непрозрачность кумулятивного эффекта и эффекта fadeout
 		private bool firstFilling = true;						// Флаг, указывающий на необходимость инициализации кисти фона
 
 		// Кумулятивный эффект
 		private byte peak;										// Пиковое значение для расчёта битовых порогов
-		private const byte peakTrigger = 0xF0;					// Значение пика, превышение которого является триггером
-		private uint cumulationCounter;							// Накопитель, обеспечивающий изменение фона
-		private const uint cumulationDivisor = 100,				// Границы накопителя
+		private uint cumulationCounter;							// Накопитель, обеспечивающий кумулятивный эффект
+		private const uint cumulationDivisor = 100,				// Граница и масштаб накопителя
 			cumulationLimit = 255 * cumulationDivisor;
 
 		// Метрики гистограмм
 		private int[] histoX = new int[4],
-			histoY = new int[4];								// Координаты линий гистограммы
+			histoY = new int[4];								// Координаты линий гистограмм
 		private const double butterflyDensity = 2.75;			// Плотность гистограммы-бабочки
 		private const double perspectiveDensity = 3.6;			// Плотность гистограммы-перспективы
 		// (даёт полный угол чуть более 90°; 90° <=> 2.84; 80° <=> 3.2)
 
 #if OBJECTS
 		// Дополнительные графические объекты
-		private List<ILogoDrawerObject> objects = new List<ILogoDrawerObject> ();	// Визуальные объекты
+		private List<ILogoDrawerObject> objects = 
+			new List<ILogoDrawerObject> ();						// Визуальные объекты
 		private LogoDrawerObjectMetrics objectsMetrics;			// Метрики генерируемых объектов
 		private LogoDrawerLayer objectsLayer;					// Слой визуальных объектов
 #endif
@@ -116,7 +119,8 @@ namespace ESHQSetupStub
 		private List<Bitmap> backgrounds = new List<Bitmap> ();	// Фоновые фреймы (если представлены)
 		private int backgroundsCounter = 0;						// Текущий фрейм видеофона
 
-		private ParametersPicker pp = new ParametersPicker (false);		// Параметры рендеринга
+		private ParametersPicker pp = 
+			new ParametersPicker (false);						// Интерфейс запроса параметров рендеринга
 #endif
 
 		/// <summary>
@@ -326,7 +330,7 @@ namespace ESHQSetupStub
 				{
 				gr.Add (Graphics.FromHwnd (this.Handle));
 				}
-			ResetLogo ();
+				ResetLogo ();
 
 #if VIDEO
 			// Подготовка параметров
@@ -346,11 +350,11 @@ namespace ESHQSetupStub
 				}
 			else
 #endif
-			// Запуск таймера
-				{
-				ExtendedTimer.Enabled = true;
-				}
-			this.Activate ();
+				// Запуск таймера
+					{
+					ExtendedTimer.Enabled = true;
+					}
+					this.Activate ();
 			}
 
 		// Метод инициализирует аудиоканал
@@ -364,7 +368,7 @@ namespace ESHQSetupStub
 				ssie = ConcurrentDrawLib.InitializeSoundStream (OFAudio.FileName);
 			else
 #endif
-				ssie = ConcurrentDrawLib.InitializeSoundStream (cdp.DeviceNumber);
+			ssie = ConcurrentDrawLib.InitializeSoundStream (cdp.DeviceNumber);
 			switch (ssie)
 				{
 				case SoundStreamInitializationErrors.BASS_ERROR_ALREADY:
@@ -732,7 +736,7 @@ namespace ESHQSetupStub
 				{
 				if (cumulationCounter > cdp.DecumulationSpeed)
 					cumulationCounter -= cdp.DecumulationSpeed;
-				if ((peak > peakTrigger) && (cumulationCounter < cumulationLimit))
+				if ((peak > cdp.BeatsDetectorLowLevel) && (cumulationCounter < cumulationLimit))
 					cumulationCounter += cdp.CumulationSpeed;
 				}
 			else if (cumulationCounter != 0)
@@ -752,16 +756,16 @@ namespace ESHQSetupStub
 			if ((backgrounds.Count == 0) || firstFilling)
 				{
 #endif
-				if (VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode))
-					{
-					if (this.Height - cdp.SpectrogramHeight > 0)
-						mainLayer.Descriptor.FillRectangle (brushes[2], 0, 0, mainLayer.Layer.Width,
-							mainLayer.Layer.Height - cdp.SpectrogramHeight);
-					}
-				else
-					{
-					mainLayer.Descriptor.FillRectangle (brushes[2], 0, 0, mainLayer.Layer.Width, mainLayer.Layer.Height);
-					}
+			if (VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode))
+				{
+				if (this.Height - cdp.SpectrogramHeight > 0)
+					mainLayer.Descriptor.FillRectangle (brushes[2], 0, 0, mainLayer.Layer.Width,
+						mainLayer.Layer.Height - cdp.SpectrogramHeight);
+				}
+			else
+				{
+				mainLayer.Descriptor.FillRectangle (brushes[2], 0, 0, mainLayer.Layer.Width, mainLayer.Layer.Height);
+				}
 #if VIDEO
 				}
 			else
@@ -898,7 +902,7 @@ namespace ESHQSetupStub
 				RotateAndDrawLogo (true);
 
 				// Бит-детектор
-				if (peak > peakTrigger)
+				if (peak > cdp.BeatsDetectorLowLevel)
 					currentLogoAngleDelta = -logoSpeedImpulse;
 				p = new Pen (ConcurrentDrawLib.GetMasterPaletteColor (peak), logoHeight / 50);
 				rad = 400 * logo[1].Height / (1200 - peak);

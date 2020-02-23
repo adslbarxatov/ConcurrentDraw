@@ -827,5 +827,16 @@ namespace ESHQSetupStub
 				return al;
 				}
 			}
+
+		/// <summary>
+		/// Возвращает порог срабатывания бит-детектора
+		/// </summary>
+		public byte BeatsDetectorLowLevel
+			{
+			get
+				{
+				return parameters[SSN].BeatsDetectorLowLevel;
+				}
+			}
 		}
 	}

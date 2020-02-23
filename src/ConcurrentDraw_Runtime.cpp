@@ -68,18 +68,20 @@ void DrawSpectrogram (uchar Mode)
 			{
 			// Движущаяся симметричная
 			case 2:
-				//break;
 				// Сдвиг изображения
-				for (x = AS->sgFrameWidth - 4 * AS->sgSpectrogramStep; x >= 0 ; x -= 2 * AS->sgSpectrogramStep)
+				for (x = AS->sgFrameWidth - 2 * AS->sgSpectrogramStep - 4; x >= 0 ; x -= 2 * AS->sgSpectrogramStep)
 					{
 					for (i = AS->sgSpectrogramStep; i > 0; i--)
-						AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth + x) / 2 + i] = 
-							AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth - x) / 2 - i] = 
-							AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth + x) / 2];
+						AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth + x) / 2 + i + 1] = 
+							AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth - x) / 2 - i - 2] = 
+							AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth + x) / 2 + 1];
 					}
 
 				// Отрисовка
-				AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth / 2] = v;
+				AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth / 2 - 2] = 
+					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth / 2 + 1] = v;
+				AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth / 2] = 
+					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth / 2 - 1] = CD_BMPINFO_MAXCOLOR;
 				break;
 
 			// Движущаяся

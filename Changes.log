@@ -260,4 +260,10 @@ Version 1.31:
 
 Version 1.31.1:
 • Runtime updater's code reviewed;
+• Drawer's code improved;
 • Symmetric moving spectrogram mode added
+
+Version 1.31.2:
+• Graphical improvement applied to symmetric moving spectrogram mode;
+• Beats detector's low triggering level setting fixed and now cannot be lower
+  than 128 (avoid of detector's rollover)
