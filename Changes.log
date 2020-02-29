@@ -265,5 +265,21 @@ Version 1.31.1:
 
 Version 1.31.2:
 • Graphical improvement applied to symmetric moving spectrogram mode;
-• Beats detector's low triggering level setting fixed and now cannot be lower
-  than 128 (avoid of detector's rollover) 
+• Beats detector's low triggering level's setting fixed and now cannot be lower
+  than 50% (avoids of detector's rollover)
+
+Version 1.32:
+• Utility now supports BASS version 2.4.15 in addition to 2.4.14;
+• Parameters window will now apply settings when you press Enter key in any
+  place and abort them when you press ESC key;
+• Hot keys processing added for:
+    Space key (will call parameters window);
+    R key (will reset logo);
+    W, A, S and D keys (will move logo);
+    Arrows (will move visualization window);
+    M key (will cyclically change visualization modes);
+    P key (will cyclically change palettes);
+    H key (will cyclically change histogram ranges);
+    T key (will switch 'always on top' flag);
+    K key (will switch 'shake flag).
+  They will change settings without calling the parameters window

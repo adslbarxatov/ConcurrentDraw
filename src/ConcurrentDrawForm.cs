@@ -1034,8 +1034,43 @@ namespace ESHQSetupStub
 		// Принудительный выход (по любой клавише)
 		private void LogoDrawer_KeyDown (object sender, KeyEventArgs e)
 			{
-			if (e.KeyCode == Keys.Escape)
-				this.Close ();
+			switch (e.KeyCode)
+				{
+				// Закрытие окна
+				case Keys.Escape:
+					this.Close ();
+					break;
+
+				// Вызов настроек
+				case Keys.Space:
+					ChangeSettingsAndRestart (ChangeSettingsAndRestartModes.CallSettingsWindow, 0);
+					break;
+
+				// Реинициализация 
+				case Keys.R:
+					ChangeSettingsAndRestart (ChangeSettingsAndRestartModes.RestartDrawingOnly, 0);
+					break;
+
+				// Смена режима
+				case Keys.M:
+				case Keys.P:
+				case Keys.H:
+
+				case Keys.W:
+				case Keys.A:
+				case Keys.S:
+				case Keys.D:
+
+				case Keys.Up:
+				case Keys.Down:
+				case Keys.Left:
+				case Keys.Right:
+
+				case Keys.T:
+				case Keys.K:
+					ChangeSettingsAndRestart (ChangeSettingsAndRestartModes.SendHotKeyToSettingsWindow, e.KeyCode);
+					break;
+				}
 			}
 
 		// Вызов настроек
@@ -1043,11 +1078,61 @@ namespace ESHQSetupStub
 			{
 			// Простой сброс логотипа
 			if ((e.Button == MouseButtons.Left) && (e.Clicks == 2))
-				{
-				// Остановка отрисовки и сброс спектрограммы/гистограммы
-				ExtendedTimer.Enabled = false;
-				ConcurrentDrawLib.DestroySpectrogram ();	// Объединяет функционал
+				ChangeSettingsAndRestart (ChangeSettingsAndRestartModes.RestartDrawingOnly, 0);
 
+			else if (e.Button == MouseButtons.Right)
+				ChangeSettingsAndRestart (ChangeSettingsAndRestartModes.CallSettingsWindow, 0);
+			}
+
+		// Режимы работы реинициализатора отрисовки
+		private enum ChangeSettingsAndRestartModes
+			{
+			// Вызов окна настроек
+			CallSettingsWindow,
+
+			// Только реинициализация
+			RestartDrawingOnly,
+
+			// Отправка горячей клавиши в окно настроек
+			SendHotKeyToSettingsWindow,
+
+			// Подрежим, запускающийся в случае сбоя реинициализации после применения настроек
+			SendHotKeyFailed
+			}
+
+		// Метод обрабатывает перезапуск отрисовки
+		private void ChangeSettingsAndRestart (ChangeSettingsAndRestartModes Mode, Keys HotKey)
+			{
+			// Переменные
+			ChangeSettingsAndRestartModes csarMode = Mode;
+
+			// Остановка отрисовки и сброс слоя
+			ExtendedTimer.Enabled = false;
+
+			if (csarMode != ChangeSettingsAndRestartModes.RestartDrawingOnly)
+				{
+				ConcurrentDrawLib.DestroySoundStream ();	// Объединяет функционал
+
+				if (csarMode == ChangeSettingsAndRestartModes.CallSettingsWindow)
+					{
+					if (mainLayer != null)
+						mainLayer.Dispose ();
+
+					if (gr[0] != null)
+						{
+						gr[0].Dispose ();
+						gr.RemoveAt (0);
+						}
+					}
+				}
+			else
+				{
+				ConcurrentDrawLib.DestroySpectrogram ();
+				}
+
+			// Выбор варианта перезапуска
+			if (csarMode == ChangeSettingsAndRestartModes.RestartDrawingOnly)
+				{
 				// Перезапуск
 				if (!VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode))
 					{
@@ -1061,55 +1146,48 @@ namespace ESHQSetupStub
 						cdp.PaletteNumber, VisualizationModesChecker.VisualizationModeToSpectrogramMode (cdp.VisualizationMode),
 						cdp.SpectrogramDoubleWidth);
 					}
-
-				brushes[0].Color = ConcurrentDrawLib.GetColorFromPalette (0);
-				brushes[1].Color = ConcurrentDrawLib.GetMasterPaletteColor ();
-				ResetLogo ();
-				ExtendedTimer.Enabled = true;
-
-				return;
 				}
-
-			// Реинициализация окна
-			if (e.Button != MouseButtons.Right)
-				return;
-
-			do
+			else
 				{
-				// Остановка отрисовки и сброс слоя
-				ExtendedTimer.Enabled = false;
-				ConcurrentDrawLib.DestroySoundStream ();	// Объединяет функционал
-
-				if (mainLayer != null)
-					mainLayer.Dispose ();
-
-				if (gr[0] != null)
-					{
-					gr[0].Dispose ();
-					gr.RemoveAt (0);
-					}
-				this.TopMost = false;						// Разрешает отображение окна параметров
-
 				// Перезапрос параметров
-				cdp.ShowDialog ();
+				do
+					{
+					// Разрешает отображение окна параметров
+					this.TopMost = false;
 
-				// Переопределение размера окна
-				this.Width = (int)cdp.VisualizationWidth;
-				this.Height = (int)cdp.VisualizationHeight;
-				this.Left = (int)cdp.VisualizationLeft;
-				this.Top = (int)cdp.VisualizationTop;
-				this.TopMost = cdp.AlwaysOnTop;
-				} while (InitializeAudioStream () != 0);
+					// Изменение параметров
+					if ((csarMode == ChangeSettingsAndRestartModes.CallSettingsWindow) ||
+						(csarMode == ChangeSettingsAndRestartModes.SendHotKeyFailed))
+						{
+						cdp.ShowDialog ();
+						}
+					else
+						{
+						cdp.ProcessHotKey (HotKey);
+						csarMode = ChangeSettingsAndRestartModes.SendHotKeyFailed;	// Защита от зацикливания при сбоях
+						}
+
+					// Переопределение размера окна
+					this.Width = (int)cdp.VisualizationWidth;
+					this.Height = (int)cdp.VisualizationHeight;
+					this.Left = (int)cdp.VisualizationLeft;
+					this.Top = (int)cdp.VisualizationTop;
+					this.TopMost = cdp.AlwaysOnTop;
+					} while (InitializeAudioStream () != 0);
+				}
 
 			// Пересоздание кисти лого и поля отрисовки
 			brushes[0].Color = ConcurrentDrawLib.GetColorFromPalette (0);
 			brushes[1].Color = ConcurrentDrawLib.GetMasterPaletteColor ();
-			mainLayer = new LogoDrawerLayer (0, 0, (uint)this.Width, (uint)this.Height);
-			mainLayer.Descriptor.FillRectangle (brushes[0], 0, 0, this.Width, this.Height);
-			gr.Insert (0, Graphics.FromHwnd (this.Handle));
+			if (csarMode == ChangeSettingsAndRestartModes.CallSettingsWindow)
+				{
+				mainLayer = new LogoDrawerLayer (0, 0, (uint)this.Width, (uint)this.Height);
+				mainLayer.Descriptor.FillRectangle (brushes[0], 0, 0, this.Width, this.Height);
+				gr.Insert (0, Graphics.FromHwnd (this.Handle));
+				}
 
 			// Реинициализация лого (при необходимости)
-			if (cdp.ReselLogo)
+			if (cdp.ReselLogo || (csarMode == ChangeSettingsAndRestartModes.RestartDrawingOnly))
 				ResetLogo ();
 
 			// Перезапуск
@@ -1162,7 +1240,7 @@ namespace ESHQSetupStub
 			objectsMetrics.ObjectsCount = 15;
 			objectsMetrics.ObjectsType = LogoDrawerObjectTypes.RotatingPolygons;
 			objectsMetrics.Rotation = true;
-			objectsMetrics.StartupPosition = LogoDrawerObjectStartupPositions.CenterRandom;
+			objectsMetrics.StartupPosition = LogoDrawerObjectStartupPositions.Top;
 			objectsMetrics.MaxSpeedFluctuation = 2;
 
 			for (int i = 0; i < objectsMetrics.ObjectsCount; i++)

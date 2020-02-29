@@ -1,6 +1,19 @@
 // Общий заголовок
 #include "ConcurrentDrawLib.h"
 
+// Функция проверяет версию библиотеки BASS
+ulong BASSVersionIsCorrect ()
+	{
+	ulong v = BASS_GetVersion ();
+
+	// Перебор допустимых версий
+	if ((v == 0x02040E00) ||
+		(v == 0x02040F00))
+		return v;
+
+	return 0;
+	}
+
 // Функция запускает процесс считывания данных со звукового вывода
 CD_API(sint) InitializeSoundStreamEx (uchar DeviceNumber)
 	{
@@ -9,7 +22,7 @@ CD_API(sint) InitializeSoundStreamEx (uchar DeviceNumber)
 		return -11;
 
 	// Получение доступа к библиотеке
-	if (BASS_GetVersion () != BASS_VERSION)
+	if (!BASSVersionIsCorrect ())
 		return -10;
 
 	// Установка начального состояния программы (если не выполнено ранее функциями настройки)
@@ -41,7 +54,7 @@ CD_API(sint) InitializeFileStreamEx (schar *FileName)
 		return -11;
 
 	// Получение доступа к библиотеке
-	if (BASS_GetVersion () != BASS_VERSION)
+	if (!BASSVersionIsCorrect ())
 		return -10;
 
 	// Установка начального состояния программы (если не выполнено ранее функциями настройки)

@@ -1,4 +1,4 @@
-# ConcurrentDraw v 1.31.2
+# ConcurrentDraw v 1.32
 
 A tool for visualization of system audio output / Утилита визуализации данных системного аудиовыхода
 
@@ -24,9 +24,9 @@ We're strongly recommend reading it before using our products.
 #
 
 Needs Windows XP or newer, Framework 4.0 or newer.
-[BASS library v 2.4.14](http://www.un4seen.com/) required.
-Interface languages: ru_ru, en_us
+[BASS library v 2.4.14 or newer](http://www.un4seen.com/) required.
+Interface languages, user manual languages: ru_ru, en_us
 
 Требуется ОС Windows XP и новее, Framework 4.0 и новее.
-Наличие [библиотеки BASS версии 2.4.14](http://www.un4seen.com/) обязательно.
-Языки интерфейса: ru_ru, en_us
+Наличие [библиотеки BASS версии 2.4.14 или новее](http://www.un4seen.com/) обязательно.
+Языки интерфейса и руководства пользователя: ru_ru, en_us

@@ -30,6 +30,10 @@ namespace ESHQSetupStub
 			// Инициализация
 			InitializeComponent ();
 
+			// Кнопки по умолчанию
+			this.AcceptButton = BOK;
+			this.CancelButton = BCancel;
+
 			// Запрос стандартных настроек и балластное заполнение второго поля
 			parameters.Add (new CDParametersSet (true));
 			parameters.Add (new CDParametersSet (true));
@@ -259,7 +263,7 @@ namespace ESHQSetupStub
 			}
 
 		// Контроль наличия доступных устройств
-		private void ConcurrentDrawParameters_Load (object sender, System.EventArgs e)
+		private void ConcurrentDrawParameters_Load (object sender, EventArgs e)
 			{
 			// Контроль возможности запуска
 			if (!DevicesCombo.Enabled)
@@ -335,7 +339,7 @@ namespace ESHQSetupStub
 			}
 
 		// Сохранение настроек
-		private void BOK_Click (object sender, System.EventArgs e)
+		private void BOK_Click (object sender, EventArgs e)
 			{
 			// Закрепление настроек и сохранение
 			SetSettings (SSN, "");
@@ -348,7 +352,8 @@ namespace ESHQSetupStub
 
 			// Завершение
 			BCancel.Enabled = true;
-			this.Close ();
+			if (this.Visible)	// Исключает инвалидацию при вызове из обработчика горячих клавиш
+				this.Close ();
 			}
 
 		private void SetSettings (uint ParametersSetNumber, string ParametersSetName)
@@ -400,7 +405,7 @@ namespace ESHQSetupStub
 			}
 
 		// Отмена настройки
-		private void BCancel_Click (object sender, System.EventArgs e)
+		private void BCancel_Click (object sender, EventArgs e)
 			{
 			// Перерисовка при отмене бессмысленна (кроме спецпалитр)
 			logoResetFlag = ConcurrentDrawLib.PaletteRequiresReset (parameters[SSN].PaletteNumber);
@@ -837,6 +842,99 @@ namespace ESHQSetupStub
 				{
 				return parameters[SSN].BeatsDetectorLowLevel;
 				}
+			}
+
+		/// <summary>
+		/// Метод обрабатывает нажатие горячей клавиши на главном экране
+		/// </summary>
+		/// <param name="HotKey">Горячая клавиша</param>
+		public void ProcessHotKey (Keys HotKey)
+			{
+			// Отмена реинициализации, которая выставляется при загрузке (кроме спецпалитр)
+			logoResetFlag = ConcurrentDrawLib.PaletteRequiresReset (parameters[SSN].PaletteNumber);
+
+			// Обработка клавиши
+			switch (HotKey)
+				{
+				// Смена режима
+				case Keys.M:
+					if (VisualizationCombo.SelectedIndex == VisualizationCombo.Items.Count - 1)
+						VisualizationCombo.SelectedIndex = 0;
+					else
+						VisualizationCombo.SelectedIndex++;
+					break;
+
+				// Смена палитры
+				case Keys.P:
+					if (SDPaletteCombo.SelectedIndex == SDPaletteCombo.Items.Count - 1)
+						SDPaletteCombo.SelectedIndex = 0;
+					else
+						SDPaletteCombo.SelectedIndex++;
+					break;
+
+				// Изменение диапазона гистограмм
+				case Keys.H:
+					if (HistogramRangeCombo.SelectedIndex == HistogramRangeCombo.Items.Count - 1)
+						HistogramRangeCombo.SelectedIndex = 0;
+					else
+						HistogramRangeCombo.SelectedIndex++;
+					break;
+
+				// Изменение расположения окна
+				case Keys.Up:
+					if (VisTop.Value != VisTop.Minimum)
+						VisTop.Value--;
+					break;
+
+				case Keys.Down:
+					if (VisTop.Value != VisTop.Maximum)
+						VisTop.Value++;
+					break;
+
+				case Keys.Left:
+					if (VisLeft.Value != VisLeft.Minimum)
+						VisLeft.Value--;
+					break;
+
+				case Keys.Right:
+					if (VisLeft.Value != VisLeft.Maximum)
+						VisLeft.Value++;
+					break;
+
+				// Изменение расположения лого
+				case Keys.S:
+					if (LogoCenterYTrack.Value != LogoCenterYTrack.Minimum)
+						LogoCenterYTrack.Value--;
+					break;
+
+				case Keys.W:
+					if (LogoCenterYTrack.Value != LogoCenterYTrack.Maximum)
+						LogoCenterYTrack.Value++;
+					break;
+
+				case Keys.A:
+					if (LogoCenterXTrack.Value != LogoCenterXTrack.Minimum)
+						LogoCenterXTrack.Value--;
+					break;
+
+				case Keys.D:
+					if (LogoCenterXTrack.Value != LogoCenterXTrack.Maximum)
+						LogoCenterXTrack.Value++;
+					break;
+
+				// Изменение флага Always on top
+				case Keys.T:
+					AlwaysOnTopFlag.Checked = !AlwaysOnTopFlag.Checked;
+					break;
+
+				// Изменение флага Shake
+				case Keys.K:
+					ShakeFlag.Checked = !ShakeFlag.Checked;
+					break;
+				}
+
+			// Применение новой настройки
+			BOK_Click (null, null);
 			}
 		}
 	}
