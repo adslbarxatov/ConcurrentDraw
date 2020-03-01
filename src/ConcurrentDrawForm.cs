@@ -1051,24 +1051,10 @@ namespace ESHQSetupStub
 					ChangeSettingsAndRestart (ChangeSettingsAndRestartModes.RestartDrawingOnly, 0);
 					break;
 
-				// Смена режима
-				case Keys.M:
-				case Keys.P:
-				case Keys.H:
-
-				case Keys.W:
-				case Keys.A:
-				case Keys.S:
-				case Keys.D:
-
-				case Keys.Up:
-				case Keys.Down:
-				case Keys.Left:
-				case Keys.Right:
-
-				case Keys.T:
-				case Keys.K:
-					ChangeSettingsAndRestart (ChangeSettingsAndRestartModes.SendHotKeyToSettingsWindow, e.KeyCode);
+				// Другие настройки
+				default:
+					ChangeSettingsAndRestart (ChangeSettingsAndRestartModes.SendHotKeyToSettingsWindow,
+						ConcurrentDrawParameters.AdaptHotKey (e.KeyCode, e.Modifiers));
 					break;
 				}
 			}
@@ -1105,6 +1091,12 @@ namespace ESHQSetupStub
 			{
 			// Переменные
 			ChangeSettingsAndRestartModes csarMode = Mode;
+
+			// Контроль
+			if (((Mode == ChangeSettingsAndRestartModes.SendHotKeyToSettingsWindow) ||
+				(Mode == ChangeSettingsAndRestartModes.SendHotKeyFailed)) &&
+				!ConcurrentDrawParameters.IsHotKeyAllowed (HotKey))
+				return;
 
 			// Остановка отрисовки и сброс слоя
 			ExtendedTimer.Enabled = false;

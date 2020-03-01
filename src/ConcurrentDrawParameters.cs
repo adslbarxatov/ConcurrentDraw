@@ -78,7 +78,7 @@ namespace ESHQSetupStub
 			// Размеры визуализации 
 			VisWidth.Minimum = ConcurrentDrawLib.MinSpectrogramFrameWidth;
 			VisWidth.Maximum = Math.Min (ScreenWidth, ConcurrentDrawLib.MaxSpectrogramFrameWidth);
-			VisHeight.Maximum = Math.Min (ScreenHeight, 1024);
+			VisHeight.Maximum = ScreenHeight;
 
 			VisWidth.Value = (int)(9 * VisWidth.Maximum / 16);
 			parameters[DSN].VisualizationWidth = (uint)VisWidth.Value;
@@ -86,10 +86,9 @@ namespace ESHQSetupStub
 			parameters[DSN].VisualizationHeight = (uint)VisHeight.Value;
 
 			// Позиция визуализации
-			VisLeft.Maximum = ScreenWidth;
 			VisLeft.Value = ScreenWidth - VisWidth.Value;	// По умолчанию - верхняя правая четверть экрана
 			parameters[DSN].VisualizationLeft = (uint)VisLeft.Value;
-			VisTop.Maximum = ScreenHeight;
+			// Максимумы теперь зависят от размеров окна визуализации; задаются в соответствующем обработчике
 
 			// Параметры детектора битов (получаются из DLL)
 			BDLowEdge.Value = parameters[DSN].BeatsDetectorLowEdge;
@@ -521,6 +520,8 @@ namespace ESHQSetupStub
 		private void SDWindowsSize_Changed (object sender, EventArgs e)
 			{
 			SDHeight.Maximum = Math.Min (ConcurrentDrawLib.MaxSpectrogramFrameHeight, VisHeight.Value);
+			VisLeft.Maximum = VisWidth.Maximum - VisWidth.Value;
+			VisTop.Maximum = VisHeight.Maximum - VisHeight.Value;
 
 			logoResetFlag = true;
 			}
@@ -543,6 +544,8 @@ namespace ESHQSetupStub
 			cdl.Dispose ();
 
 			MessageBox.Show (Localization.GetText ("HelpText", al), ProgramDescription.AssemblyTitle,
+				MessageBoxButtons.OK, MessageBoxIcon.Information);
+			MessageBox.Show (Localization.GetText ("HelpKeysText", al), ProgramDescription.AssemblyTitle,
 				MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
 
@@ -574,7 +577,7 @@ namespace ESHQSetupStub
 		private void SelectWindowSize_Click (object sender, EventArgs e)
 			{
 			// Запрос размеров
-			WindowSizeForm wsf = new WindowSizeForm ((uint)VisLeft.Maximum, (uint)VisTop.Maximum, al);
+			WindowSizeForm wsf = new WindowSizeForm ((uint)VisWidth.Maximum, (uint)VisHeight.Maximum, al);
 
 			// Перенос
 			if (wsf.Selected)
@@ -845,19 +848,109 @@ namespace ESHQSetupStub
 			}
 
 		/// <summary>
+		/// Метод проверяет, доступен ли для указанной клавиши обработчик в окне параметров
+		/// </summary>
+		/// <param name="HotKey">Горячая клавиша</param>
+		/// <returns>Возвращает true, если доступен</returns>
+		public static bool IsHotKeyAllowed (Keys HotKey)
+			{
+			return allowedHotKeys.Contains (HotKey);
+			}
+
+		// Список доступных клавиш
+		private static List<Keys> allowedHotKeys = new List<Keys>
+			{
+			Keys.M,
+			Keys.P,
+			Keys.H,	// 2
+
+			Keys.Up,
+			Keys.Down,
+			Keys.Left,
+			Keys.Right,	// 6
+
+			Keys.S,
+			Keys.W,
+			Keys.A,
+			Keys.D,	// 10
+
+			Keys.T,
+			Keys.K,	// 12
+
+			Keys.F17,
+			Keys.F18,
+			Keys.F19,
+			Keys.F20,	// 16
+
+			Keys.F21,
+			Keys.F22,
+			Keys.F23,
+			Keys.F24,	// 20
+
+			Keys.C,
+			Keys.OemQuestion
+		};
+
+		/// <summary>
+		/// Метод преобразует некоторые сочетания клавиш в специальные коды
+		/// </summary>
+		public static Keys AdaptHotKey (Keys OldKey, Keys Modifiers)
+			{
+			if (Modifiers == Keys.Control)
+				{
+				switch (OldKey)
+					{
+					// Для стрелок
+					case Keys.Up:
+						return Keys.F17;
+
+					case Keys.Down:
+						return Keys.F18;
+
+					case Keys.Left:
+						return Keys.F19;
+
+					case Keys.Right:
+						return Keys.F20;
+
+					// Для WASD
+					case Keys.S:
+						return Keys.F21;
+
+					case Keys.W:
+						return Keys.F22;
+
+					case Keys.A:
+						return Keys.F23;
+
+					case Keys.D:
+						return Keys.F24;
+					}
+				}
+
+			// Все остальные случаи
+			return OldKey;
+			}
+
+
+		/// <summary>
 		/// Метод обрабатывает нажатие горячей клавиши на главном экране
 		/// </summary>
 		/// <param name="HotKey">Горячая клавиша</param>
 		public void ProcessHotKey (Keys HotKey)
 			{
+			// Контроль
+			if (!IsHotKeyAllowed (HotKey))
+				return;
+
 			// Отмена реинициализации, которая выставляется при загрузке (кроме спецпалитр)
 			logoResetFlag = ConcurrentDrawLib.PaletteRequiresReset (parameters[SSN].PaletteNumber);
 
-			// Обработка клавиши
-			switch (HotKey)
+			// Обработка клавиш
+			switch (allowedHotKeys.IndexOf (HotKey))
 				{
 				// Смена режима
-				case Keys.M:
+				case 0:
 					if (VisualizationCombo.SelectedIndex == VisualizationCombo.Items.Count - 1)
 						VisualizationCombo.SelectedIndex = 0;
 					else
@@ -865,7 +958,7 @@ namespace ESHQSetupStub
 					break;
 
 				// Смена палитры
-				case Keys.P:
+				case 1:
 					if (SDPaletteCombo.SelectedIndex == SDPaletteCombo.Items.Count - 1)
 						SDPaletteCombo.SelectedIndex = 0;
 					else
@@ -873,7 +966,7 @@ namespace ESHQSetupStub
 					break;
 
 				// Изменение диапазона гистограмм
-				case Keys.H:
+				case 2:
 					if (HistogramRangeCombo.SelectedIndex == HistogramRangeCombo.Items.Count - 1)
 						HistogramRangeCombo.SelectedIndex = 0;
 					else
@@ -881,55 +974,97 @@ namespace ESHQSetupStub
 					break;
 
 				// Изменение расположения окна
-				case Keys.Up:
+				case 3:
 					if (VisTop.Value != VisTop.Minimum)
 						VisTop.Value--;
 					break;
 
-				case Keys.Down:
+				case 13:
+					VisTop.Value = VisTop.Minimum;
+					break;
+
+				case 4:
 					if (VisTop.Value != VisTop.Maximum)
 						VisTop.Value++;
 					break;
 
-				case Keys.Left:
+				case 14:
+					VisTop.Value = VisTop.Maximum;
+					break;
+
+				case 5:
 					if (VisLeft.Value != VisLeft.Minimum)
 						VisLeft.Value--;
 					break;
 
-				case Keys.Right:
+				case 15:
+					VisLeft.Value = VisLeft.Minimum;
+					break;
+
+				case 6:
 					if (VisLeft.Value != VisLeft.Maximum)
 						VisLeft.Value++;
 					break;
 
+				case 16:
+					VisLeft.Value = VisLeft.Maximum;
+					break;
+
 				// Изменение расположения лого
-				case Keys.S:
+				case 7:
 					if (LogoCenterYTrack.Value != LogoCenterYTrack.Minimum)
 						LogoCenterYTrack.Value--;
 					break;
 
-				case Keys.W:
+				case 17:
+					LogoCenterYTrack.Value = LogoCenterYTrack.Minimum;
+					break;
+
+				case 8:
 					if (LogoCenterYTrack.Value != LogoCenterYTrack.Maximum)
 						LogoCenterYTrack.Value++;
 					break;
 
-				case Keys.A:
+				case 18:
+					LogoCenterYTrack.Value = LogoCenterYTrack.Maximum;
+					break;
+
+				case 9:
 					if (LogoCenterXTrack.Value != LogoCenterXTrack.Minimum)
 						LogoCenterXTrack.Value--;
 					break;
 
-				case Keys.D:
+				case 19:
+					LogoCenterXTrack.Value = LogoCenterXTrack.Minimum;
+					break;
+
+				case 10:
 					if (LogoCenterXTrack.Value != LogoCenterXTrack.Maximum)
 						LogoCenterXTrack.Value++;
 					break;
 
+				case 20:
+					LogoCenterXTrack.Value = LogoCenterXTrack.Maximum;
+					break;
+
 				// Изменение флага Always on top
-				case Keys.T:
+				case 11:
 					AlwaysOnTopFlag.Checked = !AlwaysOnTopFlag.Checked;
 					break;
 
 				// Изменение флага Shake
-				case Keys.K:
+				case 12:
 					ShakeFlag.Checked = !ShakeFlag.Checked;
+					break;
+
+				// Выравнивание лого по центру
+				case 21:
+					LogoCenterButton_Click (null, null);
+					break;
+
+				// Вызов справки
+				case 22:
+					BHelp_Click (null, null);
 					break;
 				}
 

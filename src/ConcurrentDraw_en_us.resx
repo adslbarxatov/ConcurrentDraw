@@ -217,8 +217,6 @@ Fade out speed multiplier: {1:S}
   <data name="HelpText" xml:space="preserve">
     <value>Quick user manual
 
-Use right mouse button to get to settings window later; double left click to change colors of 'polymorph' and 'random' palettes; ESC key to close the application.
-
 At first application will start with recommended settings. But you can change:
 • Output device for audio data capturing (stereo mixer recommended);
 • Visualization mode (spectrogram, histogram, 'butterfly' or 'perspective' histogram, amplitude histogram);
@@ -300,5 +298,21 @@ Center placement: X = {1:S}; Y = {2:S}
   </data>
   <data name="CDP_LogoCenterButton" xml:space="preserve">
     <value>Center</value>
+  </data>
+  <data name="HelpKeysText" xml:space="preserve">
+    <value>Use next hot keys:
+• right mouse button or Space key – get to settings window;
+• double left click or R key – change colors of 'polymorph' and 'random' palettes;
+• Esc key – close the application or settings window;
+• Enter key – apply settings in settings window;
+• M key – cyclically change visualization mode;
+• P key – cyclically change palette;
+• H key – cyclically change histogram range;
+• arrows keys – move visualization window; with Ctrl key – to the edge of screen;
+• W, A, S and D keys – move logo; with Ctrl key – to the edge of window;
+• C key – move logo to the center of window;
+• '/ ?' key – show this quick user manual;
+• T key – switch 'Always on top' flag;
+• K key – switch shake flag</value>
   </data>
 </root>

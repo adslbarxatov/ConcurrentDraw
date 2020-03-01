@@ -283,3 +283,13 @@ Version 1.32:
     T key (will switch 'always on top' flag);
     K key (will switch 'shake flag).
   They will change settings without calling the parameters window
+
+Version 1.33:
+• Hot keys processing code has been reviewed;
+• Using W, A, S, D keys and arrow keys with the Ctrl key will force
+  the application to use the limit of corresponding value;
+• C key will now place logo at the center of visualization;
+• '/ ?' key will now call quick user manual;
+• Visualization window's size limits removed;
+• Visualization window now cannot cross right and bottom edges of the screen;
+• Quick user manual updates with hot keys descriptions
