@@ -101,12 +101,18 @@ namespace ESHQSetupStub
 		private Bitmap firstBMP;
 		private Pen p;
 
-#if VIDEO
 		// Субтитры
-		private bool showSubtitlesNow = false;					// Флаг фазы отрисовки текстовых подписей
 		private Font[] subtitlesFonts = new Font[2];			// Объекты поддержки текстовых подписей на рендере
 		private SizeF[] subtitlesSizes = new SizeF[2];
 		private int subtitlesBrushNumber = 1;					// Номер кисти субтитров
+
+#if !VIDEO
+		private string hotKeyResultText = "";					// Замена субтитрам, позволяющая отображать
+		private uint hotKeyResultTextShowCounter = 0;			// результат настройки горячими клавишами
+		private const uint hotKeyResultCounterLimit = 100;
+		private const int hotKeyTextFontNumber = 0;
+#else
+		private bool showSubtitlesNow = false;					// Флаг фазы отрисовки текстовых подписей
 
 		// Видео
 		private const double fps = 23.4375;						// Частота кадров видео 
@@ -332,10 +338,11 @@ namespace ESHQSetupStub
 				}
 				ResetLogo ();
 
+				// Подготовка параметров
+				subtitlesFonts[0] = new Font ("Arial Narrow", this.Width / 55, FontStyle.Bold);
+				subtitlesFonts[1] = new Font ("Arial", this.Width / 45, FontStyle.Bold);
+
 #if VIDEO
-			// Подготовка параметров
-			subtitlesFonts[0] = new Font ("a_GroticNr", this.Width / 55, FontStyle.Bold);
-			subtitlesFonts[1] = new Font ("a_GroticNr", this.Width / 45, FontStyle.Bold);
 			for (int i = 0; i < pp.SubtitlesStrings.Length; i++)
 				subtitlesSizes[i] = gr[0].MeasureString (pp.SubtitlesStrings[i], subtitlesFonts[i]);
 
@@ -941,8 +948,8 @@ namespace ESHQSetupStub
 				firstBMP.Dispose ();
 				}
 
-#if VIDEO
 			// Отрисовка текстовых подписей
+#if VIDEO
 			if (showSubtitlesNow)
 				{
 				if (pp.SubtitlesStrings[0] != "")
@@ -953,6 +960,18 @@ namespace ESHQSetupStub
 					mainLayer.Descriptor.DrawString (pp.SubtitlesStrings[1], subtitlesFonts[1], brushes[subtitlesBrushNumber],
 						(pp.RightStringsAlignment ? (this.Width - subtitlesSizes[1].Width - 50) : 50),
 						this.Height - subtitlesSizes[1].Height - 30);
+				}
+#else
+			if (hotKeyResultText != "")
+				{
+				mainLayer.Descriptor.DrawString (hotKeyResultText, subtitlesFonts[hotKeyTextFontNumber],
+					brushes[subtitlesBrushNumber], this.Width - subtitlesSizes[hotKeyTextFontNumber].Width - 50,
+					this.Height - subtitlesSizes[hotKeyTextFontNumber].Height - 30);
+
+				if (hotKeyResultTextShowCounter++ > hotKeyResultCounterLimit)
+					{
+					hotKeyResultText = "";
+					}
 				}
 #endif
 			}
@@ -1034,6 +1053,7 @@ namespace ESHQSetupStub
 		// Принудительный выход (по любой клавише)
 		private void LogoDrawer_KeyDown (object sender, KeyEventArgs e)
 			{
+#if !VIDEO
 			switch (e.KeyCode)
 				{
 				// Закрытие окна
@@ -1051,25 +1071,29 @@ namespace ESHQSetupStub
 					ChangeSettingsAndRestart (ChangeSettingsAndRestartModes.RestartDrawingOnly, 0);
 					break;
 
-				// Другие настройки
+				// Другие настройки (с передачей результата выполнения из окна настроек)
 				default:
-					ChangeSettingsAndRestart (ChangeSettingsAndRestartModes.SendHotKeyToSettingsWindow,
+					hotKeyResultText = ChangeSettingsAndRestart (ChangeSettingsAndRestartModes.SendHotKeyToSettingsWindow,
 						ConcurrentDrawParameters.AdaptHotKey (e.KeyCode, e.Modifiers));
 					break;
 				}
+#endif
 			}
 
 		// Вызов настроек
 		private void ConcurrentDrawForm_MouseClick (object sender, MouseEventArgs e)
 			{
+#if !VIDEO
 			// Простой сброс логотипа
 			if ((e.Button == MouseButtons.Left) && (e.Clicks == 2))
 				ChangeSettingsAndRestart (ChangeSettingsAndRestartModes.RestartDrawingOnly, 0);
 
 			else if (e.Button == MouseButtons.Right)
 				ChangeSettingsAndRestart (ChangeSettingsAndRestartModes.CallSettingsWindow, 0);
+#endif
 			}
 
+#if !VIDEO
 		// Режимы работы реинициализатора отрисовки
 		private enum ChangeSettingsAndRestartModes
 			{
@@ -1087,16 +1111,17 @@ namespace ESHQSetupStub
 			}
 
 		// Метод обрабатывает перезапуск отрисовки
-		private void ChangeSettingsAndRestart (ChangeSettingsAndRestartModes Mode, Keys HotKey)
+		private string ChangeSettingsAndRestart (ChangeSettingsAndRestartModes Mode, Keys HotKey)
 			{
 			// Переменные
 			ChangeSettingsAndRestartModes csarMode = Mode;
+			string hotKeyResult = "";
 
 			// Контроль
 			if (((Mode == ChangeSettingsAndRestartModes.SendHotKeyToSettingsWindow) ||
 				(Mode == ChangeSettingsAndRestartModes.SendHotKeyFailed)) &&
 				!ConcurrentDrawParameters.IsHotKeyAllowed (HotKey))
-				return;
+				return hotKeyResult;
 
 			// Остановка отрисовки и сброс слоя
 			ExtendedTimer.Enabled = false;
@@ -1155,7 +1180,11 @@ namespace ESHQSetupStub
 						}
 					else
 						{
-						cdp.ProcessHotKey (HotKey);
+						hotKeyResult = cdp.ProcessHotKey (HotKey);
+						subtitlesSizes[hotKeyTextFontNumber] = gr[0].MeasureString (hotKeyResult,
+							subtitlesFonts[hotKeyTextFontNumber]);
+						hotKeyResultTextShowCounter = 0;
+
 						csarMode = ChangeSettingsAndRestartModes.SendHotKeyFailed;	// Защита от зацикливания при сбоях
 						}
 
@@ -1184,7 +1213,9 @@ namespace ESHQSetupStub
 
 			// Перезапуск
 			ExtendedTimer.Enabled = true;
+			return hotKeyResult;
 			}
+#endif
 
 		// Метод реинициализирует лого, вызывая его повторную отрисовку
 		private void ResetLogo ()

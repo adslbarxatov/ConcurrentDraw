@@ -290,6 +290,10 @@ Version 1.33:
   the application to use the limit of corresponding value;
 • C key will now place logo at the center of visualization;
 • '/ ?' key will now call quick user manual;
-• Visualization window's size limits removed;
+• Visualization window's size maximums removed;
 • Visualization window now cannot cross right and bottom edges of the screen;
-• Quick user manual updates with hot keys descriptions
+• Quick user manual updated with hot keys descriptions
+
+Version 1.34:
+• Effect made by hot keys will now be shown at the visualization window;
+• I key will now show current settings info

@@ -154,7 +154,7 @@
     <value>Always on top</value>
   </data>
   <data name="CDP_BDSettingsText" xml:space="preserve">
-    <value>Range: {0:D} – {1:D} Hz
+    <value>Beats detection range: {0:D} – {1:D} Hz
 Amplitude threshold: {2:D}%
 FFT scale multiplier: {3:D}</value>
   </data>
@@ -169,8 +169,7 @@ FFT scale multiplier: {3:D}</value>
   </data>
   <data name="CDP_CESettingsText" xml:space="preserve">
     <value>Cumulation speed: {0:S}
-Fade out speed multiplier: {1:S}
-(1 – no cumulative effect)</value>
+Fade out speed multiplier: {1:S}</value>
   </data>
   <data name="CDP_CumulationGroup" xml:space="preserve">
     <value>Cumulative effect</value>
@@ -291,10 +290,8 @@ Placement:</value>
     <value>Logo</value>
   </data>
   <data name="CDP_LogoCenterText" xml:space="preserve">
-    <value>Height: {0:S}%
-
-Center placement: X = {1:S}; Y = {2:S}
-(0 – left (top), 1 – right (bottom), 0.5 – center)</value>
+    <value>Logo height: {0:S}%
+Center placement: X = {1:S}; Y = {2:S}</value>
   </data>
   <data name="CDP_LogoCenterButton" xml:space="preserve">
     <value>Center</value>
@@ -313,6 +310,13 @@ Center placement: X = {1:S}; Y = {2:S}
 • C key – move logo to the center of window;
 • '/ ?' key – show this quick user manual;
 • T key – switch 'Always on top' flag;
-• K key – switch shake flag</value>
+• K key – switch shake flag;
+• I key – current settings info</value>
+  </data>
+  <data name="CDP_CEInfoText" xml:space="preserve">
+    <value>(1 – no cumulative effect)</value>
+  </data>
+  <data name="CDP_LogoInfoText" xml:space="preserve">
+    <value>(0 – left (top), 1 – right (bottom), 0.5 – center)</value>
   </data>
 </root>

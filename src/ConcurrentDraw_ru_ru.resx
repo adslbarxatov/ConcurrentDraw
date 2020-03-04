@@ -154,7 +154,7 @@
     <value>Поверх всех окон</value>
   </data>
   <data name="CDP_BDSettingsText" xml:space="preserve">
-    <value>Диапазон: {0:D} – {1:D} Гц
+    <value>Диапазон детекции бито́в: {0:D} – {1:D} Гц
 Порог амплитуды: {2:D}%
 Множитель значений БПФ: {3:D}</value>
   </data>
@@ -169,8 +169,7 @@
   </data>
   <data name="CDP_CESettingsText" xml:space="preserve">
     <value>Скорость накопления: {0:S}
-Множитель скорости ослабления: {1:S}
-(1 – без эффекта накопления)</value>
+Множитель скорости ослабления: {1:S}</value>
   </data>
   <data name="CDP_CumulationGroup" xml:space="preserve">
     <value>Кумулятивный эффект</value>
@@ -291,11 +290,8 @@
     <value>Лого</value>
   </data>
   <data name="CDP_LogoCenterText" xml:space="preserve">
-    <value>Высота: {0:S}%
-
-Расположение центра: X = {1:S}; Y = {2:S}
-(0 – слева (сверху), 1 – справа (снизу),
-0.5 – по центру)</value>
+    <value>Высота лого: {0:S}%
+Расположение центра: X = {1:S}; Y = {2:S}</value>
   </data>
   <data name="CDP_LogoCenterButton" xml:space="preserve">
     <value>По центру</value>
@@ -314,6 +310,14 @@
 • клавиша C – переместить логотип в центр окна;
 • клавиша '/ ?' – показать это краткое руководство пользователя;
 • клавиша T – переключение флага «Поверх всех окон»;
-• клавиша K – переключение флага эффекта тряски</value>
+• клавиша K – переключение флага эффекта тряски;
+• клавиша I – информация о текущих настройках</value>
+  </data>
+  <data name="CDP_CEInfoText" xml:space="preserve">
+    <value>(1 – без эффекта накопления)</value>
+  </data>
+  <data name="CDP_LogoInfoText" xml:space="preserve">
+    <value>(0 – слева (сверху), 1 – справа (снизу),
+0.5 – по центру)</value>
   </data>
 </root>

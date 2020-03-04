@@ -233,6 +233,7 @@ namespace ESHQSetupStub
 			HzLabel.Text = Localization.GetText ("CDP_Hz", al);
 			LogoHeightLabel.Text = Localization.GetText ("CDP_LogoHeightLabel", al);
 			LogoCenterButton.Text = Localization.GetText ("CDP_LogoCenterButton", al);
+			LogoInfoLabel.Text = Localization.GetText ("CDP_LogoInfoText", al);
 
 			SDDoubleWidthFlag.Text = Localization.GetText ("CDP_SDDoubleWidthFlag", al);
 			AlwaysOnTopFlag.Text = Localization.GetText ("CDP_AlwaysOnTopFlag", al);
@@ -255,6 +256,8 @@ namespace ESHQSetupStub
 			HistoRotSpeed.Text = Localization.GetText ("CDP_HistoRotSpeed", al);
 
 			ShakeFlag.Text = Localization.GetText ("CDP_ShakeFlag", al);
+
+			CEInfo.Text = Localization.GetText ("CDP_CEInfoText", al);
 
 			ProfileLabel.Text = Localization.GetText ("CDP_ProfileLabel", al);
 			ProfileCombo.Items[DSN] = Localization.GetText ("CDP_ProfileDefault", al);
@@ -888,7 +891,8 @@ namespace ESHQSetupStub
 			Keys.F24,	// 20
 
 			Keys.C,
-			Keys.OemQuestion
+			Keys.OemQuestion,
+			Keys.I
 		};
 
 		/// <summary>
@@ -937,11 +941,15 @@ namespace ESHQSetupStub
 		/// Метод обрабатывает нажатие горячей клавиши на главном экране
 		/// </summary>
 		/// <param name="HotKey">Горячая клавиша</param>
-		public void ProcessHotKey (Keys HotKey)
+		/// <returns>Результат вызова горячей клавиши</returns>
+		public string ProcessHotKey (Keys HotKey)
 			{
+			// Переменные
+			string hotKeyResult = "";
+
 			// Контроль
 			if (!IsHotKeyAllowed (HotKey))
-				return;
+				return hotKeyResult;
 
 			// Отмена реинициализации, которая выставляется при загрузке (кроме спецпалитр)
 			logoResetFlag = ConcurrentDrawLib.PaletteRequiresReset (parameters[SSN].PaletteNumber);
@@ -955,6 +963,7 @@ namespace ESHQSetupStub
 						VisualizationCombo.SelectedIndex = 0;
 					else
 						VisualizationCombo.SelectedIndex++;
+					hotKeyResult = VisTypeLabel.Text + " " + VisualizationCombo.Text;
 					break;
 
 				// Смена палитры
@@ -963,6 +972,7 @@ namespace ESHQSetupStub
 						SDPaletteCombo.SelectedIndex = 0;
 					else
 						SDPaletteCombo.SelectedIndex++;
+					hotKeyResult = PaletteLabel.Text + " " + SDPaletteCombo.Text;
 					break;
 
 				// Изменение диапазона гистограмм
@@ -971,105 +981,155 @@ namespace ESHQSetupStub
 						HistogramRangeCombo.SelectedIndex = 0;
 					else
 						HistogramRangeCombo.SelectedIndex++;
+					hotKeyResult = HGRangeLabel.Text + " " + HistogramRangeCombo.Text + " " + HzLabel.Text;
 					break;
 
 				// Изменение расположения окна
 				case 3:
 					if (VisTop.Value != VisTop.Minimum)
 						VisTop.Value--;
+					hotKeyResult = VisLeftTopLabel.Text + " " + VisLeft.Value.ToString () + " x " +
+						VisTop.Value.ToString () + " px";
 					break;
 
 				case 13:
 					VisTop.Value = VisTop.Minimum;
+					hotKeyResult = VisLeftTopLabel.Text + " " + VisLeft.Value.ToString () + " x " +
+						VisTop.Value.ToString () + " px";
 					break;
 
 				case 4:
 					if (VisTop.Value != VisTop.Maximum)
 						VisTop.Value++;
+					hotKeyResult = VisLeftTopLabel.Text + " " + VisLeft.Value.ToString () + " x " +
+						VisTop.Value.ToString () + " px";
 					break;
 
 				case 14:
 					VisTop.Value = VisTop.Maximum;
+					hotKeyResult = VisLeftTopLabel.Text + " " + VisLeft.Value.ToString () + " x " +
+						VisTop.Value.ToString () + " px";
 					break;
 
 				case 5:
 					if (VisLeft.Value != VisLeft.Minimum)
 						VisLeft.Value--;
+					hotKeyResult = VisLeftTopLabel.Text + " " + VisLeft.Value.ToString () + " x " +
+						VisTop.Value.ToString () + " px";
 					break;
 
 				case 15:
 					VisLeft.Value = VisLeft.Minimum;
+					hotKeyResult = VisLeftTopLabel.Text + " " + VisLeft.Value.ToString () + " x " +
+						VisTop.Value.ToString () + " px";
 					break;
 
 				case 6:
 					if (VisLeft.Value != VisLeft.Maximum)
 						VisLeft.Value++;
+					hotKeyResult = VisLeftTopLabel.Text + " " + VisLeft.Value.ToString () + " x " +
+						VisTop.Value.ToString () + " px";
 					break;
 
 				case 16:
 					VisLeft.Value = VisLeft.Maximum;
+					hotKeyResult = VisLeftTopLabel.Text + " " + VisLeft.Value.ToString () + " x " +
+						VisTop.Value.ToString () + " px";
 					break;
 
 				// Изменение расположения лого
 				case 7:
 					if (LogoCenterYTrack.Value != LogoCenterYTrack.Minimum)
 						LogoCenterYTrack.Value--;
+					hotKeyResult = LogoCenterLabel.Text;
 					break;
 
 				case 17:
 					LogoCenterYTrack.Value = LogoCenterYTrack.Minimum;
+					hotKeyResult = LogoCenterLabel.Text;
 					break;
 
 				case 8:
 					if (LogoCenterYTrack.Value != LogoCenterYTrack.Maximum)
 						LogoCenterYTrack.Value++;
+					hotKeyResult = LogoCenterLabel.Text;
 					break;
 
 				case 18:
 					LogoCenterYTrack.Value = LogoCenterYTrack.Maximum;
+					hotKeyResult = LogoCenterLabel.Text;
 					break;
 
 				case 9:
 					if (LogoCenterXTrack.Value != LogoCenterXTrack.Minimum)
 						LogoCenterXTrack.Value--;
+					hotKeyResult = LogoCenterLabel.Text;
 					break;
 
 				case 19:
 					LogoCenterXTrack.Value = LogoCenterXTrack.Minimum;
+					hotKeyResult = LogoCenterLabel.Text;
 					break;
 
 				case 10:
 					if (LogoCenterXTrack.Value != LogoCenterXTrack.Maximum)
 						LogoCenterXTrack.Value++;
+					hotKeyResult = LogoCenterLabel.Text;
 					break;
 
 				case 20:
 					LogoCenterXTrack.Value = LogoCenterXTrack.Maximum;
+					hotKeyResult = LogoCenterLabel.Text;
 					break;
 
 				// Изменение флага Always on top
 				case 11:
 					AlwaysOnTopFlag.Checked = !AlwaysOnTopFlag.Checked;
+					hotKeyResult = AlwaysOnTopFlag.Text + " = " + (AlwaysOnTopFlag.Checked ? "1" : "0");
 					break;
 
 				// Изменение флага Shake
 				case 12:
 					ShakeFlag.Checked = !ShakeFlag.Checked;
+					hotKeyResult = ShakeFlag.Text + " = " + (ShakeFlag.Checked ? "1" : "0");
 					break;
 
 				// Выравнивание лого по центру
 				case 21:
 					LogoCenterButton_Click (null, null);
+					hotKeyResult = LogoCenterLabel.Text;
 					break;
 
 				// Вызов справки
 				case 22:
 					BHelp_Click (null, null);
+					// Установка hotKeyResult не требуется
+					break;
+
+				// Запрос всех настроек
+				case 23:
+					MessageBox.Show (DevicesLabel.Text + " " + DevicesCombo.Text + "\n" +
+						VisTypeLabel.Text + " " + VisualizationCombo.Text + "\n" +
+						VisSizeLabel.Text + " " + VisWidth.Value.ToString () + " x " + VisHeight.Value.ToString () + " px\n" +
+						VisLeftTopLabel.Text + " " + VisLeft.Value.ToString () + " x " + VisTop.Value.ToString () + " px\n" +
+						PaletteLabel.Text + " " + SDPaletteCombo.Text + "\n" +
+						SGHGHeightLabel.Text + " " + SDHeight.Value.ToString () + " px" +
+						(SDDoubleWidthFlag.Checked ? ("; " + SDDoubleWidthFlag.Text) : "") + "\n" +
+						HGRangeLabel.Text + " " + HistogramRangeCombo.Text + " " + HzLabel.Text + "\n" +
+						(ShakeFlag.Checked ? (ShakeFlag.Text + "\n") : "") +
+						(AlwaysOnTopFlag.Checked ? (AlwaysOnTopFlag.Text + "\n") : "") +
+						"\n" + LogoCenterLabel.Text + "\n\n" +
+						BDSettings.Text + "\n\n" +
+						(HistoRotAccToBeats.Checked ? HistoRotAccToBeats.Text : HistoRotSpeed.Text) + " " +
+						HistoRotSpeedArc.Value.ToString () + "°\n\n" +
+						CESettings.Text,
+						ProgramDescription.AssemblyTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
 					break;
 				}
 
 			// Применение новой настройки
 			BOK_Click (null, null);
+			return hotKeyResult;
 			}
 		}
 	}
