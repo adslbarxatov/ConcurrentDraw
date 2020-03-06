@@ -477,10 +477,13 @@ namespace ESHQSetupStub
 			if ((((TrackBar)sender).Name == "BDLowEdge") && (BDHighEdge.Value < BDLowEdge.Value))
 				BDHighEdge.Value = BDLowEdge.Value;
 
-			BDSettings.Text = string.Format (Localization.GetText ("CDP_BDSettingsText", al),
-				(44100 * BDLowEdge.Value / 2048).ToString (),
-				(44100 * BDHighEdge.Value / 2048).ToString (),
-				(100 * BDLowLevel.Value / 255).ToString (), BDFFTScaleMultiplier.Value.ToString ());
+			if ((BDLowEdge.Value == BDHighEdge.Value) && (BDHighEdge.Value == 0))
+				BDSettings.Text = Localization.GetText ("CDP_BDNo", al);
+			else
+				BDSettings.Text = string.Format (Localization.GetText ("CDP_BDSettingsText", al),
+					(44100 * BDLowEdge.Value / 2048).ToString (),
+					(44100 * BDHighEdge.Value / 2048).ToString (),
+					(100 * BDLowLevel.Value / 255).ToString (), BDFFTScaleMultiplier.Value.ToString ());
 			}
 
 		// Выравнивание окна по экрану
@@ -493,7 +496,7 @@ namespace ESHQSetupStub
 					break;
 
 				case "AlignToBottom":
-					VisTop.Value = VisTop.Maximum - VisHeight.Value;
+					VisTop.Value = VisHeight.Maximum - VisHeight.Value;
 					break;
 
 				case "AlignToLeft":
@@ -501,7 +504,7 @@ namespace ESHQSetupStub
 					break;
 
 				case "AlignToRight":
-					VisLeft.Value = VisLeft.Maximum - VisWidth.Value;
+					VisLeft.Value = VisWidth.Maximum - VisWidth.Value;
 					break;
 				}
 

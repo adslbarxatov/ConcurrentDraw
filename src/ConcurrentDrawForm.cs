@@ -606,8 +606,7 @@ namespace ESHQSetupStub
 					objects[i].Dispose ();
 
 					// Обновление зависимых параметров
-					objectsMetrics.MaxSpeed = objectsMetrics.MinSpeed = 5 + cumulation;
-					//objectsMetrics.MinSpeed = 3;
+					objectsMetrics.MaxSpeed = objectsMetrics.MinSpeed = 5;//+cumulation;
 					objectsMetrics.MaxSize = 3;	//+cumulation / 10;
 					objectsMetrics.PolygonsSidesCount = (byte)rnd.Next (5, 8);
 
@@ -1250,7 +1249,7 @@ namespace ESHQSetupStub
 #if OBJECTS
 			// Обновление метрик графических объектов
 			objectsMetrics.Acceleration = false;
-			objectsMetrics.AsStars = false;
+			objectsMetrics.AsStars = true;
 			objectsMetrics.Enlarging = 0;
 			objectsMetrics.KeepTracks = false;
 			objectsMetrics.MaxRed = ConcurrentDrawLib.GetColorFromPalette (255).R;

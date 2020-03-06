@@ -319,4 +319,7 @@ Center placement: X = {1:S}; Y = {2:S}</value>
   <data name="CDP_LogoInfoText" xml:space="preserve">
     <value>(0 – left (top), 1 – right (bottom), 0.5 – center)</value>
   </data>
+  <data name="CDP_BDNo" xml:space="preserve">
+    <value>No beats detection</value>
+  </data>
 </root>

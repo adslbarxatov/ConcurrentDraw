@@ -297,3 +297,7 @@ Version 1.33:
 Version 1.34:
 • Effect made by hot keys will now be shown at the visualization window;
 • I key will now show current settings info
+
+Version 1.34.2:
+• Fixed bug when window alignment with arrow buttons caused application crush;
+• Beats detector's 'off' state now will be shown properly

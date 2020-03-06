@@ -320,4 +320,7 @@
     <value>(0 – слева (сверху), 1 – справа (снизу),
 0.5 – по центру)</value>
   </data>
+  <data name="CDP_BDNo" xml:space="preserve">
+    <value>Бит-детектор отключён</value>
+  </data>
 </root>
