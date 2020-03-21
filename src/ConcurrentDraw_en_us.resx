@@ -302,9 +302,9 @@ Center placement: X = {1:S}; Y = {2:S}</value>
 • double left click or R key – change colors of 'polymorph' and 'random' palettes;
 • Esc key – close the application or settings window;
 • Enter key – apply settings in settings window;
-• M key – cyclically change visualization mode;
-• P key – cyclically change palette;
-• H key – cyclically change histogram range;
+• M key – cyclically change visualization mode; with Shift key – backwards;
+• P key – cyclically change palette; with Shift key – backwards;
+• H key – cyclically change histogram range; with Shift key – backwards;
 • arrows keys – move visualization window; with Ctrl key – to the edge of screen;
 • arrows keys with Shift key – move logo; with Ctrl key – to the edge of window;
 • '&lt; ,' and '&gt; .' keys – decrease and increase histogram rotation speed; with Shift key – beats-dependent rotation;

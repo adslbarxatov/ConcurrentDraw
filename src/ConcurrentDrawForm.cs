@@ -85,7 +85,7 @@ namespace ESHQSetupStub
 		private int[] histoX = new int[4],
 			histoY = new int[4];								// Координаты линий гистограмм
 		private const double butterflyDensity = 2.75;			// Плотность гистограммы-бабочки
-		private const double perspectiveDensity = 3.6;			// Плотность гистограммы-перспективы
+		private const double perspectiveDensity = 3.15;			// Плотность гистограммы-перспективы
 		// (даёт полный угол чуть более 90°; 90° <=> 2.84; 80° <=> 3.2)
 
 #if OBJECTS
@@ -606,9 +606,9 @@ namespace ESHQSetupStub
 					objects[i].Dispose ();
 
 					// Обновление зависимых параметров
-					objectsMetrics.MaxSpeed = 5;
+					objectsMetrics.MaxSpeed = 3;
 					objectsMetrics.MinSpeed = 1;
-					objectsMetrics.MaxSize = 5;
+					objectsMetrics.MaxSize = 1;
 					objectsMetrics.PolygonsSidesCount = (byte)rnd.Next (5, 8);
 
 					switch (objectsMetrics.ObjectsType)
@@ -859,7 +859,7 @@ namespace ESHQSetupStub
 					{
 					// Кисть
 					p = new Pen (Color.FromArgb (90, ConcurrentDrawLib.GetColorFromPalette ((byte)(3 * amp / 4))),
-						logoHeight / ((i > 252) ? 100 : 50));	// Костыль для обхода шва на перспективе
+						logoHeight / ((i > 252) ? 90 : 40));	// Костыль для обхода шва на перспективе
 
 					// Углы
 					// (двойная длина дуги для того же количества линий)
@@ -1279,22 +1279,22 @@ namespace ESHQSetupStub
 
 #if OBJECTS
 			// Обновление метрик графических объектов
-			objectsMetrics.Acceleration = false;
-			objectsMetrics.AsStars = true;
-			objectsMetrics.Enlarging = 0;
+			objectsMetrics.Acceleration = true;
+			objectsMetrics.AsStars = false;
+			objectsMetrics.Enlarging = 2;
 			objectsMetrics.KeepTracks = false;
 			objectsMetrics.MaxRed = ConcurrentDrawLib.GetColorFromPalette (255).R;
 			objectsMetrics.MaxGreen = ConcurrentDrawLib.GetColorFromPalette (255).G;
 			objectsMetrics.MaxBlue = ConcurrentDrawLib.GetColorFromPalette (255).B;
-			objectsMetrics.MinRed = ConcurrentDrawLib.GetColorFromPalette (224).R;
-			objectsMetrics.MinGreen = ConcurrentDrawLib.GetColorFromPalette (224).G;
-			objectsMetrics.MinBlue = ConcurrentDrawLib.GetColorFromPalette (224).B;
+			objectsMetrics.MinRed = ConcurrentDrawLib.GetColorFromPalette (192).R;
+			objectsMetrics.MinGreen = ConcurrentDrawLib.GetColorFromPalette (192).G;
+			objectsMetrics.MinBlue = ConcurrentDrawLib.GetColorFromPalette (192).B;
 			objectsMetrics.MinSize = 1;
-			objectsMetrics.ObjectsCount = 15;
-			objectsMetrics.ObjectsType = LogoDrawerObjectTypes.RotatingStars;
-			objectsMetrics.Rotation = true;
-			objectsMetrics.StartupPosition = LogoDrawerObjectStartupPositions.Top;
-			objectsMetrics.MaxSpeedFluctuation = 1;
+			objectsMetrics.ObjectsCount = 4;
+			objectsMetrics.ObjectsType = LogoDrawerObjectTypes.Spheres;
+			objectsMetrics.Rotation = false;
+			objectsMetrics.StartupPosition = LogoDrawerObjectStartupPositions.CenterRandom ;
+			objectsMetrics.MaxSpeedFluctuation = 0;
 
 			for (int i = 0; i < objectsMetrics.ObjectsCount; i++)
 				objects.Add (new LogoDrawerLetter (0, 0, null, objectsMetrics));

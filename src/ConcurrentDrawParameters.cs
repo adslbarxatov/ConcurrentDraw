@@ -908,6 +908,10 @@ namespace ESHQSetupStub
 			Keys.Oemcomma | Keys.Shift,
 			Keys.OemPeriod | Keys.Shift,	// 27
 
+			Keys.M | Keys.Shift,
+			Keys.P | Keys.Shift,
+			Keys.H | Keys.Shift,			// 30
+
 			// Клавиши, обрабатываемые в основном интерфейсе
 			// Keys.R,
 			// Keys.S,
@@ -944,6 +948,14 @@ namespace ESHQSetupStub
 					hotKeyResult = VisTypeLabel.Text + " " + VisualizationCombo.Text;
 					break;
 
+				case 28:
+					if (VisualizationCombo.SelectedIndex == 0)
+						VisualizationCombo.SelectedIndex = VisualizationCombo.Items.Count - 1;
+					else
+						VisualizationCombo.SelectedIndex--;
+					hotKeyResult = VisTypeLabel.Text + " " + VisualizationCombo.Text;
+					break;
+
 				// Смена палитры
 				case 1:
 					if (SDPaletteCombo.SelectedIndex == SDPaletteCombo.Items.Count - 1)
@@ -953,12 +965,28 @@ namespace ESHQSetupStub
 					hotKeyResult = PaletteLabel.Text + " " + SDPaletteCombo.Text;
 					break;
 
+				case 29:
+					if (SDPaletteCombo.SelectedIndex == 0)
+						SDPaletteCombo.SelectedIndex = SDPaletteCombo.Items.Count - 1;
+					else
+						SDPaletteCombo.SelectedIndex--;
+					hotKeyResult = PaletteLabel.Text + " " + SDPaletteCombo.Text;
+					break;
+
 				// Изменение диапазона гистограмм
 				case 2:
 					if (HistogramRangeCombo.SelectedIndex == HistogramRangeCombo.Items.Count - 1)
 						HistogramRangeCombo.SelectedIndex = 0;
 					else
 						HistogramRangeCombo.SelectedIndex++;
+					hotKeyResult = HGRangeLabel.Text + " " + HistogramRangeCombo.Text + " " + HzLabel.Text;
+					break;
+
+				case 30:
+					if (HistogramRangeCombo.SelectedIndex == 0)
+						HistogramRangeCombo.SelectedIndex = HistogramRangeCombo.Items.Count - 1;
+					else
+						HistogramRangeCombo.SelectedIndex--;
 					hotKeyResult = HGRangeLabel.Text + " " + HistogramRangeCombo.Text + " " + HzLabel.Text;
 					break;
 

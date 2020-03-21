@@ -295,3 +295,7 @@ Version 1.35:
 • Some fixes for source code of CD library applied;
 • Fixed unability to rotate histogram according to beats detector in visualization modes without logo;
 • Modes without logo and 'logo only' mode have been opened in release version
+
+Version 1.35.1:
+• Using Shift key with P, M, and H keys will reverse direction of change of palette, mode and range;
+• Perspective histogram mode reviewed
