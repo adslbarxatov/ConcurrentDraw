@@ -61,7 +61,8 @@ Version 1.8.1:
 • Added 'Mirror' palette
 
 Version 1.9:
-• Added cumulative effect: in case of intensive and dense beats (or other frequencies that are under detector) visualization background will change its color according to selected palette
+• Added cumulative effect: in case of intensive and dense beats (or other frequencies that are under detector)
+  visualization background will change its color according to selected palette
 
 Version 1.9.1:
 • Some fixes applied to existent palettes
@@ -183,7 +184,8 @@ Version 1.25:
 • Other code improvements applied
 
 Version 1.25.10:
-• Settings management subsystem implemented; in further versions application will be able to save sets of settings and select them from the list
+• Settings management subsystem implemented; in further versions application will be able to save
+  sets of settings and select them from the list
 
 Version 1.26:
 • New pallettes got better fitting;
@@ -204,7 +206,8 @@ Version 1.27:
 • Drawing initialization fix applied
 
 Version 1.27.2r:
-• Runtime FFT data extractor fixed. Now it will not skip updating frames if there is not enough data in audio buffer. This will make spectrogram movement smoother. It will also fix the update step of random / polymorph palettes
+• Runtime FFT data extractor fixed. Now it will not skip updating frames if there is not enough data in audio buffer.
+  This will make spectrogram movement smoother. It will also fix the update step of random / polymorph palettes
 
 Version 1.28:
 • Bit detector presentation updated;
