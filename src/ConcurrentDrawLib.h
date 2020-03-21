@@ -28,8 +28,8 @@
 
 /////////////////////////////////////////////////////
 // Константы
-#define CD_VERSION					1,34,2,0
-#define CD_VERSION_S				"1.34.2.0"
+#define CD_VERSION					1,35,0,0
+#define CD_VERSION_S				"1.35.0.0"
 #define CD_PRODUCT					"ConcurrentDraw visualization tool's BASS adapter"
 #define CD_COMPANY					"RD AAOW"
 
@@ -108,7 +108,7 @@ struct CDSTATE
 
 	RGBQUAD cdPolymorphColors[5];	// Опорные цвета полиморфной палитры
 	uint cdPolymorphUpdateCounter;	// Счётчик обновления полиморфной палитры
-	uint cdCurrentPalette;			// Текущая палитра
+	uchar cdCurrentPalette;			// Текущая палитра
 	uchar cdBackgroundColorNumber;	// Цвет текущей палитры, используемый в качестве фона спектрограмм
 	};
 

@@ -853,6 +853,12 @@ namespace ESHQSetupStub
 				}
 			}
 
+		// Сброс вращения гистограммы
+		private void ResetRotation_Click (object sender, EventArgs e)
+			{
+			HistoRotSpeedArc.Value = HistoRotSpeedArc.Minimum;
+			}
+
 		/// <summary>
 		/// Метод проверяет, доступен ли для указанной клавиши обработчик в окне параметров
 		/// </summary>
@@ -868,77 +874,46 @@ namespace ESHQSetupStub
 			{
 			Keys.M,
 			Keys.P,
-			Keys.H,	// 2
+			Keys.H,						// 2
 
 			Keys.Up,
 			Keys.Down,
 			Keys.Left,
-			Keys.Right,	// 6
+			Keys.Right,					// 6
 
-			Keys.S,
-			Keys.W,
-			Keys.A,
-			Keys.D,	// 10
+			Keys.Up | Keys.Shift,
+			Keys.Down | Keys.Shift,
+			Keys.Left | Keys.Shift,
+			Keys.Right | Keys.Shift,	// 10
 
 			Keys.T,
-			Keys.K,	// 12
+			Keys.K,						// 12
 
-			Keys.F17,
-			Keys.F18,
-			Keys.F19,
-			Keys.F20,	// 16
-
-			Keys.F21,
-			Keys.F22,
-			Keys.F23,
-			Keys.F24,	// 20
-
+			Keys.Up | Keys.Control,
+			Keys.Down | Keys.Control,
+			Keys.Left | Keys.Control,
+			Keys.Right | Keys.Control,	// 16
+			
+			Keys.Up | Keys.Control | Keys.Shift,
+			Keys.Down | Keys.Control | Keys.Shift,
+			Keys.Left | Keys.Control | Keys.Shift,
+			Keys.Right | Keys.Control | Keys.Shift,	// 20
+			
 			Keys.C,
 			Keys.OemQuestion,
-			Keys.I
+			Keys.I,							// 23
+
+			Keys.Oemcomma,
+			Keys.OemPeriod,
+			Keys.Oemcomma | Keys.Shift,
+			Keys.OemPeriod | Keys.Shift,	// 27
+
+			// Клавиши, обрабатываемые в основном интерфейсе
+			// Keys.R,
+			// Keys.S,
+			// Keys.Escape,
+			// Keys.Space,
 		};
-
-		/// <summary>
-		/// Метод преобразует некоторые сочетания клавиш в специальные коды
-		/// </summary>
-		public static Keys AdaptHotKey (Keys OldKey, Keys Modifiers)
-			{
-			if (Modifiers == Keys.Control)
-				{
-				switch (OldKey)
-					{
-					// Для стрелок
-					case Keys.Up:
-						return Keys.F17;
-
-					case Keys.Down:
-						return Keys.F18;
-
-					case Keys.Left:
-						return Keys.F19;
-
-					case Keys.Right:
-						return Keys.F20;
-
-					// Для WASD
-					case Keys.S:
-						return Keys.F21;
-
-					case Keys.W:
-						return Keys.F22;
-
-					case Keys.A:
-						return Keys.F23;
-
-					case Keys.D:
-						return Keys.F24;
-					}
-				}
-
-			// Все остальные случаи
-			return OldKey;
-			}
-
 
 		/// <summary>
 		/// Метод обрабатывает нажатие горячей клавиши на главном экране
@@ -1042,24 +1017,24 @@ namespace ESHQSetupStub
 
 				// Изменение расположения лого
 				case 7:
-					if (LogoCenterYTrack.Value != LogoCenterYTrack.Minimum)
-						LogoCenterYTrack.Value--;
-					hotKeyResult = LogoCenterLabel.Text;
-					break;
-
-				case 17:
-					LogoCenterYTrack.Value = LogoCenterYTrack.Minimum;
-					hotKeyResult = LogoCenterLabel.Text;
-					break;
-
-				case 8:
 					if (LogoCenterYTrack.Value != LogoCenterYTrack.Maximum)
 						LogoCenterYTrack.Value++;
 					hotKeyResult = LogoCenterLabel.Text;
 					break;
 
-				case 18:
+				case 17:
 					LogoCenterYTrack.Value = LogoCenterYTrack.Maximum;
+					hotKeyResult = LogoCenterLabel.Text;
+					break;
+
+				case 8:
+					if (LogoCenterYTrack.Value != LogoCenterYTrack.Minimum)
+						LogoCenterYTrack.Value--;
+					hotKeyResult = LogoCenterLabel.Text;
+					break;
+
+				case 18:
+					LogoCenterYTrack.Value = LogoCenterYTrack.Minimum;
 					hotKeyResult = LogoCenterLabel.Text;
 					break;
 
@@ -1127,6 +1102,36 @@ namespace ESHQSetupStub
 						HistoRotSpeedArc.Value.ToString () + "°\n\n" +
 						CESettings.Text,
 						ProgramDescription.AssemblyTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
+					break;
+
+				// Увеличение / уменьшение скорости вращения гистограммы
+				case 24:
+				case 25:
+				case 26:
+				case 27:
+					if (allowedHotKeys.IndexOf (HotKey) < 26)
+						{
+						HistoRotSpeed.Checked = true;
+						hotKeyResult = HistoRotSpeed.Text;
+						}
+					else
+						{
+						HistoRotAccToBeats.Checked = true;
+						hotKeyResult = HistoRotAccToBeats.Text;
+						}
+
+					if (allowedHotKeys.IndexOf (HotKey) % 2 == 0)
+						{
+						if (HistoRotSpeedArc.Value > HistoRotSpeedArc.Minimum)
+							HistoRotSpeedArc.Value -= HistoRotSpeedArc.Increment;
+						}
+					else
+						{
+						if (HistoRotSpeedArc.Value < HistoRotSpeedArc.Maximum)
+							HistoRotSpeedArc.Value += HistoRotSpeedArc.Increment;
+						}
+
+					hotKeyResult += (" " + HistoRotSpeedArc.Value.ToString () + "°");
 					break;
 				}
 

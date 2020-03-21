@@ -40,7 +40,7 @@ CD_API(uchar) GetScaledAmplitudeEx (uint FrequencyLevel)
 
 	// Пересчёт пика
 	if ((AS->cdFFTPeakEvLowEdge | AS->cdFFTPeakEvHighEdge) == 0)	// Состояние отключения
-		return v;
+		return (uchar)v;
 
 	if ((FrequencyLevel >= AS->cdFFTPeakEvLowEdge) && (FrequencyLevel <= AS->cdFFTPeakEvHighEdge) && 
 		(v >= AS->cdFFTPeakEvLowLevel))
@@ -50,7 +50,7 @@ CD_API(uchar) GetScaledAmplitudeEx (uint FrequencyLevel)
 		}
 
 	// Завершено
-	return v;
+	return (uchar)v;
 	}
 
 // Функции, отрисовывающие отдельные виды спектрограм
@@ -79,7 +79,7 @@ void DrawSpectrogram (uchar Mode)
 
 				// Отрисовка
 				AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth / 2 - 2] = 
-					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth / 2 + 1] = v;
+					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth / 2 + 1] = (uchar)v;
 				AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth / 2] = 
 					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth / 2 - 1] = CD_BMPINFO_MAXCOLOR;
 				break;
@@ -95,16 +95,16 @@ void DrawSpectrogram (uchar Mode)
 
 				// Отрисовка
 				for (i = 1; i <= AS->sgSpectrogramStep; i++)
-					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - i] = v;
+					AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - i] = (uchar)v;
 				break;
 
 			// Статичная
 			case 0:
 			default:
 				// Отрисовка (делаем так, чтобы исключить лишнюю арифметику на первом шаге)
-				AS->sgBuffer[y * AS->sgFrameWidth + AS->sgCurrentPosition] = v;
+				AS->sgBuffer[y * AS->sgFrameWidth + AS->sgCurrentPosition] = (uchar)v;
 				for (i = 1; i < AS->sgSpectrogramStep; i++)
-					AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + i) % AS->sgFrameWidth] = v;
+					AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + i) % AS->sgFrameWidth] = (uchar)v;
 
 				// Маркер
 				AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + i) % AS->sgFrameWidth] = CD_BMPINFO_MAXCOLOR;
@@ -167,7 +167,7 @@ void DrawAmplitudes (uchar Moving)
 		}
 
 	// Перемасштабирование
-	v2 = sqrt(v2 / AS->cdHistogramFFTValuesCount);
+	v2 = (ulong)sqrt (v2 / AS->cdHistogramFFTValuesCount);
 	v = v2;
 	v2 = AS->sgFrameHeight * (ulong)v2 / CD_BMPINFO_COLORS_COUNT;
 
@@ -185,9 +185,9 @@ void DrawAmplitudes (uchar Moving)
 		
 		for (y = (AS->sgFrameHeight - v2) / 2; y < (AS->sgFrameHeight + v2) / 2; y++)
 			{
-			AS->sgBuffer[y * AS->sgFrameWidth + AS->sgCurrentPosition] = v;
+			AS->sgBuffer[y * AS->sgFrameWidth + AS->sgCurrentPosition] = (uchar)v;
 			for (i = 1; i < AS->sgSpectrogramStep; i++)
-				AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + i) % AS->sgFrameWidth] = v;
+				AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgCurrentPosition + i) % AS->sgFrameWidth] = (uchar)v;
 			}
 
 		for (y = (AS->sgFrameHeight + v2) / 2; y < AS->sgFrameHeight; y++)
@@ -229,7 +229,7 @@ void DrawAmplitudes (uchar Moving)
 		for (y = (AS->sgFrameHeight - v2) / 2; y < (AS->sgFrameHeight + v2) / 2; y++)
 			{
 			for (i = 1; i <= AS->sgSpectrogramStep; i++)					
-				AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - i] = v;
+				AS->sgBuffer[y * AS->sgFrameWidth + AS->sgFrameWidth - i] = (uchar)v;
 			}
 
 		for (y = (AS->sgFrameHeight + v2) / 2; y < AS->sgFrameHeight; y++)

@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Windows.Forms;
 
 #if VIDEO
 using System.ComponentModel;
-using System.IO;
 #endif
 
 // Классы
@@ -43,6 +43,7 @@ namespace ESHQSetupStub
 		private uint steps = 0;									// Счётчик шагов отрисовки
 		private Random rnd = new Random ();						// ГПСЧ
 		private ConcurrentDrawParameters cdp;					// Параметры работы программы
+		private const string screenshotsDir = "CDScreenshots";	// Папка для скриншотов
 
 		// Графика
 		private LogoDrawerLayer mainLayer;						// Базовый слой изображения
@@ -89,7 +90,7 @@ namespace ESHQSetupStub
 
 #if OBJECTS
 		// Дополнительные графические объекты
-		private List<ILogoDrawerObject> objects = 
+		private List<ILogoDrawerObject> objects =
 			new List<ILogoDrawerObject> ();						// Визуальные объекты
 		private LogoDrawerObjectMetrics objectsMetrics;			// Метрики генерируемых объектов
 		private LogoDrawerLayer objectsLayer;					// Слой визуальных объектов
@@ -104,7 +105,6 @@ namespace ESHQSetupStub
 		// Субтитры
 		private Font[] subtitlesFonts = new Font[2];			// Объекты поддержки текстовых подписей на рендере
 		private SizeF[] subtitlesSizes = new SizeF[2];
-		private int subtitlesBrushNumber = 1;					// Номер кисти субтитров
 
 #if !VIDEO
 		private string hotKeyResultText = "";					// Замена субтитрам, позволяющая отображать
@@ -125,7 +125,7 @@ namespace ESHQSetupStub
 		private List<Bitmap> backgrounds = new List<Bitmap> ();	// Фоновые фреймы (если представлены)
 		private int backgroundsCounter = 0;						// Текущий фрейм видеофона
 
-		private ParametersPicker pp = 
+		private ParametersPicker pp =
 			new ParametersPicker (false);						// Интерфейс запроса параметров рендеринга
 #endif
 
@@ -552,7 +552,7 @@ namespace ESHQSetupStub
 				// Отрисовка
 				ExtendedTimer_Tick (null, null);
 
-				showSubtitlesNow = (i >= 375) && (i <= 525);
+				showSubtitlesNow = (i >= 325) && (i <= 475);
 
 				// Возврат прогресса
 				((BackgroundWorker)sender).ReportProgress ((int)HardWorkExecutor.ProgressBarSize * i / (int)length,
@@ -606,8 +606,9 @@ namespace ESHQSetupStub
 					objects[i].Dispose ();
 
 					// Обновление зависимых параметров
-					objectsMetrics.MaxSpeed = objectsMetrics.MinSpeed = 5;//+cumulation;
-					objectsMetrics.MaxSize = 3;	//+cumulation / 10;
+					objectsMetrics.MaxSpeed = 5;
+					objectsMetrics.MinSpeed = 1;
+					objectsMetrics.MaxSize = 5;
 					objectsMetrics.PolygonsSidesCount = (byte)rnd.Next (5, 8);
 
 					switch (objectsMetrics.ObjectsType)
@@ -665,16 +666,26 @@ namespace ESHQSetupStub
 #endif
 			}
 
-		// Поворачивает и отрисовывает лого
-		private void RotateAndDrawLogo (bool PushBrakes)
+		// Обновляет углы поворота лого
+		private void UpdateAngles (bool PushBrakes)
 			{
+			// Обновление приращения угла
+			if (peak > cdp.BeatsDetectorLowLevel)
+				currentLogoAngleDelta = -logoSpeedImpulse;
+
 			// Торможение вращения
 			if (PushBrakes)
 				currentLogoAngleDelta = (7 * currentLogoAngleDelta - logoIdleSpeed) / 8;
 
+			// Обновление угла
+			currentLogoAngle = (currentLogoAngle + currentLogoAngleDelta / 3) % 360;
+			}
+
+		// Отрисовывает лого
+		private void RotateAndDrawLogo ()
+			{
 			// Отрисовка
 			gr[1].RotateTransform (currentLogoAngleDelta);
-			currentLogoAngle = (currentLogoAngle + currentLogoAngleDelta / 3) % 360;
 			gr[1].DrawImage (logo[0], -3 * logoHeight / 5, -3 * logoHeight / 5);
 
 			// Обработка режима "только лого"
@@ -694,7 +705,8 @@ namespace ESHQSetupStub
 			{
 			// Отрисовка
 			currentLogoAngleDelta = (int)(++steps);
-			RotateAndDrawLogo (false);
+			UpdateAngles (false);
+			RotateAndDrawLogo ();
 
 			if (steps >= 170)
 				{
@@ -889,7 +901,7 @@ namespace ESHQSetupStub
 			mainLayer.Descriptor.DrawImage (objectsLayer.Layer, 0, 0);
 #endif
 
-			// Запрос пикового значения
+			// Запрос пикового значения 
 			peak = ConcurrentDrawLib.CurrentPeak;
 
 			// Отрисовка гистограммы-бабочки при необходимости
@@ -902,14 +914,13 @@ namespace ESHQSetupStub
 				ApplyCumulativeEffect (true);
 
 			// Отрисовка лого при необходимости
+			UpdateAngles (true);
 			if (VisualizationModesChecker.ContainsLogo (cdp.VisualizationMode))
 				{
 				// Лого
-				RotateAndDrawLogo (true);
+				RotateAndDrawLogo ();
 
 				// Бит-детектор
-				if (peak > cdp.BeatsDetectorLowLevel)
-					currentLogoAngleDelta = -logoSpeedImpulse;
 				p = new Pen (ConcurrentDrawLib.GetMasterPaletteColor (peak), logoHeight / 50);
 				rad = 400 * logo[1].Height / (1200 - peak);
 
@@ -952,11 +963,11 @@ namespace ESHQSetupStub
 			if (showSubtitlesNow)
 				{
 				if (pp.SubtitlesStrings[0] != "")
-					mainLayer.Descriptor.DrawString (pp.SubtitlesStrings[0], subtitlesFonts[0], brushes[subtitlesBrushNumber],
+					mainLayer.Descriptor.DrawString (pp.SubtitlesStrings[0], subtitlesFonts[0], brushes[pp.BackgroundBrush ? 0 : 1],
 						(pp.RightStringsAlignment ? (this.Width - subtitlesSizes[0].Width - 50) : 50),
 						this.Height - subtitlesSizes[0].Height - subtitlesSizes[1].Height - 30);
 				if (pp.SubtitlesStrings[1] != "")
-					mainLayer.Descriptor.DrawString (pp.SubtitlesStrings[1], subtitlesFonts[1], brushes[subtitlesBrushNumber],
+					mainLayer.Descriptor.DrawString (pp.SubtitlesStrings[1], subtitlesFonts[1], brushes[pp.BackgroundBrush ? 0 : 1],
 						(pp.RightStringsAlignment ? (this.Width - subtitlesSizes[1].Width - 50) : 50),
 						this.Height - subtitlesSizes[1].Height - 30);
 				}
@@ -964,7 +975,7 @@ namespace ESHQSetupStub
 			if (hotKeyResultText != "")
 				{
 				mainLayer.Descriptor.DrawString (hotKeyResultText, subtitlesFonts[hotKeyTextFontNumber],
-					brushes[subtitlesBrushNumber], this.Width - subtitlesSizes[hotKeyTextFontNumber].Width - 50,
+					brushes[1], this.Width - subtitlesSizes[hotKeyTextFontNumber].Width - 50,
 					this.Height - subtitlesSizes[hotKeyTextFontNumber].Height - 30);
 
 				if (hotKeyResultTextShowCounter++ > hotKeyResultCounterLimit)
@@ -1070,10 +1081,30 @@ namespace ESHQSetupStub
 					ChangeSettingsAndRestart (ChangeSettingsAndRestartModes.RestartDrawingOnly, 0);
 					break;
 
+				// Сохранение скриншота визуализации
+				case Keys.S:
+					mainLayer.Descriptor.DrawString (ProgramDescription.AssemblyTitle, subtitlesFonts[hotKeyTextFontNumber],
+						brushes[1], 0, 0);
+
+					try
+						{
+						if (!Directory.Exists (Application.StartupPath + "\\" + screenshotsDir))
+							Directory.CreateDirectory (Application.StartupPath + "\\" + screenshotsDir);
+
+						mainLayer.Layer.Save (Application.StartupPath + "\\" + screenshotsDir + "\\" +
+							DateTime.Now.ToString ("dd-MM-yyyy_HH-mm-ss") + ".png", ImageFormat.Png);
+						}
+					catch
+						{
+						MessageBox.Show (Localization.GetText ("ScreenshotFailure", cdp.CurrentInterfaceLanguage),
+							ProgramDescription.AssemblyTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+						}
+					break;
+
 				// Другие настройки (с передачей результата выполнения из окна настроек)
 				default:
 					hotKeyResultText = ChangeSettingsAndRestart (ChangeSettingsAndRestartModes.SendHotKeyToSettingsWindow,
-						ConcurrentDrawParameters.AdaptHotKey (e.KeyCode, e.Modifiers));
+						e.KeyCode | e.Modifiers);
 					break;
 				}
 #endif
@@ -1260,10 +1291,10 @@ namespace ESHQSetupStub
 			objectsMetrics.MinBlue = ConcurrentDrawLib.GetColorFromPalette (224).B;
 			objectsMetrics.MinSize = 1;
 			objectsMetrics.ObjectsCount = 15;
-			objectsMetrics.ObjectsType = LogoDrawerObjectTypes.RotatingPolygons;
+			objectsMetrics.ObjectsType = LogoDrawerObjectTypes.RotatingStars;
 			objectsMetrics.Rotation = true;
 			objectsMetrics.StartupPosition = LogoDrawerObjectStartupPositions.Top;
-			objectsMetrics.MaxSpeedFluctuation = 2;
+			objectsMetrics.MaxSpeedFluctuation = 1;
 
 			for (int i = 0; i < objectsMetrics.ObjectsCount; i++)
 				objects.Add (new LogoDrawerLetter (0, 0, null, objectsMetrics));

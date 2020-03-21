@@ -14,19 +14,19 @@
 								FP_B m }\
 								AS->cdBackgroundColorNumber = g;
 
-#define FP_Q1(r,g,b)	AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbRed = r;\
-						AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbGreen = g;\
-						AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbBlue = b;
-#define FP_QM(d,r,g,b)	AS->sgBMPInfo.cd_bmpinfo.colors[d + i].rgbRed = r;\
-						AS->sgBMPInfo.cd_bmpinfo.colors[d + i].rgbGreen = g;\
-						AS->sgBMPInfo.cd_bmpinfo.colors[d + i].rgbBlue = b;
+#define FP_Q1(r,g,b)	AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbRed = (BYTE)r;\
+						AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbGreen = (BYTE)g;\
+						AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbBlue = (BYTE)b;
+#define FP_QM(d,r,g,b)	AS->sgBMPInfo.cd_bmpinfo.colors[d + i].rgbRed = (BYTE)r;\
+						AS->sgBMPInfo.cd_bmpinfo.colors[d + i].rgbGreen = (BYTE)g;\
+						AS->sgBMPInfo.cd_bmpinfo.colors[d + i].rgbBlue = (BYTE)b;
 #define FP_Q2(r,g,b)	FP_QM(FP_QMAX,r,g,b)
 #define FP_Q3(r,g,b)	FP_QM(FP_HMAX,r,g,b)
 #define FP_Q4(r,g,b)	FP_QM(FP_AMAX,r,g,b)
 
-#define FP_B(r,g,b)		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbRed = r;\
-						AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbGreen = g;\
-						AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbBlue = b;
+#define FP_B(r,g,b)		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbRed = (BYTE)r;\
+						AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbGreen = (BYTE)g;\
+						AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbBlue = (BYTE)b;
 
 #define FPPR_UPDATE(member,limit)	member += GetRandomValue (-FPPR_RND_LIMIT, FPPR_RND_LIMIT);\
 									if (member < FPPR_RND_LIMIT) member = FP_MAX;\
@@ -86,9 +86,9 @@ void FillPalette_PolymorphRandom (uchar Polymorph, uchar Monocolor)
 		if (Monocolor)
 			{
 			// Генерация
-			AS->cdPolymorphColors[3].rgbRed = GetRandomValue (FPPR_CLR_MIN_MONO, FP_MAX);
-			AS->cdPolymorphColors[3].rgbGreen = GetRandomValue (FPPR_CLR_MIN_MONO, FP_MAX);
-			AS->cdPolymorphColors[3].rgbBlue = GetRandomValue (FPPR_CLR_MIN_MONO, FP_MAX);
+			AS->cdPolymorphColors[3].rgbRed = (BYTE)GetRandomValue (FPPR_CLR_MIN_MONO, FP_MAX);
+			AS->cdPolymorphColors[3].rgbGreen = (BYTE)GetRandomValue (FPPR_CLR_MIN_MONO, FP_MAX);
+			AS->cdPolymorphColors[3].rgbBlue = (BYTE)GetRandomValue (FPPR_CLR_MIN_MONO, FP_MAX);
 
 			// Осветление
 			FPPR_ENLIGHT
@@ -106,9 +106,9 @@ void FillPalette_PolymorphRandom (uchar Polymorph, uchar Monocolor)
 			{
 			for (i = 1; i < 4; i++)
 				{
-				AS->cdPolymorphColors[i].rgbRed = GetRandomValue (FPPR_CLR_MIN_POLY, FP_MAX);
-				AS->cdPolymorphColors[i].rgbGreen = GetRandomValue (FPPR_CLR_MIN_POLY, FP_MAX);
-				AS->cdPolymorphColors[i].rgbBlue = GetRandomValue (FPPR_CLR_MIN_POLY, FP_MAX);
+				AS->cdPolymorphColors[i].rgbRed = (BYTE)GetRandomValue (FPPR_CLR_MIN_POLY, FP_MAX);
+				AS->cdPolymorphColors[i].rgbGreen = (BYTE)GetRandomValue (FPPR_CLR_MIN_POLY, FP_MAX);
+				AS->cdPolymorphColors[i].rgbBlue = (BYTE)GetRandomValue (FPPR_CLR_MIN_POLY, FP_MAX);
 				}
 			}
 		}
@@ -387,5 +387,5 @@ CD_API(uchar) PaletteRequiresResetEx (uchar PaletteNumber)
 // Функция возвращает псевдослучайное число между Min и Max, включая границы
 sint GetRandomValue (sint Min, sint Max)
 	{
-	return (Max - Min + 1) * (sdlong)rand () / (RAND_MAX + 1) + Min;
+	return (sint)((Max - Min + 1) * (sdlong)rand () / (RAND_MAX + 1) + Min);
 	}

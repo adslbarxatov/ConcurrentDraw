@@ -306,12 +306,14 @@ Center placement: X = {1:S}; Y = {2:S}</value>
 • P key – cyclically change palette;
 • H key – cyclically change histogram range;
 • arrows keys – move visualization window; with Ctrl key – to the edge of screen;
-• W, A, S and D keys – move logo; with Ctrl key – to the edge of window;
+• arrows keys with Shift key – move logo; with Ctrl key – to the edge of window;
+• '&lt; ,' and '&gt; .' keys – decrease and increase histogram rotation speed; with Shift key – beats-dependent rotation;
 • C key – move logo to the center of window;
 • '/ ?' key – show this quick user manual;
 • T key – switch 'Always on top' flag;
 • K key – switch shake flag;
-• I key – current settings info</value>
+• I key – request for current settings info;
+• S key – saving current visualization screen to image file</value>
   </data>
   <data name="CDP_CEInfoText" xml:space="preserve">
     <value>(1 – no cumulative effect)</value>
@@ -321,5 +323,8 @@ Center placement: X = {1:S}; Y = {2:S}</value>
   </data>
   <data name="CDP_BDNo" xml:space="preserve">
     <value>No beats detection</value>
+  </data>
+  <data name="ScreenshotFailure" xml:space="preserve">
+    <value>Failed to save visualization screenshot: application placement is unavailable for writing</value>
   </data>
 </root>
