@@ -844,6 +844,8 @@ namespace ESHQSetupStub
 					rad = logo[1].Width / 2 + (int)((uint)(logo[1].Width * amp) / 256);
 					angle1 = ArcToRad (i / butterflyDensity);
 					angle2 = ArcToRad (currentHistogramAngle);
+					if (cdp.SwingingHistogram)
+						angle2 = Math.Sin (angle2) / 2.0;
 
 					// Расчёт координат
 					histoX[0] = (int)(logoCenterX + rad * Math.Cos (angle2 + angle1));
@@ -865,6 +867,8 @@ namespace ESHQSetupStub
 					// (двойная длина дуги для того же количества линий)
 					angle1 = ArcToRad (((255 - i) * ((i % 2 == 0) ? 1 : -1)) / perspectiveDensity);
 					angle2 = ArcToRad (currentHistogramAngle + 90);
+					if (cdp.SwingingHistogram)
+						angle2 = (Math.Sin (angle2) + Math.PI) / 2.0;
 
 					// Координаты
 					histoX[0] = (int)(logoCenterX + rad * Math.Cos (angle2 + angle1));

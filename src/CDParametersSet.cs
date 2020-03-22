@@ -444,6 +444,8 @@ namespace ESHQSetupStub
 
 				logoCenterX = uint.Parse (values[20]);
 				logoCenterY = uint.Parse (values[21]);
+
+				swingingHistogram = (values[22] != "0");
 				}
 			catch
 				{
@@ -505,7 +507,8 @@ namespace ESHQSetupStub
 				beatsDetectorFFTScaleMultiplier.ToString () + splitter[0].ToString () +
 
 				logoCenterX.ToString () + splitter[0].ToString () +
-				logoCenterY.ToString ();
+				logoCenterY.ToString () + splitter[0].ToString () +
+				(swingingHistogram ? "SH" : "0");
 
 			// Запись
 			try
@@ -628,5 +631,21 @@ namespace ESHQSetupStub
 				}
 			}
 		private uint logoCenterY = 50;
+
+		/// <summary>
+		/// Возвращает или задаёт флаг, указывающий на качание гистограммы вместо вращения
+		/// </summary>
+		public bool SwingingHistogram
+			{
+			get
+				{
+				return swingingHistogram;
+				}
+			set
+				{
+				swingingHistogram = value;
+				}
+			}
+		private bool swingingHistogram = false;
 		}
 	}

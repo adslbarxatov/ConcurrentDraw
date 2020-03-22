@@ -299,3 +299,9 @@ Version 1.35:
 Version 1.35.1:
 • Using Shift key with P, M and H keys will reverse direction of change of palette, mode and range;
 • Perspective histogram mode reviewed
+
+Version 1.36:
+• Added 'Swinging instead of rotating' flag for butterfly and perspective histograms; W key is for it;
+• Some 'settings' window's bugs fixed;
+• Added direct link to users videoguide in help messages sequence;
+• Logo size (affects histogram radius) changing opened for all butterfly and perspective histograms' submodes

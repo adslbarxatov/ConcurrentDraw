@@ -313,7 +313,8 @@ Center placement: X = {1:S}; Y = {2:S}</value>
 • T key – switch 'Always on top' flag;
 • K key – switch shake flag;
 • I key – request for current settings info;
-• S key – saving current visualization screen to image file</value>
+• S key – saving current visualization screen to image file;
+• W key – switch 'histogram swinging' flag</value>
   </data>
   <data name="CDP_CEInfoText" xml:space="preserve">
     <value>(1 – no cumulative effect)</value>
@@ -326,5 +327,11 @@ Center placement: X = {1:S}; Y = {2:S}</value>
   </data>
   <data name="ScreenshotFailure" xml:space="preserve">
     <value>Failed to save visualization screenshot: application placement is unavailable for writing</value>
+  </data>
+  <data name="CDP_SwingingHistogramFlag" xml:space="preserve">
+    <value>Swinging instead of rotating</value>
+  </data>
+  <data name="HelpVideo" xml:space="preserve">
+    <value>Do you want to view users videoguide on our YouTube channel?</value>
   </data>
 </root>

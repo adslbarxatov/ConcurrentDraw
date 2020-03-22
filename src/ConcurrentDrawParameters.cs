@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace ESHQSetupStub
 	{
@@ -120,6 +121,7 @@ namespace ESHQSetupStub
 			AlwaysOnTopFlag.Checked = parameters[DSN].AlwaysOnTop;
 			ShakeFlag.Checked = parameters[DSN].ShakeEffect;
 			SDDoubleWidthFlag.Checked = parameters[DSN].SpectrogramDoubleWidth;
+			SwingingHistogramFlag.Checked = parameters[DSN].SwingingHistogram;
 
 			// Язык интерфейса
 			for (int i = 0; i < Localization.AvailableLanguages; i++)
@@ -189,6 +191,7 @@ namespace ESHQSetupStub
 
 				SDDoubleWidthFlag.Checked = parameters[psn].SpectrogramDoubleWidth;
 				AlwaysOnTopFlag.Checked = parameters[psn].AlwaysOnTop;
+				SwingingHistogramFlag.Checked = parameters[psn].SwingingHistogram;
 				HistogramRangeCombo.SelectedIndex = (int)Math.Log (parameters[psn].HistogramFFTValuesCount /
 					CDParametersSet.HistogramFFTValuesCountMinimum, 2.0);
 
@@ -237,6 +240,7 @@ namespace ESHQSetupStub
 
 			SDDoubleWidthFlag.Text = Localization.GetText ("CDP_SDDoubleWidthFlag", al);
 			AlwaysOnTopFlag.Text = Localization.GetText ("CDP_AlwaysOnTopFlag", al);
+			SwingingHistogramFlag.Text = Localization.GetText ("CDP_SwingingHistogramFlag", al);
 
 			GenericTab.Text = Localization.GetText ("CDP_GenericGroup", al);
 			LogoTab.Text = Localization.GetText ("CDP_LogoGroup", al);
@@ -378,6 +382,7 @@ namespace ESHQSetupStub
 
 			parameters[psn].SpectrogramDoubleWidth = SDDoubleWidthFlag.Checked;
 			parameters[psn].AlwaysOnTop = AlwaysOnTopFlag.Checked;
+			parameters[psn].SwingingHistogram = SwingingHistogramFlag.Checked;
 			parameters[psn].HistogramFFTValuesCount = (uint)(Math.Pow (2.0, HistogramRangeCombo.SelectedIndex) *
 				CDParametersSet.HistogramFFTValuesCountMinimum);
 
@@ -469,6 +474,17 @@ namespace ESHQSetupStub
 				}
 			}
 
+		/// <summary>
+		/// Возвращает флаг, указывающий на качание гистограммы вместо вращения
+		/// </summary>
+		public bool SwingingHistogram
+			{
+			get
+				{
+				return parameters[SSN].SwingingHistogram;
+				}
+			}
+
 		// Изменение настроек детекции бита
 		private void BDLowEdge_ValueChanged (object sender, EventArgs e)
 			{
@@ -551,8 +567,13 @@ namespace ESHQSetupStub
 
 			MessageBox.Show (Localization.GetText ("HelpText", al), ProgramDescription.AssemblyTitle,
 				MessageBoxButtons.OK, MessageBoxIcon.Information);
+
 			MessageBox.Show (Localization.GetText ("HelpKeysText", al), ProgramDescription.AssemblyTitle,
 				MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+			if (MessageBox.Show (Localization.GetText ("HelpVideo", al), ProgramDescription.AssemblyTitle,
+				MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+				Process.Start ("https://www.youtube.com/watch?v=Ri10rlbl2bI&list=PLe7qKwHNkZTtr1OGOdYMrD73ByPBzCzxc&index=5");
 			}
 
 		// Изменение языка интерфейса
@@ -673,8 +694,8 @@ namespace ESHQSetupStub
 			HGRangeLabel.Enabled = HistogramRangeCombo.Enabled = !VisualizationModesChecker.ContainsSGonly (mode);
 			SDDoubleWidthFlag.Enabled = VisualizationModesChecker.ContainsSGorWF (mode);
 
-			LogoHeightPercentage.Enabled = LogoCenterXTrack.Enabled = LogoCenterYTrack.Enabled =
-				LogoCenterLabel.Enabled = VisualizationModesChecker.ContainsLogo (mode);
+			LogoTab.Enabled = VisualizationModesChecker.ContainsLogo (mode) ||
+				!VisualizationModesChecker.ContainsSGHGorWF (mode);
 
 			LogoCenterXTrack.Enabled = LogoCenterYTrack.Enabled =
 				LogoCenterXTrack.Visible = LogoCenterYTrack.Visible = !VisualizationModesChecker.IsPerspective (mode);
@@ -912,6 +933,8 @@ namespace ESHQSetupStub
 			Keys.P | Keys.Shift,
 			Keys.H | Keys.Shift,			// 30
 
+			Keys.W 			
+
 			// Клавиши, обрабатываемые в основном интерфейсе
 			// Keys.R,
 			// Keys.S,
@@ -1127,7 +1150,8 @@ namespace ESHQSetupStub
 						"\n" + LogoCenterLabel.Text + "\n\n" +
 						BDSettings.Text + "\n\n" +
 						(HistoRotAccToBeats.Checked ? HistoRotAccToBeats.Text : HistoRotSpeed.Text) + " " +
-						HistoRotSpeedArc.Value.ToString () + "°\n\n" +
+						HistoRotSpeedArc.Value.ToString () + "°\n" +
+						(SwingingHistogramFlag.Checked ? (SwingingHistogramFlag.Text + "\n\n") : "\n") +
 						CESettings.Text,
 						ProgramDescription.AssemblyTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
 					break;
@@ -1160,6 +1184,12 @@ namespace ESHQSetupStub
 						}
 
 					hotKeyResult += (" " + HistoRotSpeedArc.Value.ToString () + "°");
+					break;
+
+				// Изменение флага Always on top
+				case 31:
+					SwingingHistogramFlag.Checked = !SwingingHistogramFlag.Checked;
+					hotKeyResult = SwingingHistogramFlag.Text + " = " + (SwingingHistogramFlag.Checked ? "1" : "0");
 					break;
 				}
 
