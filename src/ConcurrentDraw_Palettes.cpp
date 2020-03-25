@@ -140,10 +140,10 @@ void FillPalette_PolymorphRandom (uchar Polymorph, uchar Monocolor)
 	}
 
 // Функция формирует палитру приложения
-#define FP_SPECIAL_PALETTES	case 16:\
-							case 17:\
-							case 18:\
-							case 19:
+#define FP_SPECIAL_PALETTES	case 12:\
+							case 13:\
+							case 14:\
+							case 15:
 
 CD_API(void) FillPaletteEx (uchar PaletteNumber)
 	{
@@ -258,18 +258,8 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 				(i, 0, 0), 8)
 			break;
 
-		// Негатив
-		case 10:
-			FP_PALETTE (
-				(FP_MAX - i, FP_MAX - i, FP_MAX - i),
-				(FP_AMAX - i, FP_AMAX - i, FP_AMAX - i),
-				(FP_HMAX - i, FP_HMAX - i, FP_HMAX - i),
-				(FP_QMAX - i, FP_QMAX - i, FP_QMAX - i),
-				(FP_MAX - i, FP_MAX - i, FP_MAX - i), 192)
-			break;
-
 		// Лимон
-		case 11:
+		case 10:
 			FP_PALETTE (
 				(i, i, 0),
 				(FP_QMAX + i, FP_QMAX + i, 0),
@@ -278,8 +268,28 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 				(i, i, 0), 8)
 			break;
 
+		// Ла фиеста
+		case 11:
+			FP_PALETTE (
+				(0, 2 * i, i),
+				(0, FP_HMAX + i, FP_QMAX - i),
+				(4 * i, FP_AMAX + i, 0),
+				(FP_MAX, FP_MAX, 4 * i),
+				(0, i, i / 2), 8)
+			break;
+
+		// Негатив
+		case 16:
+			FP_PALETTE (
+				(FP_MAX - i, FP_MAX - i, FP_MAX - i),
+				(FP_AMAX - i, FP_AMAX - i, FP_AMAX - i),
+				(FP_HMAX - i, FP_HMAX - i, FP_HMAX - i),
+				(FP_QMAX - i, FP_QMAX - i, FP_QMAX - i),
+				(FP_MAX - i, FP_MAX - i, FP_MAX - i), 192)
+			break;
+
 		// Огонь обратный
-		case 12:
+		case 17:
 			FP_PALETTE (
 				(FP_MAX, FP_MAX, FP_AMAX - 3 * i),
 				(FP_MAX, FP_MAX - 2 * i, 0),
@@ -288,8 +298,8 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 				(FP_MAX - 3 * i / 4, FP_AMAX - 3 * i / 4, FP_HMAX - i / 2), 224)
 			break;
 
-		// Море обратный
-		case 13:
+		// Море обратное
+		case 18:
 			FP_PALETTE (
 				(FP_AMAX - 3 * i, FP_MAX, FP_MAX),
 				(0, FP_MAX - 2 * i, FP_MAX),
@@ -299,7 +309,7 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 			break;
 
 		// Пурпурная
-		case 14:
+		case 19:
 			FP_PALETTE (
 				(FP_MAX - 2 * i, FP_AMAX - 3 * i, FP_MAX),
 				(FP_HMAX - i, 0, FP_MAX),
@@ -309,7 +319,7 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 			break;
 
 		// Кровь обратная
-		case 15:
+		case 20:
 			FP_PALETTE (
 				(FP_MAX, FP_AMAX - 3 * i, FP_AMAX - 3 * i),
 				(FP_MAX - 2 * i, 0, 0),
@@ -324,6 +334,36 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 			AS->cdPolymorphUpdateCounter = PaletteNumber & 0x2;
 			break;
 		}
+	}
+
+// Функция возвращает названия доступных палитр
+CD_API(schar *) GetPalettesNamesEx ()
+	{
+	#define PALETTES_NAMES	("Adobe Audition" NAMES_DELIMITER_S \
+		"Sea" NAMES_DELIMITER_S \
+		"Fire" NAMES_DELIMITER_S \
+		"Grey" NAMES_DELIMITER_S \
+		"Sunrise" NAMES_DELIMITER_S \
+		"Acid" NAMES_DELIMITER_S \
+		"7 missed calls" NAMES_DELIMITER_S \
+		"Sail on the sea" NAMES_DELIMITER_S \
+		"Mirror" NAMES_DELIMITER_S \
+		"Blood" NAMES_DELIMITER_S \
+		\
+		"Lemon" NAMES_DELIMITER_S \
+		"La fiesta" NAMES_DELIMITER_S \
+		"Random" NAMES_DELIMITER_S \
+		"Random monocolor" NAMES_DELIMITER_S \
+		"Polymorph" NAMES_DELIMITER_S \
+		"Polymorph monocolor" NAMES_DELIMITER_S \
+		"Negative" NAMES_DELIMITER_S \
+		"Fire (reversed)" NAMES_DELIMITER_S \
+		"Sea (reversed)" NAMES_DELIMITER_S \
+		"Purple" NAMES_DELIMITER_S \
+		\
+		"Blood (reversed)")
+
+	return PALETTES_NAMES;
 	}
 
 // Функция получает указанный цвет из текущей палитры
@@ -342,33 +382,6 @@ CD_API(ulong) GetMasterPaletteColorEx (uchar Brightness)
 		(AS->sgBeatsInfo.cd_bmpinfo.colors[Brightness].rgbRed << 16) |
 		(AS->sgBeatsInfo.cd_bmpinfo.colors[Brightness].rgbGreen << 8) | 
 		AS->sgBeatsInfo.cd_bmpinfo.colors[Brightness].rgbBlue;
-	}
-
-// Функция возвращает названия доступных палитр
-CD_API(schar *) GetPalettesNamesEx ()
-	{
-	#define PALETTES_NAMES	("Adobe Audition" NAMES_DELIMITER_S \
-		"Sea" NAMES_DELIMITER_S \
-		"Fire" NAMES_DELIMITER_S \
-		"Grey" NAMES_DELIMITER_S \
-		"Sunrise" NAMES_DELIMITER_S \
-		"Acid" NAMES_DELIMITER_S \
-		"7 missed calls" NAMES_DELIMITER_S \
-		"Sail on the sea" NAMES_DELIMITER_S \
-		"Mirror" NAMES_DELIMITER_S \
-		"Blood" NAMES_DELIMITER_S \
-		"Negative" NAMES_DELIMITER_S \
-		"Lemon" NAMES_DELIMITER_S \
-		"Fire (reversed)" NAMES_DELIMITER_S \
-		"Sea (reversed)" NAMES_DELIMITER_S \
-		"Purple" NAMES_DELIMITER_S \
-		"Blood (reversed)" NAMES_DELIMITER_S \
-		"Random" NAMES_DELIMITER_S \
-		"Random monocolor" NAMES_DELIMITER_S \
-		"Polymorph" NAMES_DELIMITER_S \
-		"Polymorph monocolor" )
-
-	return PALETTES_NAMES;
 	}
 
 // Функция возвращает рекомендацию на сброс лого по признаку спецпалитр

@@ -1,5 +1,11 @@
 ﻿ConcurrentDraw changes log
 
+Version 1.36.5:
+• Visualization types have been unified;
+• 'With logo' flag has been separated from visualization modes and is independent now;
+• L key now turns logo on / off;
+• 'La fiesta' palette added;
+• Palettes list has been reordered
 
 Version 1.36:
 • Added 'Swinging instead of rotating' flag for butterfly and perspective histograms; W key is for it;

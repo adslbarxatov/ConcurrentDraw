@@ -516,7 +516,7 @@ namespace ESHQSetupStub
 					gr[1].CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
 
 					// Перекрытие остатка лого при его отсутствии
-					if (!VisualizationModesChecker.ContainsLogo (cdp.VisualizationMode) &&
+					if (!cdp.VisualizationContainsLogo &&
 						VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode) &&
 						(this.Height - cdp.SpectrogramHeight > 0))
 						{
@@ -919,7 +919,7 @@ namespace ESHQSetupStub
 
 			// Отрисовка лого при необходимости
 			UpdateAngles (true);
-			if (VisualizationModesChecker.ContainsLogo (cdp.VisualizationMode))
+			if (cdp.VisualizationContainsLogo)
 				{
 				// Лого
 				RotateAndDrawLogo ();

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 namespace ESHQSetupStub
 	{
@@ -69,7 +69,8 @@ namespace ESHQSetupStub
 				{
 				VisualizationCombo.Items.Add (((VisualizationModes)i).ToString ().Replace ('_', ' '));
 				}
-			VisualizationCombo.SelectedIndex = (int)parameters[DSN].VisualizationMode;
+			VisualizationCombo.SelectedIndex = Math.Abs (parameters[DSN].VisualizationMode);
+			WithLogoFlag.Checked = (parameters[DSN].VisualizationMode >= 0);
 
 			// Высота спектрограммы
 			SDHeight.Minimum = VisHeight.Minimum = ConcurrentDrawLib.MinSpectrogramFrameHeight;
@@ -173,9 +174,10 @@ namespace ESHQSetupStub
 				DevicesCombo.SelectedIndex = parameters[psn].DeviceNumber;
 				SDPaletteCombo.SelectedIndex = parameters[psn].PaletteNumber;
 
-				if ((uint)parameters[psn].VisualizationMode >= VisualizationModesChecker.VisualizationModesCount)
-					parameters[psn].VisualizationMode = VisualizationModes.Butterfly_histogram;
-				VisualizationCombo.SelectedIndex = (int)parameters[psn].VisualizationMode;
+				if (Math.Abs (parameters[psn].VisualizationMode) >= VisualizationModesChecker.VisualizationModesCount)
+					parameters[psn].VisualizationMode = (int)VisualizationModes.Butterfly_histogram;
+				VisualizationCombo.SelectedIndex = Math.Abs (parameters[psn].VisualizationMode);
+				WithLogoFlag.Checked = (parameters[psn].VisualizationMode >= 0);
 
 				VisWidth.Value = parameters[psn].VisualizationWidth;
 				VisHeight.Value = parameters[psn].VisualizationHeight;
@@ -241,6 +243,7 @@ namespace ESHQSetupStub
 			SDDoubleWidthFlag.Text = Localization.GetText ("CDP_SDDoubleWidthFlag", al);
 			AlwaysOnTopFlag.Text = Localization.GetText ("CDP_AlwaysOnTopFlag", al);
 			SwingingHistogramFlag.Text = Localization.GetText ("CDP_SwingingHistogramFlag", al);
+			WithLogoFlag.Text = Localization.GetText ("CDP_WithLogoFlag", al);
 
 			GenericTab.Text = Localization.GetText ("CDP_GenericGroup", al);
 			LogoTab.Text = Localization.GetText ("CDP_LogoGroup", al);
@@ -329,7 +332,18 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return parameters[SSN].VisualizationMode;
+				return (VisualizationModes)Math.Abs (parameters[SSN].VisualizationMode);
+				}
+			}
+
+		/// <summary>
+		/// Возвращает флаг наличия в режиме визуализации лого
+		/// </summary>
+		public bool VisualizationContainsLogo
+			{
+			get
+				{
+				return (parameters[SSN].VisualizationMode >= 0);
 				}
 			}
 
@@ -372,7 +386,7 @@ namespace ESHQSetupStub
 			// Закрепление настроек
 			parameters[psn].DeviceNumber = (byte)DevicesCombo.SelectedIndex;
 			parameters[psn].PaletteNumber = (byte)SDPaletteCombo.SelectedIndex;
-			parameters[psn].VisualizationMode = (VisualizationModes)VisualizationCombo.SelectedIndex;
+			parameters[psn].VisualizationMode = VisualizationCombo.SelectedIndex * (WithLogoFlag.Checked ? 1 : -1);
 			parameters[psn].SpectrogramHeight = (uint)SDHeight.Value;
 
 			parameters[psn].VisualizationWidth = (uint)VisWidth.Value;
@@ -687,6 +701,7 @@ namespace ESHQSetupStub
 		private void VisualizationCombo_SelectedIndexChanged (object sender, EventArgs e)
 			{
 			VisualizationModes mode = (VisualizationModes)VisualizationCombo.SelectedIndex;
+			WithLogoFlag.Enabled = (mode != VisualizationModes.Logo_only);
 
 			SGHGHeightLabel.Enabled = SDHeight.Enabled = VisualizationModesChecker.ContainsSGHGorWF (mode);
 			RotationTab.Enabled = !VisualizationModesChecker.ContainsSGHGorWF (mode);
@@ -694,8 +709,7 @@ namespace ESHQSetupStub
 			HGRangeLabel.Enabled = HistogramRangeCombo.Enabled = !VisualizationModesChecker.ContainsSGonly (mode);
 			SDDoubleWidthFlag.Enabled = VisualizationModesChecker.ContainsSGorWF (mode);
 
-			LogoTab.Enabled = VisualizationModesChecker.ContainsLogo (mode) ||
-				!VisualizationModesChecker.ContainsSGHGorWF (mode);
+			LogoTab.Enabled = WithLogoFlag.Checked || !VisualizationModesChecker.ContainsSGHGorWF (mode);
 
 			LogoCenterXTrack.Enabled = LogoCenterYTrack.Enabled =
 				LogoCenterXTrack.Visible = LogoCenterYTrack.Visible = !VisualizationModesChecker.IsPerspective (mode);
@@ -720,7 +734,7 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				if (VisualizationModesChecker.IsPerspective (parameters[SSN].VisualizationMode))
+				if (VisualizationModesChecker.IsPerspective (this.VisualizationMode))
 					return 0.5;	// Принудительная центровка
 
 				return parameters[SSN].LogoCenterX / 100.0;
@@ -734,7 +748,7 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				if (VisualizationModesChecker.IsPerspective (parameters[SSN].VisualizationMode))
+				if (VisualizationModesChecker.IsPerspective (this.VisualizationMode))
 					return 0.5;	// Принудительная центровка
 
 				return parameters[SSN].LogoCenterY / 100.0;
@@ -933,7 +947,8 @@ namespace ESHQSetupStub
 			Keys.P | Keys.Shift,
 			Keys.H | Keys.Shift,			// 30
 
-			Keys.W 			
+			Keys.W,
+			Keys.L
 
 			// Клавиши, обрабатываемые в основном интерфейсе
 			// Keys.R,
@@ -1138,7 +1153,8 @@ namespace ESHQSetupStub
 				// Запрос всех настроек
 				case 23:
 					MessageBox.Show (DevicesLabel.Text + " " + DevicesCombo.Text + "\n" +
-						VisTypeLabel.Text + " " + VisualizationCombo.Text + "\n" +
+						VisTypeLabel.Text + " " + VisualizationCombo.Text +
+						(WithLogoFlag.Checked ? (" + " + WithLogoFlag.Text + "\n") : "\n") +
 						VisSizeLabel.Text + " " + VisWidth.Value.ToString () + " x " + VisHeight.Value.ToString () + " px\n" +
 						VisLeftTopLabel.Text + " " + VisLeft.Value.ToString () + " x " + VisTop.Value.ToString () + " px\n" +
 						PaletteLabel.Text + " " + SDPaletteCombo.Text + "\n" +
@@ -1186,10 +1202,16 @@ namespace ESHQSetupStub
 					hotKeyResult += (" " + HistoRotSpeedArc.Value.ToString () + "°");
 					break;
 
-				// Изменение флага Always on top
+				// Изменение флага Swinging histogram
 				case 31:
 					SwingingHistogramFlag.Checked = !SwingingHistogramFlag.Checked;
 					hotKeyResult = SwingingHistogramFlag.Text + " = " + (SwingingHistogramFlag.Checked ? "1" : "0");
+					break;
+
+				// Изменение флага With logo
+				case 32:
+					WithLogoFlag.Checked = !WithLogoFlag.Checked;
+					hotKeyResult = WithLogoFlag.Text + " = " + (WithLogoFlag.Checked ? "1" : "0");
 					break;
 				}
 

@@ -6,9 +6,14 @@
 	public enum VisualizationModes
 		{
 		/// <summary>
+		/// Только лого 
+		/// </summary>
+		Logo_only = 0,
+
+		/// <summary>
 		/// Статичная спектрограмма с курсором со встроенным лого
 		/// </summary>
-		Static_spectrogram = 0,
+		Static_spectrogram,
 
 		/// <summary>
 		/// Движущаяся спектрограмма со встроенным лого
@@ -48,9 +53,9 @@
 		/// <summary>
 		/// Движущаяся амплитудная со встроенным лого
 		/// </summary>
-		Moving_amplitude,	// 8
+		Moving_amplitude
 
-		/// <summary>
+		/*/// <summary>
 		/// Статичная спектрограмма с курсором без лого
 		/// </summary>
 		Static_spectrogram_without_logo,
@@ -98,7 +103,7 @@
 		/// <summary>
 		/// Только лого 
 		/// </summary>
-		Logo_only	// 18
+		Logo_only	// 18*/
 		}
 
 	/// <summary>
@@ -109,13 +114,9 @@
 		/// <summary>
 		/// Количество доступных режимов визуализации
 		/// </summary>
-#if ALL_MODES
-		public const uint VisualizationModesCount = 19;
-#else
-		public const uint VisualizationModesCount = 9;
-#endif
+		public const uint VisualizationModesCount = 10;
 
-		/// <summary>
+		/*/// <summary>
 		/// Метод проверяет, требует ли указанный режим отрисовки лого
 		/// </summary>
 		/// <param name="Mode">Режим для проверки</param>
@@ -124,7 +125,7 @@
 			{
 			return (Mode == VisualizationModes.Logo_only) ||
 				(Mode <= VisualizationModes.Moving_amplitude);
-			}
+			}*/
 
 		/// <summary>
 		/// Метод возвращает режим спектрограммы по режиму визуализации
@@ -135,32 +136,32 @@
 			{
 			switch (Mode)
 				{
-				case VisualizationModes.Static_spectrogram_without_logo:
+				//case VisualizationModes.Static_spectrogram_without_logo:
 				case VisualizationModes.Static_spectrogram:
 					return SpectrogramModes.StaticSpectrogram;
 
-				case VisualizationModes.Moving_spectrogram_without_logo:
+				//case VisualizationModes.Moving_spectrogram_without_logo:
 				case VisualizationModes.Moving_spectrogram:
 					return SpectrogramModes.MovingSpectrogram;
 
-				case VisualizationModes.Symmetric_moving_spectrogram_without_logo:
+				//case VisualizationModes.Symmetric_moving_spectrogram_without_logo:
 				case VisualizationModes.Symmetric_moving_spectrogram:
 					return SpectrogramModes.SymmetricMovingSpectrogram;
 
-				case VisualizationModes.Histogram_without_logo:
+				//case VisualizationModes.Histogram_without_logo:
 				case VisualizationModes.Histogram:
 					return SpectrogramModes.Histogram;
 
-				case VisualizationModes.Symmetric_histogram_without_logo:
+				//case VisualizationModes.Symmetric_histogram_without_logo:
 				case VisualizationModes.Symmetric_histogram:
 					return SpectrogramModes.SymmetricHistogram;
 
+				//case VisualizationModes.Static_amplitude_without_logo:
 				case VisualizationModes.Static_amplitude:
-				case VisualizationModes.Static_amplitude_without_logo:
 					return SpectrogramModes.StaticAmplitude;
 
+				//case VisualizationModes.Moving_amplitude_without_logo:
 				case VisualizationModes.Moving_amplitude:
-				case VisualizationModes.Moving_amplitude_without_logo:
 					return SpectrogramModes.MovingAmplitude;
 
 				default:
@@ -210,8 +211,8 @@
 		/// <returns>Возвращает true в случае, если предполагается гистограмма-бабочка</returns>
 		public static bool IsButterfly (VisualizationModes Mode)
 			{
-			return (Mode == VisualizationModes.Butterfly_histogram) ||
-				(Mode == VisualizationModes.Butterfly_histogram_without_logo);
+			return (Mode == VisualizationModes.Butterfly_histogram);
+			// || (Mode == VisualizationModes.Butterfly_histogram_without_logo)
 			}
 
 		/// <summary>
@@ -221,8 +222,8 @@
 		/// <returns>Возвращает true в случае, если предполагается гистограмма-перспектива</returns>
 		public static bool IsPerspective (VisualizationModes Mode)
 			{
-			return (Mode == VisualizationModes.Perspective_histogram) ||
-				(Mode == VisualizationModes.Perspective_histogram_without_logo);
+			return (Mode == VisualizationModes.Perspective_histogram);
+			// || (Mode == VisualizationModes.Perspective_histogram_without_logo)
 			}
 		}
 	}

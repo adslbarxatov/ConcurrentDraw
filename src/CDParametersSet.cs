@@ -228,7 +228,7 @@ namespace ESHQSetupStub
 		/// <summary>
 		/// Возвращает или задаёт режим визуализации
 		/// </summary>
-		public VisualizationModes VisualizationMode
+		public int VisualizationMode
 			{
 			get
 				{
@@ -239,7 +239,7 @@ namespace ESHQSetupStub
 				visualizationMode = value;
 				}
 			}
-		private VisualizationModes visualizationMode = VisualizationModes.Butterfly_histogram;
+		private int visualizationMode = (int)VisualizationModes.Butterfly_histogram;
 
 		/// <summary>
 		/// Возвращает или задаёт верхний отступ окна визуализации
@@ -417,9 +417,9 @@ namespace ESHQSetupStub
 				deviceNumber = byte.Parse (values[0]);
 				paletteNumber = byte.Parse (values[1]);
 
-				visualizationMode = (VisualizationModes)int.Parse (values[2]);
-				if ((uint)visualizationMode >= VisualizationModesChecker.VisualizationModesCount)
-					visualizationMode = VisualizationModes.Butterfly_histogram;
+				visualizationMode = int.Parse (values[2]);
+				if (Math.Abs (visualizationMode) >= VisualizationModesChecker.VisualizationModesCount)
+					visualizationMode = (int)VisualizationModes.Butterfly_histogram;
 
 				visualizationWidth = uint.Parse (values[4]);
 				visualizationHeight = uint.Parse (values[5]);
@@ -482,7 +482,7 @@ namespace ESHQSetupStub
 			// Сборка строки настроек
 			string settings = deviceNumber.ToString () + splitter[0].ToString () +
 				paletteNumber.ToString () + splitter[0].ToString () +
-				((uint)visualizationMode).ToString () + splitter[0].ToString () +
+				visualizationMode.ToString () + splitter[0].ToString () +
 				spectrogramHeight.ToString () + splitter[0].ToString () +
 
 				visualizationWidth.ToString () + splitter[0].ToString () +

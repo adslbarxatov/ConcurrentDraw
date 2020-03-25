@@ -303,6 +303,7 @@ Center placement: X = {1:S}; Y = {2:S}</value>
 • Esc key – close the application or settings window;
 • Enter key – apply settings in settings window;
 • M key – cyclically change visualization mode; with Shift key – backwards;
+• L key – turn logo on / off;
 • P key – cyclically change palette; with Shift key – backwards;
 • H key – cyclically change histogram range; with Shift key – backwards;
 • arrows keys – move visualization window; with Ctrl key – to the edge of screen;
@@ -333,5 +334,8 @@ Center placement: X = {1:S}; Y = {2:S}</value>
   </data>
   <data name="HelpVideo" xml:space="preserve">
     <value>Do you want to view users videoguide on our YouTube channel?</value>
+  </data>
+  <data name="CDP_WithLogoFlag" xml:space="preserve">
+    <value>Logo</value>
   </data>
 </root>
