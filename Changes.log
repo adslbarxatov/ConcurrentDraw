@@ -1,5 +1,9 @@
 ﻿ConcurrentDraw changes log
 
+Version 1.37:
+• Peak value for frequencies 0 - 23 Hz fixed and now will be drawn properly;
+• ConcurrentDraw got correct icon for its executables
+
 Version 1.36.5:
 • Visualization types have been unified;
 • 'With logo' flag has been separated from visualization modes and is independent now;

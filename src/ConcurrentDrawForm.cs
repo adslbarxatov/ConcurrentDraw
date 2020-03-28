@@ -339,8 +339,8 @@ namespace ESHQSetupStub
 				ResetLogo ();
 
 				// Подготовка параметров
-				subtitlesFonts[0] = new Font ("Arial Narrow", this.Width / 55, FontStyle.Bold);
-				subtitlesFonts[1] = new Font ("Arial", this.Width / 45, FontStyle.Bold);
+				subtitlesFonts[0] = new Font ("Arial Narrow", this.Width / 50, FontStyle.Bold);
+				subtitlesFonts[1] = new Font ("Arial", this.Width / 40, FontStyle.Bold);
 
 #if VIDEO
 			for (int i = 0; i < pp.SubtitlesStrings.Length; i++)

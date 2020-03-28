@@ -29,7 +29,9 @@ CD_API(uchar) GetScaledAmplitudeEx (uint FrequencyLevel)
 
 	// Контроль
 	if (FrequencyLevel >= FFT_VALUES_COUNT)
-		return 0;
+		FrequencyLevel = FFT_VALUES_COUNT - 1;
+	if (FrequencyLevel < 1)
+		FrequencyLevel = 1;
 	
 	// Получение (uint, чтобы исключить суммирование с переносом)
 	v = (uint)(sqrt (AS->cdFFT[FrequencyLevel]) * AS->cdFFTScale);
@@ -62,7 +64,7 @@ void DrawSpectrogram (uchar Mode)
 	for (y = 0; y < AS->sgFrameHeight; y++)
 		{
 		// Получение значения
-		v = GetScaledAmplitudeEx (SD_SCALE * y / AS->sgFrameHeight + 1);
+		v = GetScaledAmplitudeEx (SD_SCALE * y / AS->sgFrameHeight);
 
 		switch (Mode)
 			{
