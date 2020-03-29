@@ -181,7 +181,7 @@ Fade out speed multiplier: {1:S}</value>
     <value>Histogram range:</value>
   </data>
   <data name="CDP_Hz" xml:space="preserve">
-    <value>Hz</value>
+    <value>0 –                  kHz</value>
   </data>
   <data name="CDP_LanguageLabel" xml:space="preserve">
     <value>Language:</value>

@@ -99,13 +99,8 @@ namespace ESHQSetupStub
 			BDFFTScaleMultiplier.Value = parameters[DSN].BeatsDetectorFFTScaleMultiplier;
 
 			// Плотность гистограммы
-			for (int i = 1; i <= CDParametersSet.HistogramFFTValuesCountMinimum; i *= 2)
-				{
-				HistogramRangeCombo.Items.Add ("0 – " +
-					(i * 22050.0 / (double)CDParametersSet.HistogramFFTValuesCountMinimum).ToString ());
-				}
-			HistogramRangeCombo.SelectedIndex = (int)Math.Log (parameters[DSN].HistogramFFTValuesCount /
-				CDParametersSet.HistogramFFTValuesCountMinimum, 2.0);
+			HistogramRangeField.Maximum = (uint)(CDParametersSet.HistogramFrequencyMaximum / 1000);
+			HistogramRangeField.Value = parameters[DSN].HistogramRangeMaximum;
 
 			// Кумулятивный эффект
 			CEDecumulationMultiplier.Maximum = (int)CDParametersSet.DecumulationMultiplierMaximum;
@@ -140,7 +135,8 @@ namespace ESHQSetupStub
 #else
  parameters[SSN].BeatsDetectorFFTScaleMultiplier);
 #endif
-			ConcurrentDrawLib.SetHistogramFFTValuesCount (parameters[SSN].HistogramFFTValuesCount);
+			ConcurrentDrawLib.SetHistogramFFTValuesCount (parameters[SSN].HistogramRangeMaximum *
+				CDParametersSet.HistogramScaledFrequencyMaximum / CDParametersSet.HistogramFrequencyMaximum);
 
 			// Запуск окна немедленно, ести требуется
 			BCancel.Enabled = !requestRequired;
@@ -194,8 +190,11 @@ namespace ESHQSetupStub
 				SDDoubleWidthFlag.Checked = parameters[psn].SpectrogramDoubleWidth;
 				AlwaysOnTopFlag.Checked = parameters[psn].AlwaysOnTop;
 				SwingingHistogramFlag.Checked = parameters[psn].SwingingHistogram;
-				HistogramRangeCombo.SelectedIndex = (int)Math.Log (parameters[psn].HistogramFFTValuesCount /
-					CDParametersSet.HistogramFFTValuesCountMinimum, 2.0);
+
+				if (parameters[psn].HistogramRangeMaximum > HistogramRangeField.Maximum)
+					HistogramRangeField.Value = parameters[DSN].HistogramRangeMaximum;
+				else
+					HistogramRangeField.Value = parameters[psn].HistogramRangeMaximum;
 
 				CEDecumulationMultiplier.Value = parameters[psn].DecumulationMultiplier;
 				CECumulationSpeed.Value = parameters[psn].CumulationSpeed;
@@ -368,7 +367,8 @@ namespace ESHQSetupStub
 			ConcurrentDrawLib.SetPeakEvaluationParameters (parameters[SSN].BeatsDetectorLowEdge,
 				parameters[SSN].BeatsDetectorHighEdge, parameters[SSN].BeatsDetectorLowLevel,
 				parameters[SSN].BeatsDetectorFFTScaleMultiplier);
-			ConcurrentDrawLib.SetHistogramFFTValuesCount (parameters[SSN].HistogramFFTValuesCount);
+			ConcurrentDrawLib.SetHistogramFFTValuesCount (parameters[SSN].HistogramRangeMaximum *
+				CDParametersSet.HistogramScaledFrequencyMaximum / CDParametersSet.HistogramFrequencyMaximum);
 
 			// Завершение
 			BCancel.Enabled = true;
@@ -397,8 +397,7 @@ namespace ESHQSetupStub
 			parameters[psn].SpectrogramDoubleWidth = SDDoubleWidthFlag.Checked;
 			parameters[psn].AlwaysOnTop = AlwaysOnTopFlag.Checked;
 			parameters[psn].SwingingHistogram = SwingingHistogramFlag.Checked;
-			parameters[psn].HistogramFFTValuesCount = (uint)(Math.Pow (2.0, HistogramRangeCombo.SelectedIndex) *
-				CDParametersSet.HistogramFFTValuesCountMinimum);
+			parameters[psn].HistogramRangeMaximum = (uint)HistogramRangeField.Value;
 
 			parameters[psn].DecumulationMultiplier = (byte)CEDecumulationMultiplier.Value;
 			parameters[psn].CumulationSpeed = (byte)CECumulationSpeed.Value;
@@ -569,7 +568,8 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return parameters[SSN].HistogramFFTValuesCount;
+				return parameters[SSN].HistogramRangeMaximum *
+					CDParametersSet.HistogramScaledFrequencyMaximum / CDParametersSet.HistogramFrequencyMaximum;
 				}
 			}
 
@@ -706,7 +706,7 @@ namespace ESHQSetupStub
 			SGHGHeightLabel.Enabled = SDHeight.Enabled = VisualizationModesChecker.ContainsSGHGorWF (mode);
 			RotationTab.Enabled = !VisualizationModesChecker.ContainsSGHGorWF (mode);
 
-			HGRangeLabel.Enabled = HistogramRangeCombo.Enabled = !VisualizationModesChecker.ContainsSGonly (mode);
+			HGRangeLabel.Enabled = HistogramRangeField.Enabled = HzLabel .Enabled = !VisualizationModesChecker.ContainsSGonly (mode);
 			SDDoubleWidthFlag.Enabled = VisualizationModesChecker.ContainsSGorWF (mode);
 
 			LogoTab.Enabled = WithLogoFlag.Checked || !VisualizationModesChecker.ContainsSGHGorWF (mode);
@@ -1013,19 +1013,21 @@ namespace ESHQSetupStub
 
 				// Изменение диапазона гистограмм
 				case 2:
-					if (HistogramRangeCombo.SelectedIndex == HistogramRangeCombo.Items.Count - 1)
-						HistogramRangeCombo.SelectedIndex = 0;
+					if (HistogramRangeField.Value == HistogramRangeField.Maximum)
+						HistogramRangeField.Value = HistogramRangeField.Minimum;
 					else
-						HistogramRangeCombo.SelectedIndex++;
-					hotKeyResult = HGRangeLabel.Text + " " + HistogramRangeCombo.Text + " " + HzLabel.Text;
+						HistogramRangeField.Value++;
+					hotKeyResult = HGRangeLabel.Text + " 0 – " + HistogramRangeField.Value.ToString () + " " +
+						HzLabel.Text.Substring (HzLabel.Text.Length - 3);
 					break;
 
 				case 30:
-					if (HistogramRangeCombo.SelectedIndex == 0)
-						HistogramRangeCombo.SelectedIndex = HistogramRangeCombo.Items.Count - 1;
+					if (HistogramRangeField.Value == HistogramRangeField.Minimum)
+						HistogramRangeField.Value = HistogramRangeField.Maximum;
 					else
-						HistogramRangeCombo.SelectedIndex--;
-					hotKeyResult = HGRangeLabel.Text + " " + HistogramRangeCombo.Text + " " + HzLabel.Text;
+						HistogramRangeField.Value--;
+					hotKeyResult = HGRangeLabel.Text + " 0 – " + HistogramRangeField.Value.ToString () + " " +
+						HzLabel.Text.Substring (HzLabel.Text.Length - 3);
 					break;
 
 				// Изменение расположения окна
@@ -1160,7 +1162,8 @@ namespace ESHQSetupStub
 						PaletteLabel.Text + " " + SDPaletteCombo.Text + "\n" +
 						SGHGHeightLabel.Text + " " + SDHeight.Value.ToString () + " px" +
 						(SDDoubleWidthFlag.Checked ? ("; " + SDDoubleWidthFlag.Text) : "") + "\n" +
-						HGRangeLabel.Text + " " + HistogramRangeCombo.Text + " " + HzLabel.Text + "\n" +
+						HGRangeLabel.Text + " 0 – " + HistogramRangeField.Value.ToString () + " " +
+						HzLabel.Text.Substring (HzLabel.Text.Length - 3) + "\n" +
 						(ShakeFlag.Checked ? (ShakeFlag.Text + "\n") : "") +
 						(AlwaysOnTopFlag.Checked ? (AlwaysOnTopFlag.Text + "\n") : "") +
 						"\n" + LogoCenterLabel.Text + "\n\n" +

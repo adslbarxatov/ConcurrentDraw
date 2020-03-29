@@ -1,5 +1,8 @@
 ﻿ConcurrentDraw changes log
 
+Version 1.37.2:
+• Histogram frequencies range setting method has been replaced with decimal one
+
 Version 1.37:
 • Peak value for frequencies 0 - 23 Hz fixed and now will be drawn properly;
 • ConcurrentDraw got correct icon for its executables

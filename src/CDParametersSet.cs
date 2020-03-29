@@ -84,31 +84,31 @@ namespace ESHQSetupStub
 		private byte deviceNumber = 0;
 
 		/// <summary>
-		/// Возвращает или задаёт количество значений FFT, которые используются при формировании гистограммы
+		/// Возвращает или задаёт максимальную частоту для диапазонов гистограмм в кГц
 		/// </summary>
-		public uint HistogramFFTValuesCount
+		public uint HistogramRangeMaximum
 			{
 			get
 				{
-				if (histogramFFTValuesCount < HistogramFFTValuesCountMinimum)
-					return HistogramFFTValuesCountMinimum;
-
-				return histogramFFTValuesCount;
+				return histogramRangeMaximum;
 				}
 			set
 				{
-				if (value < HistogramFFTValuesCountMinimum)
-					histogramFFTValuesCount = HistogramFFTValuesCountMinimum;
-				else
-					histogramFFTValuesCount = value;
+				histogramRangeMaximum = value;
 				}
 			}
-		private uint histogramFFTValuesCount = 128;
+		private uint histogramRangeMaximum = 3;
 
 		/// <summary>
-		/// Константа, определяющая минимальное количество значений FFT
+		/// Константа, содержащая максимальную частоту гистограммы в Гц
 		/// </summary>
-		public const uint HistogramFFTValuesCountMinimum = 32;
+		public const uint HistogramFrequencyMaximum = 22050;
+
+		/// <summary>
+		/// Константа, содержащая максимальную частоту гистограммы, 
+		/// масштабированную в количество значений FFT с учётом перевода в кГц
+		/// </summary>
+		public const uint HistogramScaledFrequencyMaximum = 1024000;
 
 		/// <summary>
 		/// Возвращает или задаёт скорость изменения угла поворота гистограммы
@@ -430,7 +430,7 @@ namespace ESHQSetupStub
 				spectrogramDoubleWidth = (values[8] != "0");
 				alwaysOnTop = (values[9] != "0");
 
-				histogramFFTValuesCount = uint.Parse (values[10]);
+				histogramRangeMaximum = uint.Parse (values[10]);
 				decumulationMultiplier = byte.Parse (values[11]);
 				cumulationSpeed = byte.Parse (values[12]);
 				logoHeightPercentage = byte.Parse (values[13]);
@@ -493,7 +493,7 @@ namespace ESHQSetupStub
 				(spectrogramDoubleWidth ? "SDW" : "0") + splitter[0].ToString () +
 				(alwaysOnTop ? "AOT" : "0") + splitter[0].ToString () +
 
-				histogramFFTValuesCount.ToString () + splitter[0].ToString () +
+				histogramRangeMaximum.ToString () + splitter[0].ToString () +
 				decumulationMultiplier.ToString () + splitter[0].ToString () +
 				cumulationSpeed.ToString () + splitter[0].ToString () +
 				logoHeightPercentage.ToString () + splitter[0].ToString () +

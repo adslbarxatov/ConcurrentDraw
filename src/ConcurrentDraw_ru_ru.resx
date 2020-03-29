@@ -181,7 +181,7 @@
     <value>Диапазон гистограммы:</value>
   </data>
   <data name="CDP_Hz" xml:space="preserve">
-    <value>Гц</value>
+    <value>0 –                  кГц</value>
   </data>
   <data name="CDP_LanguageLabel" xml:space="preserve">
     <value>Язык:</value>

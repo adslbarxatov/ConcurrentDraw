@@ -120,7 +120,7 @@ CD_API(void) SetHistogramFFTValuesCountEx (uint Count)
 	// Установка значения
 	AS->cdHistogramFFTValuesCount = Count;
 
-	if ((Count < 64) || (Count > FFT_VALUES_COUNT))
+	if ((Count < 32) || (Count > FFT_VALUES_COUNT))
 		AS->cdHistogramFFTValuesCount = DEFAULT_FFT_VALUES_COUNT;
 	}
 

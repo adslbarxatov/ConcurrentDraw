@@ -554,14 +554,14 @@ namespace ESHQSetupStub
 		/// <summary>
 		/// Функция возвращает масштабированное значение амплитуды на указанной частоте
 		/// </summary>
-		/// <param name="FrequencyLevel">Уровень, соответствующий требуемой частоте в масштабе 44100 / 1024</param>
+		/// <param name="FrequencyLevel">Уровень, соответствующий требуемой частоте в масштабе 22050 / 1024</param>
 		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
 		private static extern Byte GetScaledAmplitudeEx (UInt16 FrequencyLevel);
 
 		/// <summary>
 		/// Метод возвращает масштабированное значение амплитуды на указанной частоте
 		/// </summary>
-		/// <param name="FrequencyLevel">Уровень, соответствующий требуемой частоте в масштабе 44100 / 1024</param>
+		/// <param name="FrequencyLevel">Уровень, соответствующий требуемой частоте в масштабе 22050 / 1024</param>
 		public static byte GetScaledAmplitude (uint FrequencyLevel)
 			{
 			return GetScaledAmplitudeEx ((UInt16)FrequencyLevel);
@@ -621,7 +621,7 @@ namespace ESHQSetupStub
 		/// Функция устанавливает количество значений FFT, 
 		/// которое будет использоваться в гистограммах
 		/// </summary>
-		/// <param name="Count">Количество значений (от 64 до 1024)</param>
+		/// <param name="Count">Количество значений</param>
 		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
 		private static extern void SetHistogramFFTValuesCountEx (UInt16 Count);
 
@@ -629,7 +629,7 @@ namespace ESHQSetupStub
 		/// Метод устанавливает количество значений FFT, 
 		/// которое будет использоваться в гистограммах
 		/// </summary>
-		/// <param name="Count">Количество значений (от 64 до 1024)</param>
+		/// <param name="Count">Количество значений</param>
 		public static void SetHistogramFFTValuesCount (uint Count)
 			{
 			SetHistogramFFTValuesCountEx ((UInt16)Count);
