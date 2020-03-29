@@ -51,14 +51,14 @@ namespace ESHQSetupStub
 			BOK.Text = Localization.GetText ("CDP_OK", InterfaceLanguage);
 			BCancel.Text = Localization.GetText ("CDP_Cancel", InterfaceLanguage);
 
-			availableSizes.Add (new Point (640, 480));
 			availableSizes.Add (new Point (640, 360));
-			availableSizes.Add (new Point (800, 600));
+			availableSizes.Add (new Point (640, 480));
 			availableSizes.Add (new Point (800, 450));
-			availableSizes.Add (new Point (960, 720));
+			availableSizes.Add (new Point (800, 600));
 			availableSizes.Add (new Point (960, 540));
-			availableSizes.Add (new Point (1024, 768));
+			availableSizes.Add (new Point (960, 720));
 			availableSizes.Add (new Point (1280, 720));
+			availableSizes.Add (new Point (1024, 768));
 			availableSizes.Add (new Point ((int)MaxWidth, 128));
 			availableSizes.Add (new Point ((int)MaxWidth, (int)MaxHeight));
 

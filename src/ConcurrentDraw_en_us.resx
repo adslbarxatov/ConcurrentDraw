@@ -181,7 +181,7 @@ Fade out speed multiplier: {1:S}</value>
     <value>Histogram range:</value>
   </data>
   <data name="CDP_Hz" xml:space="preserve">
-    <value>0 –                  kHz</value>
+    <value>0 –                  × 500 Hz</value>
   </data>
   <data name="CDP_LanguageLabel" xml:space="preserve">
     <value>Language:</value>
@@ -220,7 +220,7 @@ At first application will start with recommended settings. But you can change:
 • Output device for audio data capturing (stereo mixer recommended);
 • Visualization mode (spectrogram, histogram, 'butterfly' or 'perspective' histogram, amplitude histogram);
 • Visualization palette;
-• Window size and placement (not less than 128 x 128 px and not more than 2048 x 1024 px);
+• Window size and placement (not less than 128 x 128 px);
 • Spectrogram and histogram height (between 128 and 512 px);
 • Histogram density (how many frequencies will be shown);
 • Frequencies range and amplitude (loudness) threshold for beats detector;

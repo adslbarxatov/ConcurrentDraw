@@ -388,7 +388,7 @@ namespace ESHQSetupStub
 		/// <param name="LowLevel">Наименьшая амплитуда, на которой определяется пик</param>
 		/// <param name="FFTScaleMultiplier">Множитель масштаба FFT-значений</param>
 		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
-		private static extern void SetPeakEvaluationParametersEx (Byte LowEdge, Byte HighEdge,
+		private static extern void SetPeakEvaluationParametersEx (UInt16 LowEdge, UInt16 HighEdge,
 			Byte LowLevel, Byte FFTScaleMultiplier);
 
 		/// <summary>
@@ -398,10 +398,10 @@ namespace ESHQSetupStub
 		/// <param name="HighEdge">Верхняя граница диапазона определения пика</param>
 		/// <param name="LowLevel">Наименьшая амплитуда, на которой определяется пик</param>
 		/// <param name="FFTScaleMultiplier">Множитель масштаба FFT-значений</param>
-		public static void SetPeakEvaluationParameters (byte LowEdge, byte HighEdge, byte LowLevel,
+		public static void SetPeakEvaluationParameters (uint LowEdge, uint HighEdge, byte LowLevel,
 			byte FFTScaleMultiplier)
 			{
-			SetPeakEvaluationParametersEx (LowEdge, HighEdge, LowLevel, FFTScaleMultiplier);
+			SetPeakEvaluationParametersEx ((UInt16)LowEdge, (UInt16)HighEdge, LowLevel, FFTScaleMultiplier);
 			}
 
 		/// <summary>
@@ -554,14 +554,14 @@ namespace ESHQSetupStub
 		/// <summary>
 		/// Функция возвращает масштабированное значение амплитуды на указанной частоте
 		/// </summary>
-		/// <param name="FrequencyLevel">Уровень, соответствующий требуемой частоте в масштабе 22050 / 1024</param>
+		/// <param name="FrequencyLevel">Уровень, соответствующий требуемой частоте в масштабе</param>
 		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
 		private static extern Byte GetScaledAmplitudeEx (UInt16 FrequencyLevel);
 
 		/// <summary>
 		/// Метод возвращает масштабированное значение амплитуды на указанной частоте
 		/// </summary>
-		/// <param name="FrequencyLevel">Уровень, соответствующий требуемой частоте в масштабе 22050 / 1024</param>
+		/// <param name="FrequencyLevel">Уровень, соответствующий требуемой частоте в масштабе</param>
 		public static byte GetScaledAmplitude (uint FrequencyLevel)
 			{
 			return GetScaledAmplitudeEx ((UInt16)FrequencyLevel);

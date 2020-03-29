@@ -71,7 +71,7 @@ CD_API(uchar) GetCurrentPeakEx ()
 	}
 
 // Функция устанавливает метрики определения пикового значения
-CD_API(void) SetPeakEvaluationParametersEx (uchar LowEdge, uchar HighEdge, 
+CD_API(void) SetPeakEvaluationParametersEx (uint LowEdge, uint HighEdge, 
 	uchar LowLevel, uchar FFTScaleMultiplier)
 	{
 	// Установка начального состояния программы (функция срабатывает только один раз
@@ -120,7 +120,7 @@ CD_API(void) SetHistogramFFTValuesCountEx (uint Count)
 	// Установка значения
 	AS->cdHistogramFFTValuesCount = Count;
 
-	if ((Count < 32) || (Count > FFT_VALUES_COUNT))
+	if ((Count < 16) || (Count > FFT_VALUES_COUNT))
 		AS->cdHistogramFFTValuesCount = DEFAULT_FFT_VALUES_COUNT;
 	}
 

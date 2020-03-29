@@ -9,7 +9,7 @@ namespace ESHQSetupStub
 	public partial class ScreenShooterForm:Form
 		{
 		// Параметры
-		private Point start, end;
+		private Point start;
 
 		/// <summary>
 		/// Возвращает флаг, указывающий на успешное задание размера
@@ -41,7 +41,7 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return start;
+				return MainSelection.Location;
 				}
 			}
 
@@ -132,7 +132,6 @@ namespace ESHQSetupStub
 			// Выбор сделан
 			if (e.Button == MouseButtons.Left)
 				{
-				end = e.Location;
 				selected = true;
 				this.Close ();
 				}

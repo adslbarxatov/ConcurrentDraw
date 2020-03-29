@@ -1,10 +1,19 @@
 ﻿ConcurrentDraw changes log
 
+Version 1.38.2:
+• The number of FFT values used by BASS library has been doubled to improve accuracy and smoothness of visualization;
+• Beats detector's range setting updated: now it's more precise
+
+Version 1.38:
+• Fixed bug with window height's setting when it cannot be divided by 4;
+• Scale of histogram frequencies range's setting has been doubled;
+• Fixed bug with selection of window's placement and size by mouse when start of selection is to the right and/or below its end
+
 Version 1.37.2:
 • Histogram frequencies range setting method has been replaced with decimal one
 
 Version 1.37:
-• Peak value for frequencies 0 - 23 Hz fixed and now will be drawn properly;
+• Peak value for frequencies 0 – 23 Hz fixed and now will be drawn properly;
 • ConcurrentDraw got correct icon for its executables
 
 Version 1.36.5:

@@ -28,17 +28,17 @@
 
 /////////////////////////////////////////////////////
 // Константы
-#define CD_VERSION					1,37,2,0
-#define CD_VERSION_S				"1.37.2.0"
+#define CD_VERSION					1,38,2,0
+#define CD_VERSION_S				"1.38.2.0"
 #define CD_PRODUCT					"ConcurrentDraw visualization tool's BASS adapter"
 #define CD_COMPANY					"RD AAOW"
 
 #define MAX_RECORD_DEVICES			10
 #define MAX_DEVICE_NAME_LENGTH		128
 
-#define FFT_VALUES_COUNT			1024
+#define FFT_VALUES_COUNT			2048
 #define DEFAULT_FFT_VALUES_COUNT	128
-#define FFT_MODE					BASS_DATA_FFT2048
+#define FFT_MODE					BASS_DATA_FFT4096
 
 #define MINFRAMEWIDTH				128
 #define MAXFRAMEWIDTH				2048
@@ -46,13 +46,13 @@
 #define CD_BMPINFO_COLORS_COUNT		256
 #define CD_BMPINFO_MAXCOLOR			255
 #define MAXFRAMEHEIGHT				512
-#define SD_SCALE					384
+#define SD_SCALE					MAXFRAMEHEIGHT
 #define POLYMORPH_UPDATE_PAUSE		25
 
 #define CD_HISTO_BAR				(192 * y / AS->sgFrameHeight + 48)
 
 #define PEAK_EVALUATION_LOW_EDGE	0
-#define PEAK_EVALUATION_HIGH_EDGE	4
+#define PEAK_EVALUATION_HIGH_EDGE	8
 #define PEAK_EVALUATION_LOW_LEVEL	0xF8
 #define CD_DEFAULT_FFT_SCALE_MULT	40
 #define CD_SECOND_FFT_SCALE_MULT	25.5f
@@ -99,8 +99,8 @@ struct CDSTATE
 	float cdFFTScale;				// Масштаб значений FFT
 	uint cdHistogramFFTValuesCount;	// Количество значений FFT, используемых для гистограмм
 	uchar cdFFTPeak;				// Текущее пиковое значение
-	uchar cdFFTPeakEvLowEdge;		// Нижняя граница диапазона определения пика
-	uchar cdFFTPeakEvHighEdge;		// Верхняя граница диапазона определения пика
+	uint cdFFTPeakEvLowEdge;		// Нижняя граница диапазона определения пика
+	uint cdFFTPeakEvHighEdge;		// Верхняя граница диапазона определения пика
 	uchar cdFFTPeakEvLowLevel;		// Наименьшая амплитуда, на которой определяется пик
 
 	union CD_BITMAPINFO sgBMPInfo;	// Данные для инициализации спектрограммы
@@ -160,7 +160,7 @@ CD_API(HBITMAP) GetSpectrogramFrameEx ();
 CD_API(uchar) GetCurrentPeakEx ();
 
 // Функция устанавливает метрики определения пикового значения
-CD_API(void) SetPeakEvaluationParametersEx (uchar LowEdge, uchar HighEdge, 
+CD_API(void) SetPeakEvaluationParametersEx (uint LowEdge, uint HighEdge, 
 	uchar LowLevel, uchar FFTScaleMultiplier);
 
 // Функция возвращает основной цвет текущей палитры с указанной яркостью

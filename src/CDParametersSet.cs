@@ -84,7 +84,7 @@ namespace ESHQSetupStub
 		private byte deviceNumber = 0;
 
 		/// <summary>
-		/// Возвращает или задаёт максимальную частоту для диапазонов гистограмм в кГц
+		/// Возвращает или задаёт максимальную частоту для диапазонов гистограмм в масштабе
 		/// </summary>
 		public uint HistogramRangeMaximum
 			{
@@ -97,7 +97,7 @@ namespace ESHQSetupStub
 				histogramRangeMaximum = value;
 				}
 			}
-		private uint histogramRangeMaximum = 3;
+		private uint histogramRangeMaximum = 3000 / HistogramRangeSettingIncrement;
 
 		/// <summary>
 		/// Константа, содержащая максимальную частоту гистограммы в Гц
@@ -106,9 +106,14 @@ namespace ESHQSetupStub
 
 		/// <summary>
 		/// Константа, содержащая максимальную частоту гистограммы, 
-		/// масштабированную в количество значений FFT с учётом перевода в кГц
+		/// масштабированную в количество значений FFT с учётом масштаба
 		/// </summary>
-		public const uint HistogramScaledFrequencyMaximum = 1024000;
+		public const uint HistogramScaledFrequencyMaximum = 2048 * HistogramRangeSettingIncrement;
+
+		/// <summary>
+		/// Константа, содержащая шаг изменения границы диапазона частот гистограммы
+		/// </summary>
+		public const uint HistogramRangeSettingIncrement = 500;
 
 		/// <summary>
 		/// Возвращает или задаёт скорость изменения угла поворота гистограммы
@@ -204,7 +209,10 @@ namespace ESHQSetupStub
 				}
 			set
 				{
-				visualizationHeight = value;
+				if ((value & 0xFFFC) == value)
+					visualizationHeight = value & 0xFFFC;	// Исправление, связанное с внутренней корректировкой высоты фрейма
+				else
+					visualizationHeight = (value & 0xFFFC) + 4;
 				}
 			}
 		private uint visualizationHeight = 0;	// Определяется интерфейсом настроек
@@ -276,7 +284,7 @@ namespace ESHQSetupStub
 		/// <summary>
 		/// Возвращает или задаёт нижнюю границу диапазона детекции битов
 		/// </summary>
-		public byte BeatsDetectorLowEdge
+		public uint BeatsDetectorLowEdge
 			{
 			get
 				{
@@ -287,12 +295,12 @@ namespace ESHQSetupStub
 				beatsDetectorLowEdge = value;
 				}
 			}
-		private byte beatsDetectorLowEdge = ConcurrentDrawLib.DefaultPeakEvaluationLowEdge;
+		private uint beatsDetectorLowEdge = ConcurrentDrawLib.DefaultPeakEvaluationLowEdge;
 
 		/// <summary>
 		/// Возвращает или задаёт верхнюю границу диапазона детекции битов
 		/// </summary>
-		public byte BeatsDetectorHighEdge
+		public uint BeatsDetectorHighEdge
 			{
 			get
 				{
@@ -303,7 +311,7 @@ namespace ESHQSetupStub
 				beatsDetectorHighEdge = value;
 				}
 			}
-		private byte beatsDetectorHighEdge = ConcurrentDrawLib.DefaultPeakEvaluationHighEdge;
+		private uint beatsDetectorHighEdge = ConcurrentDrawLib.DefaultPeakEvaluationHighEdge;
 
 		/// <summary>
 		/// Возвращает или задаёт порог амплитуды детекции битов

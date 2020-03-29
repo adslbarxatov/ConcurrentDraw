@@ -93,13 +93,14 @@ namespace ESHQSetupStub
 			// Максимумы теперь зависят от размеров окна визуализации; задаются в соответствующем обработчике
 
 			// Параметры детектора битов (получаются из DLL)
-			BDLowEdge.Value = parameters[DSN].BeatsDetectorLowEdge;
-			BDHighEdge.Value = parameters[DSN].BeatsDetectorHighEdge;
+			BDLowEdge.Value = (int)parameters[DSN].BeatsDetectorLowEdge;
+			BDHighEdge.Value = (int)parameters[DSN].BeatsDetectorHighEdge;
 			BDLowLevel.Value = parameters[DSN].BeatsDetectorLowLevel;
 			BDFFTScaleMultiplier.Value = parameters[DSN].BeatsDetectorFFTScaleMultiplier;
 
 			// Плотность гистограммы
-			HistogramRangeField.Maximum = (uint)(CDParametersSet.HistogramFrequencyMaximum / 1000);
+			HistogramRangeField.Maximum = (uint)(CDParametersSet.HistogramFrequencyMaximum /
+				CDParametersSet.HistogramRangeSettingIncrement);
 			HistogramRangeField.Value = parameters[DSN].HistogramRangeMaximum;
 
 			// Кумулятивный эффект
@@ -182,19 +183,14 @@ namespace ESHQSetupStub
 
 				SDHeight.Value = parameters[psn].SpectrogramHeight;	// Установка размеров окна определяет максимум SDHeight
 
-				BDLowEdge.Value = parameters[psn].BeatsDetectorLowEdge;
-				BDHighEdge.Value = parameters[psn].BeatsDetectorHighEdge;
+				BDLowEdge.Value = (int)parameters[psn].BeatsDetectorLowEdge;
+				BDHighEdge.Value = (int)parameters[psn].BeatsDetectorHighEdge;
 				BDLowLevel.Value = parameters[psn].BeatsDetectorLowLevel;
 				BDFFTScaleMultiplier.Value = parameters[psn].BeatsDetectorFFTScaleMultiplier;
 
 				SDDoubleWidthFlag.Checked = parameters[psn].SpectrogramDoubleWidth;
 				AlwaysOnTopFlag.Checked = parameters[psn].AlwaysOnTop;
 				SwingingHistogramFlag.Checked = parameters[psn].SwingingHistogram;
-
-				if (parameters[psn].HistogramRangeMaximum > HistogramRangeField.Maximum)
-					HistogramRangeField.Value = parameters[DSN].HistogramRangeMaximum;
-				else
-					HistogramRangeField.Value = parameters[psn].HistogramRangeMaximum;
 
 				CEDecumulationMultiplier.Value = parameters[psn].DecumulationMultiplier;
 				CECumulationSpeed.Value = parameters[psn].CumulationSpeed;
@@ -210,6 +206,9 @@ namespace ESHQSetupStub
 				HistoRotSpeedArc.Value = (decimal)Math.Abs (parameters[psn].HistoRotSpeedDelta / 10.0);
 
 				ShakeFlag.Checked = parameters[psn].ShakeEffect;
+
+				HistogramRangeField.Value = parameters[psn].HistogramRangeMaximum;
+				// Перемещён сюда, т.к. вызывает ошибку при переходе на версию 1.38
 				}
 			catch
 				{
@@ -413,8 +412,8 @@ namespace ESHQSetupStub
 			parameters[psn].ShakeEffect = ShakeFlag.Checked;
 
 			parameters[psn].BeatsDetectorFFTScaleMultiplier = (byte)BDFFTScaleMultiplier.Value;
-			parameters[psn].BeatsDetectorHighEdge = (byte)BDHighEdge.Value;
-			parameters[psn].BeatsDetectorLowEdge = (byte)BDLowEdge.Value;
+			parameters[psn].BeatsDetectorHighEdge = (uint)BDHighEdge.Value;
+			parameters[psn].BeatsDetectorLowEdge = (uint)BDLowEdge.Value;
 			parameters[psn].BeatsDetectorLowLevel = (byte)BDLowLevel.Value;
 
 			// Сохранение
@@ -510,8 +509,10 @@ namespace ESHQSetupStub
 				BDSettings.Text = Localization.GetText ("CDP_BDNo", al);
 			else
 				BDSettings.Text = string.Format (Localization.GetText ("CDP_BDSettingsText", al),
-					(44100 * BDLowEdge.Value / 2048).ToString (),
-					(44100 * BDHighEdge.Value / 2048).ToString (),
+					(CDParametersSet.HistogramFrequencyMaximum * BDLowEdge.Value /		// Используется только первая четверть
+					(CDParametersSet.HistogramScaledFrequencyMaximum / CDParametersSet.HistogramRangeSettingIncrement)).ToString (),
+					(CDParametersSet.HistogramFrequencyMaximum * BDHighEdge.Value /
+					(CDParametersSet.HistogramScaledFrequencyMaximum / CDParametersSet.HistogramRangeSettingIncrement)).ToString (),
 					(100 * BDLowLevel.Value / 255).ToString (), BDFFTScaleMultiplier.Value.ToString ());
 			}
 
@@ -568,8 +569,8 @@ namespace ESHQSetupStub
 			{
 			get
 				{
-				return parameters[SSN].HistogramRangeMaximum *
-					CDParametersSet.HistogramScaledFrequencyMaximum / CDParametersSet.HistogramFrequencyMaximum;
+				return parameters[SSN].HistogramRangeMaximum * CDParametersSet.HistogramScaledFrequencyMaximum /
+					CDParametersSet.HistogramFrequencyMaximum;
 				}
 			}
 
@@ -706,7 +707,7 @@ namespace ESHQSetupStub
 			SGHGHeightLabel.Enabled = SDHeight.Enabled = VisualizationModesChecker.ContainsSGHGorWF (mode);
 			RotationTab.Enabled = !VisualizationModesChecker.ContainsSGHGorWF (mode);
 
-			HGRangeLabel.Enabled = HistogramRangeField.Enabled = HzLabel .Enabled = !VisualizationModesChecker.ContainsSGonly (mode);
+			HGRangeLabel.Enabled = HistogramRangeField.Enabled = HzLabel.Enabled = !VisualizationModesChecker.ContainsSGonly (mode);
 			SDDoubleWidthFlag.Enabled = VisualizationModesChecker.ContainsSGorWF (mode);
 
 			LogoTab.Enabled = WithLogoFlag.Checked || !VisualizationModesChecker.ContainsSGHGorWF (mode);
@@ -1017,8 +1018,9 @@ namespace ESHQSetupStub
 						HistogramRangeField.Value = HistogramRangeField.Minimum;
 					else
 						HistogramRangeField.Value++;
-					hotKeyResult = HGRangeLabel.Text + " 0 – " + HistogramRangeField.Value.ToString () + " " +
-						HzLabel.Text.Substring (HzLabel.Text.Length - 3);
+					hotKeyResult = HGRangeLabel.Text + " 0 – " + (HistogramRangeField.Value *
+						CDParametersSet.HistogramRangeSettingIncrement).ToString () + " " +
+						HzLabel.Text.Substring (HzLabel.Text.Length - 2);
 					break;
 
 				case 30:
@@ -1026,8 +1028,9 @@ namespace ESHQSetupStub
 						HistogramRangeField.Value = HistogramRangeField.Maximum;
 					else
 						HistogramRangeField.Value--;
-					hotKeyResult = HGRangeLabel.Text + " 0 – " + HistogramRangeField.Value.ToString () + " " +
-						HzLabel.Text.Substring (HzLabel.Text.Length - 3);
+					hotKeyResult = HGRangeLabel.Text + " 0 – " + (HistogramRangeField.Value *
+						CDParametersSet.HistogramRangeSettingIncrement).ToString () + " " +
+						HzLabel.Text.Substring (HzLabel.Text.Length - 2);
 					break;
 
 				// Изменение расположения окна
@@ -1162,8 +1165,9 @@ namespace ESHQSetupStub
 						PaletteLabel.Text + " " + SDPaletteCombo.Text + "\n" +
 						SGHGHeightLabel.Text + " " + SDHeight.Value.ToString () + " px" +
 						(SDDoubleWidthFlag.Checked ? ("; " + SDDoubleWidthFlag.Text) : "") + "\n" +
-						HGRangeLabel.Text + " 0 – " + HistogramRangeField.Value.ToString () + " " +
-						HzLabel.Text.Substring (HzLabel.Text.Length - 3) + "\n" +
+						HGRangeLabel.Text + " 0 – " + (HistogramRangeField.Value *
+							CDParametersSet.HistogramRangeSettingIncrement).ToString () + " " +
+							HzLabel.Text.Substring (HzLabel.Text.Length - 2) + "\n" +
 						(ShakeFlag.Checked ? (ShakeFlag.Text + "\n") : "") +
 						(AlwaysOnTopFlag.Checked ? (AlwaysOnTopFlag.Text + "\n") : "") +
 						"\n" + LogoCenterLabel.Text + "\n\n" +
