@@ -70,7 +70,8 @@ CD_API(sint) InitializeFileStreamEx (schar *FileName)
 	// Получение длины потока (в миллисекундах)
 	BASS_ChannelGetInfo (AS->cdChannel, &info);
 	streamLength = (ulong)BASS_ChannelGetLength (AS->cdChannel, BASS_POS_BYTE);
-	AS->cdChannelLength = (uint)(8 * streamLength / (info.chans * info.freq * info.origres));
+	AS->cdChannelLength = (uint)((info.origres & BASS_ORIGRES_FLOAT ? 2 : 1) * 8 * streamLength / 
+		(info.chans * info.freq * (info.origres & 0xFFFF)));
 
 	// Успешно
 	return 0;

@@ -1,5 +1,11 @@
 ﻿ConcurrentDraw changes log
 
+Version 1.39:
+• Palettes generation's bug fixed (affects '7 missed calls');
+• Videoguide's link updated;
+• Some texts in parameters window updated;
+• Application parameters window got new appearance
+
 Version 1.38.2:
 • The number of FFT values used by BASS library has been doubled to improve accuracy and smoothness of visualization;
 • Beats detector's range setting updated: now it's more precise

@@ -181,7 +181,7 @@ Fade out speed multiplier: {1:S}</value>
     <value>Histogram range:</value>
   </data>
   <data name="CDP_Hz" xml:space="preserve">
-    <value>0 –                  × 500 Hz</value>
+    <value>0 –                  x 500 Hz</value>
   </data>
   <data name="CDP_LanguageLabel" xml:space="preserve">
     <value>Language:</value>
@@ -218,7 +218,7 @@ Fade out speed multiplier: {1:S}</value>
 
 At first application will start with recommended settings. But you can change:
 • Output device for audio data capturing (stereo mixer recommended);
-• Visualization mode (spectrogram, histogram, 'butterfly' or 'perspective' histogram, amplitude histogram);
+• Visualization mode (logo only, spectrogram, histogram, 'butterfly' or 'perspective' histogram, amplitude histogram);
 • Visualization palette;
 • Window size and placement (not less than 128 x 128 px);
 • Spectrogram and histogram height (between 128 and 512 px);
@@ -281,7 +281,7 @@ Placement:</value>
     <value>Profile with the same name already exists or name is empty</value>
   </data>
   <data name="CDP_ProfileRemove" xml:space="preserve">
-    <value>Do you want to remove selected profile?</value>
+    <value>Remove selected profile?</value>
   </data>
   <data name="CDP_SDDoubleWidthFlag" xml:space="preserve">
     <value>2x width</value>
@@ -297,11 +297,11 @@ Center placement: X = {1:S}; Y = {2:S}</value>
     <value>Center</value>
   </data>
   <data name="HelpKeysText" xml:space="preserve">
-    <value>Use next hot keys:
+    <value>Use next hotkeys:
 • right mouse button or Space key – get to settings window;
 • double left click or R key – change colors of 'polymorph' and 'random' palettes;
 • Esc key – close the application or settings window;
-• Enter key – apply settings in settings window;
+• Enter key – apply changes in settings window;
 • M key – cyclically change visualization mode; with Shift key – backwards;
 • L key – turn logo on / off;
 • P key – cyclically change palette; with Shift key – backwards;

@@ -588,7 +588,7 @@ namespace ESHQSetupStub
 
 			if (MessageBox.Show (Localization.GetText ("HelpVideo", al), ProgramDescription.AssemblyTitle,
 				MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-				Process.Start ("https://www.youtube.com/watch?v=Ri10rlbl2bI&list=PLe7qKwHNkZTtr1OGOdYMrD73ByPBzCzxc&index=5");
+				ProgramDescription.ShowVideoManual ();
 			}
 
 		// Изменение языка интерфейса

@@ -14,19 +14,19 @@
 								FP_B m }\
 								AS->cdBackgroundColorNumber = g;
 
-#define FP_Q1(r,g,b)	AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbRed = (BYTE)r;\
-						AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbGreen = (BYTE)g;\
-						AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbBlue = (BYTE)b;
-#define FP_QM(d,r,g,b)	AS->sgBMPInfo.cd_bmpinfo.colors[d + i].rgbRed = (BYTE)r;\
-						AS->sgBMPInfo.cd_bmpinfo.colors[d + i].rgbGreen = (BYTE)g;\
-						AS->sgBMPInfo.cd_bmpinfo.colors[d + i].rgbBlue = (BYTE)b;
+#define FP_Q1(r,g,b)	AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbRed = r;\
+						AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbGreen = g;\
+						AS->sgBMPInfo.cd_bmpinfo.colors[i].rgbBlue = b;
+#define FP_QM(d,r,g,b)	AS->sgBMPInfo.cd_bmpinfo.colors[d + i].rgbRed = r;\
+						AS->sgBMPInfo.cd_bmpinfo.colors[d + i].rgbGreen = g;\
+						AS->sgBMPInfo.cd_bmpinfo.colors[d + i].rgbBlue = b;
 #define FP_Q2(r,g,b)	FP_QM(FP_QMAX,r,g,b)
 #define FP_Q3(r,g,b)	FP_QM(FP_HMAX,r,g,b)
 #define FP_Q4(r,g,b)	FP_QM(FP_AMAX,r,g,b)
 
-#define FP_B(r,g,b)		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbRed = (BYTE)r;\
-						AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbGreen = (BYTE)g;\
-						AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbBlue = (BYTE)b;
+#define FP_B(r,g,b)		AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbRed = r;\
+						AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbGreen = g;\
+						AS->sgBeatsInfo.cd_bmpinfo.colors[i].rgbBlue = b;
 
 #define FPPR_UPDATE(member,limit)	member += GetRandomValue (-FPPR_RND_LIMIT, FPPR_RND_LIMIT);\
 									if (member < FPPR_RND_LIMIT) member = FP_MAX;\

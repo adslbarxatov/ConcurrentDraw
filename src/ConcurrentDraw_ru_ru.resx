@@ -165,7 +165,7 @@
     <value>От&amp;мена</value>
   </data>
   <data name="CDP_CENo" xml:space="preserve">
-    <value>Без эффекта накопления</value>
+    <value>Без кумулятивного эффекта</value>
   </data>
   <data name="CDP_CESettingsText" xml:space="preserve">
     <value>Скорость накопления: {0:S}
@@ -181,7 +181,7 @@
     <value>Диапазон гистограммы:</value>
   </data>
   <data name="CDP_Hz" xml:space="preserve">
-    <value>0 –                  × 500 Гц</value>
+    <value>0 –                  x 500 Гц</value>
   </data>
   <data name="CDP_LanguageLabel" xml:space="preserve">
     <value>Язык:</value>
@@ -218,7 +218,7 @@
 
 Сначала приложение запустится с рекомендуемыми настройками. Но вы можете изменить:
 • Устройство вывода для получения аудиоданных (рекомендуется стереомикшер);
-• Режим визуализации (доступна спектрограмма, гистограмма, гистограмма «бабочка» и «перспектива», гистограмма амплитуд);
+• Режим визуализации (только лого, спектрограмма, гистограмма, гистограмма «бабочка» и «перспектива», гистограмма амплитуд);
 • Палитру визуализации;
 • Размер и размещение окна (не менее 128 x 128 пикселей);
 • Высота спектрограммы и гистограммы (от 128 до 512 пикселей);
@@ -248,16 +248,16 @@
 Позиция:</value>
   </data>
   <data name="CDP_HistoRotAccToBeats" xml:space="preserve">
-    <value>В соотв. с бит-детектором с импульсом:</value>
+    <value>В соотв. с бит-детектором при импульсе:</value>
   </data>
   <data name="CDP_HistoRotGroup" xml:space="preserve">
     <value>Вращение</value>
   </data>
   <data name="CDP_HistoRotSpeed" xml:space="preserve">
-    <value>Исп. постоянное угловое приращение:</value>
+    <value>Постоянное угловое приращение:</value>
   </data>
   <data name="CDP_ShakeFlag" xml:space="preserve">
-    <value>Эффект тряски</value>
+    <value>Эффект дрожания</value>
   </data>
   <data name="CDP_TransparentFlag" xml:space="preserve">
     <value>Прозрачное лого</value>
@@ -278,10 +278,10 @@
     <value>Последние сохранённые настройки</value>
   </data>
   <data name="CDP_ProfileError" xml:space="preserve">
-    <value>Профиль с таким именем уже существует или имя незаполнено</value>
+    <value>Профиль с таким именем уже существует, или имя профиля отсутствует</value>
   </data>
   <data name="CDP_ProfileRemove" xml:space="preserve">
-    <value>Вы хотите удалить выбранный профиль?</value>
+    <value>Удалить выбранный профиль?</value>
   </data>
   <data name="CDP_SDDoubleWidthFlag" xml:space="preserve">
     <value>2x ширина</value>
@@ -312,13 +312,13 @@
 • клавиша C – переместить логотип в центр окна;
 • клавиша '/ ?' – показать это краткое руководство пользователя;
 • клавиша T – переключение флага «Поверх всех окон»;
-• клавиша K – переключение флага эффекта тряски;
+• клавиша K – переключение флага эффекта дрожания;
 • клавиша I – запрос информации о текущих настройках;
 • клавиша S – сохранение текущего изображения визуализации в файл;
 • клавиша W – переключение флага «Качание гистограммы»</value>
   </data>
   <data name="CDP_CEInfoText" xml:space="preserve">
-    <value>(1 – без эффекта накопления)</value>
+    <value>(1 – без кумулятивного эффекта)</value>
   </data>
   <data name="CDP_LogoInfoText" xml:space="preserve">
     <value>(0 – слева (сверху), 1 – справа (снизу),

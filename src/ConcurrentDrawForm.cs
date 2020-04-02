@@ -115,8 +115,8 @@ namespace ESHQSetupStub
 		private bool showSubtitlesNow = false;					// Флаг фазы отрисовки текстовых подписей
 
 		// Видео
-		private const double fps = 23.4375;						// Частота кадров видео 
-		// определена по аудио как (48000 Hz * 2 ch * 16 bps) / (8 * sizeof (float) * 2048 fftv)
+		private const double fps = 25.0;						// Частота кадров видео 
+		// определена по аудио как (102400 Hz * 2 ch * 16 bps) / (8 * sizeof (float) * 4096 fftv)
 
 		private VideoManager vm = new VideoManager ();			// Видеофайл (балластная инициализация)
 		private AudioManager amv;								// Аудиодорожка видео
