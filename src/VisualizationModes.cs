@@ -1,4 +1,4 @@
-﻿namespace ESHQSetupStub
+﻿namespace RD_AAOW
 	{
 	/// <summary>
 	/// Варианты работы визуализатора
@@ -116,17 +116,6 @@
 		/// </summary>
 		public const uint VisualizationModesCount = 10;
 
-		/*/// <summary>
-		/// Метод проверяет, требует ли указанный режим отрисовки лого
-		/// </summary>
-		/// <param name="Mode">Режим для проверки</param>
-		/// <returns>Возвращает true в случае, если лого необходимо</returns>
-		public static bool ContainsLogo (VisualizationModes Mode)
-			{
-			return (Mode == VisualizationModes.Logo_only) ||
-				(Mode <= VisualizationModes.Moving_amplitude);
-			}*/
-
 		/// <summary>
 		/// Метод возвращает режим спектрограммы по режиму визуализации
 		/// </summary>
@@ -212,7 +201,6 @@
 		public static bool IsButterfly (VisualizationModes Mode)
 			{
 			return (Mode == VisualizationModes.Butterfly_histogram);
-			// || (Mode == VisualizationModes.Butterfly_histogram_without_logo)
 			}
 
 		/// <summary>
@@ -223,7 +211,6 @@
 		public static bool IsPerspective (VisualizationModes Mode)
 			{
 			return (Mode == VisualizationModes.Perspective_histogram);
-			// || (Mode == VisualizationModes.Perspective_histogram_without_logo)
 			}
 		}
 	}

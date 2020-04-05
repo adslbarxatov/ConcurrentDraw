@@ -6,7 +6,7 @@
 #include <time.h>
 #include <windows.h>
 
-#include "BASS/bass.h"
+#include "../BASS/bass.h"
 #pragma comment (lib, "BASS/bass.lib")
 #pragma comment (lib, "winmm.lib")
 
@@ -28,8 +28,8 @@
 
 /////////////////////////////////////////////////////
 // Константы
-#define CD_VERSION					1,39,0,0
-#define CD_VERSION_S				"1.39.0.0"
+#define CD_VERSION					1,40,0,0
+#define CD_VERSION_S				"1.40.0.0"
 #define CD_PRODUCT					"ConcurrentDraw visualization tool's BASS adapter"
 #define CD_COMPANY					"RD AAOW"
 
@@ -84,6 +84,8 @@ struct CDSTATE
 	{
 	HRECORD cdChannel;				// Дескриптор чтения
 	uint cdChannelLength;			// Длина потока (при инициализации из файла будет ненулевой)
+	udlong cdChannelPosition;		// Счётчик принудительного выравнивания курсора чтения аудиофайла
+	udlong cdChannelBPF;			// Число байт на фрейм для текущего канала
 	float cdFFT[FFT_VALUES_COUNT];	// Массив значений, получаемый из канала
 	MMRESULT cdFFTTimer;			// Дескриптор таймера запроса данных из буфера
 	uchar updating;					// Флаг, указывающий на незавершённость последнего процесса обновления FFT

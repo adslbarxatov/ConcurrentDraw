@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ESHQSetupStub
+namespace RD_AAOW
 	{
 	/// <summary>
 	/// Предоставляет доступ к сохранённым параметрам программы

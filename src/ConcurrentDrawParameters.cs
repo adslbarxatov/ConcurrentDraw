@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace ESHQSetupStub
+namespace RD_AAOW
 	{
 	/// <summary>
 	/// Класс описывает форму доступа к параметрам программы
@@ -131,11 +130,7 @@ namespace ESHQSetupStub
 			// Установка настроек
 			ConcurrentDrawLib.SetPeakEvaluationParameters (parameters[SSN].BeatsDetectorLowEdge,
 				parameters[SSN].BeatsDetectorHighEdge, parameters[SSN].BeatsDetectorLowLevel,
-#if VIDEO
- (byte)(3 * parameters[SSN].BeatsDetectorFFTScaleMultiplier / 4));
-#else
- parameters[SSN].BeatsDetectorFFTScaleMultiplier);
-#endif
+				parameters[SSN].BeatsDetectorFFTScaleMultiplier);
 			ConcurrentDrawLib.SetHistogramFFTValuesCount (parameters[SSN].HistogramRangeMaximum *
 				CDParametersSet.HistogramScaledFrequencyMaximum / CDParametersSet.HistogramFrequencyMaximum);
 

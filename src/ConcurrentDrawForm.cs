@@ -10,7 +10,7 @@ using System.ComponentModel;
 #endif
 
 // Классы
-namespace ESHQSetupStub
+namespace RD_AAOW
 	{
 	/// <summary>
 	/// Класс обеспечивает отображение визуализации проекта
@@ -343,6 +343,12 @@ namespace ESHQSetupStub
 				subtitlesFonts[1] = new Font ("Arial", this.Width / 40, FontStyle.Bold);
 
 #if VIDEO
+			// Отображение длины интро
+			MessageBox.Show ("Intro: " + (logoHeight / 27 + 170).ToString () + " frames (" +
+				((uint)(1000 * (logoHeight / 27 + 170) / fps)).ToString () + " ms)", ProgramDescription.AssemblyTitle,
+				MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+			// Расчёт метрик субтитров
 			for (int i = 0; i < pp.SubtitlesStrings.Length; i++)
 				subtitlesSizes[i] = gr[0].MeasureString (pp.SubtitlesStrings[i], subtitlesFonts[i]);
 

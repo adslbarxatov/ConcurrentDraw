@@ -1,5 +1,11 @@
 ﻿ConcurrentDraw changes log
 
+Version 1.40u:
+• Application namespace and development environment have been unified;
+• Logo height's max value has been doubled (it now can exceed window's size);
+• Added auto-adjustment for file streams that aligns FFT data grabbing to video with 25 fps;
+• Added intro length auto-evaluation
+
 Version 1.39:
 • Palettes generation's bug fixed (affects '7 missed calls');
 • Videoguide's link updated;

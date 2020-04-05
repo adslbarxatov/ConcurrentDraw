@@ -24,6 +24,8 @@ void InitAppState (void)
 	// Установка начальных значений
 	appState.cdChannel = NULL;
 	appState.cdChannelLength = 0;
+	appState.cdChannelPosition = 0;
+	appState.cdChannelBPF = 0;
 	appState.cdFFTTimer = NULL;
 	appState.updating = 0;
 	appState.sgBMP = NULL;

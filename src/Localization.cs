@@ -1,7 +1,7 @@
 ﻿using Microsoft.Win32;
 using System.Globalization;
 
-namespace ESHQSetupStub
+namespace RD_AAOW
 	{
 	/// <summary>
 	/// Поддерживаемые языки приложения

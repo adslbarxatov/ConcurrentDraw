@@ -18,6 +18,13 @@ float *GetDataFromStreamEx ()
 	
 	BASS_ChannelGetData (AS->cdChannel, &AS->cdFFT, FFT_MODE);	// Сколько выгрузит, столько и отрисуем
 
+	// Принудительное выравнивание по потоку при чтении из файла
+	if (AS->cdChannelLength)
+		{
+		BASS_ChannelSetPosition (AS->cdChannel, AS->cdChannelPosition * AS->cdChannelBPF, BASS_POS_BYTE);
+		AS->cdChannelPosition = AS->cdChannelPosition + 1;
+		}
+
 	return AS->cdFFT;
 	}
 
