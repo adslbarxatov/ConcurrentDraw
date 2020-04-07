@@ -74,7 +74,7 @@ CD_API(sint) InitializeFileStreamEx (schar *FileName)
 		(info.chans * info.freq * (info.origres & 0xFFFF)));
 
 	AS->cdChannelPosition = 0;
-	AS->cdChannelBPF = info.chans * info.freq * (info.origres & 0xFFFF) / (8 * CD_TIMER_TPS);
+	AS->cdChannelBPF = info.chans * info.freq * (info.origres & 0xFFFF) / (8 * CD_VIDEO_FPS);
 
 	// Успешно
 	return 0;

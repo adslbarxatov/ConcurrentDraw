@@ -12,25 +12,15 @@
 
 /////////////////////////////////////////////////////
 // Переопределения типов
-#define __u		unsigned
-
-#define schar	__int8
-#define sint	__int16
-#define slong	__int32
-#define sdlong	__int64
-
-#define uchar	__u schar
-#define uint	__u sint
-#define ulong	__u slong
-#define udlong	__u sdlong
+#include "..\\Generics\\CSTypes.h"
 
 #define CD_API(t)	extern __declspec(dllexport) t __stdcall
 
 /////////////////////////////////////////////////////
 // Константы
-#define CD_VERSION					1,40,0,0
-#define CD_VERSION_S				"1.40.0.0"
-#define CD_PRODUCT					"ConcurrentDraw visualization tool's BASS adapter"
+#define CD_VERSION					1,41,0,0
+#define CD_VERSION_S				"1.41.0.0"
+#define CD_PRODUCT					"BASS adapter for ConcurrentDraw visualization tool"
 #define CD_COMPANY					"RD AAOW"
 
 #define MAX_RECORD_DEVICES			10
@@ -45,7 +35,7 @@
 #define MINFRAMEHEIGHT				128
 #define CD_BMPINFO_COLORS_COUNT		256
 #define CD_BMPINFO_MAXCOLOR			255
-#define MAXFRAMEHEIGHT				512
+#define MAXFRAMEHEIGHT				540
 #define SD_SCALE					MAXFRAMEHEIGHT
 #define POLYMORPH_UPDATE_PAUSE		25
 
@@ -55,7 +45,10 @@
 #define PEAK_EVALUATION_HIGH_EDGE	8
 #define PEAK_EVALUATION_LOW_LEVEL	0xF8
 #define CD_DEFAULT_FFT_SCALE_MULT	40
-#define CD_SECOND_FFT_SCALE_MULT	25.5f
+//#define CD_SECOND_FFT_SCALE_MULT	25.5f
+#define CD_SECOND_FFT_SCALE_MULT	80.0f	
+//#define CD_FFT_EV_METHOD(v)			sqrt (v)
+#define CD_FFT_EV_METHOD(v)			v
 #define CD_MIN_FFT_SCALE_MULT		10
 #define CD_MAX_FFT_SCALE_MULT		100
 
@@ -64,6 +57,7 @@
 
 #define CD_RECORD_FREQ				44100
 #define CD_TIMER_TPS				25
+#define CD_VIDEO_FPS				25
 
 /////////////////////////////////////////////////////
 // Структура-описатель заголовка BITMAP

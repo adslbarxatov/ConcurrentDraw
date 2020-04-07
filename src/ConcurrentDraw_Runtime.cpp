@@ -41,7 +41,7 @@ CD_API(uchar) GetScaledAmplitudeEx (uint FrequencyLevel)
 		FrequencyLevel = 1;
 	
 	// Получение (uint, чтобы исключить суммирование с переносом)
-	v = (uint)(sqrt (AS->cdFFT[FrequencyLevel]) * AS->cdFFTScale);
+	v = CD_FFT_EV_METHOD (AS->cdFFT[FrequencyLevel]) * AS->cdFFTScale;
 
 	// Вписывание в диапазон (uchar)
 	if (v > CD_BMPINFO_MAXCOLOR)

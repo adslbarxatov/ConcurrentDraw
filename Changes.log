@@ -1,5 +1,9 @@
 ﻿ConcurrentDraw changes log
 
+Version 1.41:
+• New FFT values processing method implemented (noise level has been significantly reduced);
+• Maximum of histogram height has been increased up to 540 px
+
 Version 1.40u:
 • Application namespace and development environment have been unified;
 • Logo height's max value has been doubled (it now can exceed window's size);

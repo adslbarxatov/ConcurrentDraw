@@ -8,7 +8,7 @@ namespace RD_AAOW
 	/// <summary>
 	/// Класс описывает основное приложение
 	/// </summary>
-	public class CodeShow
+	public class ConcurrentDrawProgram
 		{
 		/// <summary>
 		/// Точка входа программы
