@@ -1,5 +1,8 @@
 ﻿ConcurrentDraw changes log
 
+Version 1.41.2:
+• Added special skipping range for video rendering mode (0 - 16 Hz) to avoid of black histogram lines: seems like sound files don't contain this range
+
 Version 1.41:
 • New FFT values processing method implemented (noise level has been significantly reduced);
 • Maximum of histogram height has been increased up to 540 px

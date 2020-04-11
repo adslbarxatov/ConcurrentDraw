@@ -32,16 +32,18 @@ float *GetDataFromStreamEx ()
 CD_API(uchar) GetScaledAmplitudeEx (uint FrequencyLevel)
 	{
 	// Переменные
-	uint v;
+	uint v, fl = FrequencyLevel;
 
 	// Контроль
-	if (FrequencyLevel >= FFT_VALUES_COUNT)
-		FrequencyLevel = FFT_VALUES_COUNT - 1;
-	if (FrequencyLevel < 1)
-		FrequencyLevel = 1;
+	if (fl >= FFT_VALUES_COUNT)
+		fl = FFT_VALUES_COUNT - 1;
+	if (fl < 1)
+		fl = 1;
+	if (AS->cdChannelLength && (fl < 3))
+		fl = 3;
 	
 	// Получение (uint, чтобы исключить суммирование с переносом)
-	v = CD_FFT_EV_METHOD (AS->cdFFT[FrequencyLevel]) * AS->cdFFTScale;
+	v = CD_FFT_EV_METHOD (AS->cdFFT[fl]) * AS->cdFFTScale;
 
 	// Вписывание в диапазон (uchar)
 	if (v > CD_BMPINFO_MAXCOLOR)
@@ -51,12 +53,8 @@ CD_API(uchar) GetScaledAmplitudeEx (uint FrequencyLevel)
 	if ((AS->cdFFTPeakEvLowEdge | AS->cdFFTPeakEvHighEdge) == 0)	// Состояние отключения
 		return (uchar)v;
 
-	if ((FrequencyLevel >= AS->cdFFTPeakEvLowEdge) && (FrequencyLevel <= AS->cdFFTPeakEvHighEdge) && 
-		(v >= AS->cdFFTPeakEvLowLevel))
-		{
+	if ((fl >= AS->cdFFTPeakEvLowEdge) && (fl <= AS->cdFFTPeakEvHighEdge) && (v >= AS->cdFFTPeakEvLowLevel))
 		AS->cdFFTPeak = 0xFF;
-		rand ();	// Привязка поведения ГПСЧ к звуковому потоку
-		}
 
 	// Завершено
 	return (uchar)v;
