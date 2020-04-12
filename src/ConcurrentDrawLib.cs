@@ -176,14 +176,24 @@ namespace RD_AAOW
 		SymmetricMovingSpectrogram,
 
 		/// <summary>
-		/// Гистограмма
+		/// Гистограмма без симметрии
 		/// </summary>
-		Histogram,
+		HistogramWithNoSymmetry,
 
 		/// <summary>
-		/// Симметричная гистограмма
+		/// Гистограмма с горизонтальной симметрией
 		/// </summary>
-		SymmetricHistogram,
+		HistogramWithHorizontalSymmetry,
+
+		/// <summary>
+		/// Гистограмма с вертикальной симметрией
+		/// </summary>
+		HistogramWithVerticalSymmetry,
+
+		/// <summary>
+		/// Гистограмма с полной симметрией
+		/// </summary>
+		HistogramWithFullSymmetry,
 
 		/// <summary>
 		/// Статичная волновая форма

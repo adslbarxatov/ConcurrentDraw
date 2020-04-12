@@ -612,10 +612,11 @@ namespace RD_AAOW
 					objects[i].Dispose ();
 
 					// Обновление зависимых параметров
-					objectsMetrics.MaxSpeed = 3;
+					objectsMetrics.MaxSpeed = 5 + cumulation;
 					objectsMetrics.MinSpeed = 1;
-					objectsMetrics.MaxSize = 1;
-					objectsMetrics.PolygonsSidesCount = (byte)rnd.Next (5, 8);
+					objectsMetrics.MinSize = 10;
+					objectsMetrics.MaxSize = 20;
+					objectsMetrics.PolygonsSidesCount = 5;
 
 					switch (objectsMetrics.ObjectsType)
 						{
@@ -782,9 +783,13 @@ namespace RD_AAOW
 #endif
 			if (VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode))
 				{
-				if (this.Height - cdp.SpectrogramHeight > 0)
+				if (cdp.SpectrogramTopOffset > 0)
 					mainLayer.Descriptor.FillRectangle (brushes[2], 0, 0, mainLayer.Layer.Width,
-						mainLayer.Layer.Height - cdp.SpectrogramHeight);
+						cdp.SpectrogramTopOffset);
+
+				if (cdp.SpectrogramTopOffset + cdp.SpectrogramHeight < mainLayer.Layer.Height)
+					mainLayer.Descriptor.FillRectangle (brushes[2], 0, cdp.SpectrogramTopOffset + cdp.SpectrogramHeight,
+						mainLayer.Layer.Width, mainLayer.Layer.Height - cdp.SpectrogramTopOffset - cdp.SpectrogramHeight);
 				}
 			else
 				{
@@ -952,16 +957,16 @@ namespace RD_AAOW
 				firstBMP = ConcurrentDrawLib.CurrentSpectrogramFrame;
 
 				// Отрисовка фрейма
-				if (VisualizationModesChecker.ContainsSGorWF (cdp.VisualizationMode))
+				if (VisualizationModesChecker.ContainsSGonly (cdp.VisualizationMode))
 					{
 					mainLayer.Descriptor.DrawImage (firstBMP,
-						new Rectangle (0, this.Height - firstBMP.Height, firstBMP.Width, firstBMP.Height),
+						new Rectangle (0, (int)cdp.SpectrogramTopOffset, firstBMP.Width, firstBMP.Height),
 						0, 0, firstBMP.Width, firstBMP.Height, GraphicsUnit.Pixel, sgAttributes[0]);
 					}
 				else
 					{
 					mainLayer.Descriptor.DrawImage (firstBMP,
-						new Rectangle (0, this.Height - firstBMP.Height, firstBMP.Width, firstBMP.Height),
+						new Rectangle (0, (int)cdp.SpectrogramTopOffset, firstBMP.Width, firstBMP.Height),
 						0, 0, firstBMP.Width, firstBMP.Height, GraphicsUnit.Pixel, sgAttributes[1]);
 					}
 
@@ -1289,21 +1294,20 @@ namespace RD_AAOW
 
 #if OBJECTS
 			// Обновление метрик графических объектов
-			objectsMetrics.Acceleration = true;
-			objectsMetrics.AsStars = false;
-			objectsMetrics.Enlarging = 2;
+			objectsMetrics.Acceleration = false;
+			objectsMetrics.AsStars = true;
+			objectsMetrics.Enlarging = 0;
 			objectsMetrics.KeepTracks = false;
 			objectsMetrics.MaxRed = ConcurrentDrawLib.GetColorFromPalette (255).R;
 			objectsMetrics.MaxGreen = ConcurrentDrawLib.GetColorFromPalette (255).G;
-			objectsMetrics.MaxBlue = ConcurrentDrawLib.GetColorFromPalette (255).B;
-			objectsMetrics.MinRed = ConcurrentDrawLib.GetColorFromPalette (192).R;
-			objectsMetrics.MinGreen = ConcurrentDrawLib.GetColorFromPalette (192).G;
-			objectsMetrics.MinBlue = ConcurrentDrawLib.GetColorFromPalette (192).B;
-			objectsMetrics.MinSize = 1;
-			objectsMetrics.ObjectsCount = 4;
-			objectsMetrics.ObjectsType = LogoDrawerObjectTypes.Spheres;
-			objectsMetrics.Rotation = false;
-			objectsMetrics.StartupPosition = LogoDrawerObjectStartupPositions.CenterRandom ;
+			objectsMetrics.MaxBlue = 0;//ConcurrentDrawLib.GetColorFromPalette (255).B;
+			objectsMetrics.MinRed = ConcurrentDrawLib.GetColorFromPalette (224).R;
+			objectsMetrics.MinGreen = ConcurrentDrawLib.GetColorFromPalette (224).G;
+			objectsMetrics.MinBlue = 0;//ConcurrentDrawLib.GetColorFromPalette (192).B;
+			objectsMetrics.ObjectsCount = 10;
+			objectsMetrics.ObjectsType = LogoDrawerObjectTypes.RotatingStars;
+			objectsMetrics.Rotation = true;
+			objectsMetrics.StartupPosition = LogoDrawerObjectStartupPositions.Top;
 			objectsMetrics.MaxSpeedFluctuation = 0;
 
 			for (int i = 0; i < objectsMetrics.ObjectsCount; i++)

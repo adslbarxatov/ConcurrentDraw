@@ -11,99 +11,59 @@
 		Logo_only = 0,
 
 		/// <summary>
-		/// Статичная спектрограмма с курсором со встроенным лого
+		/// Статичная спектрограмма с курсором
 		/// </summary>
 		Static_spectrogram,
 
 		/// <summary>
-		/// Движущаяся спектрограмма со встроенным лого
+		/// Движущаяся спектрограмма
 		/// </summary>
 		Moving_spectrogram,
 
 		/// <summary>
-		/// Симметричная движущаяся спектрограмма со встроенным лого
+		/// Симметричная движущаяся спектрограмма
 		/// </summary>
 		Symmetric_moving_spectrogram,
 
 		/// <summary>
-		/// Гистограмма со встроенным лого
+		/// Гистограмма без симметрии
 		/// </summary>
-		Histogram,
+		Histogram_with_no_symmetry,
 
 		/// <summary>
-		/// Симметричная гистограмма со встроенным лого
+		/// Гистограмма с горизонтальной симметрией
 		/// </summary>
-		Symmetric_histogram,
+		Histogram_with_horizontal_symmetry,
 
 		/// <summary>
-		/// Гистограмма «бабочка» со встроенным лого
+		/// Гистограмма с вертикальной симметрией
+		/// </summary>
+		Histogram_with_vertical_symmetry,
+
+		/// <summary>
+		/// Гистограмма с полной симметрией
+		/// </summary>
+		Histogram_with_full_symmetry,
+
+		/// <summary>
+		/// Гистограмма-бабочка
 		/// </summary>
 		Butterfly_histogram,
 
 		/// <summary>
-		/// Гистограмма-перспектива со встроенным лого
+		/// Гистограмма-перспектива
 		/// </summary>
 		Perspective_histogram,
 
 		/// <summary>
-		/// Статичная амплитудная с курсором со встроенным лого
+		/// Статичная амплитудная гистограмма с курсором
 		/// </summary>
 		Static_amplitude,
 
 		/// <summary>
-		/// Движущаяся амплитудная со встроенным лого
+		/// Движущаяся амплитудная гистограмма
 		/// </summary>
 		Moving_amplitude
-
-		/*/// <summary>
-		/// Статичная спектрограмма с курсором без лого
-		/// </summary>
-		Static_spectrogram_without_logo,
-
-		/// <summary>
-		/// Движущаяся спектрограмма без лого
-		/// </summary>
-		Moving_spectrogram_without_logo,
-
-		/// <summary>
-		/// Симметричная движущаяся спектрограмма без лого
-		/// </summary>
-		Symmetric_moving_spectrogram_without_logo,
-
-		/// <summary>
-		/// Гистограмма без лого
-		/// </summary>
-		Histogram_without_logo,
-
-		/// <summary>
-		/// Симметричная гистограмма без лого
-		/// </summary>
-		Symmetric_histogram_without_logo,
-
-		/// <summary>
-		/// Гистограмма «бабочка» без лого
-		/// </summary>
-		Butterfly_histogram_without_logo,
-
-		/// <summary>
-		/// Гистограмма-перспектива без лого
-		/// </summary>
-		Perspective_histogram_without_logo,
-
-		/// <summary>
-		/// Статичная амплитудная с курсором без лого
-		/// </summary>
-		Static_amplitude_without_logo,
-
-		/// <summary>
-		/// Движущаяся амплитудная без лого
-		/// </summary>
-		Moving_amplitude_without_logo,
-
-		/// <summary>
-		/// Только лого 
-		/// </summary>
-		Logo_only	// 18*/
 		}
 
 	/// <summary>
@@ -114,7 +74,7 @@
 		/// <summary>
 		/// Количество доступных режимов визуализации
 		/// </summary>
-		public const uint VisualizationModesCount = 10;
+		public const uint VisualizationModesCount = 12;
 
 		/// <summary>
 		/// Метод возвращает режим спектрограммы по режиму визуализации
@@ -125,31 +85,30 @@
 			{
 			switch (Mode)
 				{
-				//case VisualizationModes.Static_spectrogram_without_logo:
 				case VisualizationModes.Static_spectrogram:
 					return SpectrogramModes.StaticSpectrogram;
 
-				//case VisualizationModes.Moving_spectrogram_without_logo:
 				case VisualizationModes.Moving_spectrogram:
 					return SpectrogramModes.MovingSpectrogram;
 
-				//case VisualizationModes.Symmetric_moving_spectrogram_without_logo:
 				case VisualizationModes.Symmetric_moving_spectrogram:
 					return SpectrogramModes.SymmetricMovingSpectrogram;
 
-				//case VisualizationModes.Histogram_without_logo:
-				case VisualizationModes.Histogram:
-					return SpectrogramModes.Histogram;
+				case VisualizationModes.Histogram_with_no_symmetry:
+					return SpectrogramModes.HistogramWithNoSymmetry;
 
-				//case VisualizationModes.Symmetric_histogram_without_logo:
-				case VisualizationModes.Symmetric_histogram:
-					return SpectrogramModes.SymmetricHistogram;
+				case VisualizationModes.Histogram_with_horizontal_symmetry:
+					return SpectrogramModes.HistogramWithHorizontalSymmetry;
 
-				//case VisualizationModes.Static_amplitude_without_logo:
+				case VisualizationModes.Histogram_with_vertical_symmetry:
+					return SpectrogramModes.HistogramWithVerticalSymmetry;
+
+				case VisualizationModes.Histogram_with_full_symmetry:
+					return SpectrogramModes.HistogramWithFullSymmetry;
+
 				case VisualizationModes.Static_amplitude:
 					return SpectrogramModes.StaticAmplitude;
 
-				//case VisualizationModes.Moving_amplitude_without_logo:
 				case VisualizationModes.Moving_amplitude:
 					return SpectrogramModes.MovingAmplitude;
 

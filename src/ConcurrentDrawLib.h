@@ -18,8 +18,8 @@
 
 /////////////////////////////////////////////////////
 // Константы
-#define CD_VERSION					1,41,2,0
-#define CD_VERSION_S				"1.41.2.0"
+#define CD_VERSION					1,42,0,0
+#define CD_VERSION_S				"1.42.0.0"
 #define CD_PRODUCT					"BASS adapter for ConcurrentDraw visualization tool"
 #define CD_COMPANY					"RD AAOW"
 
@@ -39,7 +39,8 @@
 #define SD_SCALE					MAXFRAMEHEIGHT
 #define POLYMORPH_UPDATE_PAUSE		25
 
-#define CD_HISTO_BAR				(192 * y / AS->sgFrameHeight + 48)
+#define CD_HISTO_BAR				(192 * y / AS->sgFrameHeight + 32)
+#define CD_HISTO_BAR_S				(384 * abs (y - AS->sgFrameHeight / 2) / AS->sgFrameHeight + 32)
 
 #define PEAK_EVALUATION_LOW_EDGE	0
 #define PEAK_EVALUATION_HIGH_EDGE	8
@@ -50,7 +51,7 @@
 //#define CD_FFT_EV_METHOD(v)			sqrt (v)
 #define CD_FFT_EV_METHOD(v)			v
 #define CD_MIN_FFT_SCALE_MULT		10
-#define CD_MAX_FFT_SCALE_MULT		100
+#define CD_MAX_FFT_SCALE_MULT		150
 
 #define NAMES_DELIMITER_C			'\x1'
 #define NAMES_DELIMITER_S			"\x1"

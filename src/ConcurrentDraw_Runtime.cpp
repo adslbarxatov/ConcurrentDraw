@@ -125,6 +125,7 @@ void DrawSpectrogram (uchar Mode)
 		AS->sgCurrentPosition = (AS->sgCurrentPosition + AS->sgSpectrogramStep) % AS->sgFrameWidth;
 	}
 
+// Symmetric - битовое поле; бит 0 - горизонтальная симметрия, бит 1 - вертикальная симметрия
 void DrawHistogram (uchar Symmetric)
 	{
 	uint v, x, y;
@@ -138,24 +139,46 @@ void DrawHistogram (uchar Symmetric)
 		v = AS->sgFrameHeight * (ulong)v / CD_BMPINFO_COLORS_COUNT;	
 
 		// Симметричная
-		if (Symmetric)
+		for (y = 0; y < AS->sgFrameHeight; y++)
+		if (Symmetric & 0x1)
 			{
-			for (y = 0; y < v; y++)
-				AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth + x) / 2] =
-				AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth - x) / 2] = CD_HISTO_BAR;	// Обрезаем края палитр
-
-			for (y = v; y < AS->sgFrameHeight; y++)
-				AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth + x) / 2] =
-				AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth - x) / 2] = AS->cdBackgroundColorNumber;
+			if (Symmetric & 0x2)
+				{
+				if ((y > (AS->sgFrameHeight - v) / 2) && (y < (AS->sgFrameHeight + v) / 2))
+					AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth + x) / 2] =
+					AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth - x) / 2] = CD_HISTO_BAR_S;	
+				else
+					AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth + x) / 2] =
+					AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth - x) / 2] = AS->cdBackgroundColorNumber;
+				}
+			else
+				{
+				if (y < v)
+					AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth + x) / 2] =
+					AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth - x) / 2] = CD_HISTO_BAR;	// Обрезаем края палитр
+				else
+					AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth + x) / 2] =
+					AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth - x) / 2] = AS->cdBackgroundColorNumber;
+				}
 			}
+
 		// Простая
 		else
 			{
-			for (y = 0; y < v; y++)
-				AS->sgBuffer[y * AS->sgFrameWidth + x] = CD_HISTO_BAR;	// Обрезаем края палитр
-
-			for (y = v; y < AS->sgFrameHeight; y++)
-				AS->sgBuffer[y * AS->sgFrameWidth + x] = AS->cdBackgroundColorNumber;
+			if (Symmetric & 0x2)
+				{
+				if ((y > (AS->sgFrameHeight - v) / 2) && (y < (AS->sgFrameHeight + v) / 2))
+					AS->sgBuffer[y * AS->sgFrameWidth + x] = CD_HISTO_BAR_S;
+				else
+					AS->sgBuffer[y * AS->sgFrameWidth + x] = AS->cdBackgroundColorNumber;
+				}
+			else
+				{
+				if (y < v)
+					AS->sgBuffer[y * AS->sgFrameWidth + x] = CD_HISTO_BAR;	// Обрезаем края палитр
+				else
+					AS->sgBuffer[y * AS->sgFrameWidth + x] = AS->cdBackgroundColorNumber;
+				}
 			}
 		}
 	}
@@ -279,16 +302,18 @@ void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWOR
 			DrawSpectrogram (AS->sgSpectrogramMode - 1);
 			break;
 
-		// Гистограмма и симметричная гистограмма
+		// Гистограмма в четырёх вариантах симметрии
 		case 4:
 		case 5:
+		case 6:
+		case 7:
 			DrawHistogram (AS->sgSpectrogramMode - 4);
 			break;
 
 		// Статичная и движущаяся амплитудная
-		case 6:
-		case 7:
-			DrawAmplitudes (AS->sgSpectrogramMode - 6);
+		case 8:
+		case 9:
+			DrawAmplitudes (AS->sgSpectrogramMode - 8);
 			break;
 		}
 

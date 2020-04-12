@@ -1,5 +1,13 @@
 ﻿ConcurrentDraw changes log
 
+Version 1.42:
+• Added histogram modes with vertical symmetry;
+• Maximum of FFT multiplier increased to 150;
+• Added ability to specify offset from window's top for spectrograms and histograms;
+• Fixed minor interface bugs;
+• Added align buttons for spectro-histo height and offset;
+• All spectro-histo setting (including rotation) moved to single tab
+
 Version 1.41.2:
 • Added special skipping range for video rendering mode (0 - 16 Hz) to avoid of black histogram lines: seems like sound files don't contain this range
 

@@ -199,6 +199,22 @@ namespace RD_AAOW
 		private uint spectrogramHeight = 256;
 
 		/// <summary>
+		/// Возвращает или задаёт смещение изображения диаграммы от верха окна
+		/// </summary>
+		public uint SpectrogramTopOffset
+			{
+			get
+				{
+				return spectrogramTopOffset;
+				}
+			set
+				{
+				spectrogramTopOffset = value;
+				}
+			}
+		private uint spectrogramTopOffset = 0;	// Определяется интерфейсом настроек
+
+		/// <summary>
 		/// Возвращает или задаёт высоту окна визуализации
 		/// </summary>
 		public uint VisualizationHeight
@@ -429,11 +445,11 @@ namespace RD_AAOW
 				if (Math.Abs (visualizationMode) >= VisualizationModesChecker.VisualizationModesCount)
 					visualizationMode = (int)VisualizationModes.Butterfly_histogram;
 
+				spectrogramHeight = uint.Parse (values[3]);
 				visualizationWidth = uint.Parse (values[4]);
 				visualizationHeight = uint.Parse (values[5]);
 				visualizationLeft = uint.Parse (values[6]);
 				visualizationTop = uint.Parse (values[7]);
-				spectrogramHeight = uint.Parse (values[3]);		// Установка размеров окна определяет максимум SDHeight
 
 				spectrogramDoubleWidth = (values[8] != "0");
 				alwaysOnTop = (values[9] != "0");
@@ -454,6 +470,8 @@ namespace RD_AAOW
 				logoCenterY = uint.Parse (values[21]);
 
 				swingingHistogram = (values[22] != "0");
+
+				spectrogramTopOffset = uint.Parse (values[23]);
 				}
 			catch
 				{
@@ -516,7 +534,8 @@ namespace RD_AAOW
 
 				logoCenterX.ToString () + splitter[0].ToString () +
 				logoCenterY.ToString () + splitter[0].ToString () +
-				(swingingHistogram ? "SH" : "0");
+				(swingingHistogram ? "SH" : "0") + splitter[0].ToString () +
+				spectrogramTopOffset.ToString ();
 
 			// Запись
 			try

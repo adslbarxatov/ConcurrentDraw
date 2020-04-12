@@ -72,9 +72,9 @@ namespace RD_AAOW
 			WithLogoFlag.Checked = (parameters[DSN].VisualizationMode >= 0);
 
 			// Высота спектрограммы
-			SDHeight.Minimum = VisHeight.Minimum = ConcurrentDrawLib.MinSpectrogramFrameHeight;
-			SDHeight.Maximum = ConcurrentDrawLib.MaxSpectrogramFrameHeight;
-			SDHeight.Value = parameters[DSN].SpectrogramHeight;
+			SGHeight.Minimum = VisHeight.Minimum = ConcurrentDrawLib.MinSpectrogramFrameHeight;
+			SGHeight.Maximum = ConcurrentDrawLib.MaxSpectrogramFrameHeight;
+			SGHeight.Value = parameters[DSN].SpectrogramHeight;
 
 			// Размеры визуализации 
 			VisWidth.Minimum = ConcurrentDrawLib.MinSpectrogramFrameWidth;
@@ -89,6 +89,11 @@ namespace RD_AAOW
 			// Позиция визуализации
 			VisLeft.Value = ScreenWidth - VisWidth.Value;	// По умолчанию - верхняя правая четверть экрана
 			parameters[DSN].VisualizationLeft = (uint)VisLeft.Value;
+
+			// Смещение спектрограммы / гистограммы
+			SGTopOffset.Minimum = 0;	// Сбивается из-за вызова обработчика изменения SGHeight до установки ограничений на окно
+			SGTopOffset.Value = SGTopOffset.Maximum;
+			parameters[DSN].SpectrogramTopOffset = (uint)SGTopOffset.Value;
 			// Максимумы теперь зависят от размеров окна визуализации; задаются в соответствующем обработчике
 
 			// Параметры детектора битов (получаются из DLL)
@@ -163,20 +168,12 @@ namespace RD_AAOW
 			// Разбор сохранённых настроек
 			try
 				{
-				DevicesCombo.SelectedIndex = parameters[psn].DeviceNumber;
 				SDPaletteCombo.SelectedIndex = parameters[psn].PaletteNumber;
 
 				if (Math.Abs (parameters[psn].VisualizationMode) >= VisualizationModesChecker.VisualizationModesCount)
 					parameters[psn].VisualizationMode = (int)VisualizationModes.Butterfly_histogram;
 				VisualizationCombo.SelectedIndex = Math.Abs (parameters[psn].VisualizationMode);
 				WithLogoFlag.Checked = (parameters[psn].VisualizationMode >= 0);
-
-				VisWidth.Value = parameters[psn].VisualizationWidth;
-				VisHeight.Value = parameters[psn].VisualizationHeight;
-				VisLeft.Value = parameters[psn].VisualizationLeft;
-				VisTop.Value = parameters[psn].VisualizationTop;
-
-				SDHeight.Value = parameters[psn].SpectrogramHeight;	// Установка размеров окна определяет максимум SDHeight
 
 				BDLowEdge.Value = (int)parameters[psn].BeatsDetectorLowEdge;
 				BDHighEdge.Value = (int)parameters[psn].BeatsDetectorHighEdge;
@@ -202,8 +199,17 @@ namespace RD_AAOW
 
 				ShakeFlag.Checked = parameters[psn].ShakeEffect;
 
+				// Эти параметры перемещены в конец, т.к. могут вызывать ошибки при запусках, не зависящие от программы
 				HistogramRangeField.Value = parameters[psn].HistogramRangeMaximum;
-				// Перемещён сюда, т.к. вызывает ошибку при переходе на версию 1.38
+				DevicesCombo.SelectedIndex = parameters[psn].DeviceNumber;
+
+				VisWidth.Value = parameters[psn].VisualizationWidth;
+				VisHeight.Value = parameters[psn].VisualizationHeight;
+				VisLeft.Value = parameters[psn].VisualizationLeft;
+				VisTop.Value = parameters[psn].VisualizationTop;
+
+				SGHeight.Value = parameters[psn].SpectrogramHeight;			// Установка размеров окна определяет максимум SGHeight
+				SGTopOffset.Value = parameters[psn].SpectrogramTopOffset;	// Установка SGHeight определяет максимум SGTopOffset
 				}
 			catch
 				{
@@ -227,6 +233,7 @@ namespace RD_AAOW
 
 			PaletteLabel.Text = Localization.GetText ("CDP_PaletteLabel", al);
 			SGHGHeightLabel.Text = Localization.GetText ("CDP_SGHGHeightLabel", al);
+			SGTopOffsetLabel.Text = Localization.GetText ("CDP_SGTopOffsetLabel", al);
 			HGRangeLabel.Text = Localization.GetText ("CDP_HGRangeLabel", al);
 			HzLabel.Text = Localization.GetText ("CDP_Hz", al);
 			LogoHeightLabel.Text = Localization.GetText ("CDP_LogoHeightLabel", al);
@@ -241,7 +248,7 @@ namespace RD_AAOW
 			GenericTab.Text = Localization.GetText ("CDP_GenericGroup", al);
 			LogoTab.Text = Localization.GetText ("CDP_LogoGroup", al);
 			BeatsTab.Text = Localization.GetText ("CDP_BeatsGroup", al);
-			RotationTab.Text = Localization.GetText ("CDP_HistoRotGroup", al);
+			HistoTab.Text = Localization.GetText ("CDP_HistoGroup", al);
 			CumulationTab.Text = Localization.GetText ("CDP_CumulationGroup", al);
 
 			BOK.Text = Localization.GetText ("CDP_OK", al);
@@ -341,7 +348,7 @@ namespace RD_AAOW
 			}
 
 		/// <summary>
-		/// Возвращает выбранную высоту изображения диаграммы
+		/// Возвращает высоту изображения диаграммы
 		/// </summary>
 		public uint SpectrogramHeight
 			{
@@ -349,6 +356,44 @@ namespace RD_AAOW
 				{
 				return parameters[SSN].SpectrogramHeight;
 				}
+			}
+
+		// Установка размера поля спектро-/гистограммы
+		private void SGHeightMax_Click (object sender, EventArgs e)
+			{
+			SGHeight.Value = SGHeight.Maximum;
+			}
+
+		private void SGHeightMin_Click (object sender, EventArgs e)
+			{
+			SGHeight.Value = SGHeight.Minimum;
+			}
+
+		/// <summary>
+		/// Возвращает смещение изображения диаграммы от верха окна
+		/// </summary>
+		public uint SpectrogramTopOffset
+			{
+			get
+				{
+				return parameters[SSN].SpectrogramTopOffset;
+				}
+			}
+
+		// Установка смещения поля спектро-/гистограммы
+		private void SGTopOffsetMid_Click (object sender, EventArgs e)
+			{
+			SGTopOffset.Value = (uint)SGTopOffset.Maximum / 2;
+			}
+
+		private void SGTopOffsetMax_Click (object sender, EventArgs e)
+			{
+			SGTopOffset.Value = SGTopOffset.Maximum;
+			}
+
+		private void SGTopOffsetMin_Click (object sender, EventArgs e)
+			{
+			SGTopOffset.Value = SGTopOffset.Minimum;
 			}
 
 		// Сохранение настроек
@@ -381,7 +426,8 @@ namespace RD_AAOW
 			parameters[psn].DeviceNumber = (byte)DevicesCombo.SelectedIndex;
 			parameters[psn].PaletteNumber = (byte)SDPaletteCombo.SelectedIndex;
 			parameters[psn].VisualizationMode = VisualizationCombo.SelectedIndex * (WithLogoFlag.Checked ? 1 : -1);
-			parameters[psn].SpectrogramHeight = (uint)SDHeight.Value;
+			parameters[psn].SpectrogramHeight = (uint)SGHeight.Value;
+			parameters[psn].SpectrogramTopOffset = (uint)SGTopOffset.Value;
 
 			parameters[psn].VisualizationWidth = (uint)VisWidth.Value;
 			parameters[psn].VisualizationHeight = (uint)VisHeight.Value;
@@ -550,9 +596,10 @@ namespace RD_AAOW
 		// Установка реинициализации лого при изменении параметров, от которых зависит его вид
 		private void SDWindowsSize_Changed (object sender, EventArgs e)
 			{
-			SDHeight.Maximum = Math.Min (ConcurrentDrawLib.MaxSpectrogramFrameHeight, VisHeight.Value);
+			SGHeight.Maximum = Math.Min (ConcurrentDrawLib.MaxSpectrogramFrameHeight, VisHeight.Value);
 			VisLeft.Maximum = VisWidth.Maximum - VisWidth.Value;
 			VisTop.Maximum = VisHeight.Maximum - VisHeight.Value;
+			SGTopOffset.Maximum = VisHeight.Value - SGHeight.Value;
 
 			logoResetFlag = true;
 			}
@@ -622,6 +669,12 @@ namespace RD_AAOW
 				VisWidth.Value = wsf.WindowSize.Width;
 				VisHeight.Value = wsf.WindowSize.Height;
 				}
+			}
+
+		// Задание высоты спектрограммы
+		private void SGHeight_ValueChanged (object sender, EventArgs e)
+			{
+			SGTopOffset.Maximum = VisHeight.Value - SGHeight.Value;
 			}
 
 		// Выбор палитры
@@ -699,8 +752,13 @@ namespace RD_AAOW
 			VisualizationModes mode = (VisualizationModes)VisualizationCombo.SelectedIndex;
 			WithLogoFlag.Enabled = (mode != VisualizationModes.Logo_only);
 
-			SGHGHeightLabel.Enabled = SDHeight.Enabled = VisualizationModesChecker.ContainsSGHGorWF (mode);
-			RotationTab.Enabled = !VisualizationModesChecker.ContainsSGHGorWF (mode);
+			SGHGHeightLabel.Enabled = SGHeight.Enabled = SGHeightPxLabel.Enabled =
+				SGTopOffsetLabel.Enabled = SGTopOffset.Enabled = SGTopOffsetPxLabel.Enabled =
+				SGTopOffsetMin.Enabled = SGTopOffsetMid.Enabled = SGTopOffsetMax.Enabled =
+				SGHeightMax.Enabled = SGHeightMin.Enabled = VisualizationModesChecker.ContainsSGHGorWF (mode);
+			HistoRotAccToBeats.Enabled = HistoRotSpeed.Enabled = HistoRotSpeedArc.Enabled =
+				HistoRotSpeedLabel.Enabled = ResetRotation.Enabled = SwingingHistogramFlag.Enabled =
+				!VisualizationModesChecker.ContainsSGHGorWF (mode);
 
 			HGRangeLabel.Enabled = HistogramRangeField.Enabled = HzLabel.Enabled = !VisualizationModesChecker.ContainsSGonly (mode);
 			SDDoubleWidthFlag.Enabled = VisualizationModesChecker.ContainsSGorWF (mode);
@@ -1158,7 +1216,7 @@ namespace RD_AAOW
 						VisSizeLabel.Text + " " + VisWidth.Value.ToString () + " x " + VisHeight.Value.ToString () + " px\n" +
 						VisLeftTopLabel.Text + " " + VisLeft.Value.ToString () + " x " + VisTop.Value.ToString () + " px\n" +
 						PaletteLabel.Text + " " + SDPaletteCombo.Text + "\n" +
-						SGHGHeightLabel.Text + " " + SDHeight.Value.ToString () + " px" +
+						SGHGHeightLabel.Text + " " + SGHeight.Value.ToString () + " px" +
 						(SDDoubleWidthFlag.Checked ? ("; " + SDDoubleWidthFlag.Text) : "") + "\n" +
 						HGRangeLabel.Text + " 0 – " + (HistogramRangeField.Value *
 							CDParametersSet.HistogramRangeSettingIncrement).ToString () + " " +

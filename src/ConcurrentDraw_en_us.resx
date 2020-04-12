@@ -199,7 +199,7 @@ Fade out speed multiplier: {1:S}</value>
     <value>Palette:</value>
   </data>
   <data name="CDP_SGHGHeightLabel" xml:space="preserve">
-    <value>Spectrogram/histogram height:</value>
+    <value>Height:</value>
   </data>
   <data name="CDP_VisLeftTopLabel" xml:space="preserve">
     <value>Visualization left-top:</value>
@@ -248,13 +248,13 @@ Settings will be saved by pressing OK button. They can be changed anytime you ne
 Placement:</value>
   </data>
   <data name="CDP_HistoRotAccToBeats" xml:space="preserve">
-    <value>Acc. to beats detector with angle impulse:</value>
+    <value>Rotation according to beats detector with angle impulse:</value>
   </data>
-  <data name="CDP_HistoRotGroup" xml:space="preserve">
-    <value>Histogram rotation</value>
+  <data name="CDP_HistoGroup" xml:space="preserve">
+    <value>Spectrogram / histogram</value>
   </data>
   <data name="CDP_HistoRotSpeed" xml:space="preserve">
-    <value>Using constant angle increment:</value>
+    <value>Rotation with constant angle increment:</value>
   </data>
   <data name="CDP_ShakeFlag" xml:space="preserve">
     <value>Shake effect</value>
@@ -337,5 +337,8 @@ Center placement: X = {1:S}; Y = {2:S}</value>
   </data>
   <data name="CDP_WithLogoFlag" xml:space="preserve">
     <value>Logo</value>
+  </data>
+  <data name="CDP_SGTopOffsetLabel" xml:space="preserve">
+    <value>Offset from top:</value>
   </data>
 </root>

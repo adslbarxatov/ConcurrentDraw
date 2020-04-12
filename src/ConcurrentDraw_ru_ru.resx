@@ -199,7 +199,7 @@
     <value>Палитра:</value>
   </data>
   <data name="CDP_SGHGHeightLabel" xml:space="preserve">
-    <value>Высота спектро-/гистограммы:</value>
+    <value>Высота:</value>
   </data>
   <data name="CDP_VisLeftTopLabel" xml:space="preserve">
     <value>Позиция окна:</value>
@@ -248,13 +248,13 @@
 Позиция:</value>
   </data>
   <data name="CDP_HistoRotAccToBeats" xml:space="preserve">
-    <value>В соотв. с бит-детектором при импульсе:</value>
+    <value>Вращение в соответствии с бит-детектором при импульсе:</value>
   </data>
-  <data name="CDP_HistoRotGroup" xml:space="preserve">
-    <value>Вращение</value>
+  <data name="CDP_HistoGroup" xml:space="preserve">
+    <value>Спектрограммы / гистограммы</value>
   </data>
   <data name="CDP_HistoRotSpeed" xml:space="preserve">
-    <value>Постоянное угловое приращение:</value>
+    <value>Вращение с постоянным угловым приращением:</value>
   </data>
   <data name="CDP_ShakeFlag" xml:space="preserve">
     <value>Эффект дрожания</value>
@@ -338,5 +338,8 @@
   </data>
   <data name="CDP_WithLogoFlag" xml:space="preserve">
     <value>Лого</value>
+  </data>
+  <data name="CDP_SGTopOffsetLabel" xml:space="preserve">
+    <value>Смещение:</value>
   </data>
 </root>
