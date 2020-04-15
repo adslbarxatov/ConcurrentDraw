@@ -59,7 +59,7 @@ namespace RD_AAOW
 		// Бит-детектор
 		private const int logoIdleSpeed = 2;					// Наименьшая скорость вращения лого
 #if VIDEO
-		private const int logoSpeedImpulse = 65;				// Импульс скорости при пиковом значении
+		private const int logoSpeedImpulse = 60;				// Импульс скорости при пиковом значении
 #else
 		private const int logoSpeedImpulse = 50;
 #endif
@@ -612,11 +612,11 @@ namespace RD_AAOW
 					objects[i].Dispose ();
 
 					// Обновление зависимых параметров
-					objectsMetrics.MaxSpeed = 5 + cumulation;
+					objectsMetrics.MaxSpeed = 4;//+cumulation;
 					objectsMetrics.MinSpeed = 1;
-					objectsMetrics.MinSize = 10;
-					objectsMetrics.MaxSize = 20;
-					objectsMetrics.PolygonsSidesCount = 5;
+					objectsMetrics.MinSize = 5;
+					objectsMetrics.MaxSize = 10;
+					objectsMetrics.PolygonsSidesCount = 8;
 
 					switch (objectsMetrics.ObjectsType)
 						{
@@ -1300,15 +1300,15 @@ namespace RD_AAOW
 			objectsMetrics.KeepTracks = false;
 			objectsMetrics.MaxRed = ConcurrentDrawLib.GetColorFromPalette (255).R;
 			objectsMetrics.MaxGreen = ConcurrentDrawLib.GetColorFromPalette (255).G;
-			objectsMetrics.MaxBlue = 0;//ConcurrentDrawLib.GetColorFromPalette (255).B;
+			objectsMetrics.MaxBlue = ConcurrentDrawLib.GetColorFromPalette (255).B;
 			objectsMetrics.MinRed = ConcurrentDrawLib.GetColorFromPalette (224).R;
 			objectsMetrics.MinGreen = ConcurrentDrawLib.GetColorFromPalette (224).G;
-			objectsMetrics.MinBlue = 0;//ConcurrentDrawLib.GetColorFromPalette (192).B;
+			objectsMetrics.MinBlue = ConcurrentDrawLib.GetColorFromPalette (192).B;
 			objectsMetrics.ObjectsCount = 10;
 			objectsMetrics.ObjectsType = LogoDrawerObjectTypes.RotatingStars;
 			objectsMetrics.Rotation = true;
-			objectsMetrics.StartupPosition = LogoDrawerObjectStartupPositions.Top;
-			objectsMetrics.MaxSpeedFluctuation = 0;
+			objectsMetrics.StartupPosition = LogoDrawerObjectStartupPositions.Left;
+			objectsMetrics.MaxSpeedFluctuation = 2;
 
 			for (int i = 0; i < objectsMetrics.ObjectsCount; i++)
 				objects.Add (new LogoDrawerLetter (0, 0, null, objectsMetrics));

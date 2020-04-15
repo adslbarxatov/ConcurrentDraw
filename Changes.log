@@ -1,5 +1,11 @@
 ConcurrentDraw changes log
 
+Version 1.42.4:
+• In case of absence of required DLLs application will now offer opening corresponding download pages
+
+Version 1.42.2:
+• Added reversed version of 'Acid' and 'Lemon' palettes
+
 Version 1.42:
 • Added histogram modes with vertical symmetry;
 • Maximum of FFT multiplier increased to 150;

@@ -623,12 +623,14 @@ namespace RD_AAOW
 		private static extern string GetCDLibVersionEx ();
 
 		/// <summary>
-		/// Метод проверяет корректность версии библиотеки CDLib.dll
+		/// Возвращает версию библиотеки CDLib.dll
 		/// </summary>
-		/// <returns>Возвращает true, если версия корректна</returns>
-		public static bool CheckCDLibVersion ()
+		public static string CDLibVersion
 			{
-			return (ProgramDescription.AssemblyVersion == GetCDLibVersionEx ());
+			get
+				{
+				return GetCDLibVersionEx ();
+				}
 			}
 
 		/// <summary>

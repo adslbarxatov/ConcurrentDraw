@@ -234,7 +234,7 @@
 Настройки будут сохранены нажатием кнопки ОК. Они могут быть изменены в любое время</value>
   </data>
   <data name="LibraryIsIncompatible" xml:space="preserve">
-    <value>Эта версия библиотеки {0:S} несовместима с текущей версией приложения</value>
+    <value>Эта версия библиотеки {0:S} ({1:S}) несовместима с текущей версией приложения ({2:S})</value>
   </data>
   <data name="LibraryNotFound" xml:space="preserve">
     <value>Библиотека {0:S} не найдена или недоступна</value>
@@ -341,5 +341,15 @@
   </data>
   <data name="CDP_SGTopOffsetLabel" xml:space="preserve">
     <value>Смещение:</value>
+  </data>
+  <data name="LibraryNotFound_Lib0" xml:space="preserve">
+    <value>.
+
+Открыть веб-страницу для загрузки актуальной сборки приложения?</value>
+  </data>
+  <data name="LibraryNotFound_Lib1" xml:space="preserve">
+    <value>.
+
+Открыть веб-страницу для загрузки актуальной версии библиотеки?</value>
   </data>
 </root>

@@ -31,23 +31,32 @@ namespace RD_AAOW
 				}
 
 			// Проверка наличия обязательных компонентов
-			for (int i = 0; i < ProgramDescription.AssemblyRequirements.Length; i++)
+			if (!File.Exists (Application.StartupPath + "\\" + ProgramDescription.AssemblyRequirements[0]))
 				{
-				if (!File.Exists (Application.StartupPath + "\\" + ProgramDescription.AssemblyRequirements[i]))
-					{
-					MessageBox.Show (string.Format (Localization.GetText ("LibraryNotFound", al),
-						ProgramDescription.AssemblyRequirements[i]),
-						ProgramDescription.AssemblyTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
-					return;
-					}
+				if (MessageBox.Show (string.Format (Localization.GetText ("LibraryNotFound", al),
+					ProgramDescription.AssemblyRequirements[0]) + Localization.GetText ("LibraryNotFound_Lib0", al),
+					ProgramDescription.AssemblyTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
+					ProgramDescription.ShowActualAssemblyPage ();
+				return;
+				}
+
+			if (!File.Exists (Application.StartupPath + "\\" + ProgramDescription.AssemblyRequirements[1]))
+				{
+				if (MessageBox.Show (string.Format (Localization.GetText ("LibraryNotFound", al),
+					ProgramDescription.AssemblyRequirements[1]) + Localization.GetText ("LibraryNotFound_Lib1", al),
+					ProgramDescription.AssemblyTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
+					ProgramDescription.ShowBASSPage ();
+				return;
 				}
 
 			// Проверка корреткности версии библиотеки CDLib.dll (BASS проверяется позже)
-			if (!ConcurrentDrawLib.CheckCDLibVersion ())
+			if (ConcurrentDrawLib.CDLibVersion != ProgramDescription.AssemblyVersion)
 				{
-				MessageBox.Show (string.Format (Localization.GetText ("LibraryIsIncompatible", al),
-						ProgramDescription.AssemblyRequirements[0]), ProgramDescription.AssemblyTitle,
-					MessageBoxButtons.OK, MessageBoxIcon.Error);
+				if (MessageBox.Show (string.Format (Localization.GetText ("LibraryIsIncompatible", al),
+						ProgramDescription.AssemblyRequirements[0], ConcurrentDrawLib.CDLibVersion, ProgramDescription.AssemblyVersion) +
+						Localization.GetText ("LibraryNotFound_Lib0", al), ProgramDescription.AssemblyTitle,
+						MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
+					ProgramDescription.ShowActualAssemblyPage ();
 				return;
 				}
 

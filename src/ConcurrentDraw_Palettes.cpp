@@ -328,6 +328,26 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 				(FP_MAX - 3 * i / 4, FP_HMAX - i / 2, FP_HMAX - i / 2), 224)
 			break;
 
+		// Кислота обратная
+		case 21:
+			FP_PALETTE (
+				(FP_AMAX - 3 * i, FP_MAX, FP_AMAX - 3 * i),
+				(0, FP_MAX - 2 * i, 0),
+				(0, FP_HMAX - i, 0),
+				(0, FP_QMAX - i, 0),
+				(FP_HMAX - i / 2, FP_MAX - 3 * i / 4, FP_HMAX - i / 2), 224)
+			break;
+
+		// Лимон обратная
+		case 22:
+			FP_PALETTE (
+				(FP_MAX, FP_MAX, FP_AMAX - 3 * i),
+				(FP_MAX - 2 * i, FP_MAX - 2 * i, 0),
+				(FP_HMAX - i, FP_HMAX - i, 0),
+				(FP_QMAX - i, FP_QMAX - i, 0),
+				(FP_MAX - 3 * i / 4, FP_MAX - 3 * i / 4, FP_HMAX - i / 2), 224)
+			break;
+
 		// Полиморфная и случайная
 		FP_SPECIAL_PALETTES
 			FillPalette_PolymorphRandom (PaletteNumber & 0x2 & polymorphResetNotRequired, PaletteNumber & 0x1);
@@ -361,7 +381,9 @@ CD_API(schar *) GetPalettesNamesEx ()
 		"Sea (reversed)" NAMES_DELIMITER_S \
 		"Purple" NAMES_DELIMITER_S \
 		\
-		"Blood (reversed)")
+		"Blood (reversed)" NAMES_DELIMITER_S \
+		"Acid (reversed)" NAMES_DELIMITER_S \
+		"Lemon (reversed)")
 
 	return PALETTES_NAMES;
 	}

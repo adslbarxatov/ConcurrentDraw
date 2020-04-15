@@ -234,7 +234,7 @@ At first application will start with recommended settings. But you can change:
 Settings will be saved by pressing OK button. They can be changed anytime you need</value>
   </data>
   <data name="LibraryIsIncompatible" xml:space="preserve">
-    <value>This version of {0:S} is incompatible with current version of application</value>
+    <value>This version of {0:S} ({1:S}) is incompatible with current version of application ({2:S})</value>
   </data>
   <data name="LibraryNotFound" xml:space="preserve">
     <value>{0:S} not found or unavailable</value>
@@ -340,5 +340,15 @@ Center placement: X = {1:S}; Y = {2:S}</value>
   </data>
   <data name="CDP_SGTopOffsetLabel" xml:space="preserve">
     <value>Offset from top:</value>
+  </data>
+  <data name="LibraryNotFound_Lib0" xml:space="preserve">
+    <value>.
+
+Do you want to open webpage for downloading the actual application assembly?</value>
+  </data>
+  <data name="LibraryNotFound_Lib1" xml:space="preserve">
+    <value>.
+
+Do you want to open webpage for downloading the actual library version?</value>
   </data>
 </root>
