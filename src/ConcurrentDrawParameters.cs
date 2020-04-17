@@ -125,9 +125,15 @@ namespace RD_AAOW
 			SwingingHistogramFlag.Checked = parameters[DSN].SwingingHistogram;
 
 			// Язык интерфейса
-			for (int i = 0; i < Localization.AvailableLanguages; i++)
-				LanguageCombo.Items.Add (((SupportedLanguages)i).ToString ());
-			LanguageCombo.SelectedIndex = (int)al;			// По умолчанию - язык системы или английский
+			LanguageCombo.Items.AddRange (Localization.LanguagesNames);
+			try
+				{
+				LanguageCombo.SelectedIndex = (int)al;			// По умолчанию - язык системы или английский
+				}
+			catch
+				{
+				LanguageCombo.SelectedIndex = 0;
+				}
 
 			// Запрос настроек
 			bool requestRequired = GetSettings (SSN);

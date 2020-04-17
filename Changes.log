@@ -1,5 +1,9 @@
 ConcurrentDraw changes log
 
+Version 1.42.6L:
+• Applied correct representation of supported languages list;
+• Updated some help tips
+
 Version 1.42.4:
 • In case of absence of required DLLs application will now offer opening corresponding download pages
 
