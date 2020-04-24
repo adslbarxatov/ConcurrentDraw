@@ -352,4 +352,7 @@
 
 Открыть веб-страницу для загрузки актуальной версии библиотеки?</value>
   </data>
+  <data name="CDP_BeatWavesFlag" xml:space="preserve">
+    <value>Волны бито́в</value>
+  </data>
 </root>

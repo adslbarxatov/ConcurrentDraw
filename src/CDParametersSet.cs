@@ -378,6 +378,70 @@ namespace RD_AAOW
 		private bool spectrogramDoubleWidth = false;
 
 		/// <summary>
+		/// Возвращает или задаёт относительную абсциссу центра поля отрисовки лого
+		/// </summary>
+		public uint LogoCenterX
+			{
+			get
+				{
+				return logoCenterX;
+				}
+			set
+				{
+				logoCenterX = value;
+				}
+			}
+		private uint logoCenterX = 50;
+
+		/// <summary>
+		/// Возвращает или задаёт относительную ординату центра поля отрисовки лого
+		/// </summary>
+		public uint LogoCenterY
+			{
+			get
+				{
+				return logoCenterY;
+				}
+			set
+				{
+				logoCenterY = value;
+				}
+			}
+		private uint logoCenterY = 50;
+
+		/// <summary>
+		/// Возвращает или задаёт флаг, указывающий на качание гистограммы вместо вращения
+		/// </summary>
+		public bool SwingingHistogram
+			{
+			get
+				{
+				return swingingHistogram;
+				}
+			set
+				{
+				swingingHistogram = value;
+				}
+			}
+		private bool swingingHistogram = false;
+
+		/// <summary>
+		/// Возвращает или задаёт флаг волн бит-детектора
+		/// </summary>
+		public bool BeatDetectorWaves
+			{
+			get
+				{
+				return beatDetectorWaves;
+				}
+			set
+				{
+				beatDetectorWaves = value;
+				}
+			}
+		private bool beatDetectorWaves = false;
+
+		/// <summary>
 		/// Конструктор. Инициализирует экземпляр настройками по умолчанию
 		/// </summary>
 		/// <param name="DefaultSettings">Флаг указывает, следует ли загрузить стандартные настройки
@@ -470,8 +534,8 @@ namespace RD_AAOW
 				logoCenterY = uint.Parse (values[21]);
 
 				swingingHistogram = (values[22] != "0");
-
 				spectrogramTopOffset = uint.Parse (values[23]);
+				beatDetectorWaves = (values[24] != "0");
 				}
 			catch
 				{
@@ -535,7 +599,8 @@ namespace RD_AAOW
 				logoCenterX.ToString () + splitter[0].ToString () +
 				logoCenterY.ToString () + splitter[0].ToString () +
 				(swingingHistogram ? "SH" : "0") + splitter[0].ToString () +
-				spectrogramTopOffset.ToString ();
+				spectrogramTopOffset.ToString () + splitter[0].ToString () +
+				(beatDetectorWaves ? "BW" : "0");
 
 			// Запись
 			try
@@ -626,53 +691,5 @@ namespace RD_AAOW
 			// Завершено
 			rk.Dispose ();
 			}
-
-		/// <summary>
-		/// Возвращает или задаёт относительную абсциссу центра поля отрисовки лого
-		/// </summary>
-		public uint LogoCenterX
-			{
-			get
-				{
-				return logoCenterX;
-				}
-			set
-				{
-				logoCenterX = value;
-				}
-			}
-		private uint logoCenterX = 50;
-
-		/// <summary>
-		/// Возвращает или задаёт относительную ординату центра поля отрисовки лого
-		/// </summary>
-		public uint LogoCenterY
-			{
-			get
-				{
-				return logoCenterY;
-				}
-			set
-				{
-				logoCenterY = value;
-				}
-			}
-		private uint logoCenterY = 50;
-
-		/// <summary>
-		/// Возвращает или задаёт флаг, указывающий на качание гистограммы вместо вращения
-		/// </summary>
-		public bool SwingingHistogram
-			{
-			get
-				{
-				return swingingHistogram;
-				}
-			set
-				{
-				swingingHistogram = value;
-				}
-			}
-		private bool swingingHistogram = false;
 		}
 	}

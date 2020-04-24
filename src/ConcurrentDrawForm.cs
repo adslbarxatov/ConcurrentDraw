@@ -65,6 +65,7 @@ namespace RD_AAOW
 #endif
 		private const float beatsDetAngleMultiplier =
 			150.0f / logoSpeedImpulse;							// Множитель для расчёта угла дуги бит-детектора
+		private List<int> beatWaves = new List<int> ();			// Волны бит-детектора
 
 		// Лого
 		private int currentLogoAngleDelta = 0,					// Текущий угол приращения поворота лого
@@ -901,6 +902,12 @@ namespace RD_AAOW
 				}
 			}
 
+		// Запрос радиуса кольца бит-детектора
+		private int GetBeatRingRadius (byte PeakValue)
+			{
+			return 400 * logo[1].Height / (1200 - PeakValue);
+			}
+
 		// Отрисовка фрагментов лого
 		private void DrawingVisualization ()
 			{
@@ -932,12 +939,35 @@ namespace RD_AAOW
 			UpdateAngles (true);
 			if (cdp.VisualizationContainsLogo)
 				{
+				// Волны
+				if (cdp.BeatDetectorWaves)
+					{
+					if (peak > cdp.BeatsDetectorLowLevel)
+						beatWaves.Add ((int)logoHeight / 30);
+					rad = GetBeatRingRadius (255);
+					}
+
+				for (int i = 0; i < beatWaves.Count; i++)
+					{
+					amp = 3 * beatWaves[i];
+					p = new Pen (ConcurrentDrawLib.GetMasterPaletteColor ((byte)(255 - amp / 2)), logoHeight / 30);
+
+					mainLayer.Descriptor.DrawEllipse (p, logoCenterX - (amp + rad) / 2,
+						logoCenterY - (amp + rad) / 2, amp + rad, amp + rad);
+
+					beatWaves[i] += 2;
+					if (beatWaves[i] >= 167)
+						beatWaves.RemoveAt (i);
+
+					p.Dispose ();
+					}
+
 				// Лого
 				RotateAndDrawLogo ();
 
 				// Бит-детектор
 				p = new Pen (ConcurrentDrawLib.GetMasterPaletteColor (peak), logoHeight / 50);
-				rad = 400 * logo[1].Height / (1200 - peak);
+				rad = GetBeatRingRadius (peak);
 
 				for (int i = 0; i < 2; i++)
 					mainLayer.Descriptor.DrawArc (p, logoCenterX - rad / 2, logoCenterY - rad / 2,

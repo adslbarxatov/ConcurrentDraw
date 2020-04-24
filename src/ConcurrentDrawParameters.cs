@@ -123,6 +123,7 @@ namespace RD_AAOW
 			ShakeFlag.Checked = parameters[DSN].ShakeEffect;
 			SDDoubleWidthFlag.Checked = parameters[DSN].SpectrogramDoubleWidth;
 			SwingingHistogramFlag.Checked = parameters[DSN].SwingingHistogram;
+			BeatWavesFlag.Checked = parameters[DSN].BeatDetectorWaves;
 
 			// Язык интерфейса
 			LanguageCombo.Items.AddRange (Localization.LanguagesNames);
@@ -204,6 +205,7 @@ namespace RD_AAOW
 				HistoRotSpeedArc.Value = (decimal)Math.Abs (parameters[psn].HistoRotSpeedDelta / 10.0);
 
 				ShakeFlag.Checked = parameters[psn].ShakeEffect;
+				BeatWavesFlag.Checked = parameters[psn].BeatDetectorWaves;
 
 				// Эти параметры перемещены в конец, т.к. могут вызывать ошибки при запусках, не зависящие от программы
 				HistogramRangeField.Value = parameters[psn].HistogramRangeMaximum;
@@ -269,6 +271,7 @@ namespace RD_AAOW
 			HistoRotSpeed.Text = Localization.GetText ("CDP_HistoRotSpeed", al);
 
 			ShakeFlag.Text = Localization.GetText ("CDP_ShakeFlag", al);
+			BeatWavesFlag.Text = Localization.GetText ("CDP_BeatWavesFlag", al);
 
 			CEInfo.Text = Localization.GetText ("CDP_CEInfoText", al);
 
@@ -457,6 +460,7 @@ namespace RD_AAOW
 				parameters[psn].HistoRotSpeedDelta = (int)(HistoRotSpeedArc.Value * 10);
 
 			parameters[psn].ShakeEffect = ShakeFlag.Checked;
+			parameters[psn].BeatDetectorWaves = BeatWavesFlag.Checked;
 
 			parameters[psn].BeatsDetectorFFTScaleMultiplier = (byte)BDFFTScaleMultiplier.Value;
 			parameters[psn].BeatsDetectorHighEdge = (uint)BDHighEdge.Value;
@@ -541,6 +545,17 @@ namespace RD_AAOW
 			get
 				{
 				return parameters[SSN].SwingingHistogram;
+				}
+			}
+
+		/// <summary>
+		/// Возвращает флаг, указывающий на наличие волн бит-детектора
+		/// </summary>
+		public bool BeatDetectorWaves
+			{
+			get
+				{
+				return parameters[SSN].BeatDetectorWaves;
 				}
 			}
 
