@@ -1,5 +1,9 @@
 ConcurrentDraw changes log
 
+Version 1.43.1:
+• Better window fitting for wave effect applied;
+• Some updates for help tips applied
+
 Version 1.43:
 • Added wave effect for beats detector (may be hard for slow PC)
 

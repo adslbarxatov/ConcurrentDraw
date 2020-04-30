@@ -952,8 +952,9 @@ namespace RD_AAOW
 					amp = 3 * beatWaves[i];
 					p = new Pen (ConcurrentDrawLib.GetMasterPaletteColor ((byte)(255 - amp / 2)), logoHeight / 30);
 
-					mainLayer.Descriptor.DrawEllipse (p, logoCenterX - (amp + rad) / 2,
-						logoCenterY - (amp + rad) / 2, amp + rad, amp + rad);
+					amp = (int)cdp.VisualizationWidth * amp / 640 + rad;
+					mainLayer.Descriptor.DrawEllipse (p, logoCenterX - amp / 2,
+						logoCenterY - amp / 2, amp, amp);
 
 					beatWaves[i] += 2;
 					if (beatWaves[i] >= 167)

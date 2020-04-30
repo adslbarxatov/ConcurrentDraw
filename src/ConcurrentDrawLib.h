@@ -18,8 +18,8 @@
 
 /////////////////////////////////////////////////////
 // Константы
-#define CD_VERSION					1,43,0,0
-#define CD_VERSION_S				"1.43.0.0"
+#define CD_VERSION					1,43,1,0
+#define CD_VERSION_S				"1.43.1.0"
 #define CD_PRODUCT					"BASS adapter for ConcurrentDraw visualization tool"
 #define CD_COMPANY					"RD AAOW"
 
