@@ -1,5 +1,13 @@
 ConcurrentDraw changes log
 
+Version 1.44:
+• V key now allows you to switch 'Beats waves' flag;
+• Frequencies skipping code updated for streamed files;
+• Some info tips updated;
+• Amplitude histograms have been removed;
+• Beatwaves are now unavailable in butterfly and perspective modes;
+• Fixed startup angle for perspective mode with 'swing' flag
+
 Version 1.43.1:
 • Better window fitting for wave effect applied;
 • Some updates for help tips applied

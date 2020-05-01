@@ -35,12 +35,12 @@ CD_API(uchar) GetScaledAmplitudeEx (uint FrequencyLevel)
 	uint v, fl = FrequencyLevel;
 
 	// Контроль
+	if (AS->cdChannelLength)
+		fl += 3;
+	else
+		fl++;
 	if (fl >= FFT_VALUES_COUNT)
 		fl = FFT_VALUES_COUNT - 1;
-	if (fl < 1)
-		fl = 1;
-	if (AS->cdChannelLength && (fl < 3))
-		fl = 3;
 	
 	// Получение (uint, чтобы исключить суммирование с переносом)
 	v = CD_FFT_EV_METHOD (AS->cdFFT[fl]) * AS->cdFFTScale;

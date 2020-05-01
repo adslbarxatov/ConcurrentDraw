@@ -316,7 +316,8 @@ Center placement: X = {1:S}; Y = {2:S}</value>
 • K key – switch shake flag;
 • I key – request for current settings info;
 • S key – saving current visualization screen to image file;
-• W key – switch 'histogram swinging' flag</value>
+• W key – switch 'histogram swinging' flag;
+• V key – switch 'beats waves' flag</value>
   </data>
   <data name="CDP_CEInfoText" xml:space="preserve">
     <value>(1 – no cumulative effect)</value>

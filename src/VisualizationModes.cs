@@ -74,7 +74,7 @@
 		/// <summary>
 		/// Количество доступных режимов визуализации
 		/// </summary>
-		public const uint VisualizationModesCount = 12;
+		public const uint VisualizationModesCount = 10;
 
 		/// <summary>
 		/// Метод возвращает режим спектрограммы по режиму визуализации

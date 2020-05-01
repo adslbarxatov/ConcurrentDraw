@@ -880,7 +880,7 @@ namespace RD_AAOW
 					angle1 = ArcToRad (((255 - i) * ((i % 2 == 0) ? 1 : -1)) / perspectiveDensity);
 					angle2 = ArcToRad (currentHistogramAngle + 90);
 					if (cdp.SwingingHistogram)
-						angle2 = (Math.Sin (angle2) + Math.PI) / 2.0;
+						angle2 = (Math.Sin (angle2 + Math.PI / 2.0) + Math.PI) / 2.0;
 
 					// Координаты
 					histoX[0] = (int)(logoCenterX + rad * Math.Cos (angle2 + angle1));

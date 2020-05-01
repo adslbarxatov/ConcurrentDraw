@@ -555,7 +555,8 @@ namespace RD_AAOW
 			{
 			get
 				{
-				return parameters[SSN].BeatDetectorWaves;
+				return parameters[SSN].BeatDetectorWaves &&
+					VisualizationModesChecker.ContainsSGHGorWF ((VisualizationModes)VisualizationCombo.SelectedIndex);
 				}
 			}
 
@@ -776,7 +777,8 @@ namespace RD_AAOW
 			SGHGHeightLabel.Enabled = SGHeight.Enabled = SGHeightPxLabel.Enabled =
 				SGTopOffsetLabel.Enabled = SGTopOffset.Enabled = SGTopOffsetPxLabel.Enabled =
 				SGTopOffsetMin.Enabled = SGTopOffsetMid.Enabled = SGTopOffsetMax.Enabled =
-				SGHeightMax.Enabled = SGHeightMin.Enabled = VisualizationModesChecker.ContainsSGHGorWF (mode);
+				SGHeightMax.Enabled = SGHeightMin.Enabled = BeatWavesFlag.Enabled =
+				VisualizationModesChecker.ContainsSGHGorWF (mode);
 			HistoRotAccToBeats.Enabled = HistoRotSpeed.Enabled = HistoRotSpeedArc.Enabled =
 				HistoRotSpeedLabel.Enabled = ResetRotation.Enabled = SwingingHistogramFlag.Enabled =
 				!VisualizationModesChecker.ContainsSGHGorWF (mode);
@@ -1023,7 +1025,8 @@ namespace RD_AAOW
 			Keys.H | Keys.Shift,			// 30
 
 			Keys.W,
-			Keys.L
+			Keys.L,
+			Keys.V							// 33
 
 			// Клавиши, обрабатываемые в основном интерфейсе
 			// Keys.R,
@@ -1237,18 +1240,24 @@ namespace RD_AAOW
 						VisSizeLabel.Text + " " + VisWidth.Value.ToString () + " x " + VisHeight.Value.ToString () + " px\n" +
 						VisLeftTopLabel.Text + " " + VisLeft.Value.ToString () + " x " + VisTop.Value.ToString () + " px\n" +
 						PaletteLabel.Text + " " + SDPaletteCombo.Text + "\n" +
-						SGHGHeightLabel.Text + " " + SGHeight.Value.ToString () + " px" +
-						(SDDoubleWidthFlag.Checked ? ("; " + SDDoubleWidthFlag.Text) : "") + "\n" +
+						(ShakeFlag.Checked ? (ShakeFlag.Text + "\n") : "") +
+						(AlwaysOnTopFlag.Checked ? (AlwaysOnTopFlag.Text + "\n\n") : "\n") +
+
 						HGRangeLabel.Text + " 0 – " + (HistogramRangeField.Value *
 							CDParametersSet.HistogramRangeSettingIncrement).ToString () + " " +
 							HzLabel.Text.Substring (HzLabel.Text.Length - 2) + "\n" +
-						(ShakeFlag.Checked ? (ShakeFlag.Text + "\n") : "") +
-						(AlwaysOnTopFlag.Checked ? (AlwaysOnTopFlag.Text + "\n") : "") +
-						"\n" + LogoCenterLabel.Text + "\n\n" +
-						BDSettings.Text + "\n\n" +
+						SGHGHeightLabel.Text + " " + SGHeight.Value.ToString () + " px" +
+						(SDDoubleWidthFlag.Checked ? ("; " + SDDoubleWidthFlag.Text) : "") + "\n" +
+						SGTopOffsetLabel.Text + " " + SGTopOffset.Value.ToString () + " px\n" +
 						(HistoRotAccToBeats.Checked ? HistoRotAccToBeats.Text : HistoRotSpeed.Text) + " " +
 						HistoRotSpeedArc.Value.ToString () + "°\n" +
-						(SwingingHistogramFlag.Checked ? (SwingingHistogramFlag.Text + "\n\n") : "\n") +
+						(SwingingHistogramFlag.Checked ? (SwingingHistogramFlag.Text + "\n") : "") +
+
+						"\n" + LogoCenterLabel.Text +
+						(BeatWavesFlag.Checked ? ("\n" + BeatWavesFlag.Text) : "") + "\n\n" +
+
+						BDSettings.Text + "\n\n" +
+
 						CESettings.Text,
 						ProgramDescription.AssemblyTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
 					break;
@@ -1293,6 +1302,12 @@ namespace RD_AAOW
 				case 32:
 					WithLogoFlag.Checked = !WithLogoFlag.Checked;
 					hotKeyResult = WithLogoFlag.Text + " = " + (WithLogoFlag.Checked ? "1" : "0");
+					break;
+
+				// Изменение флага Beatwaves
+				case 33:
+					BeatWavesFlag.Checked = !BeatWavesFlag.Checked;
+					hotKeyResult = BeatWavesFlag.Text + " = " + (BeatWavesFlag.Checked ? "1" : "0");
 					break;
 				}
 
