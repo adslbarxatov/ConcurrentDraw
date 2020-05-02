@@ -1,5 +1,8 @@
 ConcurrentDraw changes log
 
+Version 1.44.1:
+• Beats' waves setting has been reviewed
+
 Version 1.44:
 • V key now allows you to switch 'Beats waves' flag;
 • Frequencies skipping code updated for streamed files;

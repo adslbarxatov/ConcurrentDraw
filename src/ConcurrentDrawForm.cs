@@ -943,21 +943,21 @@ namespace RD_AAOW
 				if (cdp.BeatDetectorWaves)
 					{
 					if (peak > cdp.BeatsDetectorLowLevel)
-						beatWaves.Add ((int)logoHeight / 30);
-					rad = GetBeatRingRadius (255);
+						beatWaves.Add (0);
 					}
 
 				for (int i = 0; i < beatWaves.Count; i++)
 					{
-					amp = 3 * beatWaves[i];
-					p = new Pen (ConcurrentDrawLib.GetMasterPaletteColor ((byte)(255 - amp / 2)), logoHeight / 30);
+					p = new Pen (ConcurrentDrawLib.GetMasterPaletteColor ((byte)(255 - beatWaves[i])), logoHeight / 30);
 
-					amp = (int)cdp.VisualizationWidth * amp / 640 + rad;
-					mainLayer.Descriptor.DrawEllipse (p, logoCenterX - amp / 2,
-						logoCenterY - amp / 2, amp, amp);
+					for (int j = 0; j < 2; j++)
+						{
+						amp = (int)logoHeight * beatWaves[i] / 100;
+						mainLayer.Descriptor.DrawEllipse (p, logoCenterX - amp / 2, logoCenterY - amp / 2, amp, amp);
+						beatWaves[i]++;
+						}
 
-					beatWaves[i] += 2;
-					if (beatWaves[i] >= 167)
+					if (beatWaves[i] >= 253)
 						beatWaves.RemoveAt (i);
 
 					p.Dispose ();
@@ -967,14 +967,17 @@ namespace RD_AAOW
 				RotateAndDrawLogo ();
 
 				// Бит-детектор
-				p = new Pen (ConcurrentDrawLib.GetMasterPaletteColor (peak), logoHeight / 50);
-				rad = GetBeatRingRadius (peak);
+				if (!cdp.BeatDetectorWaves)
+					{
+					p = new Pen (ConcurrentDrawLib.GetMasterPaletteColor (peak), logoHeight / 50);
+					rad = GetBeatRingRadius (peak);
 
-				for (int i = 0; i < 2; i++)
-					mainLayer.Descriptor.DrawArc (p, logoCenterX - rad / 2, logoCenterY - rad / 2,
-						rad, rad, currentLogoAngle + i * 180, currentLogoAngleDelta * beatsDetAngleMultiplier);
+					for (int i = 0; i < 2; i++)
+						mainLayer.Descriptor.DrawArc (p, logoCenterX - rad / 2, logoCenterY - rad / 2,
+							rad, rad, currentLogoAngle + i * 180, currentLogoAngleDelta * beatsDetAngleMultiplier);
 
-				p.Dispose ();
+					p.Dispose ();
+					}
 				}
 
 			// Отрисовка перспективы поверх лого
