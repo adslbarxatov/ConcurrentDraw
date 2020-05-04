@@ -1,15 +1,15 @@
-ConcurrentDraw changes log
+﻿ConcurrentDraw changes log
 
 Version 1.44.1:
 • Beats' waves setting has been reviewed
 
 Version 1.44:
-• V key now allows you to switch 'Beats waves' flag;
+• V key now allows you to switch beats' waves flag;
 • Frequencies skipping code updated for streamed files;
 • Some info tips updated;
 • Amplitude histograms have been removed;
-• Beatwaves are now unavailable in butterfly and perspective modes;
-• Fixed startup angle for perspective mode with 'swing' flag
+• Beats' waves are now unavailable in butterfly and perspective histogram modes;
+• Fixed startup rotation angle for perspective histogram with 'swing' flag
 
 Version 1.43.1:
 • Better window fitting for wave effect applied;
@@ -33,8 +33,8 @@ Version 1.42:
 • Maximum of FFT multiplier increased to 150;
 • Added ability to specify offset from window's top for spectrograms and histograms;
 • Fixed minor interface bugs;
-• Added align buttons for spectro-histo height and offset;
-• All spectro-histo setting (including rotation) moved to single tab
+• Added align buttons for spectrogram / histogram height and offset;
+• All spectrogram / histogram setting (including rotation) moved to single tab
 
 Version 1.41.2:
 • Added special skipping range for video rendering mode (0 – 16 Hz) to avoid of black histogram lines: seems like sound files don't contain this range
@@ -90,14 +90,14 @@ Version 1.35.1:
 
 Version 1.35:
 • W, A, S and D keys (logo moving) replaced with arrow keys in combination with Shift key. So:
-    arrow keys will move visualization window;
-    arrow keys with Ctrl key will move it to edges of screen;
-    arrow keys with Shift key will move logo;
-    arrow keys with Shift and Ctrl keys will move it to edges of window;
+    - arrow keys will move visualization window;
+    - arrow keys with Ctrl key will move it to edges of screen;
+    - arrow keys with Shift key will move logo;
+    - arrow keys with Shift and Ctrl keys will move it to edges of window;
 • S key now allow you to save current image of visualization to file;
 • '< ,' / '> .' keys allow you to decrease / increase speed of histogram rotation;
-    using without Shift key will activate constant increment;
-    using with Shift key will activate beats-dependent rotation;
+    - using without Shift key will activate constant increment;
+    - using with Shift key will activate beats-dependent rotation;
 • Rotation reset button added to parameters window;
 • Keys processing code has been reviewed;
 • Some fixes for source code of CD library applied;
@@ -125,15 +125,15 @@ Version 1.32:
 • Utility now supports BASS version 2.4.15 in addition to 2.4.14;
 • Parameters window will now apply settings when you press Enter key in any place and abort them when you press ESC key;
 • Hot keys processing added for:
-    Space key (will call parameters window);
-    R key (will reset logo);
-    W, A, S and D keys (will move logo);
-    Arrows (will move visualization window);
-    M key (will cyclically change visualization modes);
-    P key (will cyclically change palettes);
-    H key (will cyclically change histogram ranges);
-    T key (will switch 'always on top' flag);
-    K key (will switch 'shake flag);
+    - Space key (will call parameters window);
+    - R key (will reset logo);
+    - W, A, S and D keys (will move logo);
+    - Arrows (will move visualization window);
+    - M key (will cyclically change visualization modes);
+    - P key (will cyclically change palettes);
+    - H key (will cyclically change histogram ranges);
+    - T key (will switch 'always on top' flag);
+    - K key (will switch 'shake flag);
   They will change settings without calling the parameters window
 
 Version 1.31.2:
@@ -198,8 +198,7 @@ Version 1.26:
 • Settings profiling added: settings may be named and saved now
 
 Version 1.25.10:
-• Settings management subsystem implemented; in further versions application will be able to save
-  sets of settings and select them from the list
+• Settings management subsystem implemented; in further versions application will be able to save sets of settings and select them from the list
 
 Version 1.25:
 • Beats detector will decelerate more smoothly now;
@@ -244,16 +243,14 @@ Version 1.21:
 • Beats detector now may be turned off properly
 
 Version 1.20:
-• Rotation math reviewed: histograms rotation is literally rotation now;
-  Also it can be used with transparency flag;
+• Rotation math reviewed: histograms rotation is literally rotation now; also it can be used with transparency flag;
 • 'Noise' rotation in beats-according rotation mode fixed;
-• Perspective histogram mode completely reviewed: it's more usable now;
-  Also it can be used with transparency flag
+• Perspective histogram mode completely reviewed: it's more usable now; also it can be used with transparency flag
 
 Version 1.19:
 • Amplitude threshold (setting) now will be presented in percentage;
 • Window alignment at first launch is more accurate now;
-• Cumulative effect's background changed to fullwindow rectangle (instead of peaksfitting ellipse);
+• Cumulative effect's background changed to full-window rectangle (instead of peaks-fitting ellipse);
 • Added 'perspective histogram' mode;
 • Added 'static amplitude histogram' and 'moving amplitude histogram' modes;
 • Added [0; 690] Hz histogram range;
@@ -321,8 +318,7 @@ Version 1.9.1:
 • Some fixes applied to existent palettes
 
 Version 1.9:
-• Added cumulative effect: in case of intensive and dense beats (or other frequencies that are under detector)
-  visualization background will change its color according to selected palette
+• Added cumulative effect: in case of intensive and dense beats (or other frequencies that are under detector) visualization background will change its color according to selected palette
 
 Version 1.8.1:
 • Added 'Mirror' palette
