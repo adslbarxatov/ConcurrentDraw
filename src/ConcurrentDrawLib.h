@@ -18,8 +18,8 @@
 
 /////////////////////////////////////////////////////
 // Константы
-#define CD_VERSION					1,44,1,0
-#define CD_VERSION_S				"1.44.1.0"
+#define CD_VERSION					1,45,0,0
+#define CD_VERSION_S				"1.45.0.0"
 #define CD_PRODUCT					"BASS adapter for ConcurrentDraw visualization tool"
 #define CD_COMPANY					"RD AAOW"
 
@@ -46,10 +46,12 @@
 #define PEAK_EVALUATION_HIGH_EDGE	8
 #define PEAK_EVALUATION_LOW_LEVEL	0xF8
 #define CD_DEFAULT_FFT_SCALE_MULT	40
+
 //#define CD_SECOND_FFT_SCALE_MULT	25.5f
 #define CD_SECOND_FFT_SCALE_MULT	80.0f	
 //#define CD_FFT_EV_METHOD(v)			sqrt (v)
 #define CD_FFT_EV_METHOD(v)			v
+
 #define CD_MIN_FFT_SCALE_MULT		10
 #define CD_MAX_FFT_SCALE_MULT		150
 
@@ -179,7 +181,7 @@ CD_API(ulong) GetDefaultPeakEvaluationParametersEx ();
 CD_API(uchar) GetScaledAmplitudeEx (uint FrequencyLevel);
 
 // Функции формируют палитры приложения
-void FillPalette_PolymorphRandom (uchar Polymorph, uchar Monocolor);
+void FillPalette_PolymorphRandom (uchar Reversed, uchar Polymorph, uchar Monocolor);
 sint GetRandomValue (sint Min, sint Max);
 
 CD_API(void) FillPaletteEx (uchar PaletteNumber);

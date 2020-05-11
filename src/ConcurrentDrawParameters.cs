@@ -19,6 +19,8 @@ namespace RD_AAOW
 		private const int DSN = defaultSettingsNumber;
 		private const int SSN = savedSettingsNumber;
 
+		#region Interface masters
+
 		/// <summary>
 		/// Конструктор. Позволяет запросить параметры из реестра.
 		/// При отсутствии записи в реестре будет вызвано окно настроек
@@ -136,6 +138,29 @@ namespace RD_AAOW
 				LanguageCombo.SelectedIndex = 0;
 				}
 
+			// Метрики объектов
+			for (int i = 0; i < LogoDrawerSupport.ObjectTypesCount; i++)
+				ObjectsTypeCombo.Items.Add (((LogoDrawerObjectTypes)i).ToString ());
+			ObjectsTypeCombo.SelectedIndex = 0;
+
+			ObjectsCountField.Maximum = LogoDrawerSupport.MaxObjectsCount;
+
+			SidesCountField.Minimum = LogoDrawerSupport.MinPolygonsSidesCount;
+			SidesCountField.Maximum = LogoDrawerSupport.MaxPolygonsSidesCount;
+
+			for (int i = 0; i < LogoDrawerSupport.ObjectStartupPositionsCount; i++)
+				StartupSideCombo.Items.Add (((LogoDrawerObjectStartupPositions)i).ToString ());
+			StartupSideCombo.SelectedIndex = 0;
+
+			EnlargingCoeffField.Minimum = -LogoDrawerSupport.MaxEnlarge;
+			EnlargingCoeffField.Maximum = LogoDrawerSupport.MaxEnlarge;
+
+			ObjectsMinSpeedField.Minimum = ObjectsMaxSpeedField.Minimum = LogoDrawerSupport.MinObjectSpeed;
+			ObjectsMinSpeedField.Maximum = ObjectsMaxSpeedField.Maximum = SpeedFluctuationField.Maximum = LogoDrawerSupport.MaxObjectSpeed;
+
+			ObjectsMinSizeField.Minimum = ObjectsMaxSizeField.Minimum = LogoDrawerSupport.MinObjectSize;
+			ObjectsMinSizeField.Maximum = ObjectsMaxSizeField.Maximum = LogoDrawerSupport.MaxObjectSize;
+
 			// Запрос настроек
 			bool requestRequired = GetSettings (SSN);
 
@@ -148,6 +173,9 @@ namespace RD_AAOW
 
 			// Запуск окна немедленно, ести требуется
 			BCancel.Enabled = !requestRequired;
+
+			ParticlesTab.Enabled = false;
+
 			if (requestRequired)
 				this.ShowDialog ();
 			}
@@ -231,53 +259,56 @@ namespace RD_AAOW
 		// Применение языковой настройки к окну
 		private void LocalizeForm ()
 			{
-			this.Text = ProgramDescription.AssemblyMainName + " – " + Localization.GetText ("CDPName", al);
+			this.Text = ProgramDescription.AssemblyMainName + " – " + Localization.GetText ("CDP_Name", al);
 
-			DevicesLabel.Text = Localization.GetText ("CDP_DevicesLabel", al);
-
+			GenericTab.Text = Localization.GetText ("MainTabControl_GenericTab", al);
+			Localization.SetControlsText (GenericTab, al);
+			/*DevicesLabel.Text = Localization.GetText ("CDP_DevicesLabel", al);
 			VisTypeLabel.Text = Localization.GetText ("CDP_VisTypeLabel", al);
 			VisSizeLabel.Text = Localization.GetText ("CDP_VisSizeLabel", al);
 			VisLeftTopLabel.Text = Localization.GetText ("CDP_VisLeftTopLabel", al);
-
 			PaletteLabel.Text = Localization.GetText ("CDP_PaletteLabel", al);
-			SGHGHeightLabel.Text = Localization.GetText ("CDP_SGHGHeightLabel", al);
+			AlwaysOnTopFlag.Text = Localization.GetText ("CDP_AlwaysOnTopFlag", al);
+			WithLogoFlag.Text = Localization.GetText ("CDP_WithLogoFlag", al);
+			ShakeFlag.Text = Localization.GetText ("CDP_ShakeFlag", al);*/
+
+			HistoTab.Text = Localization.GetText ("MainTabControl_HistoTab", al);
+			Localization.SetControlsText (HistoTab, al);
+			/*SGHGHeightLabel.Text = Localization.GetText ("CDP_SGHGHeightLabel", al);
+			SDDoubleWidthFlag.Text = Localization.GetText ("CDP_SDDoubleWidthFlag", al);
 			SGTopOffsetLabel.Text = Localization.GetText ("CDP_SGTopOffsetLabel", al);
 			HGRangeLabel.Text = Localization.GetText ("CDP_HGRangeLabel", al);
 			HzLabel.Text = Localization.GetText ("CDP_Hz", al);
-			LogoHeightLabel.Text = Localization.GetText ("CDP_LogoHeightLabel", al);
-			LogoCenterButton.Text = Localization.GetText ("CDP_LogoCenterButton", al);
-			LogoInfoLabel.Text = Localization.GetText ("CDP_LogoInfoText", al);
-
-			SDDoubleWidthFlag.Text = Localization.GetText ("CDP_SDDoubleWidthFlag", al);
-			AlwaysOnTopFlag.Text = Localization.GetText ("CDP_AlwaysOnTopFlag", al);
-			SwingingHistogramFlag.Text = Localization.GetText ("CDP_SwingingHistogramFlag", al);
-			WithLogoFlag.Text = Localization.GetText ("CDP_WithLogoFlag", al);
-
-			GenericTab.Text = Localization.GetText ("CDP_GenericGroup", al);
-			LogoTab.Text = Localization.GetText ("CDP_LogoGroup", al);
-			BeatsTab.Text = Localization.GetText ("CDP_BeatsGroup", al);
-			HistoTab.Text = Localization.GetText ("CDP_HistoGroup", al);
-			CumulationTab.Text = Localization.GetText ("CDP_CumulationGroup", al);
-
-			BOK.Text = Localization.GetText ("CDP_OK", al);
-			BCancel.Text = Localization.GetText ("CDP_Cancel", al);
-			LanguageLabel.Text = Localization.GetText ("CDP_LanguageLabel", al);
-
-			BDLowEdge_ValueChanged (BDLowEdge, null);
-			CESpeed_ValueChanged (null, null);
-			LogoCenterXTrack_ValueChanged (null, null);
-
 			HistoRotAccToBeats.Text = Localization.GetText ("CDP_HistoRotAccToBeats", al);
 			HistoRotSpeed.Text = Localization.GetText ("CDP_HistoRotSpeed", al);
+			BeatWavesFlag.Text = Localization.GetText ("CDP_BeatWavesFlag", al);*/
 
-			ShakeFlag.Text = Localization.GetText ("CDP_ShakeFlag", al);
-			BeatWavesFlag.Text = Localization.GetText ("CDP_BeatWavesFlag", al);
+			LogoTab.Text = Localization.GetText ("MainTabControl_LogoTab", al);
+			Localization.SetControlsText (LogoTab, al);
+			LogoCenterXTrack_ValueChanged (null, null);
+			/*LogoHeightLabel.Text = Localization.GetText ("CDP_LogoHeightLabel", al);
+			LogoCenterButton.Text = Localization.GetText ("CDP_LogoCenterButton", al);
+			LogoInfoLabel.Text = Localization.GetText ("CDP_LogoInfoText", al);
+			SwingingHistogramFlag.Text = Localization.GetText ("CDP_SwingingHistogramFlag", al);*/
 
-			CEInfo.Text = Localization.GetText ("CDP_CEInfoText", al);
+			BeatsTab.Text = Localization.GetText ("MainTabControl_BeatsTab", al);
+			BDLowEdge_ValueChanged (BDLowEdge, null);
 
-			ProfileLabel.Text = Localization.GetText ("CDP_ProfileLabel", al);
+			CumulationTab.Text = Localization.GetText ("MainTabControl_CumulationTab", al);
+			Localization.SetControlsText (CumulationTab, al);
+			CESpeed_ValueChanged (null, null);
+			/*CEInfo.Text = Localization.GetText ("CumulationTab_CEInfo", al);*/
+
+			ParticlesTab.Text = Localization.GetText ("MainTabControl_ParticlesTab", al);
+			Localization.SetControlsText (ParticlesTab, al);
+
+			Localization.SetControlsText (this, al);
 			ProfileCombo.Items[DSN] = Localization.GetText ("CDP_ProfileDefault", al);
 			ProfileCombo.Items[SSN] = Localization.GetText ("CDP_ProfileSaved", al);
+			/*BOK.Text = Localization.GetText ("CDP_OK", al);
+			BCancel.Text = Localization.GetText ("CDP_Cancel", al);
+			LanguageLabel.Text = Localization.GetText ("CDP_LanguageLabel", al);
+			ProfileLabel.Text = Localization.GetText ("CDP_ProfileLabel", al);*/
 			}
 
 		// Контроль наличия доступных устройств
@@ -310,99 +341,6 @@ namespace RD_AAOW
 				{
 				return DevicesCombo.Enabled;
 				}
-			}
-
-		/// <summary>
-		/// Возвращает номер выбранного устройства
-		/// </summary>
-		public uint DeviceNumber
-			{
-			get
-				{
-				return parameters[SSN].DeviceNumber;
-				}
-			}
-
-		/// <summary>
-		/// Возвращает номер выбранной палитры
-		/// </summary>
-		public byte PaletteNumber
-			{
-			get
-				{
-				return parameters[SSN].PaletteNumber;
-				}
-			}
-
-		/// <summary>
-		/// Возвращает режим визуализации
-		/// </summary>
-		public VisualizationModes VisualizationMode
-			{
-			get
-				{
-				return (VisualizationModes)Math.Abs (parameters[SSN].VisualizationMode);
-				}
-			}
-
-		/// <summary>
-		/// Возвращает флаг наличия в режиме визуализации лого
-		/// </summary>
-		public bool VisualizationContainsLogo
-			{
-			get
-				{
-				return (parameters[SSN].VisualizationMode >= 0);
-				}
-			}
-
-		/// <summary>
-		/// Возвращает высоту изображения диаграммы
-		/// </summary>
-		public uint SpectrogramHeight
-			{
-			get
-				{
-				return parameters[SSN].SpectrogramHeight;
-				}
-			}
-
-		// Установка размера поля спектро-/гистограммы
-		private void SGHeightMax_Click (object sender, EventArgs e)
-			{
-			SGHeight.Value = SGHeight.Maximum;
-			}
-
-		private void SGHeightMin_Click (object sender, EventArgs e)
-			{
-			SGHeight.Value = SGHeight.Minimum;
-			}
-
-		/// <summary>
-		/// Возвращает смещение изображения диаграммы от верха окна
-		/// </summary>
-		public uint SpectrogramTopOffset
-			{
-			get
-				{
-				return parameters[SSN].SpectrogramTopOffset;
-				}
-			}
-
-		// Установка смещения поля спектро-/гистограммы
-		private void SGTopOffsetMid_Click (object sender, EventArgs e)
-			{
-			SGTopOffset.Value = (uint)SGTopOffset.Maximum / 2;
-			}
-
-		private void SGTopOffsetMax_Click (object sender, EventArgs e)
-			{
-			SGTopOffset.Value = SGTopOffset.Maximum;
-			}
-
-		private void SGTopOffsetMin_Click (object sender, EventArgs e)
-			{
-			SGTopOffset.Value = SGTopOffset.Minimum;
 			}
 
 		// Сохранение настроек
@@ -483,127 +421,6 @@ namespace RD_AAOW
 			}
 
 		/// <summary>
-		/// Возвращает ширину окна визуализации
-		/// </summary>
-		public uint VisualizationWidth
-			{
-			get
-				{
-				return parameters[SSN].VisualizationWidth;
-				}
-			}
-
-		/// <summary>
-		/// Возвращает высоту окна визуализации
-		/// </summary>
-		public uint VisualizationHeight
-			{
-			get
-				{
-				return parameters[SSN].VisualizationHeight;
-				}
-			}
-
-		/// <summary>
-		/// Возвращает левый отступ окна визуализации
-		/// </summary>
-		public uint VisualizationLeft
-			{
-			get
-				{
-				return parameters[SSN].VisualizationLeft;
-				}
-			}
-
-		/// <summary>
-		/// Возвращает верхний отступ окна визуализации
-		/// </summary>
-		public uint VisualizationTop
-			{
-			get
-				{
-				return parameters[SSN].VisualizationTop;
-				}
-			}
-
-		/// <summary>
-		/// Возвращает флаг, требующий расположения окна поверх остальных
-		/// </summary>
-		public bool AlwaysOnTop
-			{
-			get
-				{
-				return parameters[SSN].AlwaysOnTop;
-				}
-			}
-
-		/// <summary>
-		/// Возвращает флаг, указывающий на качание гистограммы вместо вращения
-		/// </summary>
-		public bool SwingingHistogram
-			{
-			get
-				{
-				return parameters[SSN].SwingingHistogram;
-				}
-			}
-
-		/// <summary>
-		/// Возвращает флаг, указывающий на наличие волн бит-детектора
-		/// </summary>
-		public bool BeatDetectorWaves
-			{
-			get
-				{
-				return parameters[SSN].BeatDetectorWaves &&
-					VisualizationModesChecker.ContainsSGHGorWF ((VisualizationModes)VisualizationCombo.SelectedIndex);
-				}
-			}
-
-		// Изменение настроек детекции бита
-		private void BDLowEdge_ValueChanged (object sender, EventArgs e)
-			{
-			if ((((TrackBar)sender).Name == "BDHighEdge") && (BDLowEdge.Value > BDHighEdge.Value))
-				BDLowEdge.Value = BDHighEdge.Value;
-			if ((((TrackBar)sender).Name == "BDLowEdge") && (BDHighEdge.Value < BDLowEdge.Value))
-				BDHighEdge.Value = BDLowEdge.Value;
-
-			if ((BDLowEdge.Value == BDHighEdge.Value) && (BDHighEdge.Value == 0))
-				BDSettings.Text = Localization.GetText ("CDP_BDNo", al);
-			else
-				BDSettings.Text = string.Format (Localization.GetText ("CDP_BDSettingsText", al),
-					(CDParametersSet.HistogramFrequencyMaximum * BDLowEdge.Value /		// Используется только первая четверть
-					(CDParametersSet.HistogramScaledFrequencyMaximum / CDParametersSet.HistogramRangeSettingIncrement)).ToString (),
-					(CDParametersSet.HistogramFrequencyMaximum * BDHighEdge.Value /
-					(CDParametersSet.HistogramScaledFrequencyMaximum / CDParametersSet.HistogramRangeSettingIncrement)).ToString (),
-					(100 * BDLowLevel.Value / 255).ToString (), BDFFTScaleMultiplier.Value.ToString ());
-			}
-
-		// Выравнивание окна по экрану
-		private void AlignTo_Click (object sender, EventArgs e)
-			{
-			switch (((Button)sender).Name)
-				{
-				case "AlignToTop":
-					VisTop.Value = 0;
-					break;
-
-				case "AlignToBottom":
-					VisTop.Value = VisHeight.Maximum - VisHeight.Value;
-					break;
-
-				case "AlignToLeft":
-					VisLeft.Value = 0;
-					break;
-
-				case "AlignToRight":
-					VisLeft.Value = VisWidth.Maximum - VisWidth.Value;
-					break;
-				}
-
-			}
-
-		/// <summary>
 		/// Возвращает флаг, требующий реинициализации лого
 		/// </summary>
 		public bool ReselLogo
@@ -614,29 +431,6 @@ namespace RD_AAOW
 				}
 			}
 		private bool logoResetFlag = false;
-
-		// Установка реинициализации лого при изменении параметров, от которых зависит его вид
-		private void SDWindowsSize_Changed (object sender, EventArgs e)
-			{
-			SGHeight.Maximum = Math.Min (ConcurrentDrawLib.MaxSpectrogramFrameHeight, VisHeight.Value);
-			VisLeft.Maximum = VisWidth.Maximum - VisWidth.Value;
-			VisTop.Maximum = VisHeight.Maximum - VisHeight.Value;
-			SGTopOffset.Maximum = VisHeight.Value - SGHeight.Value;
-
-			logoResetFlag = true;
-			}
-
-		/// <summary>
-		/// Возвращает количество значений FFT, которые используются при формировании гистограммы
-		/// </summary>
-		public uint HistogramFFTValuesCount
-			{
-			get
-				{
-				return parameters[SSN].HistogramRangeMaximum * CDParametersSet.HistogramScaledFrequencyMaximum /
-					CDParametersSet.HistogramFrequencyMaximum;
-				}
-			}
 
 		// Метод отображает быструю справку по использованию
 		private void BHelp_Click (object sender, EventArgs e)
@@ -693,10 +487,177 @@ namespace RD_AAOW
 				}
 			}
 
-		// Задание высоты спектрограммы
-		private void SGHeight_ValueChanged (object sender, EventArgs e)
+		/// <summary>
+		/// Возвращает текущий язык интерфейса
+		/// </summary>
+		public SupportedLanguages CurrentInterfaceLanguage
 			{
+			get
+				{
+				return al;
+				}
+			}
+
+		#endregion
+
+		#region Defaults
+
+		/// <summary>
+		/// Возвращает номер выбранного устройства
+		/// </summary>
+		public uint DeviceNumber
+			{
+			get
+				{
+				return parameters[SSN].DeviceNumber;
+				}
+			}
+
+		/// <summary>
+		/// Возвращает номер выбранной палитры
+		/// </summary>
+		public byte PaletteNumber
+			{
+			get
+				{
+				return parameters[SSN].PaletteNumber;
+				}
+			}
+
+		/// <summary>
+		/// Возвращает режим визуализации
+		/// </summary>
+		public VisualizationModes VisualizationMode
+			{
+			get
+				{
+				return (VisualizationModes)Math.Abs (parameters[SSN].VisualizationMode);
+				}
+			}
+
+		// Изменение режима отображения
+		private void VisualizationCombo_SelectedIndexChanged (object sender, EventArgs e)
+			{
+			VisualizationModes mode = (VisualizationModes)VisualizationCombo.SelectedIndex;
+			WithLogoFlag.Enabled = (mode != VisualizationModes.Logo_only);
+
+			SGHGHeightLabel.Enabled = SGHeight.Enabled = SGHeightPxLabel.Enabled =
+				SGTopOffsetLabel.Enabled = SGTopOffset.Enabled = SGTopOffsetPxLabel.Enabled =
+				SGTopOffsetMin.Enabled = SGTopOffsetMid.Enabled = SGTopOffsetMax.Enabled =
+				SGHeightMax.Enabled = SGHeightMin.Enabled = BeatWavesFlag.Enabled =
+				VisualizationModesChecker.ContainsSGHGorWF (mode);
+			HistoRotAccToBeats.Enabled = HistoRotSpeed.Enabled = HistoRotSpeedArc.Enabled =
+				HistoRotSpeedLabel.Enabled = ResetRotation.Enabled = SwingingHistogramFlag.Enabled =
+				!VisualizationModesChecker.ContainsSGHGorWF (mode);
+
+			HGRangeLabel.Enabled = HistogramRangeField.Enabled = HzLabel.Enabled = !VisualizationModesChecker.ContainsSGonly (mode);
+			SDDoubleWidthFlag.Enabled = VisualizationModesChecker.ContainsSGorWF (mode);
+
+			LogoTab.Enabled = WithLogoFlag.Checked || !VisualizationModesChecker.ContainsSGHGorWF (mode);
+
+			LogoCenterXTrack.Enabled = LogoCenterYTrack.Enabled =
+				LogoCenterXTrack.Visible = LogoCenterYTrack.Visible = !VisualizationModesChecker.IsPerspective (mode);
+			LogoCenterXTrack_ValueChanged (null, null);
+			}
+
+		/// <summary>
+		/// Возвращает флаг наличия в режиме визуализации лого
+		/// </summary>
+		public bool VisualizationContainsLogo
+			{
+			get
+				{
+				return (parameters[SSN].VisualizationMode >= 0);
+				}
+			}
+
+		/// <summary>
+		/// Возвращает ширину окна визуализации
+		/// </summary>
+		public uint VisualizationWidth
+			{
+			get
+				{
+				return parameters[SSN].VisualizationWidth;
+				}
+			}
+
+		/// <summary>
+		/// Возвращает высоту окна визуализации
+		/// </summary>
+		public uint VisualizationHeight
+			{
+			get
+				{
+				return parameters[SSN].VisualizationHeight;
+				}
+			}
+
+		/// <summary>
+		/// Возвращает левый отступ окна визуализации
+		/// </summary>
+		public uint VisualizationLeft
+			{
+			get
+				{
+				return parameters[SSN].VisualizationLeft;
+				}
+			}
+
+		/// <summary>
+		/// Возвращает верхний отступ окна визуализации
+		/// </summary>
+		public uint VisualizationTop
+			{
+			get
+				{
+				return parameters[SSN].VisualizationTop;
+				}
+			}
+
+		/// <summary>
+		/// Возвращает флаг, требующий расположения окна поверх остальных
+		/// </summary>
+		public bool AlwaysOnTop
+			{
+			get
+				{
+				return parameters[SSN].AlwaysOnTop;
+				}
+			}
+
+		// Выравнивание окна по экрану
+		private void AlignTo_Click (object sender, EventArgs e)
+			{
+			switch (((Button)sender).Name)
+				{
+				case "AlignToTop":
+					VisTop.Value = 0;
+					break;
+
+				case "AlignToBottom":
+					VisTop.Value = VisHeight.Maximum - VisHeight.Value;
+					break;
+
+				case "AlignToLeft":
+					VisLeft.Value = 0;
+					break;
+
+				case "AlignToRight":
+					VisLeft.Value = VisWidth.Maximum - VisWidth.Value;
+					break;
+				}
+			}
+
+		// Установка реинициализации лого при изменении параметров, от которых зависит его вид
+		private void SDWindowsSize_Changed (object sender, EventArgs e)
+			{
+			SGHeight.Maximum = Math.Min (ConcurrentDrawLib.MaxSpectrogramFrameHeight, VisHeight.Value);
+			VisLeft.Maximum = VisWidth.Maximum - VisWidth.Value;
+			VisTop.Maximum = VisHeight.Maximum - VisHeight.Value;
 			SGTopOffset.Maximum = VisHeight.Value - SGHeight.Value;
+
+			logoResetFlag = true;
 			}
 
 		// Выбор палитры
@@ -731,66 +692,151 @@ namespace RD_AAOW
 			}
 
 		/// <summary>
-		/// Возвращает скорость ослабления кумулятивного эффекта
+		/// Возвращает флаг, указывающий на эффект тряски
 		/// </summary>
-		public uint DecumulationSpeed
+		public bool ShakeEffect
 			{
 			get
 				{
-				return (uint)parameters[SSN].DecumulationMultiplier * (uint)parameters[SSN].CumulationSpeed /
-					(uint)CEDecumulationMultiplier.Maximum;
+				return parameters[SSN].ShakeEffect;
+				}
+			}
+
+		#endregion
+
+		#region Histograms
+
+		/// <summary>
+		/// Возвращает высоту изображения диаграммы
+		/// </summary>
+		public uint SpectrogramHeight
+			{
+			get
+				{
+				return parameters[SSN].SpectrogramHeight;
+				}
+			}
+
+		// Установка размера поля спектро-/гистограммы
+		private void SGHeightMax_Click (object sender, EventArgs e)
+			{
+			SGHeight.Value = SGHeight.Maximum;
+			}
+
+		private void SGHeightMin_Click (object sender, EventArgs e)
+			{
+			SGHeight.Value = SGHeight.Minimum;
+			}
+
+		/// <summary>
+		/// Возвращает смещение изображения диаграммы от верха окна
+		/// </summary>
+		public uint SpectrogramTopOffset
+			{
+			get
+				{
+				return parameters[SSN].SpectrogramTopOffset;
+				}
+			}
+
+		// Установка смещения поля спектро-/гистограммы
+		private void SGTopOffsetMid_Click (object sender, EventArgs e)
+			{
+			SGTopOffset.Value = (uint)SGTopOffset.Maximum / 2;
+			}
+
+		private void SGTopOffsetMax_Click (object sender, EventArgs e)
+			{
+			SGTopOffset.Value = SGTopOffset.Maximum;
+			}
+
+		private void SGTopOffsetMin_Click (object sender, EventArgs e)
+			{
+			SGTopOffset.Value = SGTopOffset.Minimum;
+			}
+
+		/// <summary>
+		/// Возвращает флаг, указывающий на качание гистограммы вместо вращения
+		/// </summary>
+		public bool SwingingHistogram
+			{
+			get
+				{
+				return parameters[SSN].SwingingHistogram;
 				}
 			}
 
 		/// <summary>
-		/// Возвращает скорость накопления кумулятивного эффекта
+		/// Возвращает количество значений FFT, которые используются при формировании гистограммы
 		/// </summary>
-		public uint CumulationSpeed
+		public uint HistogramFFTValuesCount
 			{
 			get
 				{
-				return parameters[SSN].CumulationSpeed;
+				return parameters[SSN].HistogramRangeMaximum * CDParametersSet.HistogramScaledFrequencyMaximum /
+					CDParametersSet.HistogramFrequencyMaximum;
 				}
 			}
 
-		// Изменение настроек детекции бита
-		private void CESpeed_ValueChanged (object sender, EventArgs e)
+		// Задание высоты спектрограммы
+		private void SGHeight_ValueChanged (object sender, EventArgs e)
 			{
-			if (CEDecumulationMultiplier.Value == CEDecumulationMultiplier.Maximum)
+			SGTopOffset.Maximum = VisHeight.Value - SGHeight.Value;
+			}
+
+		/// <summary>
+		/// Возвращает скорость изменения угла поворота гистограммы
+		/// </summary>
+		public double HistoRotSpeedDelta
+			{
+			get
 				{
-				CESettings.Text = Localization.GetText ("CDP_CENo", al);
-				}
-			else
-				{
-				CESettings.Text = string.Format (Localization.GetText ("CDP_CESettingsText", al),
-					CECumulationSpeed.Value.ToString (), (CEDecumulationMultiplier.Value /
-					(double)CEDecumulationMultiplier.Maximum).ToString ());
+				return Math.Abs (parameters[SSN].HistoRotSpeedDelta / 10.0);
 				}
 			}
 
-		// Изменение режима отображения
-		private void VisualizationCombo_SelectedIndexChanged (object sender, EventArgs e)
+		/// <summary>
+		/// Возвращает флаг, указывающий на режим синхронизации поворота гистограммы с бит-детектором
+		/// </summary>
+		public bool HistoRotAccordingToBeats
 			{
-			VisualizationModes mode = (VisualizationModes)VisualizationCombo.SelectedIndex;
-			WithLogoFlag.Enabled = (mode != VisualizationModes.Logo_only);
+			get
+				{
+				return (parameters[SSN].HistoRotSpeedDelta < 0);
+				}
+			}
 
-			SGHGHeightLabel.Enabled = SGHeight.Enabled = SGHeightPxLabel.Enabled =
-				SGTopOffsetLabel.Enabled = SGTopOffset.Enabled = SGTopOffsetPxLabel.Enabled =
-				SGTopOffsetMin.Enabled = SGTopOffsetMid.Enabled = SGTopOffsetMax.Enabled =
-				SGHeightMax.Enabled = SGHeightMin.Enabled = BeatWavesFlag.Enabled =
-				VisualizationModesChecker.ContainsSGHGorWF (mode);
-			HistoRotAccToBeats.Enabled = HistoRotSpeed.Enabled = HistoRotSpeedArc.Enabled =
-				HistoRotSpeedLabel.Enabled = ResetRotation.Enabled = SwingingHistogramFlag.Enabled =
-				!VisualizationModesChecker.ContainsSGHGorWF (mode);
+		/// <summary>
+		/// Возвращает флаг, указывающий на двойную ширину спектрограммы
+		/// </summary>
+		public bool SpectrogramDoubleWidth
+			{
+			get
+				{
+				return parameters[SSN].SpectrogramDoubleWidth;
+				}
+			}
 
-			HGRangeLabel.Enabled = HistogramRangeField.Enabled = HzLabel.Enabled = !VisualizationModesChecker.ContainsSGonly (mode);
-			SDDoubleWidthFlag.Enabled = VisualizationModesChecker.ContainsSGorWF (mode);
+		// Сброс вращения гистограммы
+		private void ResetRotation_Click (object sender, EventArgs e)
+			{
+			HistoRotSpeedArc.Value = HistoRotSpeedArc.Minimum;
+			}
 
-			LogoTab.Enabled = WithLogoFlag.Checked || !VisualizationModesChecker.ContainsSGHGorWF (mode);
+		#endregion
 
-			LogoCenterXTrack.Enabled = LogoCenterYTrack.Enabled =
-				LogoCenterXTrack.Visible = LogoCenterYTrack.Visible = !VisualizationModesChecker.IsPerspective (mode);
-			LogoCenterXTrack_ValueChanged (null, null);
+		#region Logo
+
+		/// <summary>
+		/// Возвращает флаг, указывающий на наличие волн бит-детектора
+		/// </summary>
+		public bool BeatDetectorWaves
+			{
+			get
+				{
+				return parameters[SSN].BeatDetectorWaves &&
+					VisualizationModesChecker.ContainsSGHGorWF ((VisualizationModes)VisualizationCombo.SelectedIndex);
+				}
 			}
 
 		/// <summary>
@@ -832,38 +878,153 @@ namespace RD_AAOW
 				}
 			}
 
+		// Изменение координат центра лого
+		private void LogoCenterXTrack_ValueChanged (object sender, EventArgs e)
+			{
+			LogoCenterLabel.Text = string.Format (Localization.GetText ("CDP_LogoCenterText", al),
+				LogoHeightPercentage.Value.ToString (),
+				LogoCenterXTrack.Enabled ? (LogoCenterXTrack.Value / 100.0).ToString () : "0.5",
+				LogoCenterYTrack.Enabled ? ((LogoCenterYTrack.Maximum - LogoCenterYTrack.Value) / 100.0).ToString () : "0.5");
+			logoResetFlag = true;
+			}
+
+		// Выравнивание по центру
+		private void LogoCenterButton_Click (object sender, EventArgs e)
+			{
+			LogoCenterXTrack.Value = LogoCenterXTrack.Maximum / 2;
+			LogoCenterYTrack.Value = LogoCenterYTrack.Maximum / 2;
+			}
+
+		#endregion
+
+		#region Beats detector
+
+		// Изменение настроек детекции бита
+		private void BDLowEdge_ValueChanged (object sender, EventArgs e)
+			{
+			if ((((TrackBar)sender).Name == "BDHighEdge") && (BDLowEdge.Value > BDHighEdge.Value))
+				BDLowEdge.Value = BDHighEdge.Value;
+			if ((((TrackBar)sender).Name == "BDLowEdge") && (BDHighEdge.Value < BDLowEdge.Value))
+				BDHighEdge.Value = BDLowEdge.Value;
+
+			if ((BDLowEdge.Value == BDHighEdge.Value) && (BDHighEdge.Value == 0))
+				BDSettings.Text = Localization.GetText ("CDP_BDNo", al);
+			else
+				BDSettings.Text = string.Format (Localization.GetText ("CDP_BDSettingsText", al),
+					(CDParametersSet.HistogramFrequencyMaximum * BDLowEdge.Value /		// Используется только первая четверть
+					(CDParametersSet.HistogramScaledFrequencyMaximum / CDParametersSet.HistogramRangeSettingIncrement)).ToString (),
+					(CDParametersSet.HistogramFrequencyMaximum * BDHighEdge.Value /
+					(CDParametersSet.HistogramScaledFrequencyMaximum / CDParametersSet.HistogramRangeSettingIncrement)).ToString (),
+					(100 * BDLowLevel.Value / 255).ToString (), BDFFTScaleMultiplier.Value.ToString ());
+			}
+
 		/// <summary>
-		/// Возвращает скорость изменения угла поворота гистограммы
+		/// Возвращает порог срабатывания бит-детектора
 		/// </summary>
-		public double HistoRotSpeedDelta
+		public byte BeatsDetectorLowLevel
 			{
 			get
 				{
-				return Math.Abs (parameters[SSN].HistoRotSpeedDelta / 10.0);
+				return parameters[SSN].BeatsDetectorLowLevel;
+				}
+			}
+
+		#endregion
+
+		#region Cumulation effect
+
+		/// <summary>
+		/// Возвращает скорость ослабления кумулятивного эффекта
+		/// </summary>
+		public uint DecumulationSpeed
+			{
+			get
+				{
+				return (uint)parameters[SSN].DecumulationMultiplier * (uint)parameters[SSN].CumulationSpeed /
+					(uint)CEDecumulationMultiplier.Maximum;
 				}
 			}
 
 		/// <summary>
-		/// Возвращает флаг, указывающий на режим синхронизации поворота гистограммы с бит-детектором
+		/// Возвращает скорость накопления кумулятивного эффекта
 		/// </summary>
-		public bool HistoRotAccordingToBeats
+		public uint CumulationSpeed
 			{
 			get
 				{
-				return (parameters[SSN].HistoRotSpeedDelta < 0);
+				return parameters[SSN].CumulationSpeed;
 				}
 			}
 
+		// Изменение настроек детекции бита
+		private void CESpeed_ValueChanged (object sender, EventArgs e)
+			{
+			if (CEDecumulationMultiplier.Value == CEDecumulationMultiplier.Maximum)
+				{
+				CESettings.Text = Localization.GetText ("CDP_CENo", al);
+				}
+			else
+				{
+				CESettings.Text = string.Format (Localization.GetText ("CDP_CESettingsText", al),
+					CECumulationSpeed.Value.ToString (), (CEDecumulationMultiplier.Value /
+					(double)CEDecumulationMultiplier.Maximum).ToString ());
+				}
+			}
+
+		#endregion
+
+		#region Particles
+
 		/// <summary>
-		/// Возвращает флаг, указывающий на эффект тряски
+		/// Возвращает метрики генерации дополнительных графических объектов
 		/// </summary>
-		public bool ShakeEffect
+		public LogoDrawerObjectMetrics ParticlesMetrics
 			{
 			get
 				{
-				return parameters[SSN].ShakeEffect;
+				return particlesMetrics;
 				}
 			}
+		private LogoDrawerObjectMetrics particlesMetrics;
+
+		/// <summary>
+		/// Возвращает флаг, разрешающий отображение дополнительных графических объектов
+		/// </summary>
+		public bool AllowParticles
+			{
+			get
+				{
+				return (ObjectsCountField.Value > 0);
+				}
+			}
+
+		/*objectsMetrics.MaxSpeed = 4;//+cumulation;
+		objectsMetrics.MinSpeed = 1;
+		objectsMetrics.MinSize = 5;
+		objectsMetrics.MaxSize = 10;
+		objectsMetrics.PolygonsSidesCount = 8;
+
+		// Обновление метрик графических объектов
+		objectsMetrics.Acceleration = false;
+		objectsMetrics.AsStars = true;
+		objectsMetrics.Enlarging = 0;
+		objectsMetrics.KeepTracks = false;
+		objectsMetrics.MaxRed = ConcurrentDrawLib.GetColorFromPalette (255).R;
+		objectsMetrics.MaxGreen = ConcurrentDrawLib.GetColorFromPalette (255).G;
+		objectsMetrics.MaxBlue = ConcurrentDrawLib.GetColorFromPalette (255).B;
+		objectsMetrics.MinRed = ConcurrentDrawLib.GetColorFromPalette (224).R;
+		objectsMetrics.MinGreen = ConcurrentDrawLib.GetColorFromPalette (224).G;
+		objectsMetrics.MinBlue = ConcurrentDrawLib.GetColorFromPalette (192).B;
+		objectsMetrics.ObjectsCount = 10;
+		objectsMetrics.ObjectsType = LogoDrawerObjectTypes.RotatingStars;
+		objectsMetrics.Rotation = true;
+		objectsMetrics.StartupPosition = LogoDrawerObjectStartupPositions.Left;
+		objectsMetrics.MaxSpeedFluctuation = 2;
+		*/
+
+		#endregion
+
+		#region Profiling
 
 		// Выбор профиля
 		private void ProfileCombo_SelectedIndexChanged (object sender, EventArgs e)
@@ -915,61 +1076,9 @@ namespace RD_AAOW
 			ProfileCombo.SelectedIndex = SSN;
 			}
 
-		/// <summary>
-		/// Возвращает флаг, указывающий на двойную ширину спектрограммы
-		/// </summary>
-		public bool SpectrogramDoubleWidth
-			{
-			get
-				{
-				return parameters[SSN].SpectrogramDoubleWidth;
-				}
-			}
+		#endregion
 
-		// Изменение координат центра лого
-		private void LogoCenterXTrack_ValueChanged (object sender, EventArgs e)
-			{
-			LogoCenterLabel.Text = string.Format (Localization.GetText ("CDP_LogoCenterText", al),
-				LogoHeightPercentage.Value.ToString (),
-				LogoCenterXTrack.Enabled ? (LogoCenterXTrack.Value / 100.0).ToString () : "0.5",
-				LogoCenterYTrack.Enabled ? ((LogoCenterYTrack.Maximum - LogoCenterYTrack.Value) / 100.0).ToString () : "0.5");
-			logoResetFlag = true;
-			}
-
-		// Выравнивание по центру
-		private void LogoCenterButton_Click (object sender, EventArgs e)
-			{
-			LogoCenterXTrack.Value = LogoCenterXTrack.Maximum / 2;
-			LogoCenterYTrack.Value = LogoCenterYTrack.Maximum / 2;
-			}
-
-		/// <summary>
-		/// Возвращает текущий язык интерфейса
-		/// </summary>
-		public SupportedLanguages CurrentInterfaceLanguage
-			{
-			get
-				{
-				return al;
-				}
-			}
-
-		/// <summary>
-		/// Возвращает порог срабатывания бит-детектора
-		/// </summary>
-		public byte BeatsDetectorLowLevel
-			{
-			get
-				{
-				return parameters[SSN].BeatsDetectorLowLevel;
-				}
-			}
-
-		// Сброс вращения гистограммы
-		private void ResetRotation_Click (object sender, EventArgs e)
-			{
-			HistoRotSpeedArc.Value = HistoRotSpeedArc.Minimum;
-			}
+		#region Keyboard
 
 		/// <summary>
 		/// Метод проверяет, доступен ли для указанной клавиши обработчик в окне параметров
@@ -1315,5 +1424,7 @@ namespace RD_AAOW
 			BOK_Click (null, null);
 			return hotKeyResult;
 			}
+
+		#endregion
 		}
 	}

@@ -147,10 +147,10 @@
   <data name="BASS_ERROR_NOTAVAIL" xml:space="preserve">
     <value>Requested device is unavailable</value>
   </data>
-  <data name="CDPName" xml:space="preserve">
+  <data name="CDP_Name" xml:space="preserve">
     <value>parameters</value>
   </data>
-  <data name="CDP_AlwaysOnTopFlag" xml:space="preserve">
+  <data name="GenericTab_AlwaysOnTopFlag" xml:space="preserve">
     <value>Always on top</value>
   </data>
   <data name="CDP_BDSettingsText" xml:space="preserve">
@@ -158,10 +158,10 @@
 Amplitude threshold: {2:D}%
 FFT scale multiplier: {3:D}</value>
   </data>
-  <data name="CDP_BeatsGroup" xml:space="preserve">
+  <data name="MainTabControl_BeatsTab" xml:space="preserve">
     <value>Beats detection</value>
   </data>
-  <data name="CDP_Cancel" xml:space="preserve">
+  <data name="ConcurrentDrawParameters_BCancel" xml:space="preserve">
     <value>&amp;Cancel</value>
   </data>
   <data name="CDP_CENo" xml:space="preserve">
@@ -171,43 +171,40 @@ FFT scale multiplier: {3:D}</value>
     <value>Cumulation speed: {0:S}
 Fade out speed multiplier: {1:S}</value>
   </data>
-  <data name="CDP_CumulationGroup" xml:space="preserve">
+  <data name="MainTabControl_CumulationTab" xml:space="preserve">
     <value>Cumulative effect</value>
   </data>
-  <data name="CDP_DevicesLabel" xml:space="preserve">
+  <data name="GenericTab_DevicesLabel" xml:space="preserve">
     <value>Output device:</value>
   </data>
-  <data name="CDP_HGRangeLabel" xml:space="preserve">
+  <data name="HistoTab_HGRangeLabel" xml:space="preserve">
     <value>Histogram range:</value>
   </data>
-  <data name="CDP_Hz" xml:space="preserve">
+  <data name="HistoTab_HzLabel" xml:space="preserve">
     <value>0 –                  x 500 Hz</value>
   </data>
-  <data name="CDP_LanguageLabel" xml:space="preserve">
+  <data name="ConcurrentDrawParameters_LanguageLabel" xml:space="preserve">
     <value>Language:</value>
-  </data>
-  <data name="CDP_LogoResetFlag" xml:space="preserve">
-    <value>Reset logo</value>
   </data>
   <data name="CDP_NoDevices" xml:space="preserve">
     <value>(no compatible devices)</value>
   </data>
-  <data name="CDP_OK" xml:space="preserve">
+  <data name="ConcurrentDrawParameters_BOK" xml:space="preserve">
     <value>&amp;OK</value>
   </data>
-  <data name="CDP_PaletteLabel" xml:space="preserve">
+  <data name="GenericTab_PaletteLabel" xml:space="preserve">
     <value>Palette:</value>
   </data>
-  <data name="CDP_SGHGHeightLabel" xml:space="preserve">
+  <data name="HistoTab_SGHGHeightLabel" xml:space="preserve">
     <value>Height:</value>
   </data>
-  <data name="CDP_VisLeftTopLabel" xml:space="preserve">
+  <data name="GenericTab_VisLeftTopLabel" xml:space="preserve">
     <value>Visualization left-top:</value>
   </data>
-  <data name="CDP_VisSizeLabel" xml:space="preserve">
+  <data name="GenericTab_VisSizeLabel" xml:space="preserve">
     <value>Visualization size:</value>
   </data>
-  <data name="CDP_VisTypeLabel" xml:space="preserve">
+  <data name="GenericTab_VisTypeLabel" xml:space="preserve">
     <value>Visualization type:</value>
   </data>
   <data name="DeviceBehaviorIsInvalid" xml:space="preserve">
@@ -243,33 +240,30 @@ Settings will be saved by pressing OK button. They can be changed anytime you ne
   <data name="NoCompatibleDevices" xml:space="preserve">
     <value>No compatible audio output devices found on your system</value>
   </data>
-  <data name="CDP_LogoHeightLabel" xml:space="preserve">
+  <data name="LogoTab_LogoHeightLabel" xml:space="preserve">
     <value>Height:
 
 Placement:</value>
   </data>
-  <data name="CDP_HistoRotAccToBeats" xml:space="preserve">
+  <data name="HistoTab_HistoRotAccToBeats" xml:space="preserve">
     <value>Rotation according to beats detector with angle impulse:</value>
   </data>
-  <data name="CDP_HistoGroup" xml:space="preserve">
+  <data name="MainTabControl_HistoTab" xml:space="preserve">
     <value>Spectrogram / histogram</value>
   </data>
-  <data name="CDP_HistoRotSpeed" xml:space="preserve">
+  <data name="HistoTab_HistoRotSpeed" xml:space="preserve">
     <value>Rotation with constant angle increment:</value>
   </data>
-  <data name="CDP_ShakeFlag" xml:space="preserve">
+  <data name="GenericTab_ShakeFlag" xml:space="preserve">
     <value>Shake effect</value>
   </data>
-  <data name="CDP_TransparentFlag" xml:space="preserve">
-    <value>Transparent logo</value>
-  </data>
-  <data name="CDPWindowSize" xml:space="preserve">
+  <data name="CDP_WindowSize" xml:space="preserve">
     <value>Select window size</value>
   </data>
-  <data name="CDP_GenericGroup" xml:space="preserve">
+  <data name="MainTabControl_GenericTab" xml:space="preserve">
     <value>Generic</value>
   </data>
-  <data name="CDP_ProfileLabel" xml:space="preserve">
+  <data name="ConcurrentDrawParameters_ProfileLabel" xml:space="preserve">
     <value>Profile:</value>
   </data>
   <data name="CDP_ProfileDefault" xml:space="preserve">
@@ -284,17 +278,17 @@ Placement:</value>
   <data name="CDP_ProfileRemove" xml:space="preserve">
     <value>Remove selected profile?</value>
   </data>
-  <data name="CDP_SDDoubleWidthFlag" xml:space="preserve">
+  <data name="HistoTab_SDDoubleWidthFlag" xml:space="preserve">
     <value>2x width</value>
   </data>
-  <data name="CDP_LogoGroup" xml:space="preserve">
+  <data name="MainTabControl_LogoTab" xml:space="preserve">
     <value>Logo</value>
   </data>
   <data name="CDP_LogoCenterText" xml:space="preserve">
     <value>Logo height: {0:S}%
 Center placement: X = {1:S}; Y = {2:S}</value>
   </data>
-  <data name="CDP_LogoCenterButton" xml:space="preserve">
+  <data name="LogoTab_LogoCenterButton" xml:space="preserve">
     <value>Center</value>
   </data>
   <data name="HelpKeysText" xml:space="preserve">
@@ -319,10 +313,10 @@ Center placement: X = {1:S}; Y = {2:S}</value>
 • W key – switch 'histogram swinging' flag;
 • V key – switch 'beats waves' flag</value>
   </data>
-  <data name="CDP_CEInfoText" xml:space="preserve">
+  <data name="CumulationTab_CEInfoLabel" xml:space="preserve">
     <value>(1 – no cumulative effect)</value>
   </data>
-  <data name="CDP_LogoInfoText" xml:space="preserve">
+  <data name="LogoTab_LogoInfoLabel" xml:space="preserve">
     <value>(0 – left (top), 1 – right (bottom), 0.5 – center)</value>
   </data>
   <data name="CDP_BDNo" xml:space="preserve">
@@ -331,16 +325,16 @@ Center placement: X = {1:S}; Y = {2:S}</value>
   <data name="ScreenshotFailure" xml:space="preserve">
     <value>Failed to save visualization screenshot: application placement is unavailable for writing</value>
   </data>
-  <data name="CDP_SwingingHistogramFlag" xml:space="preserve">
+  <data name="HistoTab_SwingingHistogramFlag" xml:space="preserve">
     <value>Swinging instead of rotating</value>
   </data>
   <data name="HelpVideo" xml:space="preserve">
     <value>Do you want to view users videoguide on our YouTube channel?</value>
   </data>
-  <data name="CDP_WithLogoFlag" xml:space="preserve">
+  <data name="GenericTab_WithLogoFlag" xml:space="preserve">
     <value>Logo</value>
   </data>
-  <data name="CDP_SGTopOffsetLabel" xml:space="preserve">
+  <data name="HistoTab_SGTopOffsetLabel" xml:space="preserve">
     <value>Offset from top:</value>
   </data>
   <data name="LibraryNotFound_Lib0" xml:space="preserve">
@@ -353,7 +347,46 @@ Do you want to open webpage for downloading the actual application assembly?</va
 
 Do you want to open webpage for downloading the actual library version?</value>
   </data>
-  <data name="CDP_BeatWavesFlag" xml:space="preserve">
+  <data name="LogoTab_BeatWavesFlag" xml:space="preserve">
     <value>Beats waves</value>
+  </data>
+  <data name="MainTabControl_ParticlesTab" xml:space="preserve">
+    <value>Particles</value>
+  </data>
+  <data name="ParticlesTab_EnlargingCoeffLabel" xml:space="preserve">
+    <value>Enlarging coeff.:</value>
+  </data>
+  <data name="ParticlesTab_ObjectsAccelerationFlag" xml:space="preserve">
+    <value>Acceleration</value>
+  </data>
+  <data name="ParticlesTab_ObjectsCountLabel" xml:space="preserve">
+    <value>Count:</value>
+  </data>
+  <data name="ParticlesTab_ObjectsKeepTracksFlag" xml:space="preserve">
+    <value>Keep tracks</value>
+  </data>
+  <data name="ParticlesTab_ObjectsMaxColor" xml:space="preserve">
+    <value>Max. color</value>
+  </data>
+  <data name="ParticlesTab_ObjectsMinColor" xml:space="preserve">
+    <value>Min. color</value>
+  </data>
+  <data name="ParticlesTab_ObjectsSizeLabel" xml:space="preserve">
+    <value>Size range:</value>
+  </data>
+  <data name="ParticlesTab_ObjectsSpeedLabel" xml:space="preserve">
+    <value>Speed range:</value>
+  </data>
+  <data name="ParticlesTab_ObjectsTypeLabel" xml:space="preserve">
+    <value>Type:</value>
+  </data>
+  <data name="ParticlesTab_SidesCountLabel" xml:space="preserve">
+    <value>Sides count:</value>
+  </data>
+  <data name="ParticlesTab_SpeedFluctuationLabel" xml:space="preserve">
+    <value>Speed fluctuation:</value>
+  </data>
+  <data name="ParticlesTab_StartupSideLabel" xml:space="preserve">
+    <value>Start at:</value>
   </data>
 </root>

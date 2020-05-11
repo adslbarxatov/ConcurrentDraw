@@ -1,5 +1,11 @@
 ﻿ConcurrentDraw changes log
 
+Version 1.45:
+• Added reversed versions of random and polymorph palettes;
+• Particles settings interface has been implemented (not available in release for now);
+• Application of extended graphical objects (particles) has been structured;
+• Localization code for parameters window has been simplified
+
 Version 1.44.1:
 • Beats' waves setting has been reviewed
 

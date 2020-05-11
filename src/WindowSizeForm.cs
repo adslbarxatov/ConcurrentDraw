@@ -47,7 +47,7 @@ namespace RD_AAOW
 			// Инициализация
 			InitializeComponent ();
 
-			this.Text = Localization.GetText ("CDPWindowSize", InterfaceLanguage);
+			this.Text = Localization.GetText ("CDP_WindowSize", InterfaceLanguage);
 			BOK.Text = Localization.GetText ("CDP_OK", InterfaceLanguage);
 			BCancel.Text = Localization.GetText ("CDP_Cancel", InterfaceLanguage);
 

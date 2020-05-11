@@ -89,13 +89,10 @@ namespace RD_AAOW
 		private const double perspectiveDensity = 3.15;			// Плотность гистограммы-перспективы
 		// (даёт полный угол чуть более 90°; 90° <=> 2.84; 80° <=> 3.2)
 
-#if OBJECTS
 		// Дополнительные графические объекты
 		private List<ILogoDrawerObject> objects =
 			new List<ILogoDrawerObject> ();						// Визуальные объекты
-		private LogoDrawerObjectMetrics objectsMetrics;			// Метрики генерируемых объектов
 		private LogoDrawerLayer objectsLayer;					// Слой визуальных объектов
-#endif
 
 		// Вспомогательные переменные
 		private int rad, amp;
@@ -585,12 +582,11 @@ namespace RD_AAOW
 			}
 #endif
 
-#if OBJECTS
 		// Отрисовка визуальных объектов
 		private void DrawObjects ()
 			{
 			// Затенение предыдущих элементов
-			if (!objectsMetrics.KeepTracks || (objectsLayer == null))
+			if (!cdp.ParticlesMetrics.KeepTracks || (objectsLayer == null))
 				{
 				if (objectsLayer != null)
 					objectsLayer.Dispose ();
@@ -598,55 +594,54 @@ namespace RD_AAOW
 				}
 
 			// Отрисовка объектов со смещением
-			uint cumulation;
+			/*uint cumulation;
 			if (VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode))
 				cumulation = 255;
 			else
-				cumulation = cumulationCounter / cumulationDivisor;
+				cumulation = cumulationCounter / cumulationDivisor;*/
+
+			// Фиктивная инициализация
+			if (objects.Count < cdp.ParticlesMetrics.ObjectsCount)
+				objects.Add (new LogoDrawerLetter (0, 0, null, cdp.ParticlesMetrics));
 
 			for (int i = 0; i < objects.Count; i++)
 				{
-				objects[i].Move (objectsMetrics.Acceleration, objectsMetrics.Enlarging);
+				// Движение объектов
+				objects[i].Move (cdp.ParticlesMetrics.Acceleration, cdp.ParticlesMetrics.Enlarging);
 
+				// Обновление объектов
 				if (!objects[i].IsInited)
 					{
 					objects[i].Dispose ();
 
-					// Обновление зависимых параметров
-					objectsMetrics.MaxSpeed = 4;//+cumulation;
-					objectsMetrics.MinSpeed = 1;
-					objectsMetrics.MinSize = 5;
-					objectsMetrics.MaxSize = 10;
-					objectsMetrics.PolygonsSidesCount = 8;
-
-					switch (objectsMetrics.ObjectsType)
+					switch (cdp.ParticlesMetrics.ObjectsType)
 						{
 						default:
 						//case LogoDrawerObjectTypes.Pictures:
 						//case LogoDrawerObjectTypes.RotatingPictures:
 						case LogoDrawerObjectTypes.Spheres:
-							objects[i] = new LogoDrawerSphere ((uint)this.Width, (uint)this.Height, rnd, objectsMetrics);
+							objects[i] = new LogoDrawerSphere ((uint)this.Width, (uint)this.Height, rnd, cdp.ParticlesMetrics);
 							break;
 
 						case LogoDrawerObjectTypes.Polygons:
 						case LogoDrawerObjectTypes.Stars:
 						case LogoDrawerObjectTypes.RotatingPolygons:
 						case LogoDrawerObjectTypes.RotatingStars:
-							objects[i] = new LogoDrawerSquare ((uint)this.Width, (uint)this.Height, rnd, objectsMetrics);
+							objects[i] = new LogoDrawerSquare ((uint)this.Width, (uint)this.Height, rnd, cdp.ParticlesMetrics);
 							break;
 
 						case LogoDrawerObjectTypes.Letters:
 						case LogoDrawerObjectTypes.RotatingLetters:
-							objects[i] = new LogoDrawerLetter ((uint)this.Width, (uint)this.Height, rnd, objectsMetrics);
+							objects[i] = new LogoDrawerLetter ((uint)this.Width, (uint)this.Height, rnd, cdp.ParticlesMetrics);
 							break;
 						}
 					}
 
+				// Отрисовка
 				objectsLayer.Descriptor.DrawImage (objects[i].Image, objects[i].X - objects[i].Image.Width / 2,
 					objects[i].Y - objects[i].Image.Height / 2);
 				}
 			}
-#endif
 
 		// Метод отрисовывает сформированный кадр
 		private void DrawFrame ()
@@ -917,11 +912,12 @@ namespace RD_AAOW
 				ConcurrentDrawLib.UpdateFFTData ();
 #endif
 
-#if OBJECTS
 			// Отрисовка объектов
-			DrawObjects ();
-			mainLayer.Descriptor.DrawImage (objectsLayer.Layer, 0, 0);
-#endif
+			if (cdp.AllowParticles)
+				{
+				DrawObjects ();
+				mainLayer.Descriptor.DrawImage (objectsLayer.Layer, 0, 0);
+				}
 
 			// Запрос пикового значения 
 			peak = ConcurrentDrawLib.CurrentPeak;
@@ -1082,11 +1078,8 @@ namespace RD_AAOW
 				firstBMP.Dispose ();
 			if (cdp != null)
 				cdp.Dispose ();
-
-#if OBJECTS
 			if (objectsLayer != null)
 				objectsLayer.Dispose ();
-#endif
 
 #if VIDEO
 			if (secondBMP != null)
@@ -1306,11 +1299,9 @@ namespace RD_AAOW
 				gr.RemoveAt (1);
 				}
 
-#if OBJECTS
 			for (int i = 0; i < objects.Count; i++)
 				objects[i].Dispose ();
 			objects.Clear ();
-#endif
 
 			for (int i = 0; i < logo.Count; i++)
 				logo[i].Dispose ();
@@ -1325,28 +1316,6 @@ namespace RD_AAOW
 
 			// Перезапуск алгоритма таймера
 			currentPhase = VisualizationPhases.LayersPrecache;
-
-#if OBJECTS
-			// Обновление метрик графических объектов
-			objectsMetrics.Acceleration = false;
-			objectsMetrics.AsStars = true;
-			objectsMetrics.Enlarging = 0;
-			objectsMetrics.KeepTracks = false;
-			objectsMetrics.MaxRed = ConcurrentDrawLib.GetColorFromPalette (255).R;
-			objectsMetrics.MaxGreen = ConcurrentDrawLib.GetColorFromPalette (255).G;
-			objectsMetrics.MaxBlue = ConcurrentDrawLib.GetColorFromPalette (255).B;
-			objectsMetrics.MinRed = ConcurrentDrawLib.GetColorFromPalette (224).R;
-			objectsMetrics.MinGreen = ConcurrentDrawLib.GetColorFromPalette (224).G;
-			objectsMetrics.MinBlue = ConcurrentDrawLib.GetColorFromPalette (192).B;
-			objectsMetrics.ObjectsCount = 10;
-			objectsMetrics.ObjectsType = LogoDrawerObjectTypes.RotatingStars;
-			objectsMetrics.Rotation = true;
-			objectsMetrics.StartupPosition = LogoDrawerObjectStartupPositions.Left;
-			objectsMetrics.MaxSpeedFluctuation = 2;
-
-			for (int i = 0; i < objectsMetrics.ObjectsCount; i++)
-				objects.Add (new LogoDrawerLetter (0, 0, null, objectsMetrics));
-#endif
 			}
 		}
 	}

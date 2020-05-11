@@ -44,11 +44,6 @@ void InitAppState (void)
 	appState.cdPolymorphUpdateCounter = 0;
 	appState.cdCurrentPalette = 0;
 	
-	appState.cdPolymorphColors[4].rgbRed = appState.cdPolymorphColors[4].rgbGreen = 
-		appState.cdPolymorphColors[4].rgbBlue = CD_BMPINFO_MAXCOLOR;
-	appState.cdPolymorphColors[0].rgbRed = appState.cdPolymorphColors[0].rgbGreen = 
-		appState.cdPolymorphColors[0].rgbBlue = 0;
-
 	// Завершено
 	appStateInited = 1;
 	}

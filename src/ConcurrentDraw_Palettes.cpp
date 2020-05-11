@@ -31,11 +31,11 @@
 #define FPPR_UPDATE(member,limit)	member += GetRandomValue (-FPPR_RND_LIMIT, FPPR_RND_LIMIT);\
 									if (member < FPPR_RND_LIMIT) member = FP_MAX;\
 									if (member < limit) member = limit;
-#define FPPR_ENLIGHT	while ((AS->cdPolymorphColors[3].rgbRed + AS->cdPolymorphColors[3].rgbGreen +\
-							AS->cdPolymorphColors[3].rgbBlue) < FPPR_CLR_MIN_SUMMA) {\
-							AS->cdPolymorphColors[3].rgbRed += ((AS->cdPolymorphColors[3].rgbRed < CD_BMPINFO_MAXCOLOR) ? 1 : 0);\
-							AS->cdPolymorphColors[3].rgbGreen += ((AS->cdPolymorphColors[3].rgbGreen < CD_BMPINFO_MAXCOLOR) ? 1 : 0);\
-							AS->cdPolymorphColors[3].rgbBlue += ((AS->cdPolymorphColors[3].rgbBlue < CD_BMPINFO_MAXCOLOR) ? 1 : 0); }
+#define FPPR_ENLIGHT	while ((AS->cdPolymorphColors[FPPR_HIGH_INDEX].rgbRed + AS->cdPolymorphColors[FPPR_HIGH_INDEX].rgbGreen +\
+							AS->cdPolymorphColors[FPPR_HIGH_INDEX].rgbBlue) < FPPR_CLR_MIN_SUMMA) {\
+							AS->cdPolymorphColors[FPPR_HIGH_INDEX].rgbRed += ((AS->cdPolymorphColors[FPPR_HIGH_INDEX].rgbRed < CD_BMPINFO_MAXCOLOR) ? 1 : 0);\
+							AS->cdPolymorphColors[FPPR_HIGH_INDEX].rgbGreen += ((AS->cdPolymorphColors[FPPR_HIGH_INDEX].rgbGreen < CD_BMPINFO_MAXCOLOR) ? 1 : 0);\
+							AS->cdPolymorphColors[FPPR_HIGH_INDEX].rgbBlue += ((AS->cdPolymorphColors[FPPR_HIGH_INDEX].rgbBlue < CD_BMPINFO_MAXCOLOR) ? 1 : 0); }
 
 // Функции, инициализирующие палитры
 #define FPPR_RND_LIMIT		10
@@ -43,31 +43,42 @@
 #define FPPR_CLR_MIN_POLY	64
 #define FPPR_CLR_MIN_SUMMA	0x1E0
 
-void FillPalette_PolymorphRandom (uchar Polymorph, uchar Monocolor)
+#define FPPR_HIGH_INDEX		Reversed ? 1 : 3
+#define FPPR_LOW_INDEX		Reversed ? 3 : 1
+#define FPPR_MID_INDEX		2
+#define FPPR_TOP_INDEX		Reversed ? 0 : 4
+#define FPPR_BOTTOM_INDEX	Reversed ? 4 : 0
+
+void FillPalette_PolymorphRandom (uchar Reversed, uchar Polymorph, uchar Monocolor)
 	{
 	uint i, j;
 
 	// Смещение опорных цветов
+	AS->cdPolymorphColors[FPPR_BOTTOM_INDEX].rgbRed = AS->cdPolymorphColors[FPPR_BOTTOM_INDEX].rgbGreen = 
+		AS->cdPolymorphColors[FPPR_BOTTOM_INDEX].rgbBlue = 0;
+	AS->cdPolymorphColors[FPPR_TOP_INDEX].rgbRed = AS->cdPolymorphColors[FPPR_TOP_INDEX].rgbGreen = 
+		AS->cdPolymorphColors[FPPR_TOP_INDEX].rgbBlue = CD_BMPINFO_MAXCOLOR;
+
 	if (Polymorph)
 		{
 		if (Monocolor)
 			{
 			// Смещение
-			FPPR_UPDATE (AS->cdPolymorphColors[3].rgbRed, FPPR_CLR_MIN_MONO);
-			FPPR_UPDATE (AS->cdPolymorphColors[3].rgbGreen, FPPR_CLR_MIN_MONO);
-			FPPR_UPDATE (AS->cdPolymorphColors[3].rgbBlue, FPPR_CLR_MIN_MONO);
+			FPPR_UPDATE (AS->cdPolymorphColors[FPPR_HIGH_INDEX].rgbRed, FPPR_CLR_MIN_MONO);
+			FPPR_UPDATE (AS->cdPolymorphColors[FPPR_HIGH_INDEX].rgbGreen, FPPR_CLR_MIN_MONO);
+			FPPR_UPDATE (AS->cdPolymorphColors[FPPR_HIGH_INDEX].rgbBlue, FPPR_CLR_MIN_MONO);
 
 			// Осветление
 			FPPR_ENLIGHT
 
 			// Распространение
-			AS->cdPolymorphColors[2].rgbRed = AS->cdPolymorphColors[3].rgbRed / 2;
-			AS->cdPolymorphColors[2].rgbGreen = AS->cdPolymorphColors[3].rgbGreen / 2;
-			AS->cdPolymorphColors[2].rgbBlue = AS->cdPolymorphColors[3].rgbBlue / 2;
+			AS->cdPolymorphColors[FPPR_MID_INDEX].rgbRed = AS->cdPolymorphColors[FPPR_HIGH_INDEX].rgbRed / 2;
+			AS->cdPolymorphColors[FPPR_MID_INDEX].rgbGreen = AS->cdPolymorphColors[FPPR_HIGH_INDEX].rgbGreen / 2;
+			AS->cdPolymorphColors[FPPR_MID_INDEX].rgbBlue = AS->cdPolymorphColors[FPPR_HIGH_INDEX].rgbBlue / 2;
 
-			AS->cdPolymorphColors[1].rgbRed = AS->cdPolymorphColors[3].rgbRed / 4;
-			AS->cdPolymorphColors[1].rgbGreen = AS->cdPolymorphColors[3].rgbGreen / 4;
-			AS->cdPolymorphColors[1].rgbBlue = AS->cdPolymorphColors[3].rgbBlue / 4;
+			AS->cdPolymorphColors[FPPR_LOW_INDEX].rgbRed = AS->cdPolymorphColors[FPPR_HIGH_INDEX].rgbRed / 4;
+			AS->cdPolymorphColors[FPPR_LOW_INDEX].rgbGreen = AS->cdPolymorphColors[FPPR_HIGH_INDEX].rgbGreen / 4;
+			AS->cdPolymorphColors[FPPR_LOW_INDEX].rgbBlue = AS->cdPolymorphColors[FPPR_HIGH_INDEX].rgbBlue / 4;
 			}
 		else
 			{
@@ -86,21 +97,21 @@ void FillPalette_PolymorphRandom (uchar Polymorph, uchar Monocolor)
 		if (Monocolor)
 			{
 			// Генерация
-			AS->cdPolymorphColors[3].rgbRed = (BYTE)GetRandomValue (FPPR_CLR_MIN_MONO, FP_MAX);
-			AS->cdPolymorphColors[3].rgbGreen = (BYTE)GetRandomValue (FPPR_CLR_MIN_MONO, FP_MAX);
-			AS->cdPolymorphColors[3].rgbBlue = (BYTE)GetRandomValue (FPPR_CLR_MIN_MONO, FP_MAX);
+			AS->cdPolymorphColors[FPPR_HIGH_INDEX].rgbRed = (BYTE)GetRandomValue (FPPR_CLR_MIN_MONO, FP_MAX);
+			AS->cdPolymorphColors[FPPR_HIGH_INDEX].rgbGreen = (BYTE)GetRandomValue (FPPR_CLR_MIN_MONO, FP_MAX);
+			AS->cdPolymorphColors[FPPR_HIGH_INDEX].rgbBlue = (BYTE)GetRandomValue (FPPR_CLR_MIN_MONO, FP_MAX);
 
 			// Осветление
 			FPPR_ENLIGHT
 
 			// Распространение
-			AS->cdPolymorphColors[2].rgbRed = AS->cdPolymorphColors[3].rgbRed / 2;
-			AS->cdPolymorphColors[2].rgbGreen = AS->cdPolymorphColors[3].rgbGreen / 2;
-			AS->cdPolymorphColors[2].rgbBlue = AS->cdPolymorphColors[3].rgbBlue / 2;
+			AS->cdPolymorphColors[FPPR_MID_INDEX].rgbRed = AS->cdPolymorphColors[FPPR_HIGH_INDEX].rgbRed / 2;
+			AS->cdPolymorphColors[FPPR_MID_INDEX].rgbGreen = AS->cdPolymorphColors[FPPR_HIGH_INDEX].rgbGreen / 2;
+			AS->cdPolymorphColors[FPPR_MID_INDEX].rgbBlue = AS->cdPolymorphColors[FPPR_HIGH_INDEX].rgbBlue / 2;
 
-			AS->cdPolymorphColors[1].rgbRed = AS->cdPolymorphColors[3].rgbRed / 4;
-			AS->cdPolymorphColors[1].rgbGreen = AS->cdPolymorphColors[3].rgbGreen / 4;
-			AS->cdPolymorphColors[1].rgbBlue = AS->cdPolymorphColors[3].rgbBlue / 4;
+			AS->cdPolymorphColors[FPPR_LOW_INDEX].rgbRed = AS->cdPolymorphColors[FPPR_HIGH_INDEX].rgbRed / 4;
+			AS->cdPolymorphColors[FPPR_LOW_INDEX].rgbGreen = AS->cdPolymorphColors[FPPR_HIGH_INDEX].rgbGreen / 4;
+			AS->cdPolymorphColors[FPPR_LOW_INDEX].rgbBlue = AS->cdPolymorphColors[FPPR_HIGH_INDEX].rgbBlue / 4;
 			}
 		else
 			{
@@ -130,20 +141,25 @@ void FillPalette_PolymorphRandom (uchar Polymorph, uchar Monocolor)
 	// Заполнение цветов бит-детектора
 	for (i = 0; i < CD_BMPINFO_COLORS_COUNT; i++)
 		{
-		FP_B (i * AS->cdPolymorphColors[3].rgbRed / CD_BMPINFO_COLORS_COUNT, 
-			i * AS->cdPolymorphColors[3].rgbGreen / CD_BMPINFO_COLORS_COUNT,
-			i * AS->cdPolymorphColors[3].rgbBlue / CD_BMPINFO_COLORS_COUNT);
+		FP_B ((Reversed ? (CD_BMPINFO_MAXCOLOR - i) : i) * AS->cdPolymorphColors[FPPR_HIGH_INDEX].rgbRed / CD_BMPINFO_COLORS_COUNT, 
+			(Reversed ? (CD_BMPINFO_MAXCOLOR - i) : i) * AS->cdPolymorphColors[FPPR_HIGH_INDEX].rgbGreen / CD_BMPINFO_COLORS_COUNT,
+			(Reversed ? (CD_BMPINFO_MAXCOLOR - i) : i) * AS->cdPolymorphColors[FPPR_HIGH_INDEX].rgbBlue / CD_BMPINFO_COLORS_COUNT);
 		}
 
 	// Цвет фона спектрограмм
-	AS->cdBackgroundColorNumber = 8;
+	AS->cdBackgroundColorNumber = Reversed ? 224 : 8;
 	}
 
 // Функция формирует палитру приложения
 #define FP_SPECIAL_PALETTES	case 12:\
 							case 13:\
 							case 14:\
-							case 15:
+							case 15:\
+							case 16:\
+							case 17:\
+							case 18:\
+							case 19:
+#define FP_SP_BASE			19
 
 CD_API(void) FillPaletteEx (uchar PaletteNumber)
 	{
@@ -279,7 +295,7 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 			break;
 
 		// Негатив
-		case 16:
+		case FP_SP_BASE + 1:
 			FP_PALETTE (
 				(FP_MAX - i, FP_MAX - i, FP_MAX - i),
 				(FP_AMAX - i, FP_AMAX - i, FP_AMAX - i),
@@ -289,7 +305,7 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 			break;
 
 		// Огонь обратный
-		case 17:
+		case FP_SP_BASE + 2:
 			FP_PALETTE (
 				(FP_MAX, FP_MAX, FP_AMAX - 3 * i),
 				(FP_MAX, FP_MAX - 2 * i, 0),
@@ -299,7 +315,7 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 			break;
 
 		// Море обратное
-		case 18:
+		case FP_SP_BASE + 3:
 			FP_PALETTE (
 				(FP_AMAX - 3 * i, FP_MAX, FP_MAX),
 				(0, FP_MAX - 2 * i, FP_MAX),
@@ -309,7 +325,7 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 			break;
 
 		// Пурпурная
-		case 19:
+		case FP_SP_BASE + 4:
 			FP_PALETTE (
 				(FP_MAX - 2 * i, FP_AMAX - 3 * i, FP_MAX),
 				(FP_HMAX - i, 0, FP_MAX),
@@ -319,7 +335,7 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 			break;
 
 		// Кровь обратная
-		case 20:
+		case FP_SP_BASE + 5:
 			FP_PALETTE (
 				(FP_MAX, FP_AMAX - 3 * i, FP_AMAX - 3 * i),
 				(FP_MAX - 2 * i, 0, 0),
@@ -329,7 +345,7 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 			break;
 
 		// Кислота обратная
-		case 21:
+		case FP_SP_BASE + 6:
 			FP_PALETTE (
 				(FP_AMAX - 3 * i, FP_MAX, FP_AMAX - 3 * i),
 				(0, FP_MAX - 2 * i, 0),
@@ -339,7 +355,7 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 			break;
 
 		// Лимон обратная
-		case 22:
+		case FP_SP_BASE + 7:
 			FP_PALETTE (
 				(FP_MAX, FP_MAX, FP_AMAX - 3 * i),
 				(FP_MAX - 2 * i, FP_MAX - 2 * i, 0),
@@ -350,7 +366,7 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 
 		// Полиморфная и случайная
 		FP_SPECIAL_PALETTES
-			FillPalette_PolymorphRandom (PaletteNumber & 0x2 & polymorphResetNotRequired, PaletteNumber & 0x1);
+			FillPalette_PolymorphRandom (0x4 - (PaletteNumber & 0x4), PaletteNumber & 0x2 & polymorphResetNotRequired, PaletteNumber & 0x1);
 			AS->cdPolymorphUpdateCounter = PaletteNumber & 0x2;
 			break;
 		}
@@ -374,13 +390,17 @@ CD_API(schar *) GetPalettesNamesEx ()
 		"La fiesta" NAMES_DELIMITER_S \
 		"Random" NAMES_DELIMITER_S \
 		"Random monocolor" NAMES_DELIMITER_S \
-		"Polymorph" NAMES_DELIMITER_S \
-		"Polymorph monocolor" NAMES_DELIMITER_S \
+		"Polymorphic" NAMES_DELIMITER_S \
+		"Polymorphic monocolor" NAMES_DELIMITER_S \
+		"Random (reversed)" NAMES_DELIMITER_S \
+		"Random monocolor (reversed)" NAMES_DELIMITER_S \
+		"Polymorphic (reversed)" NAMES_DELIMITER_S \
+		"Polymorphic monocolor (reversed)" NAMES_DELIMITER_S \
+		\
 		"Negative" NAMES_DELIMITER_S \
 		"Fire (reversed)" NAMES_DELIMITER_S \
 		"Sea (reversed)" NAMES_DELIMITER_S \
 		"Purple" NAMES_DELIMITER_S \
-		\
 		"Blood (reversed)" NAMES_DELIMITER_S \
 		"Acid (reversed)" NAMES_DELIMITER_S \
 		"Lemon (reversed)")

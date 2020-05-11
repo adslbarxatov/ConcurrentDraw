@@ -60,7 +60,7 @@ namespace RD_AAOW
 				decumulationMultiplier = value;
 				}
 			}
-		private byte decumulationMultiplier = 16;
+		private byte decumulationMultiplier = 15;
 
 		/// <summary>
 		/// Константа, определяющая максимум для шкалы ослабления кумулятивного эффекта
@@ -145,7 +145,7 @@ namespace RD_AAOW
 				logoHeightPercentage = value;
 				}
 			}
-		private byte logoHeightPercentage = 30;
+		private byte logoHeightPercentage = 60;
 
 		/// <summary>
 		/// Возвращает или задаёт номер выбранной палитры
