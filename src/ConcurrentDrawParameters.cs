@@ -438,15 +438,11 @@ namespace RD_AAOW
 			ConcurrentDrawLogo cdl = new ConcurrentDrawLogo ();
 			cdl.Dispose ();
 
-			MessageBox.Show (Localization.GetText ("HelpText", al), ProgramDescription.AssemblyTitle,
-				MessageBoxButtons.OK, MessageBoxIcon.Information);
+			AboutForm af = new AboutForm (al, "https://github.com/adslbarxatov/ConcurrentDraw",
+				ProgramDescription.AssemblyUpdatesLink,
+				"https://www.youtube.com/watch?v=VE9k73uhy0Y&list=PLe7qKwHNkZTtr1OGOdYMrD73ByPBzCzxc&index=16",
 
-			MessageBox.Show (Localization.GetText ("HelpKeysText", al), ProgramDescription.AssemblyTitle,
-				MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-			if (MessageBox.Show (Localization.GetText ("HelpVideo", al), ProgramDescription.AssemblyTitle,
-				MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-				ProgramDescription.ShowVideoManual ();
+				Localization.GetText ("HelpText", al) + "\r\n\r\n" + Localization.GetText ("HelpKeysText", al));
 			}
 
 		// Изменение языка интерфейса
@@ -544,11 +540,12 @@ namespace RD_AAOW
 			SGHGHeightLabel.Enabled = SGHeight.Enabled = SGHeightPxLabel.Enabled =
 				SGTopOffsetLabel.Enabled = SGTopOffset.Enabled = SGTopOffsetPxLabel.Enabled =
 				SGTopOffsetMin.Enabled = SGTopOffsetMid.Enabled = SGTopOffsetMax.Enabled =
-				SGHeightMax.Enabled = SGHeightMin.Enabled = BeatWavesFlag.Enabled =
+				SGHeightMax.Enabled = SGHeightMin.Enabled =
 				VisualizationModesChecker.ContainsSGHGorWF (mode);
 			HistoRotAccToBeats.Enabled = HistoRotSpeed.Enabled = HistoRotSpeedArc.Enabled =
 				HistoRotSpeedLabel.Enabled = ResetRotation.Enabled = SwingingHistogramFlag.Enabled =
 				!VisualizationModesChecker.ContainsSGHGorWF (mode);
+			BeatWavesFlag.Enabled = VisualizationModesChecker.ContainsSGHGorWF (mode) || (mode == VisualizationModes.Logo_only);
 
 			HGRangeLabel.Enabled = HistogramRangeField.Enabled = HzLabel.Enabled = !VisualizationModesChecker.ContainsSGonly (mode);
 			SDDoubleWidthFlag.Enabled = VisualizationModesChecker.ContainsSGorWF (mode);
@@ -834,8 +831,7 @@ namespace RD_AAOW
 			{
 			get
 				{
-				return parameters[SSN].BeatDetectorWaves &&
-					VisualizationModesChecker.ContainsSGHGorWF ((VisualizationModes)VisualizationCombo.SelectedIndex);
+				return parameters[SSN].BeatDetectorWaves && BeatWavesFlag.Enabled;
 				}
 			}
 

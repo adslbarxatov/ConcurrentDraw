@@ -1,5 +1,13 @@
 ﻿ConcurrentDraw changes log
 
+Version 1.45.2h:
+• New application info interface implemented;
+• Some minor bugs fixed
+
+Version 1.45.1:
+• Updated library versioning;
+• Fixed inability to enable beat waves in 'logo only' mode
+
 Version 1.45:
 • Added reversed versions of random and polymorph palettes;
 • Particles settings interface has been implemented (not available in release for now);

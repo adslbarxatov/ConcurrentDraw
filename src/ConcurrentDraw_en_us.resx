@@ -232,7 +232,7 @@ At first application will start with recommended settings. But you can change:
 Settings will be saved by pressing OK button. They can be changed anytime you need</value>
   </data>
   <data name="LibraryIsIncompatible" xml:space="preserve">
-    <value>This version of {0:S} ({1:S}) is incompatible with current version of application ({2:S})</value>
+    <value>This version of {0:S} ({1:S}) is incompatible with the required library version ({2:S})</value>
   </data>
   <data name="LibraryNotFound" xml:space="preserve">
     <value>{0:S} not found or unavailable</value>

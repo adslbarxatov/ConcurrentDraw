@@ -36,7 +36,9 @@ namespace RD_AAOW
 				if (MessageBox.Show (string.Format (Localization.GetText ("LibraryNotFound", al),
 					ProgramDescription.AssemblyRequirements[0]) + Localization.GetText ("LibraryNotFound_Lib0", al),
 					ProgramDescription.AssemblyTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
-					ProgramDescription.ShowActualAssemblyPage ();
+					{
+					AboutForm af = new AboutForm (ProgramDescription.AssemblyUpdatesLink);
+					}
 				return;
 				}
 
@@ -45,18 +47,23 @@ namespace RD_AAOW
 				if (MessageBox.Show (string.Format (Localization.GetText ("LibraryNotFound", al),
 					ProgramDescription.AssemblyRequirements[1]) + Localization.GetText ("LibraryNotFound_Lib1", al),
 					ProgramDescription.AssemblyTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
-					ProgramDescription.ShowBASSPage ();
+					{
+					AboutForm af = new AboutForm ("http://www.un4seen.com");
+					}
 				return;
 				}
 
 			// Проверка корреткности версии библиотеки CDLib.dll (BASS проверяется позже)
-			if (ConcurrentDrawLib.CDLibVersion != ProgramDescription.AssemblyVersion)
+			if (ConcurrentDrawLib.CDLibVersion != ProgramDescription.AssemblyLibVersion)
 				{
 				if (MessageBox.Show (string.Format (Localization.GetText ("LibraryIsIncompatible", al),
-						ProgramDescription.AssemblyRequirements[0], ConcurrentDrawLib.CDLibVersion, ProgramDescription.AssemblyVersion) +
+						ProgramDescription.AssemblyRequirements[0], ConcurrentDrawLib.CDLibVersion,
+						ProgramDescription.AssemblyLibVersion) +
 						Localization.GetText ("LibraryNotFound_Lib0", al), ProgramDescription.AssemblyTitle,
 						MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
-					ProgramDescription.ShowActualAssemblyPage ();
+					{
+					AboutForm af = new AboutForm (ProgramDescription.AssemblyUpdatesLink);
+					}
 				return;
 				}
 

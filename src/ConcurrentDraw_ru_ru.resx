@@ -232,7 +232,7 @@
 Настройки будут сохранены нажатием кнопки ОК. Они могут быть изменены в любое время</value>
   </data>
   <data name="LibraryIsIncompatible" xml:space="preserve">
-    <value>Эта версия библиотеки {0:S} ({1:S}) несовместима с текущей версией приложения ({2:S})</value>
+    <value>Эта версия {0:S} ({1:S}) несовместима с требуемой версией библиотеки ({2:S})</value>
   </data>
   <data name="LibraryNotFound" xml:space="preserve">
     <value>Библиотека {0:S} не найдена или недоступна</value>
