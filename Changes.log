@@ -6,7 +6,7 @@ Version 1.45.2h:
 
 Version 1.45.1:
 • Updated library versioning;
-• Fixed inability to enable beat waves in 'logo only' mode
+• Fixed inability to use beat waves in 'logo only' mode
 
 Version 1.45:
 • Added reversed versions of random and polymorph palettes;
