@@ -1,5 +1,14 @@
 ﻿ConcurrentDraw changes log
 
+Version 1.46:
+• Fixed missing button names in visualization sizes' window;
+• [Shift] + [PageUp] and [Shift] + [PageDown] combinations now can change logo height;
+• Logo center alignment now have [Shift] + [C] combination;
+• [PageUp] and [PageDown] keys now can change histogram height;
+• [C] key now can centerize histogram field;
+• Keyboard processing code has been simplified;
+• Keyboard tips have been reviewed
+
 Version 1.45.2h:
 • New application info interface implemented;
 • Some minor bugs fixed

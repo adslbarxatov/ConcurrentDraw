@@ -195,7 +195,7 @@ Fade out speed multiplier: {1:S}</value>
   <data name="GenericTab_PaletteLabel" xml:space="preserve">
     <value>Palette:</value>
   </data>
-  <data name="HistoTab_SGHGHeightLabel" xml:space="preserve">
+  <data name="HistoTab_SGHeightLabel" xml:space="preserve">
     <value>Height:</value>
   </data>
   <data name="GenericTab_VisLeftTopLabel" xml:space="preserve">
@@ -293,25 +293,26 @@ Center placement: X = {1:S}; Y = {2:S}</value>
   </data>
   <data name="HelpKeysText" xml:space="preserve">
     <value>Use next hotkeys:
-• right mouse button or Space key – get to settings window;
-• double left click or R key – change colors of 'polymorph' and 'random' palettes;
-• Esc key – close the application or settings window;
-• Enter key – apply changes in settings window;
-• M key – cyclically change visualization mode; with Shift key – backwards;
-• L key – turn logo on / off;
-• P key – cyclically change palette; with Shift key – backwards;
-• H key – cyclically change histogram range; with Shift key – backwards;
-• arrows keys – move visualization window; with Ctrl key – to the edge of screen;
-• arrows keys with Shift key – move logo; with Ctrl key – to the edge of window;
-• '&lt; ,' and '&gt; .' keys – decrease and increase histogram rotation speed; with Shift key – beats-dependent rotation;
-• C key – move logo to the center of window;
-• '/ ?' key – show this quick user manual;
-• T key – switch 'Always on top' flag;
-• K key – switch shake flag;
-• I key – request for current settings info;
-• S key – saving current visualization screen to image file;
-• W key – switch 'histogram swinging' flag;
-• V key – switch 'beats waves' flag</value>
+• right mouse button or [Space] – get to settings window;
+• double left click or [R] – change colors of 'polymorph' and 'random' palettes;
+• [Esc] – close the application or settings window;
+• [Enter] – apply changes in settings window;
+• [M] – cyclically change visualization mode; with [Shift] – backward;
+• [L] – turn logo on / off;
+• [P] – cyclically change palette; with [Shift] – backward;
+• [H] – cyclically change histogram range; with [Shift] – backward;
+• arrows keys – move visualization window; with [Ctrl] – to the edge of screen;
+• arrows keys with [Shift] – move logo; with [Ctrl] – to the edge of window;
+• [&lt; ,] and [&gt; .] – decrease and increase histogram rotation speed; with [Shift] – beats-dependent rotation;
+• [C] – move histogram to the center of window; with [Shift] – move logo;
+• [/ ?] – show this quick user manual;
+• [T] – switch 'Always on top' flag;
+• [K] – switch shake flag;
+• [I] – request for current settings info;
+• [S] – saving current visualization screen to image file;
+• [W] – switch 'histogram swinging' flag;
+• [V] – switch 'beats waves' flag;
+• [PageUp] and [PageDown] – change histogram field's height; with [Shift] – change logo height</value>
   </data>
   <data name="CumulationTab_CEInfoLabel" xml:space="preserve">
     <value>(1 – no cumulative effect)</value>

@@ -537,7 +537,7 @@ namespace RD_AAOW
 			VisualizationModes mode = (VisualizationModes)VisualizationCombo.SelectedIndex;
 			WithLogoFlag.Enabled = (mode != VisualizationModes.Logo_only);
 
-			SGHGHeightLabel.Enabled = SGHeight.Enabled = SGHeightPxLabel.Enabled =
+			SGHeightLabel.Enabled = SGHeight.Enabled = SGHeightPxLabel.Enabled =
 				SGTopOffsetLabel.Enabled = SGTopOffset.Enabled = SGTopOffsetPxLabel.Enabled =
 				SGTopOffsetMin.Enabled = SGTopOffsetMid.Enabled = SGTopOffsetMax.Enabled =
 				SGHeightMax.Enabled = SGHeightMin.Enabled =
@@ -1116,7 +1116,7 @@ namespace RD_AAOW
 			Keys.Left | Keys.Control | Keys.Shift,
 			Keys.Right | Keys.Control | Keys.Shift,	// 20
 			
-			Keys.C,
+			Keys.C | Keys.Shift,
 			Keys.OemQuestion,
 			Keys.I,							// 23
 
@@ -1131,7 +1131,14 @@ namespace RD_AAOW
 
 			Keys.W,
 			Keys.L,
-			Keys.V							// 33
+			Keys.V,							// 33
+
+			Keys.PageUp | Keys.Shift,
+			Keys.PageDown | Keys.Shift,		// 35
+
+			Keys.C,
+			Keys.PageUp,
+			Keys.PageDown					// 38
 
 			// Клавиши, обрабатываемые в основном интерфейсе
 			// Keys.R,
@@ -1158,160 +1165,177 @@ namespace RD_AAOW
 			logoResetFlag = ConcurrentDrawLib.PaletteRequiresReset (parameters[SSN].PaletteNumber);
 
 			// Обработка клавиш
-			switch (allowedHotKeys.IndexOf (HotKey))
+			int i = allowedHotKeys.IndexOf (HotKey);
+			switch (i)
 				{
-				// Смена режима
+				#region Смена режима
 				case 0:
-					if (VisualizationCombo.SelectedIndex == VisualizationCombo.Items.Count - 1)
-						VisualizationCombo.SelectedIndex = 0;
-					else
-						VisualizationCombo.SelectedIndex++;
-					hotKeyResult = VisTypeLabel.Text + " " + VisualizationCombo.Text;
-					break;
-
 				case 28:
-					if (VisualizationCombo.SelectedIndex == 0)
-						VisualizationCombo.SelectedIndex = VisualizationCombo.Items.Count - 1;
+					if (i == 0)
+						{
+						if (VisualizationCombo.SelectedIndex == VisualizationCombo.Items.Count - 1)
+							VisualizationCombo.SelectedIndex = 0;
+						else
+							VisualizationCombo.SelectedIndex++;
+						}
 					else
-						VisualizationCombo.SelectedIndex--;
+						{
+						if (VisualizationCombo.SelectedIndex == 0)
+							VisualizationCombo.SelectedIndex = VisualizationCombo.Items.Count - 1;
+						else
+							VisualizationCombo.SelectedIndex--;
+						}
+
 					hotKeyResult = VisTypeLabel.Text + " " + VisualizationCombo.Text;
 					break;
+				#endregion
 
-				// Смена палитры
+				#region Смена палитры
 				case 1:
-					if (SDPaletteCombo.SelectedIndex == SDPaletteCombo.Items.Count - 1)
-						SDPaletteCombo.SelectedIndex = 0;
-					else
-						SDPaletteCombo.SelectedIndex++;
-					hotKeyResult = PaletteLabel.Text + " " + SDPaletteCombo.Text;
-					break;
-
 				case 29:
-					if (SDPaletteCombo.SelectedIndex == 0)
-						SDPaletteCombo.SelectedIndex = SDPaletteCombo.Items.Count - 1;
+					if (i == 1)
+						{
+						if (SDPaletteCombo.SelectedIndex == SDPaletteCombo.Items.Count - 1)
+							SDPaletteCombo.SelectedIndex = 0;
+						else
+							SDPaletteCombo.SelectedIndex++;
+						}
 					else
-						SDPaletteCombo.SelectedIndex--;
+						{
+						if (SDPaletteCombo.SelectedIndex == 0)
+							SDPaletteCombo.SelectedIndex = SDPaletteCombo.Items.Count - 1;
+						else
+							SDPaletteCombo.SelectedIndex--;
+						}
+
 					hotKeyResult = PaletteLabel.Text + " " + SDPaletteCombo.Text;
 					break;
+				#endregion
 
-				// Изменение диапазона гистограмм
+				#region Изменение диапазона гистограмм
 				case 2:
-					if (HistogramRangeField.Value == HistogramRangeField.Maximum)
-						HistogramRangeField.Value = HistogramRangeField.Minimum;
-					else
-						HistogramRangeField.Value++;
-					hotKeyResult = HGRangeLabel.Text + " 0 – " + (HistogramRangeField.Value *
-						CDParametersSet.HistogramRangeSettingIncrement).ToString () + " " +
-						HzLabel.Text.Substring (HzLabel.Text.Length - 2);
-					break;
-
 				case 30:
-					if (HistogramRangeField.Value == HistogramRangeField.Minimum)
-						HistogramRangeField.Value = HistogramRangeField.Maximum;
+					if (i == 2)
+						{
+						if (HistogramRangeField.Value < HistogramRangeField.Maximum)
+							HistogramRangeField.Value++;
+						}
 					else
-						HistogramRangeField.Value--;
+						{
+						if (HistogramRangeField.Value > HistogramRangeField.Minimum)
+							HistogramRangeField.Value--;
+						}
+
 					hotKeyResult = HGRangeLabel.Text + " 0 – " + (HistogramRangeField.Value *
 						CDParametersSet.HistogramRangeSettingIncrement).ToString () + " " +
 						HzLabel.Text.Substring (HzLabel.Text.Length - 2);
 					break;
+				#endregion
 
-				// Изменение расположения окна
+				#region Изменение расположения окна
 				case 3:
-					if (VisTop.Value != VisTop.Minimum)
-						VisTop.Value--;
-					hotKeyResult = VisLeftTopLabel.Text + " " + VisLeft.Value.ToString () + " x " +
-						VisTop.Value.ToString () + " px";
-					break;
-
 				case 13:
-					VisTop.Value = VisTop.Minimum;
-					hotKeyResult = VisLeftTopLabel.Text + " " + VisLeft.Value.ToString () + " x " +
-						VisTop.Value.ToString () + " px";
-					break;
-
 				case 4:
-					if (VisTop.Value != VisTop.Maximum)
-						VisTop.Value++;
-					hotKeyResult = VisLeftTopLabel.Text + " " + VisLeft.Value.ToString () + " x " +
-						VisTop.Value.ToString () + " px";
-					break;
-
 				case 14:
-					VisTop.Value = VisTop.Maximum;
-					hotKeyResult = VisLeftTopLabel.Text + " " + VisLeft.Value.ToString () + " x " +
-						VisTop.Value.ToString () + " px";
-					break;
-
 				case 5:
-					if (VisLeft.Value != VisLeft.Minimum)
-						VisLeft.Value--;
-					hotKeyResult = VisLeftTopLabel.Text + " " + VisLeft.Value.ToString () + " x " +
-						VisTop.Value.ToString () + " px";
-					break;
-
 				case 15:
-					VisLeft.Value = VisLeft.Minimum;
-					hotKeyResult = VisLeftTopLabel.Text + " " + VisLeft.Value.ToString () + " x " +
-						VisTop.Value.ToString () + " px";
-					break;
-
 				case 6:
-					if (VisLeft.Value != VisLeft.Maximum)
-						VisLeft.Value++;
-					hotKeyResult = VisLeftTopLabel.Text + " " + VisLeft.Value.ToString () + " x " +
-						VisTop.Value.ToString () + " px";
-					break;
-
 				case 16:
-					VisLeft.Value = VisLeft.Maximum;
+					switch (i)
+						{
+						case 3:
+							if (VisTop.Value != VisTop.Minimum)
+								VisTop.Value--;
+							break;
+
+						case 13:
+							VisTop.Value = VisTop.Minimum;
+							break;
+
+						case 4:
+							if (VisTop.Value != VisTop.Maximum)
+								VisTop.Value++;
+							break;
+
+						case 14:
+							VisTop.Value = VisTop.Maximum;
+							break;
+
+						case 5:
+							if (VisLeft.Value != VisLeft.Minimum)
+								VisLeft.Value--;
+							break;
+
+						case 15:
+							VisLeft.Value = VisLeft.Minimum;
+							break;
+
+						case 6:
+							if (VisLeft.Value != VisLeft.Maximum)
+								VisLeft.Value++;
+							break;
+
+						case 16:
+							VisLeft.Value = VisLeft.Maximum;
+							break;
+						}
+
 					hotKeyResult = VisLeftTopLabel.Text + " " + VisLeft.Value.ToString () + " x " +
 						VisTop.Value.ToString () + " px";
 					break;
+				#endregion
 
-				// Изменение расположения лого
+				#region Изменение расположения лого
 				case 7:
-					if (LogoCenterYTrack.Value != LogoCenterYTrack.Maximum)
-						LogoCenterYTrack.Value++;
-					hotKeyResult = LogoCenterLabel.Text;
-					break;
-
 				case 17:
-					LogoCenterYTrack.Value = LogoCenterYTrack.Maximum;
-					hotKeyResult = LogoCenterLabel.Text;
-					break;
-
 				case 8:
-					if (LogoCenterYTrack.Value != LogoCenterYTrack.Minimum)
-						LogoCenterYTrack.Value--;
-					hotKeyResult = LogoCenterLabel.Text;
-					break;
-
 				case 18:
-					LogoCenterYTrack.Value = LogoCenterYTrack.Minimum;
-					hotKeyResult = LogoCenterLabel.Text;
-					break;
-
 				case 9:
-					if (LogoCenterXTrack.Value != LogoCenterXTrack.Minimum)
-						LogoCenterXTrack.Value--;
-					hotKeyResult = LogoCenterLabel.Text;
-					break;
-
 				case 19:
-					LogoCenterXTrack.Value = LogoCenterXTrack.Minimum;
-					hotKeyResult = LogoCenterLabel.Text;
-					break;
-
 				case 10:
-					if (LogoCenterXTrack.Value != LogoCenterXTrack.Maximum)
-						LogoCenterXTrack.Value++;
-					hotKeyResult = LogoCenterLabel.Text;
-					break;
-
 				case 20:
-					LogoCenterXTrack.Value = LogoCenterXTrack.Maximum;
+					switch (i)
+						{
+						case 7:
+							if (LogoCenterYTrack.Value != LogoCenterYTrack.Maximum)
+								LogoCenterYTrack.Value++;
+							break;
+
+						case 17:
+							LogoCenterYTrack.Value = LogoCenterYTrack.Maximum;
+							break;
+
+						case 8:
+							if (LogoCenterYTrack.Value != LogoCenterYTrack.Minimum)
+								LogoCenterYTrack.Value--;
+							break;
+
+						case 18:
+							LogoCenterYTrack.Value = LogoCenterYTrack.Minimum;
+							break;
+
+						case 9:
+							if (LogoCenterXTrack.Value != LogoCenterXTrack.Minimum)
+								LogoCenterXTrack.Value--;
+							break;
+
+						case 19:
+							LogoCenterXTrack.Value = LogoCenterXTrack.Minimum;
+							break;
+
+						case 10:
+							if (LogoCenterXTrack.Value != LogoCenterXTrack.Maximum)
+								LogoCenterXTrack.Value++;
+							break;
+
+						case 20:
+							LogoCenterXTrack.Value = LogoCenterXTrack.Maximum;
+							break;
+						}
+
 					hotKeyResult = LogoCenterLabel.Text;
 					break;
+				#endregion
 
 				// Изменение флага Always on top
 				case 11:
@@ -1337,7 +1361,7 @@ namespace RD_AAOW
 					// Установка hotKeyResult не требуется
 					break;
 
-				// Запрос всех настроек
+				#region Запрос всех настроек
 				case 23:
 					MessageBox.Show (DevicesLabel.Text + " " + DevicesCombo.Text + "\n" +
 						VisTypeLabel.Text + " " + VisualizationCombo.Text +
@@ -1351,7 +1375,7 @@ namespace RD_AAOW
 						HGRangeLabel.Text + " 0 – " + (HistogramRangeField.Value *
 							CDParametersSet.HistogramRangeSettingIncrement).ToString () + " " +
 							HzLabel.Text.Substring (HzLabel.Text.Length - 2) + "\n" +
-						SGHGHeightLabel.Text + " " + SGHeight.Value.ToString () + " px" +
+						SGHeightLabel.Text + " " + SGHeight.Value.ToString () + " px" +
 						(SDDoubleWidthFlag.Checked ? ("; " + SDDoubleWidthFlag.Text) : "") + "\n" +
 						SGTopOffsetLabel.Text + " " + SGTopOffset.Value.ToString () + " px\n" +
 						(HistoRotAccToBeats.Checked ? HistoRotAccToBeats.Text : HistoRotSpeed.Text) + " " +
@@ -1366,13 +1390,14 @@ namespace RD_AAOW
 						CESettings.Text,
 						ProgramDescription.AssemblyTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
 					break;
+				#endregion
 
-				// Увеличение / уменьшение скорости вращения гистограммы
+				#region Увеличение / уменьшение скорости вращения гистограммы
 				case 24:
 				case 25:
 				case 26:
 				case 27:
-					if (allowedHotKeys.IndexOf (HotKey) < 26)
+					if (i < 26)
 						{
 						HistoRotSpeed.Checked = true;
 						hotKeyResult = HistoRotSpeed.Text;
@@ -1383,7 +1408,7 @@ namespace RD_AAOW
 						hotKeyResult = HistoRotAccToBeats.Text;
 						}
 
-					if (allowedHotKeys.IndexOf (HotKey) % 2 == 0)
+					if (i % 2 == 0)
 						{
 						if (HistoRotSpeedArc.Value > HistoRotSpeedArc.Minimum)
 							HistoRotSpeedArc.Value -= HistoRotSpeedArc.Increment;
@@ -1396,6 +1421,7 @@ namespace RD_AAOW
 
 					hotKeyResult += (" " + HistoRotSpeedArc.Value.ToString () + "°");
 					break;
+				#endregion
 
 				// Изменение флага Swinging histogram
 				case 31:
@@ -1414,6 +1440,50 @@ namespace RD_AAOW
 					BeatWavesFlag.Checked = !BeatWavesFlag.Checked;
 					hotKeyResult = BeatWavesFlag.Text + " = " + (BeatWavesFlag.Checked ? "1" : "0");
 					break;
+
+				#region Изменение размера лого
+				case 34:
+				case 35:
+					if (i == 34)
+						{
+						if (LogoHeightPercentage.Value < LogoHeightPercentage.Maximum)
+							LogoHeightPercentage.Value++;
+						}
+					else
+						{
+						if (LogoHeightPercentage.Value > LogoHeightPercentage.Minimum)
+							LogoHeightPercentage.Value--;
+						}
+
+					hotKeyResult = LogoCenterLabel.Text;
+					break;
+				#endregion
+
+				// Выравниваие гистограммы по центру
+				case 36:
+					SGTopOffsetMid_Click (null, null);
+					hotKeyResult = HistoTab.Text + ": " + SGTopOffsetLabel.Text + " " +
+						SGTopOffset.Value.ToString () + SGTopOffsetPxLabel.Text;
+					break;
+
+				#region Изменение размера поля гистограммы
+				case 37:
+				case 38:
+					if (i == 37)
+						{
+						if (SGHeight.Value < SGHeight.Maximum)
+							SGHeight.Value++;
+						}
+					else
+						{
+						if (SGHeight.Value > SGHeight.Minimum)
+							SGHeight.Value--;
+						}
+
+					hotKeyResult = HistoTab.Text + ": " + SGHeightLabel.Text + " " +
+						SGHeight.Value.ToString () + SGHeightPxLabel.Text;
+					break;
+				#endregion
 				}
 
 			// Применение новой настройки

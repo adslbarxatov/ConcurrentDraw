@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -48,8 +49,8 @@ namespace RD_AAOW
 			InitializeComponent ();
 
 			this.Text = Localization.GetText ("CDP_WindowSize", InterfaceLanguage);
-			BOK.Text = Localization.GetText ("CDP_OK", InterfaceLanguage);
-			BCancel.Text = Localization.GetText ("CDP_Cancel", InterfaceLanguage);
+			BOK.Text = Localization.GetText ("ConcurrentDrawParameters_BOK", InterfaceLanguage);
+			BCancel.Text = Localization.GetText ("ConcurrentDrawParameters_BCancel", InterfaceLanguage);
 
 			availableSizes.Add (new Point (640, 360));
 			availableSizes.Add (new Point (640, 480));
@@ -71,14 +72,14 @@ namespace RD_AAOW
 			}
 
 		// Выбор размера
-		private void BOK_Click (object sender, System.EventArgs e)
+		private void BOK_Click (object sender, EventArgs e)
 			{
 			selected = true;
 			this.Close ();
 			}
 
 		// Отмена
-		private void BCancel_Click (object sender, System.EventArgs e)
+		private void BCancel_Click (object sender, EventArgs e)
 			{
 			this.Close ();
 			}
