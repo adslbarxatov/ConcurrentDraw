@@ -1,5 +1,10 @@
 ﻿ConcurrentDraw changes log
 
+Version 1.46.2:
+• Fixed FFT scale multiplier for video rendering mode;
+• FFT scale moved to main settings page
+• Some interface improvements applied
+
 Version 1.46:
 • Fixed missing button names in visualization sizes' window;
 • [Shift] + [PageUp] and [Shift] + [PageDown] combinations now can change logo height;

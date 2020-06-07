@@ -155,8 +155,7 @@
   </data>
   <data name="CDP_BDSettingsText" xml:space="preserve">
     <value>Beats detection range: {0:D} – {1:D} Hz
-Amplitude threshold: {2:D}%
-FFT scale multiplier: {3:D}</value>
+Amplitude threshold: {2:D}%</value>
   </data>
   <data name="MainTabControl_BeatsTab" xml:space="preserve">
     <value>Beats detection</value>
@@ -389,5 +388,8 @@ Do you want to open webpage for downloading the actual library version?</value>
   </data>
   <data name="ParticlesTab_StartupSideLabel" xml:space="preserve">
     <value>Start at:</value>
+  </data>
+  <data name="CDP_FFTScaleLabel" xml:space="preserve">
+    <value>FFT scale multiplier: {0:D}</value>
   </data>
 </root>

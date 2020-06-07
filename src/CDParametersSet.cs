@@ -348,18 +348,18 @@ namespace RD_AAOW
 		/// <summary>
 		/// Возвращает или задаёт множитель амплитуды детектора битов
 		/// </summary>
-		public byte BeatsDetectorFFTScaleMultiplier
+		public byte FFTScaleMultiplier
 			{
 			get
 				{
-				return beatsDetectorFFTScaleMultiplier;
+				return fftScaleMultiplier;
 				}
 			set
 				{
-				beatsDetectorFFTScaleMultiplier = value;
+				fftScaleMultiplier = value;
 				}
 			}
-		private byte beatsDetectorFFTScaleMultiplier = ConcurrentDrawLib.DefaultFFTScaleMultiplier;
+		private byte fftScaleMultiplier = ConcurrentDrawLib.DefaultFFTScaleMultiplier;
 
 		/// <summary>
 		/// Возвращает или задаёт флаг двойной ширины спектрограммы
@@ -528,7 +528,7 @@ namespace RD_AAOW
 				beatsDetectorLowEdge = byte.Parse (values[16]);
 				beatsDetectorHighEdge = byte.Parse (values[17]);
 				beatsDetectorLowLevel = byte.Parse (values[18]);
-				beatsDetectorFFTScaleMultiplier = byte.Parse (values[19]);
+				fftScaleMultiplier = byte.Parse (values[19]);
 
 				logoCenterX = uint.Parse (values[20]);
 				logoCenterY = uint.Parse (values[21]);
@@ -594,7 +594,7 @@ namespace RD_AAOW
 				beatsDetectorLowEdge.ToString () + splitter[0].ToString () +
 				beatsDetectorHighEdge.ToString () + splitter[0].ToString () +
 				beatsDetectorLowLevel.ToString () + splitter[0].ToString () +
-				beatsDetectorFFTScaleMultiplier.ToString () + splitter[0].ToString () +
+				fftScaleMultiplier.ToString () + splitter[0].ToString () +
 
 				logoCenterX.ToString () + splitter[0].ToString () +
 				logoCenterY.ToString () + splitter[0].ToString () +

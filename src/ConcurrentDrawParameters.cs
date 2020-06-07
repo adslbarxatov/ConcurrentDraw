@@ -102,7 +102,7 @@ namespace RD_AAOW
 			BDLowEdge.Value = (int)parameters[DSN].BeatsDetectorLowEdge;
 			BDHighEdge.Value = (int)parameters[DSN].BeatsDetectorHighEdge;
 			BDLowLevel.Value = parameters[DSN].BeatsDetectorLowLevel;
-			BDFFTScaleMultiplier.Value = parameters[DSN].BeatsDetectorFFTScaleMultiplier;
+			FFTScaleMultiplier.Value = parameters[DSN].FFTScaleMultiplier;
 
 			// Плотность гистограммы
 			HistogramRangeField.Maximum = (uint)(CDParametersSet.HistogramFrequencyMaximum /
@@ -167,7 +167,7 @@ namespace RD_AAOW
 			// Установка настроек
 			ConcurrentDrawLib.SetPeakEvaluationParameters (parameters[SSN].BeatsDetectorLowEdge,
 				parameters[SSN].BeatsDetectorHighEdge, parameters[SSN].BeatsDetectorLowLevel,
-				parameters[SSN].BeatsDetectorFFTScaleMultiplier);
+				parameters[SSN].FFTScaleMultiplier);
 			ConcurrentDrawLib.SetHistogramFFTValuesCount (parameters[SSN].HistogramRangeMaximum *
 				CDParametersSet.HistogramScaledFrequencyMaximum / CDParametersSet.HistogramFrequencyMaximum);
 
@@ -213,7 +213,7 @@ namespace RD_AAOW
 				BDLowEdge.Value = (int)parameters[psn].BeatsDetectorLowEdge;
 				BDHighEdge.Value = (int)parameters[psn].BeatsDetectorHighEdge;
 				BDLowLevel.Value = parameters[psn].BeatsDetectorLowLevel;
-				BDFFTScaleMultiplier.Value = parameters[psn].BeatsDetectorFFTScaleMultiplier;
+				FFTScaleMultiplier.Value = parameters[psn].FFTScaleMultiplier;
 
 				SDDoubleWidthFlag.Checked = parameters[psn].SpectrogramDoubleWidth;
 				AlwaysOnTopFlag.Checked = parameters[psn].AlwaysOnTop;
@@ -263,33 +263,14 @@ namespace RD_AAOW
 
 			GenericTab.Text = Localization.GetText ("MainTabControl_GenericTab", al);
 			Localization.SetControlsText (GenericTab, al);
-			/*DevicesLabel.Text = Localization.GetText ("CDP_DevicesLabel", al);
-			VisTypeLabel.Text = Localization.GetText ("CDP_VisTypeLabel", al);
-			VisSizeLabel.Text = Localization.GetText ("CDP_VisSizeLabel", al);
-			VisLeftTopLabel.Text = Localization.GetText ("CDP_VisLeftTopLabel", al);
-			PaletteLabel.Text = Localization.GetText ("CDP_PaletteLabel", al);
-			AlwaysOnTopFlag.Text = Localization.GetText ("CDP_AlwaysOnTopFlag", al);
-			WithLogoFlag.Text = Localization.GetText ("CDP_WithLogoFlag", al);
-			ShakeFlag.Text = Localization.GetText ("CDP_ShakeFlag", al);*/
+			FFTScaleMultiplier_ValueChanged (null, null);
 
 			HistoTab.Text = Localization.GetText ("MainTabControl_HistoTab", al);
 			Localization.SetControlsText (HistoTab, al);
-			/*SGHGHeightLabel.Text = Localization.GetText ("CDP_SGHGHeightLabel", al);
-			SDDoubleWidthFlag.Text = Localization.GetText ("CDP_SDDoubleWidthFlag", al);
-			SGTopOffsetLabel.Text = Localization.GetText ("CDP_SGTopOffsetLabel", al);
-			HGRangeLabel.Text = Localization.GetText ("CDP_HGRangeLabel", al);
-			HzLabel.Text = Localization.GetText ("CDP_Hz", al);
-			HistoRotAccToBeats.Text = Localization.GetText ("CDP_HistoRotAccToBeats", al);
-			HistoRotSpeed.Text = Localization.GetText ("CDP_HistoRotSpeed", al);
-			BeatWavesFlag.Text = Localization.GetText ("CDP_BeatWavesFlag", al);*/
 
 			LogoTab.Text = Localization.GetText ("MainTabControl_LogoTab", al);
 			Localization.SetControlsText (LogoTab, al);
 			LogoCenterXTrack_ValueChanged (null, null);
-			/*LogoHeightLabel.Text = Localization.GetText ("CDP_LogoHeightLabel", al);
-			LogoCenterButton.Text = Localization.GetText ("CDP_LogoCenterButton", al);
-			LogoInfoLabel.Text = Localization.GetText ("CDP_LogoInfoText", al);
-			SwingingHistogramFlag.Text = Localization.GetText ("CDP_SwingingHistogramFlag", al);*/
 
 			BeatsTab.Text = Localization.GetText ("MainTabControl_BeatsTab", al);
 			BDLowEdge_ValueChanged (BDLowEdge, null);
@@ -297,7 +278,6 @@ namespace RD_AAOW
 			CumulationTab.Text = Localization.GetText ("MainTabControl_CumulationTab", al);
 			Localization.SetControlsText (CumulationTab, al);
 			CESpeed_ValueChanged (null, null);
-			/*CEInfo.Text = Localization.GetText ("CumulationTab_CEInfo", al);*/
 
 			ParticlesTab.Text = Localization.GetText ("MainTabControl_ParticlesTab", al);
 			Localization.SetControlsText (ParticlesTab, al);
@@ -305,10 +285,6 @@ namespace RD_AAOW
 			Localization.SetControlsText (this, al);
 			ProfileCombo.Items[DSN] = Localization.GetText ("CDP_ProfileDefault", al);
 			ProfileCombo.Items[SSN] = Localization.GetText ("CDP_ProfileSaved", al);
-			/*BOK.Text = Localization.GetText ("CDP_OK", al);
-			BCancel.Text = Localization.GetText ("CDP_Cancel", al);
-			LanguageLabel.Text = Localization.GetText ("CDP_LanguageLabel", al);
-			ProfileLabel.Text = Localization.GetText ("CDP_ProfileLabel", al);*/
 			}
 
 		// Контроль наличия доступных устройств
@@ -352,7 +328,7 @@ namespace RD_AAOW
 			// Установка параметров
 			ConcurrentDrawLib.SetPeakEvaluationParameters (parameters[SSN].BeatsDetectorLowEdge,
 				parameters[SSN].BeatsDetectorHighEdge, parameters[SSN].BeatsDetectorLowLevel,
-				parameters[SSN].BeatsDetectorFFTScaleMultiplier);
+				parameters[SSN].FFTScaleMultiplier);
 			ConcurrentDrawLib.SetHistogramFFTValuesCount (parameters[SSN].HistogramRangeMaximum *
 				CDParametersSet.HistogramScaledFrequencyMaximum / CDParametersSet.HistogramFrequencyMaximum);
 
@@ -400,7 +376,7 @@ namespace RD_AAOW
 			parameters[psn].ShakeEffect = ShakeFlag.Checked;
 			parameters[psn].BeatDetectorWaves = BeatWavesFlag.Checked;
 
-			parameters[psn].BeatsDetectorFFTScaleMultiplier = (byte)BDFFTScaleMultiplier.Value;
+			parameters[psn].FFTScaleMultiplier = (byte)FFTScaleMultiplier.Value;
 			parameters[psn].BeatsDetectorHighEdge = (uint)BDHighEdge.Value;
 			parameters[psn].BeatsDetectorLowEdge = (uint)BDLowEdge.Value;
 			parameters[psn].BeatsDetectorLowLevel = (byte)BDLowLevel.Value;
@@ -699,6 +675,12 @@ namespace RD_AAOW
 				}
 			}
 
+		// Изменение множителя значений БПФ
+		private void FFTScaleMultiplier_ValueChanged (object sender, EventArgs e)
+			{
+			FFTScaleLabel.Text = string.Format (Localization.GetText ("CDP_FFTScaleLabel", al), FFTScaleMultiplier.Value);
+			}
+
 		#endregion
 
 		#region Histograms
@@ -911,7 +893,7 @@ namespace RD_AAOW
 					(CDParametersSet.HistogramScaledFrequencyMaximum / CDParametersSet.HistogramRangeSettingIncrement)).ToString (),
 					(CDParametersSet.HistogramFrequencyMaximum * BDHighEdge.Value /
 					(CDParametersSet.HistogramScaledFrequencyMaximum / CDParametersSet.HistogramRangeSettingIncrement)).ToString (),
-					(100 * BDLowLevel.Value / 255).ToString (), BDFFTScaleMultiplier.Value.ToString ());
+					(100 * BDLowLevel.Value / 255).ToString ());
 			}
 
 		/// <summary>
@@ -1370,7 +1352,8 @@ namespace RD_AAOW
 						VisLeftTopLabel.Text + " " + VisLeft.Value.ToString () + " x " + VisTop.Value.ToString () + " px\n" +
 						PaletteLabel.Text + " " + SDPaletteCombo.Text + "\n" +
 						(ShakeFlag.Checked ? (ShakeFlag.Text + "\n") : "") +
-						(AlwaysOnTopFlag.Checked ? (AlwaysOnTopFlag.Text + "\n\n") : "\n") +
+						(AlwaysOnTopFlag.Checked ? (AlwaysOnTopFlag.Text + "\n") : "") +
+						FFTScaleLabel.Text + "\n\n" +
 
 						HGRangeLabel.Text + " 0 – " + (HistogramRangeField.Value *
 							CDParametersSet.HistogramRangeSettingIncrement).ToString () + " " +

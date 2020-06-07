@@ -58,11 +58,7 @@ namespace RD_AAOW
 
 		// Бит-детектор
 		private const int logoIdleSpeed = 2;					// Наименьшая скорость вращения лого
-#if VIDEO
-		private const int logoSpeedImpulse = 60;				// Импульс скорости при пиковом значении
-#else
 		private const int logoSpeedImpulse = 50;
-#endif
 		private const float beatsDetAngleMultiplier =
 			150.0f / logoSpeedImpulse;							// Множитель для расчёта угла дуги бит-детектора
 		private List<int> beatWaves = new List<int> ();			// Волны бит-детектора

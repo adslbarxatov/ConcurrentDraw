@@ -411,11 +411,7 @@ namespace RD_AAOW
 		public static void SetPeakEvaluationParameters (uint LowEdge, uint HighEdge, byte LowLevel,
 			byte FFTScaleMultiplier)
 			{
-#if VIDEO
-			SetPeakEvaluationParametersEx ((UInt16)LowEdge, (UInt16)HighEdge, LowLevel, (byte)(3 * FFTScaleMultiplier / 4));
-#else
 			SetPeakEvaluationParametersEx ((UInt16)LowEdge, (UInt16)HighEdge, LowLevel, FFTScaleMultiplier);
-#endif
 			}
 
 		/// <summary>

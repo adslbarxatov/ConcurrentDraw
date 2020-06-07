@@ -155,8 +155,7 @@
   </data>
   <data name="CDP_BDSettingsText" xml:space="preserve">
     <value>Диапазон детекции бито́в: {0:D} – {1:D} Гц
-Порог амплитуды: {2:D}%
-Множитель значений БПФ: {3:D}</value>
+Порог амплитуды: {2:D}%</value>
   </data>
   <data name="MainTabControl_BeatsTab" xml:space="preserve">
     <value>Детектор бито́в</value>
@@ -390,5 +389,8 @@
   </data>
   <data name="ParticlesTab_StartupSideLabel" xml:space="preserve">
     <value>Начинать с:</value>
+  </data>
+  <data name="CDP_FFTScaleLabel" xml:space="preserve">
+    <value>Множитель значений БПФ: {0:D}</value>
   </data>
 </root>

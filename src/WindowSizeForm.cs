@@ -47,6 +47,8 @@ namespace RD_AAOW
 			{
 			// Инициализация
 			InitializeComponent ();
+			this.AcceptButton = BOK;
+			this.CancelButton = BCancel;
 
 			this.Text = Localization.GetText ("CDP_WindowSize", InterfaceLanguage);
 			BOK.Text = Localization.GetText ("ConcurrentDrawParameters_BOK", InterfaceLanguage);
