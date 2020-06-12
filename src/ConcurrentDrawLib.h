@@ -47,10 +47,8 @@
 #define PEAK_EVALUATION_LOW_LEVEL	0xF8
 #define CD_DEFAULT_FFT_SCALE_MULT	40
 
-//#define CD_SECOND_FFT_SCALE_MULT	25.5f
 #define CD_SECOND_FFT_SCALE_MULT	80.0f	
-//#define CD_FFT_EV_METHOD(v)			sqrt (v)
-#define CD_FFT_EV_METHOD(v)			v
+#define CD_FFT_EV_METHOD(v)			v * AS->cdFFTScale
 
 #define CD_MIN_FFT_SCALE_MULT		10
 #define CD_MAX_FFT_SCALE_MULT		150

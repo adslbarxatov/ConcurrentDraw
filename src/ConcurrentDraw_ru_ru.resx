@@ -393,4 +393,7 @@
   <data name="CDP_FFTScaleLabel" xml:space="preserve">
     <value>Множитель значений БПФ: {0:D}</value>
   </data>
+  <data name="HistoTab_HistoRotInitialAngleLabel" xml:space="preserve">
+    <value>Начальный угол:</value>
+  </data>
 </root>

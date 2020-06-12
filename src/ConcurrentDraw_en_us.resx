@@ -392,4 +392,7 @@ Do you want to open webpage for downloading the actual library version?</value>
   <data name="CDP_FFTScaleLabel" xml:space="preserve">
     <value>FFT scale multiplier: {0:D}</value>
   </data>
+  <data name="HistoTab_HistoRotInitialAngleLabel" xml:space="preserve">
+    <value>Initial angle:</value>
+  </data>
 </root>

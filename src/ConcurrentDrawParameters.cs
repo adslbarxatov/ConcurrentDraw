@@ -117,8 +117,9 @@ namespace RD_AAOW
 			LogoHeightPercentage.Value = parameters[DSN].LogoHeightPercentage;
 
 			// Скорость вращения гистограммы
-			HistoRotSpeedArc.Value = parameters[DSN].HistoRotSpeedDelta;
+			HistoRotSpeedAngle.Value = parameters[DSN].HistoRotSpeedDelta;
 			HistoRotSpeed.Checked = true;
+			HistoRotInitialAngle.Value = parameters[DSN].HistoRotInitialAngle;
 
 			// Флаги
 			AlwaysOnTopFlag.Checked = parameters[DSN].AlwaysOnTop;
@@ -141,25 +142,45 @@ namespace RD_AAOW
 			// Метрики объектов
 			for (int i = 0; i < LogoDrawerSupport.ObjectTypesCount; i++)
 				ObjectsTypeCombo.Items.Add (((LogoDrawerObjectTypes)i).ToString ());
-			ObjectsTypeCombo.SelectedIndex = 0;
+			ObjectsTypeCombo.SelectedIndex = (int)parameters[DSN].ParticlesMetrics.ObjectsType;
 
 			ObjectsCountField.Maximum = LogoDrawerSupport.MaxObjectsCount;
+			ObjectsCountField.Value = parameters[DSN].ParticlesMetrics.ObjectsCount;
 
-			SidesCountField.Minimum = LogoDrawerSupport.MinPolygonsSidesCount;
-			SidesCountField.Maximum = LogoDrawerSupport.MaxPolygonsSidesCount;
+			ObjectsSidesCountField.Minimum = LogoDrawerSupport.MinPolygonsSidesCount;
+			ObjectsSidesCountField.Maximum = LogoDrawerSupport.MaxPolygonsSidesCount;
+			ObjectsSidesCountField.Value = parameters[DSN].ParticlesMetrics.PolygonsSidesCount;
 
 			for (int i = 0; i < LogoDrawerSupport.ObjectStartupPositionsCount; i++)
-				StartupSideCombo.Items.Add (((LogoDrawerObjectStartupPositions)i).ToString ());
-			StartupSideCombo.SelectedIndex = 0;
+				ObjectsStartupSideCombo.Items.Add (((LogoDrawerObjectStartupPositions)i).ToString ());
+			ObjectsStartupSideCombo.SelectedIndex = (int)parameters[DSN].ParticlesMetrics.StartupPosition;
 
-			EnlargingCoeffField.Minimum = -LogoDrawerSupport.MaxEnlarge;
-			EnlargingCoeffField.Maximum = LogoDrawerSupport.MaxEnlarge;
+			ObjectsEnlargingCoeffField.Minimum = -LogoDrawerSupport.MaxEnlarge;
+			ObjectsEnlargingCoeffField.Maximum = LogoDrawerSupport.MaxEnlarge;
+			ObjectsEnlargingCoeffField.Value = parameters[DSN].ParticlesMetrics.Enlarging;
 
 			ObjectsMinSpeedField.Minimum = ObjectsMaxSpeedField.Minimum = LogoDrawerSupport.MinObjectSpeed;
-			ObjectsMinSpeedField.Maximum = ObjectsMaxSpeedField.Maximum = SpeedFluctuationField.Maximum = LogoDrawerSupport.MaxObjectSpeed;
+			ObjectsMinSpeedField.Maximum = ObjectsMaxSpeedField.Maximum =
+				ObjectsSpeedFluctuationField.Maximum = LogoDrawerSupport.MaxObjectSpeed;
+			ObjectsMaxSpeedField.Value = parameters[DSN].ParticlesMetrics.MaxSpeed;
+			ObjectsMinSpeedField.Value = parameters[DSN].ParticlesMetrics.MinSpeed;
+			ObjectsSpeedFluctuationField.Value = parameters[DSN].ParticlesMetrics.MaxSpeedFluctuation;
 
 			ObjectsMinSizeField.Minimum = ObjectsMaxSizeField.Minimum = LogoDrawerSupport.MinObjectSize;
 			ObjectsMinSizeField.Maximum = ObjectsMaxSizeField.Maximum = LogoDrawerSupport.MaxObjectSize;
+			ObjectsMaxSizeField.Value = parameters[DSN].ParticlesMetrics.MaxSize;
+			ObjectsMinSizeField.Value = parameters[DSN].ParticlesMetrics.MinSize;
+
+			ObjectsAccelerationFlag.Checked = parameters[DSN].ParticlesMetrics.Acceleration;
+			//ObjectsKeepTracksFlag.Checked = parameters[DSN].ParticlesMetrics.KeepTracks;
+
+			ObjectsMaxColor.BackColor = Color.FromArgb (parameters[DSN].ParticlesMetrics.MaxRed,
+				parameters[DSN].ParticlesMetrics.MaxGreen, parameters[DSN].ParticlesMetrics.MaxBlue);
+			ColorPicker_Click (ObjectsMaxColor, null);
+
+			ObjectsMinColor.BackColor = Color.FromArgb (parameters[DSN].ParticlesMetrics.MinRed,
+				parameters[DSN].ParticlesMetrics.MinGreen, parameters[DSN].ParticlesMetrics.MinBlue);
+			ColorPicker_Click (ObjectsMinColor, null);
 
 			// Запрос настроек
 			bool requestRequired = GetSettings (SSN);
@@ -173,8 +194,6 @@ namespace RD_AAOW
 
 			// Запуск окна немедленно, ести требуется
 			BCancel.Enabled = !requestRequired;
-
-			ParticlesTab.Enabled = false;
 
 			if (requestRequired)
 				this.ShowDialog ();
@@ -230,7 +249,8 @@ namespace RD_AAOW
 					HistoRotAccToBeats.Checked = true;
 				else
 					HistoRotSpeed.Checked = true;
-				HistoRotSpeedArc.Value = (decimal)Math.Abs (parameters[psn].HistoRotSpeedDelta / 10.0);
+				HistoRotSpeedAngle.Value = (decimal)Math.Abs (parameters[psn].HistoRotSpeedDelta / 10.0);
+				HistoRotInitialAngle.Value = parameters[psn].HistoRotInitialAngle;
 
 				ShakeFlag.Checked = parameters[psn].ShakeEffect;
 				BeatWavesFlag.Checked = parameters[psn].BeatDetectorWaves;
@@ -246,6 +266,25 @@ namespace RD_AAOW
 
 				SGHeight.Value = parameters[psn].SpectrogramHeight;			// Установка размеров окна определяет максимум SGHeight
 				SGTopOffset.Value = parameters[psn].SpectrogramTopOffset;	// Установка SGHeight определяет максимум SGTopOffset
+
+				// Эти параметры не сохраняются
+				/*ObjectsMaxSpeedField.Value = parameters[psn].ParticlesMetrics.MaxSpeed;
+				ObjectsMinSpeedField.Value = parameters[psn].ParticlesMetrics.MinSpeed;
+				ObjectsMaxSizeField.Value = parameters[psn].ParticlesMetrics.MaxSize;
+				ObjectsMinSizeField.Value = parameters[psn].ParticlesMetrics.MinSize;
+				ObjectsSidesCountField.Value = parameters[psn].ParticlesMetrics.PolygonsSidesCount;
+
+				ObjectsAccelerationFlag.Checked = parameters[psn].ParticlesMetrics.Acceleration;
+				ObjectsEnlargingCoeffField.Value = parameters[psn].ParticlesMetrics.Enlarging;
+				//ObjectsKeepTracksFlag.Checked = parameters[psn].ParticlesMetrics.KeepTracks;
+				ObjectsMaxColor.BackColor = Color.FromArgb (parameters[psn].ParticlesMetrics.MaxRed,
+					parameters[psn].ParticlesMetrics.MaxGreen, parameters[psn].ParticlesMetrics.MaxBlue);
+				ObjectsMinColor.BackColor = Color.FromArgb (parameters[psn].ParticlesMetrics.MinRed,
+					parameters[psn].ParticlesMetrics.MinGreen, parameters[psn].ParticlesMetrics.MinBlue);
+				ObjectsCountField.Value = parameters[psn].ParticlesMetrics.ObjectsCount;
+				ObjectsTypeCombo.SelectedIndex = (int)parameters[psn].ParticlesMetrics.ObjectsType;
+				ObjectsStartupSideCombo.SelectedIndex = (int)parameters[psn].ParticlesMetrics.StartupPosition;
+				ObjectsSpeedFluctuationField.Value = parameters[psn].ParticlesMetrics.MaxSpeedFluctuation;*/
 				}
 			catch
 				{
@@ -369,9 +408,10 @@ namespace RD_AAOW
 			parameters[psn].LogoCenterY = (uint)(LogoCenterYTrack.Maximum - LogoCenterYTrack.Value);
 
 			if (HistoRotAccToBeats.Checked)
-				parameters[psn].HistoRotSpeedDelta = (int)(-HistoRotSpeedArc.Value * 10);
+				parameters[psn].HistoRotSpeedDelta = (int)(-HistoRotSpeedAngle.Value * 10);
 			else
-				parameters[psn].HistoRotSpeedDelta = (int)(HistoRotSpeedArc.Value * 10);
+				parameters[psn].HistoRotSpeedDelta = (int)(HistoRotSpeedAngle.Value * 10);
+			parameters[psn].HistoRotInitialAngle = (uint)HistoRotInitialAngle.Value;
 
 			parameters[psn].ShakeEffect = ShakeFlag.Checked;
 			parameters[psn].BeatDetectorWaves = BeatWavesFlag.Checked;
@@ -380,6 +420,37 @@ namespace RD_AAOW
 			parameters[psn].BeatsDetectorHighEdge = (uint)BDHighEdge.Value;
 			parameters[psn].BeatsDetectorLowEdge = (uint)BDLowEdge.Value;
 			parameters[psn].BeatsDetectorLowLevel = (byte)BDLowLevel.Value;
+
+			// Эти параметры не сохраняются
+			LogoDrawerObjectMetrics ldom = parameters[psn].ParticlesMetrics;
+
+			ldom.MaxSpeed = (uint)ObjectsMaxSpeedField.Value;
+			ldom.MinSpeed = (uint)ObjectsMinSpeedField.Value;
+			ldom.MaxSize = (uint)ObjectsMaxSizeField.Value;
+			ldom.MinSize = (uint)ObjectsMinSizeField.Value;
+			ldom.PolygonsSidesCount = (byte)ObjectsSidesCountField.Value;
+
+			ldom.Acceleration = ObjectsAccelerationFlag.Checked;
+			ldom.Enlarging = (int)ObjectsEnlargingCoeffField.Value;
+			//ldom.KeepTracks = ObjectsKeepTracksFlag.Checked;
+			ldom.MaxRed = ObjectsMaxColor.BackColor.R;
+			ldom.MaxGreen = ObjectsMaxColor.BackColor.G;
+			ldom.MaxBlue = ObjectsMaxColor.BackColor.B;
+			ldom.MinRed = ObjectsMinColor.BackColor.R;
+			ldom.MinGreen = ObjectsMinColor.BackColor.G;
+			ldom.MinBlue = ObjectsMinColor.BackColor.B;
+			ldom.ObjectsCount = (byte)ObjectsCountField.Value;
+			ldom.ObjectsType = (LogoDrawerObjectTypes)ObjectsTypeCombo.SelectedIndex;
+			ldom.AsStars = ((ldom.ObjectsType == LogoDrawerObjectTypes.RotatingStars) ||
+				(ldom.ObjectsType == LogoDrawerObjectTypes.Stars));
+			ldom.Rotation = ((ldom.ObjectsType == LogoDrawerObjectTypes.RotatingLetters) ||
+				(ldom.ObjectsType == LogoDrawerObjectTypes.RotatingPictures) ||
+				(ldom.ObjectsType == LogoDrawerObjectTypes.RotatingPolygons) ||
+				(ldom.ObjectsType == LogoDrawerObjectTypes.RotatingStars));
+			ldom.StartupPosition = (LogoDrawerObjectStartupPositions)ObjectsStartupSideCombo.SelectedIndex;
+			ldom.MaxSpeedFluctuation = (uint)ObjectsSpeedFluctuationField.Value;
+
+			parameters[psn].ParticlesMetrics = ldom;
 
 			// Сохранение
 			if (psn == 1)
@@ -518,9 +589,10 @@ namespace RD_AAOW
 				SGTopOffsetMin.Enabled = SGTopOffsetMid.Enabled = SGTopOffsetMax.Enabled =
 				SGHeightMax.Enabled = SGHeightMin.Enabled =
 				VisualizationModesChecker.ContainsSGHGorWF (mode);
-			HistoRotAccToBeats.Enabled = HistoRotSpeed.Enabled = HistoRotSpeedArc.Enabled =
+			HistoRotAccToBeats.Enabled = HistoRotSpeed.Enabled = HistoRotSpeedAngle.Enabled =
 				HistoRotSpeedLabel.Enabled = ResetRotation.Enabled = SwingingHistogramFlag.Enabled =
-				!VisualizationModesChecker.ContainsSGHGorWF (mode);
+				HistoRotInitialAngle.Enabled = HistoRotInitialAngleLabel.Enabled = HistoRotInitialLabel.Enabled =
+				ResetInitialAngle.Enabled = !VisualizationModesChecker.ContainsSGHGorWF (mode);
 			BeatWavesFlag.Enabled = VisualizationModesChecker.ContainsSGHGorWF (mode) || (mode == VisualizationModes.Logo_only);
 
 			HGRangeLabel.Enabled = HistogramRangeField.Enabled = HzLabel.Enabled = !VisualizationModesChecker.ContainsSGonly (mode);
@@ -775,6 +847,17 @@ namespace RD_AAOW
 			}
 
 		/// <summary>
+		/// Возвращает начальный угол поворота гистограммы
+		/// </summary>
+		public uint HistoRotStartAngle
+			{
+			get
+				{
+				return parameters[SSN].HistoRotInitialAngle;
+				}
+			}
+
+		/// <summary>
 		/// Возвращает флаг, указывающий на режим синхронизации поворота гистограммы с бит-детектором
 		/// </summary>
 		public bool HistoRotAccordingToBeats
@@ -799,7 +882,13 @@ namespace RD_AAOW
 		// Сброс вращения гистограммы
 		private void ResetRotation_Click (object sender, EventArgs e)
 			{
-			HistoRotSpeedArc.Value = HistoRotSpeedArc.Minimum;
+			HistoRotSpeedAngle.Value = HistoRotSpeedAngle.Minimum;
+			}
+
+		// Сброс начального угла поворота гистограммы
+		private void ResetInitialAngle_Click (object sender, EventArgs e)
+			{
+			HistoRotInitialAngle.Value = HistoRotInitialAngle.Minimum;
 			}
 
 		#endregion
@@ -960,10 +1049,9 @@ namespace RD_AAOW
 			{
 			get
 				{
-				return particlesMetrics;
+				return parameters[SSN].ParticlesMetrics;
 				}
 			}
-		private LogoDrawerObjectMetrics particlesMetrics;
 
 		/// <summary>
 		/// Возвращает флаг, разрешающий отображение дополнительных графических объектов
@@ -976,29 +1064,21 @@ namespace RD_AAOW
 				}
 			}
 
-		/*objectsMetrics.MaxSpeed = 4;//+cumulation;
-		objectsMetrics.MinSpeed = 1;
-		objectsMetrics.MinSize = 5;
-		objectsMetrics.MaxSize = 10;
-		objectsMetrics.PolygonsSidesCount = 8;
+		// Выбор цветов объектов
+		private void ColorPicker_Click (object sender, EventArgs e)
+			{
+			Button btn = (Button)sender;
 
-		// Обновление метрик графических объектов
-		objectsMetrics.Acceleration = false;
-		objectsMetrics.AsStars = true;
-		objectsMetrics.Enlarging = 0;
-		objectsMetrics.KeepTracks = false;
-		objectsMetrics.MaxRed = ConcurrentDrawLib.GetColorFromPalette (255).R;
-		objectsMetrics.MaxGreen = ConcurrentDrawLib.GetColorFromPalette (255).G;
-		objectsMetrics.MaxBlue = ConcurrentDrawLib.GetColorFromPalette (255).B;
-		objectsMetrics.MinRed = ConcurrentDrawLib.GetColorFromPalette (224).R;
-		objectsMetrics.MinGreen = ConcurrentDrawLib.GetColorFromPalette (224).G;
-		objectsMetrics.MinBlue = ConcurrentDrawLib.GetColorFromPalette (192).B;
-		objectsMetrics.ObjectsCount = 10;
-		objectsMetrics.ObjectsType = LogoDrawerObjectTypes.RotatingStars;
-		objectsMetrics.Rotation = true;
-		objectsMetrics.StartupPosition = LogoDrawerObjectStartupPositions.Left;
-		objectsMetrics.MaxSpeedFluctuation = 2;
-		*/
+			if (e != null)
+				{
+				ColorPicker.Color = btn.BackColor;
+				ColorPicker.ShowDialog ();
+				btn.BackColor = ColorPicker.Color;
+				}
+
+			btn.ForeColor = (btn.BackColor.R + btn.BackColor.G + btn.BackColor.B > 128 * 3) ? Color.FromArgb (0, 0, 0) :
+				Color.FromArgb (255, 255, 255);
+			}
 
 		#endregion
 
@@ -1362,7 +1442,7 @@ namespace RD_AAOW
 						(SDDoubleWidthFlag.Checked ? ("; " + SDDoubleWidthFlag.Text) : "") + "\n" +
 						SGTopOffsetLabel.Text + " " + SGTopOffset.Value.ToString () + " px\n" +
 						(HistoRotAccToBeats.Checked ? HistoRotAccToBeats.Text : HistoRotSpeed.Text) + " " +
-						HistoRotSpeedArc.Value.ToString () + "°\n" +
+						HistoRotSpeedAngle.Value.ToString () + "°\n" +
 						(SwingingHistogramFlag.Checked ? (SwingingHistogramFlag.Text + "\n") : "") +
 
 						"\n" + LogoCenterLabel.Text +
@@ -1393,16 +1473,16 @@ namespace RD_AAOW
 
 					if (i % 2 == 0)
 						{
-						if (HistoRotSpeedArc.Value > HistoRotSpeedArc.Minimum)
-							HistoRotSpeedArc.Value -= HistoRotSpeedArc.Increment;
+						if (HistoRotSpeedAngle.Value > HistoRotSpeedAngle.Minimum)
+							HistoRotSpeedAngle.Value -= HistoRotSpeedAngle.Increment;
 						}
 					else
 						{
-						if (HistoRotSpeedArc.Value < HistoRotSpeedArc.Maximum)
-							HistoRotSpeedArc.Value += HistoRotSpeedArc.Increment;
+						if (HistoRotSpeedAngle.Value < HistoRotSpeedAngle.Maximum)
+							HistoRotSpeedAngle.Value += HistoRotSpeedAngle.Increment;
 						}
 
-					hotKeyResult += (" " + HistoRotSpeedArc.Value.ToString () + "°");
+					hotKeyResult += (" " + HistoRotSpeedAngle.Value.ToString () + "°");
 					break;
 				#endregion
 

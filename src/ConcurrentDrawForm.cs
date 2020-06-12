@@ -58,7 +58,12 @@ namespace RD_AAOW
 
 		// Бит-детектор
 		private const int logoIdleSpeed = 2;					// Наименьшая скорость вращения лого
+
+#if VIDEO
+		private const int logoSpeedImpulse = 60;
+#else
 		private const int logoSpeedImpulse = 50;
+#endif
 		private const float beatsDetAngleMultiplier =
 			150.0f / logoSpeedImpulse;							// Множитель для расчёта угла дуги бит-детектора
 		private List<int> beatWaves = new List<int> ();			// Волны бит-детектора
@@ -110,7 +115,6 @@ namespace RD_AAOW
 
 		// Видео
 		private const double fps = 25.0;						// Частота кадров видео 
-		// определена по аудио как (102400 Hz * 2 ch * 16 bps) / (8 * sizeof (float) * 4096 fftv)
 
 		private VideoManager vm = new VideoManager ();			// Видеофайл (балластная инициализация)
 		private AudioManager amv;								// Аудиодорожка видео
@@ -842,11 +846,14 @@ namespace RD_AAOW
 					{
 					// Кисть
 					p = new Pen (ConcurrentDrawLib.GetColorFromPalette ((byte)(4 * amp / 5)), logoHeight / 80);
+#if VIDEO
+					p.Width = logoHeight / 60;
+#endif
 
 					// Радиус и углы поворота по индексу и общему вращению
 					rad = logo[1].Width / 2 + (int)((uint)(logo[1].Width * amp) / 256);
 					angle1 = ArcToRad (i / butterflyDensity);
-					angle2 = ArcToRad (currentHistogramAngle);
+					angle2 = ArcToRad (currentHistogramAngle + cdp.HistoRotStartAngle);
 					if (cdp.SwingingHistogram)
 						angle2 = Math.Sin (angle2) / 2.0;
 
@@ -869,7 +876,7 @@ namespace RD_AAOW
 					// Углы
 					// (двойная длина дуги для того же количества линий)
 					angle1 = ArcToRad (((255 - i) * ((i % 2 == 0) ? 1 : -1)) / perspectiveDensity);
-					angle2 = ArcToRad (currentHistogramAngle + 90);
+					angle2 = ArcToRad (currentHistogramAngle + 90 + cdp.HistoRotStartAngle);
 					if (cdp.SwingingHistogram)
 						angle2 = (Math.Sin (angle2 + Math.PI / 2.0) + Math.PI) / 2.0;
 

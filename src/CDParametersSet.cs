@@ -132,6 +132,22 @@ namespace RD_AAOW
 		private int histoRotSpeedDelta = 0;
 
 		/// <summary>
+		/// Возвращает или задаёт начальный угол поворота гистограммы
+		/// </summary>
+		public uint HistoRotInitialAngle
+			{
+			get
+				{
+				return histoRotInitialAngle;
+				}
+			set
+				{
+				histoRotInitialAngle = value;
+				}
+			}
+		private uint histoRotInitialAngle = 0;
+
+		/// <summary>
 		/// Возвращает или задаёт высоту лого в процентах от высоты окна
 		/// </summary>
 		public byte LogoHeightPercentage
@@ -442,6 +458,22 @@ namespace RD_AAOW
 		private bool beatDetectorWaves = false;
 
 		/// <summary>
+		/// Возвращает или задаёт метрики генерации дополнительных графических объектов
+		/// </summary>
+		public LogoDrawerObjectMetrics ParticlesMetrics
+			{
+			get
+				{
+				return particlesMetrics;
+				}
+			set
+				{
+				particlesMetrics = value;
+				}
+			}
+		private LogoDrawerObjectMetrics particlesMetrics;
+
+		/// <summary>
 		/// Конструктор. Инициализирует экземпляр настройками по умолчанию
 		/// </summary>
 		/// <param name="DefaultSettings">Флаг указывает, следует ли загрузить стандартные настройки
@@ -470,7 +502,32 @@ namespace RD_AAOW
 			{
 			// Возврат стандартного набора настроек
 			if (SetName == DefaultSetName)
+				{
+				// Инициализация несохраняемых параметров
+				particlesMetrics.MaxSpeed = 5;
+				particlesMetrics.MinSpeed = 1;
+				particlesMetrics.MinSize = 5;
+				particlesMetrics.MaxSize = 10;
+				particlesMetrics.PolygonsSidesCount = 4;
+
+				particlesMetrics.Acceleration = false;
+				particlesMetrics.AsStars = true;
+				particlesMetrics.Enlarging = 0;
+				//particlesMetrics.KeepTracks = false;
+				particlesMetrics.MaxRed = 255;
+				particlesMetrics.MaxGreen = 255;
+				particlesMetrics.MaxBlue = 255;
+				particlesMetrics.MinRed = 128;
+				particlesMetrics.MinGreen = 128;
+				particlesMetrics.MinBlue = 128;
+				particlesMetrics.ObjectsCount = 0;
+				particlesMetrics.ObjectsType = LogoDrawerObjectTypes.RotatingStars;
+				particlesMetrics.Rotation = true;
+				particlesMetrics.StartupPosition = LogoDrawerObjectStartupPositions.CenterRandom;
+				particlesMetrics.MaxSpeedFluctuation = 0;
+
 				return;
+				}
 
 			// Запрос
 			string settings = "";
@@ -497,9 +554,9 @@ namespace RD_AAOW
 				return;
 				}
 
-			// Разбор сохранённых настроек
 			try
 				{
+				// Разбор сохранённых настроек
 				string[] values = settings.Split (splitter, StringSplitOptions.RemoveEmptyEntries);
 
 				deviceNumber = byte.Parse (values[0]);
@@ -536,6 +593,8 @@ namespace RD_AAOW
 				swingingHistogram = (values[22] != "0");
 				spectrogramTopOffset = uint.Parse (values[23]);
 				beatDetectorWaves = (values[24] != "0");
+
+				histoRotInitialAngle = uint.Parse (values[25]);
 				}
 			catch
 				{
@@ -600,7 +659,8 @@ namespace RD_AAOW
 				logoCenterY.ToString () + splitter[0].ToString () +
 				(swingingHistogram ? "SH" : "0") + splitter[0].ToString () +
 				spectrogramTopOffset.ToString () + splitter[0].ToString () +
-				(beatDetectorWaves ? "BW" : "0");
+				(beatDetectorWaves ? "BW" : "0") + splitter[0].ToString () +
+				histoRotInitialAngle.ToString ();
 
 			// Запись
 			try

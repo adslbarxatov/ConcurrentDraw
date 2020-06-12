@@ -1,5 +1,10 @@
 ﻿ConcurrentDraw changes log
 
+Version 1.47e:
+• Added ability to set initial histogram rotation angle;
+• Particles settings are now available in experimental mode (may work incorrectly);
+• Some rendering improvements applied
+
 Version 1.46.2:
 • Fixed FFT scale multiplier for video rendering mode;
 • FFT scale moved to main settings page
