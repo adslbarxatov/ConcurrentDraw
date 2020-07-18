@@ -1,5 +1,8 @@
 ﻿ConcurrentDraw changes log
 
+To do:
+- Accept cumulative effect to particles behavior
+
 Version 1.48p:
 • Updated application info interface (more convenient font is used for now);
 • Added a button to access the Application development policy and EULA in the application info interface (due to ADP update);
