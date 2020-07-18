@@ -1,5 +1,11 @@
 ﻿ConcurrentDraw changes log
 
+Version 1.48p:
+• Updated application info interface (more convenient font is used for now);
+• Added a button to access the Application development policy and EULA in the application info interface (due to ADP update);
+• Added automatic check for updates to the application info interface;
+• Particles settings are now fully available and will be saved properly
+
 Version 1.47e:
 • Added ability to set initial histogram rotation angle;
 • Particles settings are now available in experimental mode (may work incorrectly);

@@ -37,7 +37,7 @@ namespace RD_AAOW
 					ProgramDescription.AssemblyRequirements[0]) + Localization.GetText ("LibraryNotFound_Lib0", al),
 					ProgramDescription.AssemblyTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
 					{
-					AboutForm af = new AboutForm (ProgramDescription.AssemblyUpdatesLink);
+					AboutForm af = new AboutForm (null);
 					}
 				return;
 				}
@@ -62,7 +62,7 @@ namespace RD_AAOW
 						Localization.GetText ("LibraryNotFound_Lib0", al), ProgramDescription.AssemblyTitle,
 						MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
 					{
-					AboutForm af = new AboutForm (ProgramDescription.AssemblyUpdatesLink);
+					AboutForm af = new AboutForm (null);
 					}
 				return;
 				}

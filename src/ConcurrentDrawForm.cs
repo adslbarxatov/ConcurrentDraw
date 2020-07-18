@@ -853,9 +853,10 @@ namespace RD_AAOW
 					// Радиус и углы поворота по индексу и общему вращению
 					rad = logo[1].Width / 2 + (int)((uint)(logo[1].Width * amp) / 256);
 					angle1 = ArcToRad (i / butterflyDensity);
-					angle2 = ArcToRad (currentHistogramAngle + cdp.HistoRotStartAngle);
+					angle2 = ArcToRad (currentHistogramAngle);
 					if (cdp.SwingingHistogram)
 						angle2 = Math.Sin (angle2) / 2.0;
+					angle2 += ArcToRad (cdp.HistoRotStartAngle);
 
 					// Расчёт координат
 					histoX[0] = (int)(logoCenterX + rad * Math.Cos (angle2 + angle1));
@@ -876,9 +877,10 @@ namespace RD_AAOW
 					// Углы
 					// (двойная длина дуги для того же количества линий)
 					angle1 = ArcToRad (((255 - i) * ((i % 2 == 0) ? 1 : -1)) / perspectiveDensity);
-					angle2 = ArcToRad (currentHistogramAngle + 90 + cdp.HistoRotStartAngle);
+					angle2 = ArcToRad (currentHistogramAngle + 90);
 					if (cdp.SwingingHistogram)
 						angle2 = (Math.Sin (angle2 + Math.PI / 2.0) + Math.PI) / 2.0;
+					angle2 += ArcToRad (cdp.HistoRotStartAngle);
 
 					// Координаты
 					histoX[0] = (int)(logoCenterX + rad * Math.Cos (angle2 + angle1));

@@ -10,7 +10,7 @@ namespace RD_AAOW
 	public class CDParametersSet
 		{
 		// Параметры
-		private char[] splitter = new char[] { ';' };
+		private char[] splitter = new char[] { '|', ';' };
 		private const string DefaultSetName = "\x1";
 		private const string SavedSetName = "\x2";
 
@@ -500,34 +500,32 @@ namespace RD_AAOW
 		// Метод загружает настройки программы
 		private void InitParametersSet (string SetName)
 			{
+			// Инициализация несохраняемых параметров
+			particlesMetrics.MaxSpeed = 3;
+			particlesMetrics.MinSpeed = 1;
+			particlesMetrics.MinSize = 5;
+			particlesMetrics.MaxSize = 10;
+			particlesMetrics.PolygonsSidesCount = 6;
+
+			particlesMetrics.Acceleration = false;
+			particlesMetrics.AsStars = true;
+			particlesMetrics.Enlarging = 0;
+			//particlesMetrics.KeepTracks = false;
+			particlesMetrics.MaxRed = 255;
+			particlesMetrics.MaxGreen = 255;
+			particlesMetrics.MaxBlue = 255;
+			particlesMetrics.MinRed = 128;
+			particlesMetrics.MinGreen = 128;
+			particlesMetrics.MinBlue = 128;
+			particlesMetrics.ObjectsCount = 0;
+			particlesMetrics.ObjectsType = LogoDrawerObjectTypes.RotatingStars;
+			particlesMetrics.Rotation = true;
+			particlesMetrics.StartupPosition = LogoDrawerObjectStartupPositions.Top;
+			particlesMetrics.MaxSpeedFluctuation = 0;
+
 			// Возврат стандартного набора настроек
 			if (SetName == DefaultSetName)
-				{
-				// Инициализация несохраняемых параметров
-				particlesMetrics.MaxSpeed = 5;
-				particlesMetrics.MinSpeed = 1;
-				particlesMetrics.MinSize = 5;
-				particlesMetrics.MaxSize = 10;
-				particlesMetrics.PolygonsSidesCount = 4;
-
-				particlesMetrics.Acceleration = false;
-				particlesMetrics.AsStars = true;
-				particlesMetrics.Enlarging = 0;
-				//particlesMetrics.KeepTracks = false;
-				particlesMetrics.MaxRed = 255;
-				particlesMetrics.MaxGreen = 255;
-				particlesMetrics.MaxBlue = 255;
-				particlesMetrics.MinRed = 128;
-				particlesMetrics.MinGreen = 128;
-				particlesMetrics.MinBlue = 128;
-				particlesMetrics.ObjectsCount = 0;
-				particlesMetrics.ObjectsType = LogoDrawerObjectTypes.RotatingStars;
-				particlesMetrics.Rotation = true;
-				particlesMetrics.StartupPosition = LogoDrawerObjectStartupPositions.CenterRandom;
-				particlesMetrics.MaxSpeedFluctuation = 0;
-
 				return;
-				}
 
 			// Запрос
 			string settings = "";
@@ -554,10 +552,11 @@ namespace RD_AAOW
 				return;
 				}
 
+			string[] values;
 			try
 				{
 				// Разбор сохранённых настроек
-				string[] values = settings.Split (splitter, StringSplitOptions.RemoveEmptyEntries);
+				values = settings.Split (splitter, StringSplitOptions.RemoveEmptyEntries);
 
 				deviceNumber = byte.Parse (values[0]);
 				paletteNumber = byte.Parse (values[1]);
@@ -599,6 +598,34 @@ namespace RD_AAOW
 			catch
 				{
 				initFailure = true;
+				return;
+				}
+
+			// Отдельный разбор новых настроек с игнорированием ошибок
+			try
+				{
+				particlesMetrics.MaxSpeed = uint.Parse (values[26]);
+				particlesMetrics.MinSpeed = uint.Parse (values[27]);
+				particlesMetrics.MinSize = uint.Parse (values[28]);
+				particlesMetrics.MaxSize = uint.Parse (values[29]);
+				particlesMetrics.PolygonsSidesCount = byte.Parse (values[30]);
+				particlesMetrics.Acceleration = (values[31] != "0");
+				particlesMetrics.AsStars = (values[32] != "0");
+				particlesMetrics.Enlarging = int.Parse (values[33]);
+				particlesMetrics.MaxRed = byte.Parse (values[34]);
+				particlesMetrics.MaxGreen = byte.Parse (values[35]);
+				particlesMetrics.MaxBlue = byte.Parse (values[36]);
+				particlesMetrics.MinRed = byte.Parse (values[37]);
+				particlesMetrics.MinGreen = byte.Parse (values[38]);
+				particlesMetrics.MinBlue = byte.Parse (values[39]);
+				particlesMetrics.ObjectsCount = byte.Parse (values[40]);
+				particlesMetrics.ObjectsType = (LogoDrawerObjectTypes)byte.Parse (values[41]);
+				particlesMetrics.Rotation = (values[42] != "0");
+				particlesMetrics.StartupPosition = (LogoDrawerObjectStartupPositions)byte.Parse (values[43]);
+				particlesMetrics.MaxSpeedFluctuation = uint.Parse (values[44]);
+				}
+			catch
+				{
 				}
 			}
 
@@ -661,6 +688,26 @@ namespace RD_AAOW
 				spectrogramTopOffset.ToString () + splitter[0].ToString () +
 				(beatDetectorWaves ? "BW" : "0") + splitter[0].ToString () +
 				histoRotInitialAngle.ToString ();
+
+			settings += (splitter[1].ToString () + particlesMetrics.MaxSpeed.ToString () + splitter[0].ToString () +
+				particlesMetrics.MinSpeed.ToString () + splitter[0].ToString () +
+				particlesMetrics.MinSize.ToString () + splitter[0].ToString () +
+				particlesMetrics.MaxSize.ToString () + splitter[0].ToString () +
+				particlesMetrics.PolygonsSidesCount.ToString () + splitter[0].ToString () +
+				(particlesMetrics.Acceleration ? "A" : "0") + splitter[0].ToString () +
+				(particlesMetrics.AsStars ? "AS" : "0") + splitter[0].ToString () +
+				particlesMetrics.Enlarging.ToString () + splitter[0].ToString () +
+				particlesMetrics.MaxRed.ToString () + splitter[0].ToString () +
+				particlesMetrics.MaxGreen.ToString () + splitter[0].ToString () +
+				particlesMetrics.MaxBlue.ToString () + splitter[0].ToString () +
+				particlesMetrics.MinRed.ToString () + splitter[0].ToString () +
+				particlesMetrics.MinGreen.ToString () + splitter[0].ToString () +
+				particlesMetrics.MinBlue.ToString () + splitter[0].ToString () +
+				particlesMetrics.ObjectsCount.ToString () + splitter[0].ToString () +
+				((byte)particlesMetrics.ObjectsType).ToString () + splitter[0].ToString () +
+				(particlesMetrics.Rotation ? "R" : "0") + splitter[0].ToString () +
+				((byte)particlesMetrics.StartupPosition).ToString () + splitter[0].ToString () +
+				particlesMetrics.MaxSpeedFluctuation.ToString ());
 
 			// Запись
 			try

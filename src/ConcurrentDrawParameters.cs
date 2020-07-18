@@ -267,8 +267,8 @@ namespace RD_AAOW
 				SGHeight.Value = parameters[psn].SpectrogramHeight;			// Установка размеров окна определяет максимум SGHeight
 				SGTopOffset.Value = parameters[psn].SpectrogramTopOffset;	// Установка SGHeight определяет максимум SGTopOffset
 
-				// Эти параметры не сохраняются
-				/*ObjectsMaxSpeedField.Value = parameters[psn].ParticlesMetrics.MaxSpeed;
+				// Эти параметры теперь тоже сохраняются
+				ObjectsMaxSpeedField.Value = parameters[psn].ParticlesMetrics.MaxSpeed;
 				ObjectsMinSpeedField.Value = parameters[psn].ParticlesMetrics.MinSpeed;
 				ObjectsMaxSizeField.Value = parameters[psn].ParticlesMetrics.MaxSize;
 				ObjectsMinSizeField.Value = parameters[psn].ParticlesMetrics.MinSize;
@@ -284,7 +284,7 @@ namespace RD_AAOW
 				ObjectsCountField.Value = parameters[psn].ParticlesMetrics.ObjectsCount;
 				ObjectsTypeCombo.SelectedIndex = (int)parameters[psn].ParticlesMetrics.ObjectsType;
 				ObjectsStartupSideCombo.SelectedIndex = (int)parameters[psn].ParticlesMetrics.StartupPosition;
-				ObjectsSpeedFluctuationField.Value = parameters[psn].ParticlesMetrics.MaxSpeedFluctuation;*/
+				ObjectsSpeedFluctuationField.Value = parameters[psn].ParticlesMetrics.MaxSpeedFluctuation;
 				}
 			catch
 				{
@@ -485,8 +485,7 @@ namespace RD_AAOW
 			ConcurrentDrawLogo cdl = new ConcurrentDrawLogo ();
 			cdl.Dispose ();
 
-			AboutForm af = new AboutForm (al, "https://github.com/adslbarxatov/ConcurrentDraw",
-				ProgramDescription.AssemblyUpdatesLink,
+			AboutForm af = new AboutForm (al, "*", "*",
 				"https://www.youtube.com/watch?v=VE9k73uhy0Y&list=PLe7qKwHNkZTtr1OGOdYMrD73ByPBzCzxc&index=16",
 
 				Localization.GetText ("HelpText", al) + "\r\n\r\n" + Localization.GetText ("HelpKeysText", al));
@@ -1060,7 +1059,7 @@ namespace RD_AAOW
 			{
 			get
 				{
-				return (ObjectsCountField.Value > 0);
+				return (parameters[SSN].ParticlesMetrics.ObjectsCount > 0);
 				}
 			}
 
