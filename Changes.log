@@ -1,7 +1,8 @@
 ﻿ConcurrentDraw changes log
 
 To do:
-- Accept cumulative effect to particles behavior
+- Apply cumulative effect to particles behavior;
+- Replace shake flag with shake power coefficient
 
 Version 1.48p:
 • Updated application info interface (more convenient font is used for now);
