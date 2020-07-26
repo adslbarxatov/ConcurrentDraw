@@ -1115,7 +1115,7 @@ namespace RD_AAOW
 		/// <summary>
 		/// Количество возможных стартовых позиций
 		/// </summary>
-		public const uint ObjectStartupPositionsCount = 10;
+		public const uint ObjectStartupPositionsCount = 14;
 
 		/// <summary>
 		/// Количество возможных типов объектов

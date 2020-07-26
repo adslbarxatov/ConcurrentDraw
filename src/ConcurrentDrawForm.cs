@@ -82,6 +82,7 @@ namespace RD_AAOW
 		private uint cumulationCounter;							// Накопитель, обеспечивающий кумулятивный эффект
 		private const uint cumulationDivisor = 100,				// Граница и масштаб накопителя
 			cumulationLimit = 255 * cumulationDivisor;
+		private uint cumulation;								// Дополнительная переменная для хранения текущего состояния эффекта
 
 		// Метрики гистограмм
 		private int[] histoX = new int[4],
@@ -334,11 +335,11 @@ namespace RD_AAOW
 				{
 				gr.Add (Graphics.FromHwnd (this.Handle));
 				}
-				ResetLogo ();
+			ResetLogo ();
 
-				// Подготовка параметров
-				subtitlesFonts[0] = new Font ("Arial Narrow", this.Width / 50, FontStyle.Bold);
-				subtitlesFonts[1] = new Font ("Arial", this.Width / 40, FontStyle.Bold);
+			// Подготовка параметров
+			subtitlesFonts[0] = new Font ("Arial Narrow", this.Width / 50, FontStyle.Bold);
+			subtitlesFonts[1] = new Font ("Arial", this.Width / 40, FontStyle.Bold);
 
 #if VIDEO
 			// Отображение длины интро
@@ -361,11 +362,11 @@ namespace RD_AAOW
 				}
 			else
 #endif
-				// Запуск таймера
-					{
-					ExtendedTimer.Enabled = true;
-					}
-					this.Activate ();
+			// Запуск таймера
+				{
+				ExtendedTimer.Enabled = true;
+				}
+			this.Activate ();
 			}
 
 		// Метод инициализирует аудиоканал
@@ -379,7 +380,7 @@ namespace RD_AAOW
 				ssie = ConcurrentDrawLib.InitializeSoundStream (OFAudio.FileName);
 			else
 #endif
-			ssie = ConcurrentDrawLib.InitializeSoundStream (cdp.DeviceNumber);
+				ssie = ConcurrentDrawLib.InitializeSoundStream (cdp.DeviceNumber);
 			switch (ssie)
 				{
 				case SoundStreamInitializationErrors.BASS_ERROR_ALREADY:
@@ -594,15 +595,19 @@ namespace RD_AAOW
 				}
 
 			// Отрисовка объектов со смещением
-			/*uint cumulation;
-			if (VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode))
-				cumulation = 255;
-			else
-				cumulation = cumulationCounter / cumulationDivisor;*/
+			LogoDrawerObjectMetrics ldom = cdp.ParticlesMetrics;
+			if (cumulation > 0)
+				{
+				ldom.MaxSpeed += cumulation * ldom.MaxSpeed / 128;
+				ldom.MinSpeed += cumulation * ldom.MinSpeed / 128;
+				ldom.MaxSpeedFluctuation += cumulation * ldom.MaxSpeedFluctuation / 256;
+				ldom.MaxSize += cumulation * ldom.MaxSize / 128;
+				ldom.MinSize += cumulation * ldom.MinSize / 128;
+				}
 
 			// Фиктивная инициализация
 			if (objects.Count < cdp.ParticlesMetrics.ObjectsCount)
-				objects.Add (new LogoDrawerLetter (0, 0, null, cdp.ParticlesMetrics));
+				objects.Add (new LogoDrawerLetter (0, 0, null, ldom));
 
 			for (int i = 0; i < objects.Count; i++)
 				{
@@ -620,19 +625,19 @@ namespace RD_AAOW
 						//case LogoDrawerObjectTypes.Pictures:
 						//case LogoDrawerObjectTypes.RotatingPictures:
 						case LogoDrawerObjectTypes.Spheres:
-							objects[i] = new LogoDrawerSphere ((uint)this.Width, (uint)this.Height, rnd, cdp.ParticlesMetrics);
+							objects[i] = new LogoDrawerSphere ((uint)this.Width, (uint)this.Height, rnd, ldom);
 							break;
 
 						case LogoDrawerObjectTypes.Polygons:
 						case LogoDrawerObjectTypes.Stars:
 						case LogoDrawerObjectTypes.RotatingPolygons:
 						case LogoDrawerObjectTypes.RotatingStars:
-							objects[i] = new LogoDrawerSquare ((uint)this.Width, (uint)this.Height, rnd, cdp.ParticlesMetrics);
+							objects[i] = new LogoDrawerSquare ((uint)this.Width, (uint)this.Height, rnd, ldom);
 							break;
 
 						case LogoDrawerObjectTypes.Letters:
 						case LogoDrawerObjectTypes.RotatingLetters:
-							objects[i] = new LogoDrawerLetter ((uint)this.Width, (uint)this.Height, rnd, cdp.ParticlesMetrics);
+							objects[i] = new LogoDrawerLetter ((uint)this.Width, (uint)this.Height, rnd, ldom);
 							break;
 						}
 					}
@@ -646,9 +651,11 @@ namespace RD_AAOW
 		// Метод отрисовывает сформированный кадр
 		private void DrawFrame ()
 			{
-			if (cdp.ShakeEffect)
+			if (cdp.ShakeEffect > 1)
 				{
-				amp = mainLayer.Layer.Width * peak / 0xA000;
+				amp = (int)cdp.ShakeEffect * peak / 256;
+				if (cumulation > 0)
+					amp += (int)cumulation * amp / 192;
 
 				gr[0].DrawImage (mainLayer.Layer, mainLayer.Left + rnd.Next (-amp, amp),
 					mainLayer.Top + rnd.Next (-amp, amp));
@@ -688,7 +695,10 @@ namespace RD_AAOW
 		private void RotateAndDrawLogo ()
 			{
 			// Отрисовка
-			gr[1].RotateTransform (currentLogoAngleDelta);
+			if (cdp.ExtendedCumulationEffect && (cumulation > 0))
+				gr[1].RotateTransform (currentLogoAngleDelta + cumulation * currentLogoAngleDelta / 256);
+			else
+				gr[1].RotateTransform (currentLogoAngleDelta);
 			gr[1].DrawImage (logo[0], -3 * logoHeight / 5, -3 * logoHeight / 5);
 
 			// Обработка режима "только лого"
@@ -701,6 +711,9 @@ namespace RD_AAOW
 
 			// Отрисовка лого
 			mainLayer.Descriptor.DrawImage (logo[1], logoCenterX - logo[1].Width / 2, logoCenterY - logo[1].Height / 2);
+			/*mainLayer.Descriptor.DrawImage (logo[1],
+				new Rectangle ((int)logoCenterX - logo[1].Width / 2, (int)logoCenterY - logo[1].Height / 2, logo[1].Width, logo[1].Height),
+				0, 0, logo[1].Width, logo[1].Height, GraphicsUnit.Pixel, sgAttributes[3]);*/
 			}
 
 		// Первичное вращение лого
@@ -765,11 +778,12 @@ namespace RD_AAOW
 				cumulationCounter = 0;
 				}
 
-			if (((cumulationCounter / cumulationDivisor) != (oldCC / cumulationDivisor)) ||	// Целочисленное деление обязательно
+			cumulation = cumulationCounter / cumulationDivisor;
+			if ((cumulation != (oldCC / cumulationDivisor)) ||	// Целочисленное деление обязательно
 				firstFilling)	// Отвечает за правильное применение фона при старте программы
 				{
 				brushes[2].Color = Color.FromArgb (fillingOpacity * (MaxFilling ? 6 : 1),
-					ConcurrentDrawLib.GetMasterPaletteColor ((byte)(cumulationCounter / cumulationDivisor)));
+					ConcurrentDrawLib.GetMasterPaletteColor ((byte)cumulation));
 				}
 
 			// Затенение изображения / кумулятивный эффект
@@ -777,20 +791,20 @@ namespace RD_AAOW
 			if ((backgrounds.Count == 0) || firstFilling)
 				{
 #endif
-			if (VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode))
-				{
-				if (cdp.SpectrogramTopOffset > 0)
-					mainLayer.Descriptor.FillRectangle (brushes[2], 0, 0, mainLayer.Layer.Width,
-						cdp.SpectrogramTopOffset);
+				if (VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode))
+					{
+					if (cdp.SpectrogramTopOffset > 0)
+						mainLayer.Descriptor.FillRectangle (brushes[2], 0, 0, mainLayer.Layer.Width,
+							cdp.SpectrogramTopOffset);
 
-				if (cdp.SpectrogramTopOffset + cdp.SpectrogramHeight < mainLayer.Layer.Height)
-					mainLayer.Descriptor.FillRectangle (brushes[2], 0, cdp.SpectrogramTopOffset + cdp.SpectrogramHeight,
-						mainLayer.Layer.Width, mainLayer.Layer.Height - cdp.SpectrogramTopOffset - cdp.SpectrogramHeight);
-				}
-			else
-				{
-				mainLayer.Descriptor.FillRectangle (brushes[2], 0, 0, mainLayer.Layer.Width, mainLayer.Layer.Height);
-				}
+					if (cdp.SpectrogramTopOffset + cdp.SpectrogramHeight < mainLayer.Layer.Height)
+						mainLayer.Descriptor.FillRectangle (brushes[2], 0, cdp.SpectrogramTopOffset + cdp.SpectrogramHeight,
+							mainLayer.Layer.Width, mainLayer.Layer.Height - cdp.SpectrogramTopOffset - cdp.SpectrogramHeight);
+					}
+				else
+					{
+					mainLayer.Descriptor.FillRectangle (brushes[2], 0, 0, mainLayer.Layer.Width, mainLayer.Layer.Height);
+					}
 #if VIDEO
 				}
 			else
@@ -808,6 +822,8 @@ namespace RD_AAOW
 			// Завершение
 			if (firstFilling)
 				firstFilling = false;
+			if (!cdp.ExtendedCumulationEffect)
+				cumulation = 0;
 			}
 
 		// Метод отрисовывает гистограммы «бабочка» и «перспектива»
@@ -822,15 +838,22 @@ namespace RD_AAOW
 				if (currentLogoAngleDelta < -logoIdleSpeed)
 					{
 					currentHistogramAngle -= (cdp.HistoRotSpeedDelta * currentLogoAngleDelta / logoSpeedImpulse);
+					if (cumulation > 0)
+						currentHistogramAngle -= (cumulation * cdp.HistoRotSpeedDelta * currentLogoAngleDelta /
+							(logoSpeedImpulse * 192));
 					}
 				}
 			else
 				{
 				currentHistogramAngle += cdp.HistoRotSpeedDelta;
+				if (cumulation > 0)
+					currentHistogramAngle += cumulation * cdp.HistoRotSpeedDelta / 192;
 				}
 
 			if (currentHistogramAngle > 360.0)
 				currentHistogramAngle -= 360.0;
+			if (currentHistogramAngle < 0.0)
+				currentHistogramAngle += 360.0;
 
 			// Отрисовка
 			if (VisualizationModesChecker.IsPerspective (cdp.VisualizationMode))

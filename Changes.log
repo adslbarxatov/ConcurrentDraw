@@ -1,8 +1,14 @@
 ﻿ConcurrentDraw changes log
 
-To do:
-- Apply cumulative effect to particles behavior;
-- Replace shake flag with shake power coefficient
+Version 1.49:
+• Shake effect flag replaced with power coefficient (up to 15); [K] key will increase it; with [Shift] it will decrease value;
+• Histogram rotation now can be CCW (with negative angle); as before, can be set with '<' and '>' keys;
+• Added extended cumulation effect flag. When set, cumulation effect will also increase:
+    - speed, size and fluctuation of particles;
+    - power of shake effect;
+    - speed of logo rotation;
+    - speed of histogram rotation.
+  Can be switched by [E] key
 
 Version 1.48p:
 • Updated application info interface (more convenient font is used for now);

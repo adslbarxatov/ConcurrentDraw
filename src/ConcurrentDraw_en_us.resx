@@ -253,8 +253,8 @@ Placement:</value>
   <data name="HistoTab_HistoRotSpeed" xml:space="preserve">
     <value>Rotation with constant angle increment:</value>
   </data>
-  <data name="GenericTab_ShakeFlag" xml:space="preserve">
-    <value>Shake effect</value>
+  <data name="GenericTab_ShakeLabel" xml:space="preserve">
+    <value>Shake power:</value>
   </data>
   <data name="CDP_WindowSize" xml:space="preserve">
     <value>Select window size</value>
@@ -306,12 +306,13 @@ Center placement: X = {1:S}; Y = {2:S}</value>
 • [C] – move histogram to the center of window; with [Shift] – move logo;
 • [/ ?] – show this quick user manual;
 • [T] – switch 'Always on top' flag;
-• [K] – switch shake flag;
+• [K] – increase shake effect power; with [Shift] – decrease it;
 • [I] – request for current settings info;
 • [S] – saving current visualization screen to image file;
 • [W] – switch 'histogram swinging' flag;
 • [V] – switch 'beats waves' flag;
-• [PageUp] and [PageDown] – change histogram field's height; with [Shift] – change logo height</value>
+• [PageUp] and [PageDown] – change histogram field's height; with [Shift] – change logo height;
+• [E] – switch 'extended cumulative effect' flag</value>
   </data>
   <data name="CumulationTab_CEInfoLabel" xml:space="preserve">
     <value>(1 – no cumulative effect)</value>
@@ -394,5 +395,8 @@ Do you want to open webpage for downloading the actual library version?</value>
   </data>
   <data name="HistoTab_HistoRotInitialAngleLabel" xml:space="preserve">
     <value>Initial angle:</value>
+  </data>
+  <data name="CumulationTab_ExtendedCumulation" xml:space="preserve">
+    <value>Extended cumulative effect</value>
   </data>
 </root>

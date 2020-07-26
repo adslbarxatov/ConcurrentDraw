@@ -253,8 +253,8 @@
   <data name="HistoTab_HistoRotSpeed" xml:space="preserve">
     <value>Вращение с постоянным угловым приращением:</value>
   </data>
-  <data name="GenericTab_ShakeFlag" xml:space="preserve">
-    <value>Эффект дрожания</value>
+  <data name="GenericTab_ShakeLabel" xml:space="preserve">
+    <value>Сила дрожания:</value>
   </data>
   <data name="CDP_WindowSize" xml:space="preserve">
     <value>Выберите размер окна</value>
@@ -306,12 +306,13 @@
 • [C] – переместить поле гистограммы в центр окна; вместе с [Shift] – переместить лого;
 • [/ ?] – показать это краткое руководство пользователя;
 • [T] – переключение флага «Поверх всех окон»;
-• [K] – переключение флага эффекта дрожания;
+• [K] – увеличение силы эффекта дрожания; вместе с [Shift] – уменьшение;
 • [I] – запрос информации о текущих настройках;
 • [S] – сохранение текущего изображения визуализации в файл;
 • [W] – переключение флага «Качание гистограммы»;
 • [V] – переключение флага «Волны бит-детектора»;
-• [PageUp] и [PageDown] – изменение высоты поля гистограммы; вместе с [Shift] – изменение размера лого</value>
+• [PageUp] и [PageDown] – изменение высоты поля гистограммы; вместе с [Shift] – изменение размера лого;
+• [E] – переключение флага «Расширенный кумулятивный эффект»</value>
   </data>
   <data name="CumulationTab_CEInfoLabel" xml:space="preserve">
     <value>(1 – без кумулятивного эффекта)</value>
@@ -395,5 +396,8 @@
   </data>
   <data name="HistoTab_HistoRotInitialAngleLabel" xml:space="preserve">
     <value>Начальный угол:</value>
+  </data>
+  <data name="CumulationTab_ExtendedCumulation" xml:space="preserve">
+    <value>Расширенный кумулятивный эффект</value>
   </data>
 </root>

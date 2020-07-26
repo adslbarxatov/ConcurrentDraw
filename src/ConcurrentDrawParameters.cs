@@ -72,6 +72,7 @@ namespace RD_AAOW
 				}
 			VisualizationCombo.SelectedIndex = Math.Abs (parameters[DSN].VisualizationMode);
 			WithLogoFlag.Checked = (parameters[DSN].VisualizationMode >= 0);
+			ShakeValue.Value = parameters[DSN].ShakeEffect;
 
 			// Высота спектрограммы
 			SGHeight.Minimum = VisHeight.Minimum = ConcurrentDrawLib.MinSpectrogramFrameHeight;
@@ -117,13 +118,15 @@ namespace RD_AAOW
 			LogoHeightPercentage.Value = parameters[DSN].LogoHeightPercentage;
 
 			// Скорость вращения гистограммы
-			HistoRotSpeedAngle.Value = parameters[DSN].HistoRotSpeedDelta;
-			HistoRotSpeed.Checked = true;
+			HistoRotSpeedAngle.Value = parameters[DSN].HistoRotationSpeedDelta;
+			if (parameters[DSN].HistoRotationAccToBeats)
+				HistoRotAccToBeats.Checked = true;
+			else
+				HistoRotSpeed.Checked = true;
 			HistoRotInitialAngle.Value = parameters[DSN].HistoRotInitialAngle;
 
 			// Флаги
 			AlwaysOnTopFlag.Checked = parameters[DSN].AlwaysOnTop;
-			ShakeFlag.Checked = parameters[DSN].ShakeEffect;
 			SDDoubleWidthFlag.Checked = parameters[DSN].SpectrogramDoubleWidth;
 			SwingingHistogramFlag.Checked = parameters[DSN].SwingingHistogram;
 			BeatWavesFlag.Checked = parameters[DSN].BeatDetectorWaves;
@@ -240,19 +243,20 @@ namespace RD_AAOW
 
 				CEDecumulationMultiplier.Value = parameters[psn].DecumulationMultiplier;
 				CECumulationSpeed.Value = parameters[psn].CumulationSpeed;
+				ExtendedCumulation.Checked = parameters[psn].ExtendedCumulativeEffect;
 
 				LogoHeightPercentage.Value = parameters[psn].LogoHeightPercentage;
 				LogoCenterXTrack.Value = (int)parameters[psn].LogoCenterX;
 				LogoCenterYTrack.Value = (int)(LogoCenterYTrack.Maximum - parameters[psn].LogoCenterY);
 
-				if (parameters[psn].HistoRotSpeedDelta < 0)
+				if (parameters[psn].HistoRotationAccToBeats)
 					HistoRotAccToBeats.Checked = true;
 				else
 					HistoRotSpeed.Checked = true;
-				HistoRotSpeedAngle.Value = (decimal)Math.Abs (parameters[psn].HistoRotSpeedDelta / 10.0);
+				HistoRotSpeedAngle.Value = (decimal)(parameters[psn].HistoRotationSpeedDelta / 10.0);
 				HistoRotInitialAngle.Value = parameters[psn].HistoRotInitialAngle;
 
-				ShakeFlag.Checked = parameters[psn].ShakeEffect;
+				ShakeValue.Value = parameters[psn].ShakeEffect;
 				BeatWavesFlag.Checked = parameters[psn].BeatDetectorWaves;
 
 				// Эти параметры перемещены в конец, т.к. могут вызывать ошибки при запусках, не зависящие от программы
@@ -403,17 +407,17 @@ namespace RD_AAOW
 
 			parameters[psn].DecumulationMultiplier = (byte)CEDecumulationMultiplier.Value;
 			parameters[psn].CumulationSpeed = (byte)CECumulationSpeed.Value;
+			parameters[psn].ExtendedCumulativeEffect = ExtendedCumulation.Checked;
+
 			parameters[psn].LogoHeightPercentage = (byte)LogoHeightPercentage.Value;
 			parameters[psn].LogoCenterX = (uint)LogoCenterXTrack.Value;
 			parameters[psn].LogoCenterY = (uint)(LogoCenterYTrack.Maximum - LogoCenterYTrack.Value);
 
-			if (HistoRotAccToBeats.Checked)
-				parameters[psn].HistoRotSpeedDelta = (int)(-HistoRotSpeedAngle.Value * 10);
-			else
-				parameters[psn].HistoRotSpeedDelta = (int)(HistoRotSpeedAngle.Value * 10);
+			parameters[psn].HistoRotationAccToBeats = HistoRotAccToBeats.Checked;
+			parameters[psn].HistoRotationSpeedDelta = (int)(HistoRotSpeedAngle.Value * 10);
 			parameters[psn].HistoRotInitialAngle = (uint)HistoRotInitialAngle.Value;
 
-			parameters[psn].ShakeEffect = ShakeFlag.Checked;
+			parameters[psn].ShakeEffect = (uint)ShakeValue.Value;
 			parameters[psn].BeatDetectorWaves = BeatWavesFlag.Checked;
 
 			parameters[psn].FFTScaleMultiplier = (byte)FFTScaleMultiplier.Value;
@@ -736,13 +740,13 @@ namespace RD_AAOW
 			}
 
 		/// <summary>
-		/// Возвращает флаг, указывающий на эффект тряски
+		/// Возвращает силу тряски
 		/// </summary>
-		public bool ShakeEffect
+		public uint ShakeEffect
 			{
 			get
 				{
-				return parameters[SSN].ShakeEffect;
+				return parameters[SSN].ShakeEffect + 1;	// Значение 1 не имеет реального эффекта
 				}
 			}
 
@@ -841,7 +845,7 @@ namespace RD_AAOW
 			{
 			get
 				{
-				return Math.Abs (parameters[SSN].HistoRotSpeedDelta / 10.0);
+				return parameters[SSN].HistoRotationSpeedDelta / 10.0;
 				}
 			}
 
@@ -863,7 +867,7 @@ namespace RD_AAOW
 			{
 			get
 				{
-				return (parameters[SSN].HistoRotSpeedDelta < 0);
+				return parameters[SSN].HistoRotationAccToBeats;
 				}
 			}
 
@@ -881,7 +885,7 @@ namespace RD_AAOW
 		// Сброс вращения гистограммы
 		private void ResetRotation_Click (object sender, EventArgs e)
 			{
-			HistoRotSpeedAngle.Value = HistoRotSpeedAngle.Minimum;
+			HistoRotSpeedAngle.Value = 0;
 			}
 
 		// Сброс начального угла поворота гистограммы
@@ -1019,6 +1023,17 @@ namespace RD_AAOW
 			get
 				{
 				return parameters[SSN].CumulationSpeed;
+				}
+			}
+
+		/// <summary>
+		/// Возвращает флаг расширенного кумулятивного эффекта
+		/// </summary>
+		public bool ExtendedCumulationEffect
+			{
+			get
+				{
+				return parameters[SSN].ExtendedCumulativeEffect;
 				}
 			}
 
@@ -1199,7 +1214,11 @@ namespace RD_AAOW
 
 			Keys.C,
 			Keys.PageUp,
-			Keys.PageDown					// 38
+			Keys.PageDown,					// 38
+
+			Keys.K | Keys.Shift,			
+			Keys.E							// 40
+
 
 			// Клавиши, обрабатываемые в основном интерфейсе
 			// Keys.R,
@@ -1404,10 +1423,24 @@ namespace RD_AAOW
 					hotKeyResult = AlwaysOnTopFlag.Text + " = " + (AlwaysOnTopFlag.Checked ? "1" : "0");
 					break;
 
-				// Изменение флага Shake
+				// Изменение значения силы тряски
 				case 12:
-					ShakeFlag.Checked = !ShakeFlag.Checked;
-					hotKeyResult = ShakeFlag.Text + " = " + (ShakeFlag.Checked ? "1" : "0");
+				case 39:
+					if (i == 12)
+						{
+						if (ShakeValue.Value < ShakeValue.Maximum)
+							ShakeValue.Value++;
+						else
+							ShakeValue.Value = ShakeValue.Minimum;
+						}
+					else
+						{
+						if (ShakeValue.Value > ShakeValue.Minimum)
+							ShakeValue.Value--;
+						else
+							ShakeValue.Value = ShakeValue.Maximum;
+						}
+					hotKeyResult = ShakeLabel.Text + " " + ShakeValue.Value.ToString ();
 					break;
 
 				// Выравнивание лого по центру
@@ -1430,7 +1463,7 @@ namespace RD_AAOW
 						VisSizeLabel.Text + " " + VisWidth.Value.ToString () + " x " + VisHeight.Value.ToString () + " px\n" +
 						VisLeftTopLabel.Text + " " + VisLeft.Value.ToString () + " x " + VisTop.Value.ToString () + " px\n" +
 						PaletteLabel.Text + " " + SDPaletteCombo.Text + "\n" +
-						(ShakeFlag.Checked ? (ShakeFlag.Text + "\n") : "") +
+						ShakeLabel.Text + " " + ShakeValue.Value.ToString () + "\n" +
 						(AlwaysOnTopFlag.Checked ? (AlwaysOnTopFlag.Text + "\n") : "") +
 						FFTScaleLabel.Text + "\n\n" +
 
@@ -1546,6 +1579,12 @@ namespace RD_AAOW
 						SGHeight.Value.ToString () + SGHeightPxLabel.Text;
 					break;
 				#endregion
+
+				// Переключение флага расширенного кумулятивного эффекта
+				case 40:
+					ExtendedCumulation.Checked = !ExtendedCumulation.Checked;
+					hotKeyResult = ExtendedCumulation.Text + " = " + (ExtendedCumulation.Checked ? "1" : "0");
+					break;
 				}
 
 			// Применение новой настройки

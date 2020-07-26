@@ -63,6 +63,22 @@ namespace RD_AAOW
 		private byte decumulationMultiplier = 15;
 
 		/// <summary>
+		/// Возвращает или задаёт флаг применения кумулятивного эффекта к остальным параметрам отображения
+		/// </summary>
+		public bool ExtendedCumulativeEffect
+			{
+			get
+				{
+				return extendedCumulativeEffect;
+				}
+			set
+				{
+				extendedCumulativeEffect = value;
+				}
+			}
+		private bool extendedCumulativeEffect = false;
+
+		/// <summary>
 		/// Константа, определяющая максимум для шкалы ослабления кумулятивного эффекта
 		/// </summary>
 		public const byte DecumulationMultiplierMaximum = 20;
@@ -118,18 +134,34 @@ namespace RD_AAOW
 		/// <summary>
 		/// Возвращает или задаёт скорость изменения угла поворота гистограммы
 		/// </summary>
-		public int HistoRotSpeedDelta
+		public int HistoRotationSpeedDelta
 			{
 			get
 				{
-				return histoRotSpeedDelta;
+				return histoRotationSpeedDelta;
 				}
 			set
 				{
-				histoRotSpeedDelta = value;
+				histoRotationSpeedDelta = value;
 				}
 			}
-		private int histoRotSpeedDelta = 0;
+		private int histoRotationSpeedDelta = 0;
+
+		/// <summary>
+		/// Возвращает или задаёт флаг вращения в соответствии с детектором битов
+		/// </summary>
+		public bool HistoRotationAccToBeats
+			{
+			get
+				{
+				return histoRotationAccToBeats;
+				}
+			set
+				{
+				histoRotationAccToBeats = value;
+				}
+			}
+		private bool histoRotationAccToBeats = false;
 
 		/// <summary>
 		/// Возвращает или задаёт начальный угол поворота гистограммы
@@ -180,9 +212,9 @@ namespace RD_AAOW
 		private byte paletteNumber = 0;
 
 		/// <summary>
-		/// Возвращает или задаёт флаг, указывающий на эффект тряски
+		/// Возвращает или задаёт силу тряски
 		/// </summary>
-		public bool ShakeEffect
+		public uint ShakeEffect
 			{
 			get
 				{
@@ -193,7 +225,7 @@ namespace RD_AAOW
 				shakeEffect = value;
 				}
 			}
-		private bool shakeEffect = false;
+		private uint shakeEffect = 0;
 
 		/// <summary>
 		/// Возвращает или задаёт высоту изображения диаграммы
@@ -578,8 +610,8 @@ namespace RD_AAOW
 				decumulationMultiplier = byte.Parse (values[11]);
 				cumulationSpeed = byte.Parse (values[12]);
 				logoHeightPercentage = byte.Parse (values[13]);
-				histoRotSpeedDelta = int.Parse (values[14]);
-				shakeEffect = (values[15] != "0");
+				histoRotationSpeedDelta = int.Parse (values[14]);
+				shakeEffect = uint.Parse (values[15]);
 
 				beatsDetectorLowEdge = byte.Parse (values[16]);
 				beatsDetectorHighEdge = byte.Parse (values[17]);
@@ -623,6 +655,9 @@ namespace RD_AAOW
 				particlesMetrics.Rotation = (values[42] != "0");
 				particlesMetrics.StartupPosition = (LogoDrawerObjectStartupPositions)byte.Parse (values[43]);
 				particlesMetrics.MaxSpeedFluctuation = uint.Parse (values[44]);
+
+				histoRotationAccToBeats = (values[45] != "0");
+				extendedCumulativeEffect = (values[46] != "0");
 				}
 			catch
 				{
@@ -673,9 +708,9 @@ namespace RD_AAOW
 				decumulationMultiplier.ToString () + splitter[0].ToString () +
 				cumulationSpeed.ToString () + splitter[0].ToString () +
 				logoHeightPercentage.ToString () + splitter[0].ToString () +
-				histoRotSpeedDelta.ToString () + splitter[0].ToString () +
+				histoRotationSpeedDelta.ToString () + splitter[0].ToString () +
 
-				(shakeEffect ? "SE" : "0") + splitter[0].ToString () +
+				shakeEffect.ToString () + splitter[0].ToString () +
 
 				beatsDetectorLowEdge.ToString () + splitter[0].ToString () +
 				beatsDetectorHighEdge.ToString () + splitter[0].ToString () +
@@ -708,6 +743,9 @@ namespace RD_AAOW
 				(particlesMetrics.Rotation ? "R" : "0") + splitter[0].ToString () +
 				((byte)particlesMetrics.StartupPosition).ToString () + splitter[0].ToString () +
 				particlesMetrics.MaxSpeedFluctuation.ToString ());
+
+			settings += (splitter[1].ToString () + (histoRotationAccToBeats ? "RAB" : "0") +
+				splitter[0].ToString () + (extendedCumulativeEffect ? "ECE" : "0"));
 
 			// Запись
 			try
