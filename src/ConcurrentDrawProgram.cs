@@ -67,9 +67,16 @@ namespace RD_AAOW
 				return;
 				}
 
-			// Начальная обработка и отображение лого
+			// Инициализация
 			Application.EnableVisualStyles ();
 			Application.SetCompatibleTextRenderingDefault (false);
+
+			// Отображение справки и запроса на принятие Политики
+			if (!ProgramDescription.AcceptEULA ())
+				return;
+			ProgramDescription.ShowAbout (true);
+
+			// Запуск
 			Application.Run (new ConcurrentDrawForm ());
 			}
 		}

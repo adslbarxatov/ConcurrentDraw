@@ -217,7 +217,10 @@ namespace RD_AAOW
 				parameters[psn] = new CDParametersSet (false);
 				if (parameters[psn].InitFailure)
 					{
-					BHelp_Click (null, null);	// Справка на случай первого запуска
+					ConcurrentDrawLogo cdl = new ConcurrentDrawLogo ();
+					cdl.Dispose ();
+
+					ProgramDescription.ShowAbout (true);	// Справка на случай первого запуска
 					req = true;
 					}
 				}
@@ -489,10 +492,7 @@ namespace RD_AAOW
 			ConcurrentDrawLogo cdl = new ConcurrentDrawLogo ();
 			cdl.Dispose ();
 
-			AboutForm af = new AboutForm (al, "*", "*",
-				"https://www.youtube.com/watch?v=VE9k73uhy0Y&list=PLe7qKwHNkZTtr1OGOdYMrD73ByPBzCzxc&index=16",
-
-				Localization.GetText ("HelpText", al) + "\r\n\r\n" + Localization.GetText ("HelpKeysText", al));
+			ProgramDescription.ShowAbout (false);
 			}
 
 		// Изменение языка интерфейса

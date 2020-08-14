@@ -335,11 +335,11 @@ namespace RD_AAOW
 				{
 				gr.Add (Graphics.FromHwnd (this.Handle));
 				}
-			ResetLogo ();
+				ResetLogo ();
 
-			// Подготовка параметров
-			subtitlesFonts[0] = new Font ("Arial Narrow", this.Width / 50, FontStyle.Bold);
-			subtitlesFonts[1] = new Font ("Arial", this.Width / 40, FontStyle.Bold);
+				// Подготовка параметров
+				subtitlesFonts[0] = new Font ("Arial Narrow", this.Width / 50, FontStyle.Bold);
+				subtitlesFonts[1] = new Font ("Arial", this.Width / 40, FontStyle.Bold);
 
 #if VIDEO
 			// Отображение длины интро
@@ -362,11 +362,11 @@ namespace RD_AAOW
 				}
 			else
 #endif
-			// Запуск таймера
-				{
-				ExtendedTimer.Enabled = true;
-				}
-			this.Activate ();
+				// Запуск таймера
+					{
+					ExtendedTimer.Enabled = true;
+					}
+					this.Activate ();
 			}
 
 		// Метод инициализирует аудиоканал
@@ -380,7 +380,7 @@ namespace RD_AAOW
 				ssie = ConcurrentDrawLib.InitializeSoundStream (OFAudio.FileName);
 			else
 #endif
-				ssie = ConcurrentDrawLib.InitializeSoundStream (cdp.DeviceNumber);
+			ssie = ConcurrentDrawLib.InitializeSoundStream (cdp.DeviceNumber);
 			switch (ssie)
 				{
 				case SoundStreamInitializationErrors.BASS_ERROR_ALREADY:
@@ -791,20 +791,20 @@ namespace RD_AAOW
 			if ((backgrounds.Count == 0) || firstFilling)
 				{
 #endif
-				if (VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode))
-					{
-					if (cdp.SpectrogramTopOffset > 0)
-						mainLayer.Descriptor.FillRectangle (brushes[2], 0, 0, mainLayer.Layer.Width,
-							cdp.SpectrogramTopOffset);
+			if (VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode))
+				{
+				if (cdp.SpectrogramTopOffset > 0)
+					mainLayer.Descriptor.FillRectangle (brushes[2], 0, 0, mainLayer.Layer.Width,
+						cdp.SpectrogramTopOffset);
 
-					if (cdp.SpectrogramTopOffset + cdp.SpectrogramHeight < mainLayer.Layer.Height)
-						mainLayer.Descriptor.FillRectangle (brushes[2], 0, cdp.SpectrogramTopOffset + cdp.SpectrogramHeight,
-							mainLayer.Layer.Width, mainLayer.Layer.Height - cdp.SpectrogramTopOffset - cdp.SpectrogramHeight);
-					}
-				else
-					{
-					mainLayer.Descriptor.FillRectangle (brushes[2], 0, 0, mainLayer.Layer.Width, mainLayer.Layer.Height);
-					}
+				if (cdp.SpectrogramTopOffset + cdp.SpectrogramHeight < mainLayer.Layer.Height)
+					mainLayer.Descriptor.FillRectangle (brushes[2], 0, cdp.SpectrogramTopOffset + cdp.SpectrogramHeight,
+						mainLayer.Layer.Width, mainLayer.Layer.Height - cdp.SpectrogramTopOffset - cdp.SpectrogramHeight);
+				}
+			else
+				{
+				mainLayer.Descriptor.FillRectangle (brushes[2], 0, 0, mainLayer.Layer.Width, mainLayer.Layer.Height);
+				}
 #if VIDEO
 				}
 			else
