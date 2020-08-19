@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Net;
-using System.Reflection;
 using System.Windows.Forms;
 
 namespace RD_AAOW
@@ -37,7 +36,8 @@ namespace RD_AAOW
 		/// кнопка отключается, если это значение не задано</param>
 		/// <param name="UserManualLink">Ссылка на страницу руководства пользователя;
 		/// кнопка отключается, если это значение не задано</param>
-		public AboutForm (string ProjectLink, string UpdatesLink, string UserManualLink)
+		/// <param name="AppIcon">Значок приложения</param>
+		public AboutForm (string ProjectLink, string UpdatesLink, string UserManualLink, Icon AppIcon)
 			{
 			// Инициализация
 			InitializeComponent ();
@@ -64,8 +64,16 @@ namespace RD_AAOW
 				ProgramDescription.AssemblyCopyright + "\nv " + ProgramDescription.AssemblyVersion +
 				"; " + ProgramDescription.AssemblyLastUpdate;
 
-			IconBox.BackgroundImage = Icon.ExtractAssociatedIcon (Assembly.GetExecutingAssembly ().Location).ToBitmap ();
-			OtherIconBox.BackgroundImage = this.Icon.ToBitmap ();
+			if (AppIcon != null)
+				{
+				IconBox.BackgroundImage = AppIcon.ToBitmap ();
+				OtherIconBox.BackgroundImage = this.Icon.ToBitmap ();
+				}
+			else
+				{
+				IconBox.BackgroundImage = this.Icon.ToBitmap ();
+				}
+			//IconBox.BackgroundImage = Icon.ExtractAssociatedIcon (Assembly.GetExecutingAssembly ().Location).ToBitmap ();
 
 			// Завершение
 			UserManualButton.Enabled = (userManualLink != "");
@@ -430,7 +438,14 @@ htmlError:
 
 			// Чтение ответа
 			StreamReader SR = new StreamReader (resp.GetResponseStream (), true);
-			html = SR.ReadToEnd ();
+			try
+				{
+				html = SR.ReadToEnd ();
+				}
+			catch
+				{
+				html = "";	// Почему-то иногда исполнение обрывается на этом месте
+				}
 			SR.Close ();
 			resp.Close ();
 
