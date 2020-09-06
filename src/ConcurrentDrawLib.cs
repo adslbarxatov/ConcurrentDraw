@@ -330,9 +330,14 @@ namespace RD_AAOW
 		public static SpectrogramInitializationErrors InitializeSpectrogram (uint FrameWidth, uint FrameHeight,
 			byte PaletteNumber, SpectrogramModes Mode, bool DoubleWidth)
 			{
-			return (SpectrogramInitializationErrors)InitializeSpectrogramEx ((UInt16)FrameWidth, (UInt16)FrameHeight,
+			Int16 e = InitializeSpectrogramEx ((UInt16)FrameWidth, (UInt16)FrameHeight,
 				(Byte)PaletteNumber, (Byte)Mode, (byte)(DoubleWidth ? 1 : 0));
+
+			paletteBackgroundColor = Color.FromArgb ((int)GetPaletteBackgroundColorEx ());	// Обновляется после инициализации
+
+			return (SpectrogramInitializationErrors)e;
 			}
+		private static Color paletteBackgroundColor;
 
 		/// <summary>
 		/// Функция удаляет активную спектрограмму
@@ -358,18 +363,19 @@ namespace RD_AAOW
 		/// <summary>
 		/// Возвращает текущее изображение спектрограммы или null при отсутствии инициализации
 		/// </summary>
-		public static Bitmap CurrentSpectrogramFrame
+		/// <param name="Transparent">Флаг прозрачности</param>
+		public static Bitmap CurrentSpectrogramFrame (bool Transparent)
 			{
-			get
-				{
-				// Запрос фрейма
-				IntPtr bmp = GetSpectrogramFrameEx ();
-				if (bmp == IntPtr.Zero)
-					return null;
+			// Запрос фрейма
+			IntPtr bmp = GetSpectrogramFrameEx ();
+			if (bmp == IntPtr.Zero)
+				return null;
 
-				// Формирование изображения
-				return Bitmap.FromHbitmap (bmp);
-				}
+			// Формирование изображения
+			Bitmap b = Bitmap.FromHbitmap (bmp);
+			if (Transparent)
+				b.MakeTransparent (paletteBackgroundColor);
+			return b;
 			}
 
 		/// <summary>
@@ -600,6 +606,13 @@ namespace RD_AAOW
 		/// <returns>Цвет в представлении ARGB</returns>
 		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
 		private static extern UInt32 GetColorFromPaletteEx (Byte ColorNumber);
+
+		/// <summary>
+		/// Функция получает цвет фона текущей палитры
+		/// </summary>
+		/// <returns>Цвет в представлении ARGB</returns>
+		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
+		private static extern UInt32 GetPaletteBackgroundColorEx ();
 
 		/// <summary>
 		/// Метод возвращает указанный цвет из текущей палитры

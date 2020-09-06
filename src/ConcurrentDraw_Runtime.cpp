@@ -136,7 +136,7 @@ void DrawHistogram (uchar Symmetric)
 		v = GetScaledAmplitudeEx (AS->cdHistogramFFTValuesCount * (ulong)x / AS->sgFrameWidth);
 
 		// Перемасштабирование
-		v = AS->sgFrameHeight * (ulong)v / CD_BMPINFO_COLORS_COUNT;	
+		v = AS->sgFrameHeight * (ulong)v / CD_BMPINFO_COLORS_COUNT;
 
 		// Симметричная
 		for (y = 0; y < AS->sgFrameHeight; y++)

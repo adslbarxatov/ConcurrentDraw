@@ -301,7 +301,7 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 				(FP_AMAX - i, FP_AMAX - i, FP_AMAX - i),
 				(FP_HMAX - i, FP_HMAX - i, FP_HMAX - i),
 				(FP_QMAX - i, FP_QMAX - i, FP_QMAX - i),
-				(FP_MAX - i, FP_MAX - i, FP_MAX - i), 192)
+				(FP_MAX - i, FP_MAX - i, FP_MAX - i), 224)
 			break;
 
 		// Огонь обратный
@@ -415,6 +415,15 @@ CD_API(ulong) GetColorFromPaletteEx (uchar ColorNumber)
 		(AS->sgBMPInfo.cd_bmpinfo.colors[ColorNumber].rgbRed << 16) |
 		(AS->sgBMPInfo.cd_bmpinfo.colors[ColorNumber].rgbGreen << 8) | 
 		AS->sgBMPInfo.cd_bmpinfo.colors[ColorNumber].rgbBlue;
+	}
+
+// Функция получает цвет фона текущей палитры
+CD_API(ulong) GetPaletteBackgroundColorEx ()
+	{
+	return 0xFF000000 | 
+		(AS->sgBMPInfo.cd_bmpinfo.colors[AS->cdBackgroundColorNumber].rgbRed << 16) |
+		(AS->sgBMPInfo.cd_bmpinfo.colors[AS->cdBackgroundColorNumber].rgbGreen << 8) | 
+		AS->sgBMPInfo.cd_bmpinfo.colors[AS->cdBackgroundColorNumber].rgbBlue;
 	}
 
 // Функция возвращает основной цвет текущей палитры с указанной яркостью

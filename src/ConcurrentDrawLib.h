@@ -18,8 +18,8 @@
 
 /////////////////////////////////////////////////////
 // Константы
-#define CD_VERSION					1,45,0,0
-#define CD_VERSION_S				"1.45.0.0"
+#define CD_VERSION					1,50,0,0
+#define CD_VERSION_S				"1.50.0.0"
 #define CD_PRODUCT					"BASS adapter for ConcurrentDraw visualization tool"
 #define CD_COMPANY					"RD AAOW"
 
@@ -186,6 +186,9 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber);
 
 // Функция получает указанный цвет из текущей палитры
 CD_API(ulong) GetColorFromPaletteEx (uchar ColorNumber);
+
+// Функция получает цвет фона текущей палитры
+CD_API(ulong) GetPaletteBackgroundColorEx ();
 
 // Функция возвращает версию данной библиотеки
 CD_API(schar *) GetCDLibVersionEx ();

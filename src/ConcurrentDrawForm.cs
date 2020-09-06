@@ -791,20 +791,7 @@ namespace RD_AAOW
 			if ((backgrounds.Count == 0) || firstFilling)
 				{
 #endif
-			if (VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode))
-				{
-				if (cdp.SpectrogramTopOffset > 0)
-					mainLayer.Descriptor.FillRectangle (brushes[2], 0, 0, mainLayer.Layer.Width,
-						cdp.SpectrogramTopOffset);
-
-				if (cdp.SpectrogramTopOffset + cdp.SpectrogramHeight < mainLayer.Layer.Height)
-					mainLayer.Descriptor.FillRectangle (brushes[2], 0, cdp.SpectrogramTopOffset + cdp.SpectrogramHeight,
-						mainLayer.Layer.Width, mainLayer.Layer.Height - cdp.SpectrogramTopOffset - cdp.SpectrogramHeight);
-				}
-			else
-				{
-				mainLayer.Descriptor.FillRectangle (brushes[2], 0, 0, mainLayer.Layer.Width, mainLayer.Layer.Height);
-				}
+			mainLayer.Descriptor.FillRectangle (brushes[2], 0, 0, mainLayer.Layer.Width, mainLayer.Layer.Height);
 #if VIDEO
 				}
 			else
@@ -1012,7 +999,7 @@ namespace RD_AAOW
 			if (VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode))
 				{
 				// Получение текущего фрейма спектрограммы
-				firstBMP = ConcurrentDrawLib.CurrentSpectrogramFrame;
+				firstBMP = ConcurrentDrawLib.CurrentSpectrogramFrame (!VisualizationModesChecker.ContainsSGonly (cdp.VisualizationMode));
 
 				// Отрисовка фрейма
 				if (VisualizationModesChecker.ContainsSGonly (cdp.VisualizationMode))
@@ -1023,9 +1010,10 @@ namespace RD_AAOW
 					}
 				else
 					{
-					mainLayer.Descriptor.DrawImage (firstBMP,
+					/*mainLayer.Descriptor.DrawImage (firstBMP,
 						new Rectangle (0, (int)cdp.SpectrogramTopOffset, firstBMP.Width, firstBMP.Height),
-						0, 0, firstBMP.Width, firstBMP.Height, GraphicsUnit.Pixel, sgAttributes[1]);
+						0, 0, firstBMP.Width, firstBMP.Height, GraphicsUnit.Pixel, sgAttributes[1]);*/
+					mainLayer.Descriptor.DrawImage (firstBMP, 0, (int)cdp.SpectrogramTopOffset);
 					}
 
 				firstBMP.Dispose ();
