@@ -187,8 +187,8 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 		// Море
 		case 1:
 			FP_PALETTE (
-				(0, 0, 4 * i),
-				(0, 2 * i, FP_MAX),
+				(0, 0, 3 * i),
+				(0, 2 * i, FP_AMAX + i),
 				(0, 2 * (FP_QMAX + i), FP_MAX),
 				(4 * i, FP_MAX, FP_MAX),
 				(0, 2 * i / 3, i), 8)
@@ -197,8 +197,8 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 		// Огонь
 		case 2:
 			FP_PALETTE (
-				(4 * i, 0, 0),
-				(FP_MAX, 2 * i, 0),
+				(3 * i, 0, 0),
+				(FP_AMAX + i, 2 * i, 0),
 				(FP_MAX, 2 * (FP_QMAX + i), 0),
 				(FP_MAX, FP_MAX, 4 * i),
 				(i, 2 * i / 3, 0), 8)
@@ -247,8 +247,8 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 		// Парус
 		case 7:
 			FP_PALETTE (
-				(0, 0, 4 * i),
-				(2 * i, 0, FP_MAX),
+				(0, 0, 3 * i),
+				(2 * i, 0, FP_AMAX + i),
 				(2 * (FP_QMAX + i), 0, 4 * (FP_QMAX - 1 - i)),
 				(FP_MAX, 4 * i, 4 * i),
 				(i, 0, 0), 8)
@@ -328,9 +328,9 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 		case FP_SP_BASE + 4:
 			FP_PALETTE (
 				(FP_MAX - 2 * i, FP_AMAX - 3 * i, FP_MAX),
-				(FP_HMAX - i, 0, FP_MAX),
-				(FP_QMAX, 0, FP_MAX - 2 * i),
-				(FP_QMAX - i, 0, FP_HMAX - 2 * i),
+				(FP_HMAX - i, 0, FP_MAX - i),
+				(FP_QMAX - i / 2, 0, FP_AMAX - i),
+				(32 - i / 2, 0, FP_HMAX - 2 * i),
 				(FP_AMAX - 3 * i / 4, FP_HMAX - i / 2, FP_MAX - 3 * i / 4), 224)
 			break;
 

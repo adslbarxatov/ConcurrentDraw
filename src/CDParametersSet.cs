@@ -539,7 +539,7 @@ namespace RD_AAOW
 			particlesMetrics.MaxSize = 10;
 			particlesMetrics.PolygonsSidesCount = 6;
 
-			particlesMetrics.Acceleration = false;
+			particlesMetrics.Acceleration = 0;
 			particlesMetrics.AsStars = true;
 			particlesMetrics.Enlarging = 0;
 			//particlesMetrics.KeepTracks = false;
@@ -641,7 +641,6 @@ namespace RD_AAOW
 				particlesMetrics.MinSize = uint.Parse (values[28]);
 				particlesMetrics.MaxSize = uint.Parse (values[29]);
 				particlesMetrics.PolygonsSidesCount = byte.Parse (values[30]);
-				particlesMetrics.Acceleration = (values[31] != "0");
 				particlesMetrics.AsStars = (values[32] != "0");
 				particlesMetrics.Enlarging = int.Parse (values[33]);
 				particlesMetrics.MaxRed = byte.Parse (values[34]);
@@ -655,9 +654,11 @@ namespace RD_AAOW
 				particlesMetrics.Rotation = (values[42] != "0");
 				particlesMetrics.StartupPosition = (LogoDrawerObjectStartupPositions)byte.Parse (values[43]);
 				particlesMetrics.MaxSpeedFluctuation = uint.Parse (values[44]);
-
 				histoRotationAccToBeats = (values[45] != "0");
 				extendedCumulativeEffect = (values[46] != "0");
+
+				// Новая для версии 1.50
+				particlesMetrics.Acceleration = uint.Parse (values[31]);
 				}
 			catch
 				{
@@ -729,7 +730,7 @@ namespace RD_AAOW
 				particlesMetrics.MinSize.ToString () + splitter[0].ToString () +
 				particlesMetrics.MaxSize.ToString () + splitter[0].ToString () +
 				particlesMetrics.PolygonsSidesCount.ToString () + splitter[0].ToString () +
-				(particlesMetrics.Acceleration ? "A" : "0") + splitter[0].ToString () +
+				particlesMetrics.Acceleration.ToString () + splitter[0].ToString () +
 				(particlesMetrics.AsStars ? "AS" : "0") + splitter[0].ToString () +
 				particlesMetrics.Enlarging.ToString () + splitter[0].ToString () +
 				particlesMetrics.MaxRed.ToString () + splitter[0].ToString () +

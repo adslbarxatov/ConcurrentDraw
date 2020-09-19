@@ -162,6 +162,10 @@ namespace RD_AAOW
 			ObjectsEnlargingCoeffField.Maximum = LogoDrawerSupport.MaxEnlarge;
 			ObjectsEnlargingCoeffField.Value = parameters[DSN].ParticlesMetrics.Enlarging;
 
+			ObjectsAccelerationField.Minimum = 0;
+			ObjectsAccelerationField.Maximum = LogoDrawerSupport.MaxAcceleration;
+			ObjectsAccelerationField.Value = parameters[DSN].ParticlesMetrics.Acceleration;
+
 			ObjectsMinSpeedField.Minimum = ObjectsMaxSpeedField.Minimum = LogoDrawerSupport.MinObjectSpeed;
 			ObjectsMinSpeedField.Maximum = ObjectsMaxSpeedField.Maximum =
 				ObjectsSpeedFluctuationField.Maximum = LogoDrawerSupport.MaxObjectSpeed;
@@ -174,7 +178,6 @@ namespace RD_AAOW
 			ObjectsMaxSizeField.Value = parameters[DSN].ParticlesMetrics.MaxSize;
 			ObjectsMinSizeField.Value = parameters[DSN].ParticlesMetrics.MinSize;
 
-			ObjectsAccelerationFlag.Checked = parameters[DSN].ParticlesMetrics.Acceleration;
 			//ObjectsKeepTracksFlag.Checked = parameters[DSN].ParticlesMetrics.KeepTracks;
 
 			ObjectsMaxColor.BackColor = Color.FromArgb (parameters[DSN].ParticlesMetrics.MaxRed,
@@ -281,7 +284,7 @@ namespace RD_AAOW
 				ObjectsMinSizeField.Value = parameters[psn].ParticlesMetrics.MinSize;
 				ObjectsSidesCountField.Value = parameters[psn].ParticlesMetrics.PolygonsSidesCount;
 
-				ObjectsAccelerationFlag.Checked = parameters[psn].ParticlesMetrics.Acceleration;
+				ObjectsAccelerationField.Value = parameters[psn].ParticlesMetrics.Acceleration;
 				ObjectsEnlargingCoeffField.Value = parameters[psn].ParticlesMetrics.Enlarging;
 				//ObjectsKeepTracksFlag.Checked = parameters[psn].ParticlesMetrics.KeepTracks;
 				ObjectsMaxColor.BackColor = Color.FromArgb (parameters[psn].ParticlesMetrics.MaxRed,
@@ -437,7 +440,7 @@ namespace RD_AAOW
 			ldom.MinSize = (uint)ObjectsMinSizeField.Value;
 			ldom.PolygonsSidesCount = (byte)ObjectsSidesCountField.Value;
 
-			ldom.Acceleration = ObjectsAccelerationFlag.Checked;
+			ldom.Acceleration = (uint)ObjectsAccelerationField.Value;
 			ldom.Enlarging = (int)ObjectsEnlargingCoeffField.Value;
 			//ldom.KeepTracks = ObjectsKeepTracksFlag.Checked;
 			ldom.MaxRed = ObjectsMaxColor.BackColor.R;

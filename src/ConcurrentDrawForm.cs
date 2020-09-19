@@ -603,6 +603,8 @@ namespace RD_AAOW
 				ldom.MaxSpeedFluctuation += cumulation * ldom.MaxSpeedFluctuation / 256;
 				ldom.MaxSize += cumulation * ldom.MaxSize / 128;
 				ldom.MinSize += cumulation * ldom.MinSize / 128;
+				ldom.Acceleration += cumulation * ldom.Acceleration / 128;
+				ldom.Enlarging += (int)cumulation * ldom.Enlarging / 128;
 				}
 
 			// Фиктивная инициализация

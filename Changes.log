@@ -1,9 +1,11 @@
 ﻿ConcurrentDraw changes log
 
-Version 1.50 (preparing):
+Version 1.50:
 • Application info interface now able to get last release's changes log;
 • Histogram modes are now fully transparent;
-• Some palettes got more smooth transitions between colors than before
+• Some palettes got more smooth transitions between colors than before;
+• Changed math for enlarging and acceleration coeffs of particles: they will be more smooth;
+• Improved particles settings interface
 
 Version 1.49.2i:
 • Found and fixed hidden bug that caused an error when starting the application from local network;
