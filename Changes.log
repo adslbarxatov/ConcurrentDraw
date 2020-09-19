@@ -1,5 +1,12 @@
 ﻿ConcurrentDraw changes log
 
+Version 1.50.1:
+• Fixed some interface bugs;
+• Fixed acceleration bug;
+• Particles will now follow the center of logo, not the center of screen (in corresponding modes);
+• Some particles sources have been removed;
+• Video background loader have been rebuilt and now uses memory properly
+
 Version 1.50:
 • Application info interface now able to get last release's changes log;
 • Histogram modes are now fully transparent;

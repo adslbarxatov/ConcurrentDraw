@@ -117,7 +117,8 @@ namespace RD_AAOW
 		// Видео
 		private const double fps = 25.0;						// Частота кадров видео 
 
-		private VideoManager vm = new VideoManager ();			// Видеофайл (балластная инициализация)
+		private VideoManager vm = new VideoManager (),
+			vf = new VideoManager ();							// Видеофайлы (балластная инициализация)
 		private AudioManager amv;								// Аудиодорожка видео
 		private const uint fadeOutLength = 40;					// Длина эффекта fade out в кадрах
 		private Bitmap secondBMP;								// Отрисовочный кадр
@@ -262,21 +263,16 @@ namespace RD_AAOW
 
 					// Видеофайл
 					case 3:
-						vm = new VideoManager (OFBackground.FileName);
+						vf = new VideoManager (OFBackground.FileName);
 
-						if (!vm.IsOpened)
+						if (!vf.IsOpened)
 							{
 							MessageBox.Show ("Failed to load background video", ProgramDescription.AssemblyTitle,
 								 MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 							break;
 							}
 
-						// Считывание кадров
-						for (uint i = 0; i < vm.FramesCount; i++)
-							backgrounds.Add (vm.GetFrame (i));
-
-						// Завершение
-						vm.Dispose ();
+						// Считывание выполняется по ходу записи, иначе моментально кончается память
 						break;
 					}
 				}
@@ -609,7 +605,7 @@ namespace RD_AAOW
 
 			// Фиктивная инициализация
 			if (objects.Count < cdp.ParticlesMetrics.ObjectsCount)
-				objects.Add (new LogoDrawerLetter (0, 0, null, ldom));
+				objects.Add (new LogoDrawerLetter (0, 0, logoCenterX, logoCenterY, null, ldom));
 
 			for (int i = 0; i < objects.Count; i++)
 				{
@@ -627,19 +623,22 @@ namespace RD_AAOW
 						//case LogoDrawerObjectTypes.Pictures:
 						//case LogoDrawerObjectTypes.RotatingPictures:
 						case LogoDrawerObjectTypes.Spheres:
-							objects[i] = new LogoDrawerSphere ((uint)this.Width, (uint)this.Height, rnd, ldom);
+							objects[i] = new LogoDrawerSphere ((uint)this.Width, (uint)this.Height, logoCenterX, logoCenterY,
+								rnd, ldom);
 							break;
 
 						case LogoDrawerObjectTypes.Polygons:
 						case LogoDrawerObjectTypes.Stars:
 						case LogoDrawerObjectTypes.RotatingPolygons:
 						case LogoDrawerObjectTypes.RotatingStars:
-							objects[i] = new LogoDrawerSquare ((uint)this.Width, (uint)this.Height, rnd, ldom);
+							objects[i] = new LogoDrawerSquare ((uint)this.Width, (uint)this.Height, logoCenterX, logoCenterY,
+								rnd, ldom);
 							break;
 
 						case LogoDrawerObjectTypes.Letters:
 						case LogoDrawerObjectTypes.RotatingLetters:
-							objects[i] = new LogoDrawerLetter ((uint)this.Width, (uint)this.Height, rnd, ldom);
+							objects[i] = new LogoDrawerLetter ((uint)this.Width, (uint)this.Height, logoCenterX, logoCenterY,
+								rnd, ldom);
 							break;
 						}
 					}
@@ -788,9 +787,19 @@ namespace RD_AAOW
 					ConcurrentDrawLib.GetMasterPaletteColor ((byte)cumulation));
 				}
 
-			// Затенение изображения / кумулятивный эффект
+			// Затенение изображения / кумулятивный эффект / фон
 #if VIDEO
-			if ((backgrounds.Count == 0) || firstFilling)
+			if (OFBackground.FilterIndex == 3)	// Фоновое видео
+				{
+				firstBMP = vf.GetFrame ((uint)backgroundsCounter);
+
+				mainLayer.Descriptor.DrawImage (firstBMP, new Rectangle (0, 0, this.Width, this.Height),
+					0, 0, firstBMP.Width, firstBMP.Height, GraphicsUnit.Pixel, sgAttributes[2]);
+
+				if (++backgroundsCounter >= vf.FramesCount)
+					backgroundsCounter = 0;
+				}
+			else if ((backgrounds.Count == 0) || firstFilling)
 				{
 #endif
 			mainLayer.Descriptor.FillRectangle (brushes[2], 0, 0, mainLayer.Layer.Width, mainLayer.Layer.Height);
@@ -1117,6 +1126,7 @@ namespace RD_AAOW
 
 			// Завершение
 			vm.Dispose ();
+			vf.Dispose ();
 #endif
 			}
 

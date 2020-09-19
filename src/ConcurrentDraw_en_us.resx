@@ -357,8 +357,8 @@ Do you want to open webpage for downloading the actual library version?</value>
   <data name="ParticlesTab_EnlargingCoeffLabel" xml:space="preserve">
     <value>Enlarging coeff.:</value>
   </data>
-  <data name="ParticlesTab_ObjectsAccelerationFlag" xml:space="preserve">
-    <value>Acceleration</value>
+  <data name="ParticlesTab_ObjectsAccelerationLabel" xml:space="preserve">
+    <value>Acceleration:</value>
   </data>
   <data name="ParticlesTab_ObjectsCountLabel" xml:space="preserve">
     <value>Count:</value>

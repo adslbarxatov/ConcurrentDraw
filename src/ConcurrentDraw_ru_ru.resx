@@ -358,8 +358,8 @@
   <data name="ParticlesTab_EnlargingCoeffLabel" xml:space="preserve">
     <value>Коэфф. роста:</value>
   </data>
-  <data name="ParticlesTab_ObjectsAccelerationFlag" xml:space="preserve">
-    <value>Ускорение</value>
+  <data name="ParticlesTab_ObjectsAccelerationLabel" xml:space="preserve">
+    <value>Ускорение:</value>
   </data>
   <data name="ParticlesTab_ObjectsCountLabel" xml:space="preserve">
     <value>Количество:</value>
