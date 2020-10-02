@@ -67,7 +67,7 @@ CD_API(sint) InitializeFileStreamEx (schar *FileName)
 	if (!(AS->cdChannel = BASS_StreamCreateFile (FALSE, FileName, 0, 0, BASS_STREAM_DECODE)))
 		return BASS_ErrorGetCode ();
 
-	// Получение длины потока (в миллисекундах)
+	// Получение длины потока (в секундах)
 	BASS_ChannelGetInfo (AS->cdChannel, &info);
 	streamLength = (ulong)BASS_ChannelGetLength (AS->cdChannel, BASS_POS_BYTE);
 	AS->cdChannelLength = (uint)((info.origres & BASS_ORIGRES_FLOAT ? 2 : 1) * 8 * streamLength / 
@@ -168,4 +168,65 @@ CD_API(void) DestroySpectrogramEx ()
 		DeleteObject (AS->sgBMP);
 		AS->sgBMP = NULL;
 		}
+	}
+
+// Функция выгружает полные данные БПФ в виде сумм амплитуд по частотам в табличный файл
+CD_API(sint) DumpSpectrogramFromFileEx (schar *SoundFileName)
+	{
+	// Переменные
+	float FFT[FFT_CLEAN_VALUES_COUNT],
+		fftSumma[FFT_CLEAN_VALUES_COUNT];
+	float max = 0.0f;
+	sint i;
+	FILE *FO;
+	schar ColumnName[MAX_DEVICE_NAME_LENGTH],
+		TableFileName[256];
+
+	// Пробуем открыть файлы
+	if (i = InitializeFileStreamEx (SoundFileName))
+		return i;
+
+	sprintf (ColumnName, "%s", strrchr (SoundFileName, '\\') + 1);
+	ColumnName[strlen (ColumnName) - 4] = '\0';
+
+	sprintf (TableFileName, "%s", SoundFileName);
+	i = strlen (TableFileName);
+	TableFileName[i - 3] = 'c';
+	TableFileName[i - 2] = 's';
+	TableFileName[i - 1] = 'v';
+
+	if ((FO = fopen (TableFileName, "wb")) == NULL)
+		return -1;
+
+	// Инициализируем массивы
+	for (i = 0; i < FFT_CLEAN_VALUES_COUNT; i++)
+		FFT[i] = fftSumma[i] = 0.0f;
+
+	// Выполняем считывание
+	while (GetDataFromStream (&FFT))
+		{
+		for (i = 0; i < FFT_CLEAN_VALUES_COUNT; i++)
+			fftSumma[i] += FFT[i];
+		}
+
+	// Нормализуем значения на одну минуту трека
+	for (i = 0; i < FFT_CLEAN_VALUES_COUNT; i++)
+		{
+		fftSumma[i] = 100.0f * 60.0f * fftSumma[i] / (float)AS->cdChannelLength;
+		if (max < fftSumma[i])
+			max = fftSumma[i];
+		}
+
+	// Нормализуем значения на громкость 1000 у. е.
+	for (i = 0; i < FFT_CLEAN_VALUES_COUNT; i++)
+		fftSumma[i] = 1000.0f * fftSumma[i] / max;
+
+	// Записываем в файл, указывая соответствующие частоты вместо отсчётов
+	fprintf (FO, "Fq;%s\r\n", ColumnName);
+	for (i = 0; i < FFT_CLEAN_VALUES_COUNT; i++)
+		fprintf (FO, "%u;%f\r\n", 22050 * (ulong)i / FFT_CLEAN_VALUES_COUNT, fftSumma[i]);
+
+	// Завершено
+	DestroySoundStreamEx ();
+	fclose (FO);
 	}

@@ -208,6 +208,28 @@ namespace RD_AAOW
 			OFBackground.Title = "Select background file for rendering";
 			OFBackground.Filter = "Image file|*.png|Image files set, including this one|*.png|" + SFVideo.Filter;
 
+			// Только дамп БПФ
+			if (pp.DumpSpectrogramData)
+				{
+				// Запрос файла
+				if (OFAudio.ShowDialog () != DialogResult.OK)
+					{
+					this.Close ();
+					return;
+					}
+
+				// Формирование дампа
+				if (ConcurrentDrawLib.DumpSpectrogramFromFile (OFAudio.FileName) != 0)
+					{
+					MessageBox.Show ("Failed to create FFT dump", ProgramDescription.AssemblyTitle,
+						MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					}
+
+				// Без выхода в основной режим
+				this.Close ();
+				return;
+				}
+
 			// Инициализация фона
 			if (pp.LoadBackground && (OFBackground.ShowDialog () == DialogResult.OK))
 				{
@@ -331,11 +353,11 @@ namespace RD_AAOW
 				{
 				gr.Add (Graphics.FromHwnd (this.Handle));
 				}
-				ResetLogo ();
+			ResetLogo ();
 
-				// Подготовка параметров
-				subtitlesFonts[0] = new Font ("Arial Narrow", this.Width / 50, FontStyle.Bold);
-				subtitlesFonts[1] = new Font ("Arial", this.Width / 40, FontStyle.Bold);
+			// Подготовка параметров
+			subtitlesFonts[0] = new Font ("Arial Narrow", this.Width / 50, FontStyle.Bold);
+			subtitlesFonts[1] = new Font ("Arial", this.Width / 40, FontStyle.Bold);
 
 #if VIDEO
 			// Отображение длины интро
@@ -358,11 +380,11 @@ namespace RD_AAOW
 				}
 			else
 #endif
-				// Запуск таймера
-					{
-					ExtendedTimer.Enabled = true;
-					}
-					this.Activate ();
+			// Запуск таймера
+				{
+				ExtendedTimer.Enabled = true;
+				}
+			this.Activate ();
 			}
 
 		// Метод инициализирует аудиоканал
@@ -376,7 +398,7 @@ namespace RD_AAOW
 				ssie = ConcurrentDrawLib.InitializeSoundStream (OFAudio.FileName);
 			else
 #endif
-			ssie = ConcurrentDrawLib.InitializeSoundStream (cdp.DeviceNumber);
+				ssie = ConcurrentDrawLib.InitializeSoundStream (cdp.DeviceNumber);
 			switch (ssie)
 				{
 				case SoundStreamInitializationErrors.BASS_ERROR_ALREADY:
@@ -802,7 +824,7 @@ namespace RD_AAOW
 			else if ((backgrounds.Count == 0) || firstFilling)
 				{
 #endif
-			mainLayer.Descriptor.FillRectangle (brushes[2], 0, 0, mainLayer.Layer.Width, mainLayer.Layer.Height);
+				mainLayer.Descriptor.FillRectangle (brushes[2], 0, 0, mainLayer.Layer.Width, mainLayer.Layer.Height);
 #if VIDEO
 				}
 			else

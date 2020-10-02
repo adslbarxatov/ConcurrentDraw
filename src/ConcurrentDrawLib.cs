@@ -691,5 +691,20 @@ namespace RD_AAOW
 			{
 			return (PaletteRequiresResetEx (PaletteNumber) != 0);
 			}
+
+		/// <summary>
+		/// Функция выгружает полные данные БПФ в виде сумм амплитуд по частотам в табличный файл
+		/// </summary>
+		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
+		private static extern Int16 DumpSpectrogramFromFileEx (string SoundFileName);
+
+		/// <summary>
+		/// Метод выгружает полные данные БПФ в виде сумм амплитуд по частотам в табличный файл
+		/// </summary>
+		/// <param name="SoundFileName">Имя звукового файла</param>
+		public static int DumpSpectrogramFromFile (string SoundFileName)
+			{
+			return DumpSpectrogramFromFileEx (SoundFileName);
+			}
 		}
 	}

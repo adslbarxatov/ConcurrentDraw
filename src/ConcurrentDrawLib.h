@@ -18,17 +18,19 @@
 
 /////////////////////////////////////////////////////
 // Константы
-#define CD_VERSION					1,50,0,0
-#define CD_VERSION_S				"1.50.0.0"
+#define CD_VERSION					1,50,2,0
+#define CD_VERSION_S				"1.50.2.0"
 #define CD_PRODUCT					"BASS adapter for ConcurrentDraw visualization tool"
 #define CD_COMPANY					"RD AAOW"
 
 #define MAX_RECORD_DEVICES			10
 #define MAX_DEVICE_NAME_LENGTH		128
 
-#define FFT_VALUES_COUNT			2048
 #define DEFAULT_FFT_VALUES_COUNT	128
+#define FFT_VALUES_COUNT			2048
 #define FFT_MODE					BASS_DATA_FFT4096
+#define FFT_CLEAN_VALUES_COUNT		8192
+#define FFT_CLEAN_MODE				BASS_DATA_FFT16384
 
 #define MINFRAMEWIDTH				128
 #define MAXFRAMEWIDTH				2048
@@ -130,7 +132,7 @@ CD_API(sint) InitializeFileStreamEx (schar *FileName);
 CD_API(void) DestroySoundStreamEx ();
 
 // Функция запрашивает данные из аудиобуфера
-float *GetDataFromStreamEx ();
+float *GetDataFromStream (float *CleanData);
 
 // Функции выполняю отрисовку гистограм и спектрограм
 void DrawSpectrogram (uchar Mode);
@@ -205,3 +207,6 @@ struct CDSTATE *GetAppState (void);
 
 // Функция инициализирует состояние программы
 void InitAppState (void);
+
+// Функция выгружает полные данные БПФ в виде сумм амплитуд по частотам в табличный файл
+CD_API(sint) DumpSpectrogramFromFileEx (schar *SoundFileName);

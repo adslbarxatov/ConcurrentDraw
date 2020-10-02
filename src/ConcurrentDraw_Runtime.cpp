@@ -2,22 +2,37 @@
 #include "ConcurrentDrawLib.h"
 
 // Функция запрашивает данные из канала считывания
-float *GetDataFromStreamEx ()
+float *GetDataFromStream (float *CleanData)
 	{
 	// Отмена выгрузки при закрытом канале
 	if (!AS->cdChannel)
 		return NULL;
 
-	// Получение (вариант предельной выгрузки)
-	if (BASS_ChannelGetData (AS->cdChannel, &AS->cdFFT, BASS_DATA_AVAILABLE) < FFT_VALUES_COUNT)
-	// Этот вызов призван отсекать заполнение массива FFT неполными (на рисунке – дырявыми) сетами.
-	// Однако отменять обновление фрейма здесь, как это было ранее, нет смысла: задвоенные сеты
-	// выглядят куда лучше движущегося рывками изображения.
-	// К тому же эта отсечка сильно тормозила обновление полиморфных палитр
-		return AS->cdFFT;
-	
-	BASS_ChannelGetData (AS->cdChannel, &AS->cdFFT, FFT_MODE);	// Сколько выгрузит, столько и отрисуем
+	// Простая выгрузка для спектрограммы
+	if (!CleanData)
+		{
+		// Получение (вариант предельной выгрузки)
+		if (BASS_ChannelGetData (AS->cdChannel, &AS->cdFFT, BASS_DATA_AVAILABLE) < FFT_VALUES_COUNT)
+		// Этот вызов призван отсекать заполнение массива FFT неполными (на рисунке – дырявыми) сетами.
+		// Однако отменять обновление фрейма здесь, как это было ранее, нет смысла: задвоенные сеты
+		// выглядят куда лучше движущегося рывками изображения.
+		// К тому же эта отсечка сильно тормозила обновление полиморфных палитр
+			return AS->cdFFT;
 
+		BASS_ChannelGetData (AS->cdChannel, &AS->cdFFT, FFT_MODE);	// Сколько выгрузит, столько и отрисуем
+		}
+
+	// Выгрузка максимально доступного объёма данных
+	else
+		{
+		//if (BASS_ChannelGetData (AS->cdChannel, CleanData, BASS_DATA_AVAILABLE) < FFT_CLEAN_VALUES_COUNT)
+		if (BASS_ChannelGetPosition (AS->cdChannel, BASS_POS_BYTE) >= BASS_ChannelGetLength (AS->cdChannel, BASS_POS_BYTE))
+			return NULL;
+
+		BASS_ChannelGetData (AS->cdChannel, CleanData, FFT_CLEAN_MODE);
+		return CleanData;
+		}
+	
 	// Принудительное выравнивание по потоку при чтении из файла
 	if (AS->cdChannelLength)
 		{
@@ -274,7 +289,7 @@ void DrawAmplitudes (uchar Moving)
 void CALLBACK UpdateFFT (UINT uTimerID, UINT uMsg, DWORD dwUser, DWORD dw1, DWORD dw2)
 	{
 	// Заполнение массива (если возможно)
-	if (!GetDataFromStreamEx ())
+	if (!GetDataFromStream (NULL))
 		return;
 
 	// Переход в режим обновления
