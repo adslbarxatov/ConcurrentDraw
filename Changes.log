@@ -1,5 +1,8 @@
 ﻿ConcurrentDraw changes log
 
+Version 1.50.2:
+• Added ability to dump spectrogram data from wave file (in test mode)
+
 Version 1.50.1:
 • Fixed some interface bugs;
 • Fixed acceleration bug;
