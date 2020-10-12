@@ -19,14 +19,14 @@ namespace RD_AAOW
 		private SupportedLanguages al;
 		private string updatesMessage = "", description = "", policyLoaderCaption = "";
 
-		private const string adpLink = "https://vk.com/@rdaaow_fupl-adp";			// Ссылка на Политику
-		private const string defaultGitLink = "https://github.com/adslbarxatov/";	// Мастер-ссылка проекта
-		private const string gitUpdatesSublink = "/releases";						// Часть пути для перехода к релизам
+		private const string adpLink = "https://vk.com/@rdaaow_fupl-adp";           // Ссылка на Политику
+		private const string defaultGitLink = "https://github.com/adslbarxatov/";   // Мастер-ссылка проекта
+		private const string gitUpdatesSublink = "/releases";                       // Часть пути для перехода к релизам
 		private string versionDescription = "";
 
-		private const string lastShownVersionKey = "HelpShownAt";		// Ключ реестра, хранящий версию, на которой отображалась справка
+		private const string lastShownVersionKey = "HelpShownAt";       // Ключ реестра, хранящий версию, на которой отображалась справка
 
-		private bool accepted = false;									// Флаг принятия Политики
+		private bool accepted = false;                                  // Флаг принятия Политики
 
 		/// <summary>
 		/// Конструктор. Инициализирует форму
@@ -40,21 +40,10 @@ namespace RD_AAOW
 			InitializeComponent ();
 
 			// Получение параметров
-			userManualLink = ((UserManualLink == null) ? "" : UserManualLink);
+			userManualLink = (UserManualLink == null) ? "" : UserManualLink;
 
-			/*if (ProjectLink == null)
-				projectLink = "";
-			else if (ProjectLink == "*")*/
 			projectLink = defaultGitLink + ProgramDescription.AssemblyMainName;
-			/*else
-				projectLink = ProjectLink;*/
-
-			/*if (UpdatesLink == null)
-				updatesLink = "";
-			else if (UpdatesLink == "*")*/
 			updatesLink = defaultGitLink + ProgramDescription.AssemblyMainName + gitUpdatesSublink;
-			/*else
-				updatesLink = UpdatesLink;*/
 
 			// Загрузка окружения
 			AboutLabel.Text = ProgramDescription.AssemblyTitle + "\n" + ProgramDescription.AssemblyDescription + "\n\n" +
@@ -123,8 +112,8 @@ namespace RD_AAOW
 				}
 
 			// Контроль
-			if (StartupMode && (helpShownAt == ProgramDescription.AssemblyVersion) ||	// Справка уже отображалась
-				AcceptMode && (helpShownAt != ""))			// Политика уже принята
+			if (StartupMode && (helpShownAt == ProgramDescription.AssemblyVersion) ||   // Справка уже отображалась
+				AcceptMode && (helpShownAt != ""))          // Политика уже принята
 				return 1;
 
 			// Настройка контролов
@@ -145,7 +134,7 @@ namespace RD_AAOW
 					this.Text = AcceptMode ? "Политика разработки и соглашение пользователя" : "О программе";
 					break;
 
-				default:	// en_us
+				default:    // en_us
 					UserManualButton.Text = "User manual";
 					ProjectPageButton.Text = "Project webpage";
 					UpdatesPageButton.Text = "Updates webpage";
@@ -362,7 +351,7 @@ namespace RD_AAOW
 						updatesMessage = "доступна " + version;
 					break;
 
-				default:	// en_us
+				default:    // en_us
 					if (ProgramDescription.AssemblyTitle.EndsWith (version))
 						updatesMessage = "no updates";
 					else
@@ -374,7 +363,7 @@ namespace RD_AAOW
 			e.Result = 0;
 			return;
 
-			// Есть проблема при загрузке страницы. Отмена
+// Есть проблема при загрузке страницы. Отмена
 htmlError:
 			switch (al)
 				{
@@ -382,7 +371,7 @@ htmlError:
 					updatesMessage = "недоступны";
 					break;
 
-				default:	// en_us
+				default:    // en_us
 					updatesMessage = "unavailable";
 					break;
 				}
@@ -467,7 +456,7 @@ htmlError:
 				}
 			catch
 				{
-				html = "";	// Почему-то иногда исполнение обрывается на этом месте
+				html = "";  // Почему-то иногда исполнение обрывается на этом месте
 				}
 			SR.Close ();
 			resp.Close ();
