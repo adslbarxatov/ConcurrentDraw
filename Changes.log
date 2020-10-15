@@ -2,7 +2,8 @@
 
 Version 1.51 (preparing):
 - Fix settings fail on window size 960x540 and histogram metrics 270x270;
-- Fix particles' color buttons
+- Fix particles' color buttons;
+- Try to use sectors instead of lines
 
 Version 1.50.2:
 • Added ability to dump spectrogram data from wave file (in test mode)
