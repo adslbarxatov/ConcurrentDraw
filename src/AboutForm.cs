@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Net;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace RD_AAOW
@@ -300,6 +301,20 @@ namespace RD_AAOW
 			}
 
 		// Метод-исполнитель проверки обновлений
+		private string[][] ucReplacements = new string[][] {
+			new string[] { "<p>", "\r\n\r\n" },
+			new string[] { "<li>", "\r\n• " },
+			new string[] { "</p>", "\r\n" },
+
+			new string[] { "</li>", "" },
+			new string[] { "<ul>", "" },
+			new string[] { "</ul>", "" },
+			new string[] { "<em>", "" },
+			new string[] { "</em>", "" },
+			new string[] { "<code>", "" },
+			new string[] { "</code>", "" }
+			};
+
 		private void UpdatesChecker (object sender, DoWorkEventArgs e)
 			{
 			// Запрос обновлений пакета
@@ -337,9 +352,8 @@ namespace RD_AAOW
 				goto htmlError;
 
 			versionDescription = html.Substring (i, j - i);
-			versionDescription = versionDescription.Replace ("<p>", "\r\n\r\n").Replace ("<li>", "\r\n• ").Replace ("</p>", "\r\n");
-			versionDescription = versionDescription.Replace ("</li>", "").Replace ("<ul>", "").Replace ("</ul>", "").
-				Replace ("<em>", "").Replace ("</em>", "");
+			for (int r = 0; r < ucReplacements.Length; r++)
+				versionDescription = versionDescription.Replace (ucReplacements[r][0], ucReplacements[r][1]);
 
 			// Отображение результата
 			switch (al)
@@ -379,6 +393,112 @@ htmlError:
 			e.Result = -2;
 			return;
 			}
+
+#if !SIMPLE_HWE
+		/// <summary>
+		/// Метод-исполнитель загрузки пакета обновлений
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		public static void PackageLoader (object sender, DoWorkEventArgs e)
+			{
+			// Разбор аргументов
+			string[] paths = (string[])e.Argument;
+
+			// Настройка безопасности соединения
+			ServicePointManager.SecurityProtocol = (SecurityProtocolType)0xFC0;
+			// Принудительно открывает TLS1.0, TLS1.1 и TLS1.2; блокирует SSL3
+
+			// Запрос обновлений
+			HttpWebRequest rq;
+			try
+				{
+				rq = (HttpWebRequest)WebRequest.Create (paths[0]);
+				}
+			catch
+				{
+				e.Result = -1;
+				return;
+				}
+			rq.Method = "GET";
+			rq.KeepAlive = false;
+			rq.Timeout = 10000;
+
+			// Инициализация полосы загрузки
+			SupportedLanguages al = Localization.CurrentLanguage;
+			string report = Localization.GetText ("PackageDownload", al) + Path.GetFileName (paths[1]);
+			((BackgroundWorker)sender).ReportProgress ((int)HardWorkExecutor.ProgressBarSize, report);
+
+			// Отправка запроса
+			HttpWebResponse resp = null;
+			try
+				{
+				resp = (HttpWebResponse)rq.GetResponse ();
+				}
+			catch
+				{
+				// Любая ошибка здесь будет означать необходимость прекращения проверки
+				e.Result = -2;
+				return;
+				}
+
+			// Создание файла
+			FileStream FS = null;
+			try
+				{
+				FS = new FileStream (paths[1], FileMode.Create);
+				}
+			catch
+				{
+				e.Result = -3;
+				return;
+				}
+
+			// Чтение ответа
+			Stream SR = resp.GetResponseStream ();
+
+			int b;
+
+			long length = 0, current = 0;
+			try
+				{
+				length = long.Parse (paths[2]);
+				}
+			catch { }
+
+			while ((b = SR.ReadByte ()) >= 0)
+				{
+				FS.WriteByte ((byte)b);
+
+				if ((length != 0) && (current++ % 0x1000 == 0))
+					((BackgroundWorker)sender).ReportProgress ((int)(HardWorkExecutor.ProgressBarSize * current / length),
+						report);  // Возврат прогресса
+
+				// Завершение работы, если получено требование от диалога
+				if (((BackgroundWorker)sender).CancellationPending)
+					{
+					SR.Close ();
+					FS.Close ();
+					resp.Close ();
+
+					e.Result = 1;
+					e.Cancel = true;
+					return;
+					}
+				}
+
+			SR.Close ();
+			FS.Close ();
+			resp.Close ();
+
+			// Завершено. Отображение сообщения
+			((BackgroundWorker)sender).ReportProgress (0, Localization.GetText ("PackageSuccess", al));
+			Thread.Sleep (1000);
+
+			e.Result = 0;
+			return;
+			}
+#endif
 
 		// Контроль сообщения об обновлении
 		private void UpdatesTimer_Tick (object sender, EventArgs e)
