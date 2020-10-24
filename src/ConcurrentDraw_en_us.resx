@@ -179,8 +179,8 @@ Fade out speed multiplier: {1:S}</value>
   <data name="HistoTab_HGRangeLabel" xml:space="preserve">
     <value>Histogram range:</value>
   </data>
-  <data name="HistoTab_HzLabel" xml:space="preserve">
-    <value>0 –                  x 500 Hz</value>
+  <data name="HistoTab_HzLabelText" xml:space="preserve">
+    <value>0 –                  x {0:D} = {1:D} Hz</value>
   </data>
   <data name="ConcurrentDrawParameters_LanguageLabel" xml:space="preserve">
     <value>Language:</value>

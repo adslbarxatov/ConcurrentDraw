@@ -18,17 +18,17 @@
 
 /////////////////////////////////////////////////////
 // Константы
-#define CD_VERSION					1,50,2,0
-#define CD_VERSION_S				"1.50.2.0"
+#define CD_VERSION					1,51,0,0
+#define CD_VERSION_S				"1.51.0.0"
 #define CD_PRODUCT					"BASS adapter for ConcurrentDraw visualization tool"
 #define CD_COMPANY					"RD AAOW"
 
 #define MAX_RECORD_DEVICES			10
 #define MAX_DEVICE_NAME_LENGTH		128
 
-#define DEFAULT_FFT_VALUES_COUNT	128
-#define FFT_VALUES_COUNT			2048
-#define FFT_MODE					BASS_DATA_FFT4096
+#define DEFAULT_FFT_VALUES_COUNT	256
+#define FFT_VALUES_COUNT			4096
+#define FFT_MODE					BASS_DATA_FFT8192
 #define FFT_CLEAN_VALUES_COUNT		8192
 #define FFT_CLEAN_MODE				BASS_DATA_FFT16384
 
@@ -45,7 +45,7 @@
 #define CD_HISTO_BAR_S				(384 * abs (y - AS->sgFrameHeight / 2) / AS->sgFrameHeight + 32)
 
 #define PEAK_EVALUATION_LOW_EDGE	0
-#define PEAK_EVALUATION_HIGH_EDGE	8
+#define PEAK_EVALUATION_HIGH_EDGE	16
 #define PEAK_EVALUATION_LOW_LEVEL	0xF8
 #define CD_DEFAULT_FFT_SCALE_MULT	40
 

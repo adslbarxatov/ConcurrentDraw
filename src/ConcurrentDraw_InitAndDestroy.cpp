@@ -122,12 +122,12 @@ CD_API(sint) InitializeSpectrogramEx (uint FrameWidth, uint FrameHeight, uchar P
 		return -2;
 
 	AS->sgFrameWidth = FrameWidth & 0xFFFC;		// Хрен знает, почему, но CreateDIBSection не понимает размеры,
-	if (AS->sgFrameWidth != FrameWidth)
-		AS->sgFrameWidth += 4;
+	//if (AS->sgFrameWidth != FrameWidth)
+	//	AS->sgFrameWidth += 4;
 
 	AS->sgFrameHeight = FrameHeight & 0xFFFC;	// которые не делятся на 4
-	if (AS->sgFrameHeight != FrameHeight)
-		AS->sgFrameHeight += 4;
+	//if (AS->sgFrameHeight != FrameHeight)
+	//	AS->sgFrameHeight += 4;
 
 	AS->sgSpectrogramMode = SpectrogramMode;
 	AS->sgSpectrogramStep = 1 + (Flags & 0x1);

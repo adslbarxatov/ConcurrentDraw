@@ -11,8 +11,8 @@ namespace RD_AAOW
 	public partial class ConcurrentDrawParameters:Form
 		{
 		// Константы и переменные
-		private SupportedLanguages al = Localization.CurrentLanguage;				// Текущий язык интерфейса
-		private List<CDParametersSet> parameters = new List<CDParametersSet> ();	// Наборы сохранённых параметров
+		private SupportedLanguages al = Localization.CurrentLanguage;               // Текущий язык интерфейса
+		private List<CDParametersSet> parameters = new List<CDParametersSet> ();    // Наборы сохранённых параметров
 
 		private const int defaultSettingsNumber = 0;
 		private const int savedSettingsNumber = 1;
@@ -86,15 +86,15 @@ namespace RD_AAOW
 
 			VisWidth.Value = (int)(9 * VisWidth.Maximum / 16);
 			parameters[DSN].VisualizationWidth = (uint)VisWidth.Value;
-			VisHeight.Value = (int)(9 * VisHeight.Maximum / 16);	// По умолчанию - (9 / 16) размера экрана
+			VisHeight.Value = (int)(9 * VisHeight.Maximum / 16);    // По умолчанию - (9 / 16) размера экрана
 			parameters[DSN].VisualizationHeight = (uint)VisHeight.Value;
 
 			// Позиция визуализации
-			VisLeft.Value = ScreenWidth - VisWidth.Value;	// По умолчанию - верхняя правая четверть экрана
+			VisLeft.Value = ScreenWidth - VisWidth.Value;   // По умолчанию - верхняя правая четверть экрана
 			parameters[DSN].VisualizationLeft = (uint)VisLeft.Value;
 
 			// Смещение спектрограммы / гистограммы
-			SGTopOffset.Minimum = 0;	// Сбивается из-за вызова обработчика изменения SGHeight до установки ограничений на окно
+			SGTopOffset.Minimum = 0;    // Сбивается из-за вызова обработчика изменения SGHeight до установки ограничений на окно
 			SGTopOffset.Value = SGTopOffset.Maximum;
 			parameters[DSN].SpectrogramTopOffset = (uint)SGTopOffset.Value;
 			// Максимумы теперь зависят от размеров окна визуализации; задаются в соответствующем обработчике
@@ -106,7 +106,7 @@ namespace RD_AAOW
 			FFTScaleMultiplier.Value = parameters[DSN].FFTScaleMultiplier;
 
 			// Плотность гистограммы
-			HistogramRangeField.Maximum = (uint)(CDParametersSet.HistogramFrequencyMaximum /
+			HistogramRangeField.Maximum = (uint)(CDParametersSet.HistogramUsedFrequencyMaximum /
 				CDParametersSet.HistogramRangeSettingIncrement);
 			HistogramRangeField.Value = parameters[DSN].HistogramRangeMaximum;
 
@@ -135,7 +135,7 @@ namespace RD_AAOW
 			LanguageCombo.Items.AddRange (Localization.LanguagesNames);
 			try
 				{
-				LanguageCombo.SelectedIndex = (int)al;			// По умолчанию - язык системы или английский
+				LanguageCombo.SelectedIndex = (int)al;          // По умолчанию - язык системы или английский
 				}
 			catch
 				{
@@ -223,7 +223,7 @@ namespace RD_AAOW
 					ConcurrentDrawLogo cdl = new ConcurrentDrawLogo ();
 					cdl.Dispose ();
 
-					ProgramDescription.ShowAbout (true);	// Справка на случай первого запуска
+					ProgramDescription.ShowAbout (true);    // Справка на случай первого запуска
 					req = true;
 					}
 				}
@@ -274,8 +274,8 @@ namespace RD_AAOW
 				VisLeft.Value = parameters[psn].VisualizationLeft;
 				VisTop.Value = parameters[psn].VisualizationTop;
 
-				SGHeight.Value = parameters[psn].SpectrogramHeight;			// Установка размеров окна определяет максимум SGHeight
-				SGTopOffset.Value = parameters[psn].SpectrogramTopOffset;	// Установка SGHeight определяет максимум SGTopOffset
+				SGHeight.Value = parameters[psn].SpectrogramHeight;         // Установка размеров окна определяет максимум SGHeight
+				SGTopOffset.Value = parameters[psn].SpectrogramTopOffset;   // Установка SGHeight определяет максимум SGTopOffset
 
 				// Эти параметры теперь тоже сохраняются
 				ObjectsMaxSpeedField.Value = parameters[psn].ParticlesMetrics.MaxSpeed;
@@ -287,10 +287,14 @@ namespace RD_AAOW
 				ObjectsAccelerationField.Value = parameters[psn].ParticlesMetrics.Acceleration;
 				ObjectsEnlargingCoeffField.Value = parameters[psn].ParticlesMetrics.Enlarging;
 				//ObjectsKeepTracksFlag.Checked = parameters[psn].ParticlesMetrics.KeepTracks;
+				
 				ObjectsMaxColor.BackColor = Color.FromArgb (parameters[psn].ParticlesMetrics.MaxRed,
 					parameters[psn].ParticlesMetrics.MaxGreen, parameters[psn].ParticlesMetrics.MaxBlue);
+				ColorPicker_Click (ObjectsMaxColor, null);
 				ObjectsMinColor.BackColor = Color.FromArgb (parameters[psn].ParticlesMetrics.MinRed,
 					parameters[psn].ParticlesMetrics.MinGreen, parameters[psn].ParticlesMetrics.MinBlue);
+				ColorPicker_Click (ObjectsMinColor, null);
+				
 				ObjectsCountField.Value = parameters[psn].ParticlesMetrics.ObjectsCount;
 				ObjectsTypeCombo.SelectedIndex = (int)parameters[psn].ParticlesMetrics.ObjectsType;
 				ObjectsStartupSideCombo.SelectedIndex = (int)parameters[psn].ParticlesMetrics.StartupPosition;
@@ -316,6 +320,7 @@ namespace RD_AAOW
 
 			HistoTab.Text = Localization.GetText ("MainTabControl_HistoTab", al);
 			Localization.SetControlsText (HistoTab, al);
+			HistogramRangeField_ValueChanged (null, null);
 
 			LogoTab.Text = Localization.GetText ("MainTabControl_LogoTab", al);
 			Localization.SetControlsText (LogoTab, al);
@@ -383,7 +388,7 @@ namespace RD_AAOW
 
 			// Завершение
 			BCancel.Enabled = true;
-			if (this.Visible)	// Исключает инвалидацию при вызове из обработчика горячих клавиш
+			if (this.Visible)   // Исключает инвалидацию при вызове из обработчика горячих клавиш
 				this.Close ();
 			}
 
@@ -601,14 +606,13 @@ namespace RD_AAOW
 				ResetInitialAngle.Enabled = !VisualizationModesChecker.ContainsSGHGorWF (mode);
 			BeatWavesFlag.Enabled = VisualizationModesChecker.ContainsSGHGorWF (mode) || (mode == VisualizationModes.Logo_only);
 
-			HGRangeLabel.Enabled = HistogramRangeField.Enabled = HzLabel.Enabled = !VisualizationModesChecker.ContainsSGonly (mode);
+			HGRangeLabel.Enabled = HistogramRangeField.Enabled = HzLabel.Enabled = (mode != VisualizationModes.Logo_only);
 			SDDoubleWidthFlag.Enabled = VisualizationModesChecker.ContainsSGorWF (mode);
-
-			LogoTab.Enabled = WithLogoFlag.Checked || !VisualizationModesChecker.ContainsSGHGorWF (mode);
 
 			LogoCenterXTrack.Enabled = LogoCenterYTrack.Enabled =
 				LogoCenterXTrack.Visible = LogoCenterYTrack.Visible = !VisualizationModesChecker.IsPerspective (mode);
 			LogoCenterXTrack_ValueChanged (null, null);
+			BeatWavesFlag.Enabled = WithLogoFlag.Checked;
 			}
 
 		/// <summary>
@@ -749,7 +753,7 @@ namespace RD_AAOW
 			{
 			get
 				{
-				return parameters[SSN].ShakeEffect + 1;	// Значение 1 не имеет реального эффекта
+				return parameters[SSN].ShakeEffect + 1; // Значение 1 не имеет реального эффекта
 				}
 			}
 
@@ -897,6 +901,14 @@ namespace RD_AAOW
 			HistoRotInitialAngle.Value = HistoRotInitialAngle.Minimum;
 			}
 
+		// Изменение значения диапазона гистограммы
+		private void HistogramRangeField_ValueChanged (object sender, EventArgs e)
+			{
+			HzLabel.Text = string.Format (Localization.GetText ("HistoTab_HzLabelText", al),
+				CDParametersSet.HistogramRangeSettingIncrement,
+				CDParametersSet.HistogramRangeSettingIncrement * (uint)HistogramRangeField.Value);
+			}
+
 		#endregion
 
 		#region Logo
@@ -931,7 +943,7 @@ namespace RD_AAOW
 			get
 				{
 				if (VisualizationModesChecker.IsPerspective (this.VisualizationMode))
-					return 0.5;	// Принудительная центровка
+					return 0.5; // Принудительная центровка
 
 				return parameters[SSN].LogoCenterX / 100.0;
 				}
@@ -945,7 +957,7 @@ namespace RD_AAOW
 			get
 				{
 				if (VisualizationModesChecker.IsPerspective (this.VisualizationMode))
-					return 0.5;	// Принудительная центровка
+					return 0.5; // Принудительная центровка
 
 				return parameters[SSN].LogoCenterY / 100.0;
 				}
@@ -984,7 +996,7 @@ namespace RD_AAOW
 				BDSettings.Text = Localization.GetText ("CDP_BDNo", al);
 			else
 				BDSettings.Text = string.Format (Localization.GetText ("CDP_BDSettingsText", al),
-					(CDParametersSet.HistogramFrequencyMaximum * BDLowEdge.Value /		// Используется только первая четверть
+					(CDParametersSet.HistogramFrequencyMaximum * BDLowEdge.Value /      // Используется только первая четверть
 					(CDParametersSet.HistogramScaledFrequencyMaximum / CDParametersSet.HistogramRangeSettingIncrement)).ToString (),
 					(CDParametersSet.HistogramFrequencyMaximum * BDHighEdge.Value /
 					(CDParametersSet.HistogramScaledFrequencyMaximum / CDParametersSet.HistogramRangeSettingIncrement)).ToString (),
@@ -1219,7 +1231,7 @@ namespace RD_AAOW
 			Keys.PageUp,
 			Keys.PageDown,					// 38
 
-			Keys.K | Keys.Shift,			
+			Keys.K | Keys.Shift,
 			Keys.E							// 40
 
 

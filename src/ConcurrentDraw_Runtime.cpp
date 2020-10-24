@@ -84,7 +84,7 @@ void DrawSpectrogram (uchar Mode)
 	for (y = 0; y < AS->sgFrameHeight; y++)
 		{
 		// Получение значения
-		v = GetScaledAmplitudeEx (SD_SCALE * y / AS->sgFrameHeight);
+		v = GetScaledAmplitudeEx (AS->cdHistogramFFTValuesCount * y / AS->sgFrameHeight);
 
 		switch (Mode)
 			{

@@ -1,9 +1,15 @@
 ﻿ConcurrentDraw changes log
 
-Version 1.51 (preparing):
-- Fix settings fail on window size 960x540 and histogram metrics 270x270;
-- Fix particles' color buttons;
+ToDo:
 - Try to use sectors instead of lines
+
+Version 1.51:
+• Fixed displaying of histograms range: now it will be evaluated automatically;
+• Precision of FFT data has been doubled; maximum of processing frequencies has been decreased to 11025 Hz;
+• Histogram range control now available in all modes (except of logo only);
+• Logo tab is now available in all modes (because its parameters also control butterflies, particles and waves behaviour);
+• Fixed settings loading fails on some histogram heights;
+• Fixed bug of color buttons in particles settings
 
 Version 1.50.2:
 • Added ability to dump spectrogram data from wave file (in test mode)

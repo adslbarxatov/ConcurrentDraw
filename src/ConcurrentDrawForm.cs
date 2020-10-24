@@ -38,26 +38,26 @@ namespace RD_AAOW
 
 		// Общие переменные и константы
 		private VisualizationPhases currentPhase =
-			VisualizationPhases.LayersPrecache;					// Текущая фаза отрисовки
-		private bool logoFirstShowMade = false;					// Флаг, указывающий на выполненное первое отображение лого
-		private uint steps = 0;									// Счётчик шагов отрисовки
-		private Random rnd = new Random ();						// ГПСЧ
-		private ConcurrentDrawParameters cdp;					// Параметры работы программы
-		private const string screenshotsDir = "CDScreenshots";	// Папка для скриншотов
+			VisualizationPhases.LayersPrecache;                 // Текущая фаза отрисовки
+		private bool logoFirstShowMade = false;                 // Флаг, указывающий на выполненное первое отображение лого
+		private uint steps = 0;                                 // Счётчик шагов отрисовки
+		private Random rnd = new Random ();                     // ГПСЧ
+		private ConcurrentDrawParameters cdp;                   // Параметры работы программы
+		private const string screenshotsDir = "CDScreenshots";  // Папка для скриншотов
 
 		// Графика
-		private LogoDrawerLayer mainLayer;						// Базовый слой изображения
+		private LogoDrawerLayer mainLayer;                      // Базовый слой изображения
 		private ColorMatrix[] colorMatrix =
-			new ColorMatrix[3];									// Полупрозрачные цветовые матрицы для спектрограмм
+			new ColorMatrix[3];                                 // Полупрозрачные цветовые матрицы для спектрограмм
 		private ImageAttributes[] sgAttributes =
-			new ImageAttributes[3];								// Атрибуты изображений спектрограмм
+			new ImageAttributes[3];                             // Атрибуты изображений спектрограмм
 
-		private List<Graphics> gr = new List<Graphics> ();		// Объекты-отрисовщики
+		private List<Graphics> gr = new List<Graphics> ();      // Объекты-отрисовщики
 		private List<SolidBrush> brushes = new List<SolidBrush> ();
 		private List<Bitmap> logo = new List<Bitmap> ();
 
 		// Бит-детектор
-		private const int logoIdleSpeed = 2;					// Наименьшая скорость вращения лого
+		private const int logoIdleSpeed = 2;                    // Наименьшая скорость вращения лого
 
 #if VIDEO
 		private const int logoSpeedImpulse = 60;
@@ -65,36 +65,36 @@ namespace RD_AAOW
 		private const int logoSpeedImpulse = 50;
 #endif
 		private const float beatsDetAngleMultiplier =
-			150.0f / logoSpeedImpulse;							// Множитель для расчёта угла дуги бит-детектора
-		private List<int> beatWaves = new List<int> ();			// Волны бит-детектора
+			150.0f / logoSpeedImpulse;                          // Множитель для расчёта угла дуги бит-детектора
+		private List<int> beatWaves = new List<int> ();         // Волны бит-детектора
 
 		// Лого
-		private int currentLogoAngleDelta = 0,					// Текущий угол приращения поворота лого
-			currentLogoAngle = 0;								// Текущий угол поворота лого (для бит-детектора)
-		private double currentHistogramAngle = 0.0;				// Текущий угол поворота гистограммы-бабочки
-		private uint logoHeight,								// Текущий диаметр лого
-			logoCenterX, logoCenterY;							// Текущие координаты центра лого
-		private const int fillingOpacity = 15;					// Непрозрачность кумулятивного эффекта и эффекта fadeout
-		private bool firstFilling = true;						// Флаг, указывающий на необходимость инициализации кисти фона
+		private int currentLogoAngleDelta = 0,                  // Текущий угол приращения поворота лого
+			currentLogoAngle = 0;                               // Текущий угол поворота лого (для бит-детектора)
+		private double currentHistogramAngle = 0.0;             // Текущий угол поворота гистограммы-бабочки
+		private uint logoHeight,                                // Текущий диаметр лого
+			logoCenterX, logoCenterY;                           // Текущие координаты центра лого
+		private const int fillingOpacity = 15;                  // Непрозрачность кумулятивного эффекта и эффекта fadeout
+		private bool firstFilling = true;                       // Флаг, указывающий на необходимость инициализации кисти фона
 
 		// Кумулятивный эффект
-		private byte peak;										// Пиковое значение для расчёта битовых порогов
-		private uint cumulationCounter;							// Накопитель, обеспечивающий кумулятивный эффект
-		private const uint cumulationDivisor = 100,				// Граница и масштаб накопителя
+		private byte peak;                                      // Пиковое значение для расчёта битовых порогов
+		private uint cumulationCounter;                         // Накопитель, обеспечивающий кумулятивный эффект
+		private const uint cumulationDivisor = 100,             // Граница и масштаб накопителя
 			cumulationLimit = 255 * cumulationDivisor;
-		private uint cumulation;								// Дополнительная переменная для хранения текущего состояния эффекта
+		private uint cumulation;                                // Дополнительная переменная для хранения текущего состояния эффекта
 
 		// Метрики гистограмм
 		private int[] histoX = new int[4],
-			histoY = new int[4];								// Координаты линий гистограмм
-		private const double butterflyDensity = 2.75;			// Плотность гистограммы-бабочки
-		private const double perspectiveDensity = 3.15;			// Плотность гистограммы-перспективы
-		// (даёт полный угол чуть более 90°; 90° <=> 2.84; 80° <=> 3.2)
+			histoY = new int[4];                                // Координаты линий гистограмм
+		private const double butterflyDensity = 2.75;           // Плотность гистограммы-бабочки
+		private const double perspectiveDensity = 3.15;         // Плотность гистограммы-перспективы
+																// (даёт полный угол чуть более 90°; 90° <=> 2.84; 80° <=> 3.2)
 
 		// Дополнительные графические объекты
 		private List<ILogoDrawerObject> objects =
-			new List<ILogoDrawerObject> ();						// Визуальные объекты
-		private LogoDrawerLayer objectsLayer;					// Слой визуальных объектов
+			new List<ILogoDrawerObject> ();                     // Визуальные объекты
+		private LogoDrawerLayer objectsLayer;                   // Слой визуальных объектов
 
 		// Вспомогательные переменные
 		private int rad, amp;
@@ -103,12 +103,12 @@ namespace RD_AAOW
 		private Pen p;
 
 		// Субтитры
-		private Font[] subtitlesFonts = new Font[2];			// Объекты поддержки текстовых подписей на рендере
+		private Font[] subtitlesFonts = new Font[2];            // Объекты поддержки текстовых подписей на рендере
 		private SizeF[] subtitlesSizes = new SizeF[2];
 
 #if !VIDEO
-		private string hotKeyResultText = "";					// Замена субтитрам, позволяющая отображать
-		private uint hotKeyResultTextShowCounter = 0;			// результат настройки горячими клавишами
+		private string hotKeyResultText = "";                   // Замена субтитрам, позволяющая отображать
+		private uint hotKeyResultTextShowCounter = 0;           // результат настройки горячими клавишами
 		private const uint hotKeyResultCounterLimit = 100;
 		private const int hotKeyTextFontNumber = 0;
 #else
@@ -170,11 +170,11 @@ namespace RD_AAOW
 			mainLayer = new LogoDrawerLayer (0, 0, (uint)this.Width, (uint)this.Height);
 
 			colorMatrix[0] = new ColorMatrix ();
-			colorMatrix[0].Matrix33 = 0.9f;						// Спектрограмма
+			colorMatrix[0].Matrix33 = 0.9f;                     // Спектрограмма
 			colorMatrix[1] = new ColorMatrix ();
-			colorMatrix[1].Matrix33 = 0.5f;						// Простая гистограмма
+			colorMatrix[1].Matrix33 = 0.5f;                     // Простая гистограмма
 			colorMatrix[2] = new ColorMatrix ();
-			colorMatrix[2].Matrix33 = fillingOpacity / 50.0f;	// Фоновое изображение
+			colorMatrix[2].Matrix33 = fillingOpacity / 50.0f;   // Фоновое изображение
 
 			for (int i = 0; i < colorMatrix.Length; i++)
 				{
@@ -183,9 +183,9 @@ namespace RD_AAOW
 				}
 
 			// Формирование кистей
-			brushes.Add (new SolidBrush (ConcurrentDrawLib.GetColorFromPalette (0)));			// Фон
-			brushes.Add (new SolidBrush (ConcurrentDrawLib.GetMasterPaletteColor ()));			// Лого и beat-детектор
-			brushes.Add (new SolidBrush (Color.FromArgb (fillingOpacity, brushes[0].Color)));	// Fade out (переопределяется далее)
+			brushes.Add (new SolidBrush (ConcurrentDrawLib.GetColorFromPalette (0)));           // Фон
+			brushes.Add (new SolidBrush (ConcurrentDrawLib.GetMasterPaletteColor ()));          // Лого и beat-детектор
+			brushes.Add (new SolidBrush (Color.FromArgb (fillingOpacity, brushes[0].Color)));   // Fade out (переопределяется далее)
 
 			// Начальная инициализация слоёв (первый кадр)
 			this.BackColor = brushes[0].Color;
@@ -398,7 +398,7 @@ namespace RD_AAOW
 				ssie = ConcurrentDrawLib.InitializeSoundStream (OFAudio.FileName);
 			else
 #endif
-				ssie = ConcurrentDrawLib.InitializeSoundStream (cdp.DeviceNumber);
+			ssie = ConcurrentDrawLib.InitializeSoundStream (cdp.DeviceNumber);
 			switch (ssie)
 				{
 				case SoundStreamInitializationErrors.BASS_ERROR_ALREADY:
@@ -439,7 +439,7 @@ namespace RD_AAOW
 				case SoundStreamInitializationErrors.BASS_ERROR_UNKNOWN:
 					// Возникает при выборе стереомикшера при включённом микрофоне (почему-то)
 					err = Localization.GetText ("DeviceBehaviorIsInvalid", cdp.CurrentInterfaceLanguage);
-					result = 1;		// Запросить настройку приложения
+					result = 1;     // Запросить настройку приложения
 					break;
 
 				case SoundStreamInitializationErrors.BASS_ERROR_ILLPARAM:
@@ -728,15 +728,12 @@ namespace RD_AAOW
 			if (cdp.VisualizationMode == VisualizationModes.Logo_only)
 				{
 				// Ручной перебор амплитуд для поддержки бит-детектора
-				for (uint i = 0; i < 256; i++)
+				for (uint i = 0; i < cdp.HistogramFFTValuesCount; i++)
 					ConcurrentDrawLib.GetScaledAmplitude (i);
 				}
 
 			// Отрисовка лого
 			mainLayer.Descriptor.DrawImage (logo[1], logoCenterX - logo[1].Width / 2, logoCenterY - logo[1].Height / 2);
-			/*mainLayer.Descriptor.DrawImage (logo[1],
-				new Rectangle ((int)logoCenterX - logo[1].Width / 2, (int)logoCenterY - logo[1].Height / 2, logo[1].Width, logo[1].Height),
-				0, 0, logo[1].Width, logo[1].Height, GraphicsUnit.Pixel, sgAttributes[3]);*/
 			}
 
 		// Первичное вращение лого
@@ -802,8 +799,8 @@ namespace RD_AAOW
 				}
 
 			cumulation = cumulationCounter / cumulationDivisor;
-			if ((cumulation != (oldCC / cumulationDivisor)) ||	// Целочисленное деление обязательно
-				firstFilling)	// Отвечает за правильное применение фона при старте программы
+			if ((cumulation != (oldCC / cumulationDivisor)) ||  // Целочисленное деление обязательно
+				firstFilling)   // Отвечает за правильное применение фона при старте программы
 				{
 				brushes[2].Color = Color.FromArgb (fillingOpacity * (MaxFilling ? 6 : 1),
 					ConcurrentDrawLib.GetMasterPaletteColor ((byte)cumulation));
@@ -824,7 +821,7 @@ namespace RD_AAOW
 			else if ((backgrounds.Count == 0) || firstFilling)
 				{
 #endif
-				mainLayer.Descriptor.FillRectangle (brushes[2], 0, 0, mainLayer.Layer.Width, mainLayer.Layer.Height);
+			mainLayer.Descriptor.FillRectangle (brushes[2], 0, 0, mainLayer.Layer.Width, mainLayer.Layer.Height);
 #if VIDEO
 				}
 			else
@@ -877,7 +874,7 @@ namespace RD_AAOW
 
 			// Отрисовка
 			if (VisualizationModesChecker.IsPerspective (cdp.VisualizationMode))
-				rad = (int)Math.Sqrt (this.Width * this.Width + this.Height * this.Height) / 2;		// Радиус для перспективы
+				rad = (int)Math.Sqrt (this.Width * this.Width + this.Height * this.Height) / 2;     // Радиус для перспективы
 
 			for (int i = 0; i < 256; i++)
 				{
@@ -915,7 +912,7 @@ namespace RD_AAOW
 					{
 					// Кисть
 					p = new Pen (Color.FromArgb (90, ConcurrentDrawLib.GetColorFromPalette ((byte)(3 * amp / 4))),
-						logoHeight / ((i > 252) ? 90 : 40));	// Костыль для обхода шва на перспективе
+						logoHeight / ((i > 252) ? 90 : 40));    // Костыль для обхода шва на перспективе
 
 					// Углы
 					// (двойная длина дуги для того же количества линий)
@@ -981,14 +978,12 @@ namespace RD_AAOW
 
 			// Отрисовка лого при необходимости
 			UpdateAngles (true);
+
 			if (cdp.VisualizationContainsLogo)
 				{
 				// Волны
-				if (cdp.BeatDetectorWaves)
-					{
-					if (peak > cdp.BeatsDetectorLowLevel)
-						beatWaves.Add (0);
-					}
+				if (cdp.BeatDetectorWaves && (peak > cdp.BeatsDetectorLowLevel))
+					beatWaves.Add (0);
 
 				for (int i = 0; i < beatWaves.Count; i++)
 					{
@@ -1250,7 +1245,7 @@ namespace RD_AAOW
 
 			if (csarMode != ChangeSettingsAndRestartModes.RestartDrawingOnly)
 				{
-				ConcurrentDrawLib.DestroySoundStream ();	// Объединяет функционал
+				ConcurrentDrawLib.DestroySoundStream ();    // Объединяет функционал
 
 				if (csarMode == ChangeSettingsAndRestartModes.CallSettingsWindow)
 					{
@@ -1307,7 +1302,7 @@ namespace RD_AAOW
 							subtitlesFonts[hotKeyTextFontNumber]);
 						hotKeyResultTextShowCounter = 0;
 
-						csarMode = ChangeSettingsAndRestartModes.SendHotKeyFailed;	// Защита от зацикливания при сбоях
+						csarMode = ChangeSettingsAndRestartModes.SendHotKeyFailed;  // Защита от зацикливания при сбоях
 						}
 
 					// Переопределение размера окна

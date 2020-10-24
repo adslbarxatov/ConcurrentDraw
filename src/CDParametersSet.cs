@@ -28,7 +28,7 @@ namespace RD_AAOW
 				alwaysOnTop = value;
 				}
 			}
-		private bool alwaysOnTop = false;	// Здесь и далее исходные значения представляют настройки по умолчанию
+		private bool alwaysOnTop = false;   // Здесь и далее исходные значения представляют настройки по умолчанию
 
 		/// <summary>
 		/// Возвращает или задаёт скорость накопления кумулятивного эффекта
@@ -100,7 +100,7 @@ namespace RD_AAOW
 		private byte deviceNumber = 0;
 
 		/// <summary>
-		/// Возвращает или задаёт максимальную частоту для диапазонов гистограмм в масштабе
+		/// Возвращает или задаёт максимальную частоту выбранного диапазона гистограмм в герцовом масштабе
 		/// </summary>
 		public uint HistogramRangeMaximum
 			{
@@ -113,23 +113,28 @@ namespace RD_AAOW
 				histogramRangeMaximum = value;
 				}
 			}
-		private uint histogramRangeMaximum = 3000 / HistogramRangeSettingIncrement;
+		private uint histogramRangeMaximum = 6000 / HistogramRangeSettingIncrement;
 
 		/// <summary>
-		/// Константа, содержащая максимальную частоту гистограммы в Гц
+		/// Константа, содержащая максимальную частоту гистограммы в герцах, получаемую из БПФ
 		/// </summary>
 		public const uint HistogramFrequencyMaximum = 22050;
+
+		/// <summary>
+		/// Константа, содержащая максимальную частоту гистограммы в герцах, обрабатываемую программой
+		/// </summary>
+		public const uint HistogramUsedFrequencyMaximum = 11025;
 
 		/// <summary>
 		/// Константа, содержащая максимальную частоту гистограммы, 
 		/// масштабированную в количество значений FFT с учётом масштаба
 		/// </summary>
-		public const uint HistogramScaledFrequencyMaximum = 2048 * HistogramRangeSettingIncrement;
+		public const uint HistogramScaledFrequencyMaximum = 4096 * HistogramRangeSettingIncrement;
 
 		/// <summary>
 		/// Константа, содержащая шаг изменения границы диапазона частот гистограммы
 		/// </summary>
-		public const uint HistogramRangeSettingIncrement = 500;
+		public const uint HistogramRangeSettingIncrement = 250;
 
 		/// <summary>
 		/// Возвращает или задаёт скорость изменения угла поворота гистограммы
@@ -238,10 +243,10 @@ namespace RD_AAOW
 				}
 			set
 				{
-				if ((value & 0xFFFC) == value)
-					spectrogramHeight = value & 0xFFFC;			// Исправление, связанное с внутренней корректировкой высоты фрейма
-				else
-					spectrogramHeight = (value & 0xFFFC) + 4;	// (см. текст InitializeSpectrogramEx)
+				//if ((value & 0xFFFC) == value)
+				spectrogramHeight = value & 0xFFFC;         // Исправление, связанное с внутренней корректировкой высоты фрейма
+															//else
+															//	spectrogramHeight = (value & 0xFFFC) + 4;	// (см. текст InitializeSpectrogramEx)
 				}
 			}
 		private uint spectrogramHeight = 256;
@@ -260,7 +265,7 @@ namespace RD_AAOW
 				spectrogramTopOffset = value;
 				}
 			}
-		private uint spectrogramTopOffset = 0;	// Определяется интерфейсом настроек
+		private uint spectrogramTopOffset = 0;  // Определяется интерфейсом настроек
 
 		/// <summary>
 		/// Возвращает или задаёт высоту окна визуализации
@@ -273,13 +278,13 @@ namespace RD_AAOW
 				}
 			set
 				{
-				if ((value & 0xFFFC) == value)
-					visualizationHeight = value & 0xFFFC;	// Исправление, связанное с внутренней корректировкой высоты фрейма
-				else
-					visualizationHeight = (value & 0xFFFC) + 4;
+				//if ((value & 0xFFFC) == value)
+				visualizationHeight = value & 0xFFFC;   // Исправление, связанное с внутренней корректировкой высоты фрейма
+														//else
+														//	visualizationHeight = (value & 0xFFFC) + 4;
 				}
 			}
-		private uint visualizationHeight = 0;	// Определяется интерфейсом настроек
+		private uint visualizationHeight = 0;   // Определяется интерфейсом настроек
 
 		/// <summary>
 		/// Возвращает или заадёт левый отступ окна визуализации
@@ -340,7 +345,7 @@ namespace RD_AAOW
 				}
 			set
 				{
-				visualizationWidth = value;
+				visualizationWidth = value & 0xFFFC;  // Исправление, связанное с внутренней корректировкой высоты фрейма
 				}
 			}
 		private uint visualizationWidth = 0;
