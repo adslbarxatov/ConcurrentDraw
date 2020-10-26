@@ -1,7 +1,8 @@
 ﻿ConcurrentDraw changes log
 
 ToDo:
-- Try to use sectors instead of lines
+- Try to use sectors instead of lines;
+- Fix subtitles font size
 
 Version 1.51:
 • Fixed displaying of histograms range: now it will be evaluated automatically;
