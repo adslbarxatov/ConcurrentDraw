@@ -2,7 +2,11 @@
 
 ToDo:
 - Try to use sectors instead of lines;
-- Fix subtitles font size
+
+Version 1.51.2:
+• Fixed subtitles font size;
+• ADP loader has been rebuilt; policy text now formatted properly;
+• App about and Policy windows are now fully expandaple
 
 Version 1.51:
 • Fixed displaying of histograms range: now it will be evaluated automatically;

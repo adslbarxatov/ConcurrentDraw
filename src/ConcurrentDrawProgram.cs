@@ -13,10 +13,13 @@ namespace RD_AAOW
 		/// <summary>
 		/// Точка входа программы
 		/// </summary>
-		/// <param name="args">Аргументы командной строки</param>
 		[STAThread]
-		public static void Main (string[] args)
+		public static void Main ()
 			{
+			// Инициализация
+			Application.EnableVisualStyles ();
+			Application.SetCompatibleTextRenderingDefault (false);
+
 			// Запрос языка приложения
 			SupportedLanguages al = Localization.CurrentLanguage;
 
@@ -66,10 +69,6 @@ namespace RD_AAOW
 					}
 				return;
 				}
-
-			// Инициализация
-			Application.EnableVisualStyles ();
-			Application.SetCompatibleTextRenderingDefault (false);
 
 			// Отображение справки и запроса на принятие Политики
 			if (!ProgramDescription.AcceptEULA ())

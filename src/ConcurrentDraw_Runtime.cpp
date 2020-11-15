@@ -159,7 +159,7 @@ void DrawHistogram (uchar Symmetric)
 			{
 			if (Symmetric & 0x2)
 				{
-				if ((y > (AS->sgFrameHeight - v) / 2) && (y < (AS->sgFrameHeight + v) / 2))
+				if ((y >= (AS->sgFrameHeight - v) / 2) && (y < (AS->sgFrameHeight + v) / 2))
 					AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth + x) / 2] =
 					AS->sgBuffer[y * AS->sgFrameWidth + (AS->sgFrameWidth - x) / 2] = CD_HISTO_BAR_S;	
 				else
@@ -182,7 +182,7 @@ void DrawHistogram (uchar Symmetric)
 			{
 			if (Symmetric & 0x2)
 				{
-				if ((y > (AS->sgFrameHeight - v) / 2) && (y < (AS->sgFrameHeight + v) / 2))
+				if ((y >= (AS->sgFrameHeight - v) / 2) && (y < (AS->sgFrameHeight + v) / 2))
 					AS->sgBuffer[y * AS->sgFrameWidth + x] = CD_HISTO_BAR_S;
 				else
 					AS->sgBuffer[y * AS->sgFrameWidth + x] = AS->cdBackgroundColorNumber;

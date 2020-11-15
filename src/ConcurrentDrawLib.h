@@ -60,7 +60,7 @@
 
 #define CD_RECORD_FREQ				44100
 #define CD_TIMER_TPS				25
-#define CD_VIDEO_FPS				25
+#define CD_VIDEO_FPS				30
 
 /////////////////////////////////////////////////////
 // Структура-описатель заголовка BITMAP

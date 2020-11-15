@@ -15,7 +15,7 @@ namespace RD_AAOW
 	/// <summary>
 	/// Класс обеспечивает отображение визуализации проекта
 	/// </summary>
-	public partial class ConcurrentDrawForm:Form
+	public partial class ConcurrentDrawForm: Form
 		{
 		// Доступные фазы отрисовки
 		private enum VisualizationPhases
@@ -115,7 +115,7 @@ namespace RD_AAOW
 		private bool showSubtitlesNow = false;					// Флаг фазы отрисовки текстовых подписей
 
 		// Видео
-		private const double fps = 25.0;						// Частота кадров видео 
+		private const double fps = 30.0;						// Частота кадров видео 
 
 		private VideoManager vm = new VideoManager (),
 			vf = new VideoManager ();							// Видеофайлы (балластная инициализация)
@@ -354,10 +354,6 @@ namespace RD_AAOW
 				gr.Add (Graphics.FromHwnd (this.Handle));
 				}
 			ResetLogo ();
-
-			// Подготовка параметров
-			subtitlesFonts[0] = new Font ("Arial Narrow", this.Width / 50, FontStyle.Bold);
-			subtitlesFonts[1] = new Font ("Arial", this.Width / 40, FontStyle.Bold);
 
 #if VIDEO
 			// Отображение длины интро
@@ -1358,6 +1354,10 @@ namespace RD_AAOW
 			logoHeight = (uint)(Math.Min (this.Width, this.Height) * cdp.LogoHeight);
 			logoCenterX = (uint)(this.Width * cdp.LogoCenterX);
 			logoCenterY = (uint)(this.Height * cdp.LogoCenterY);
+
+			// Подготовка субтитров
+			subtitlesFonts[0] = new Font ("Arial Narrow", this.Width / 50, FontStyle.Bold);
+			subtitlesFonts[1] = new Font ("Arial", this.Width / 40, FontStyle.Bold);
 
 			// Перезапуск алгоритма таймера
 			currentPhase = VisualizationPhases.LayersPrecache;
