@@ -3,6 +3,11 @@
 ToDo:
 - Try to use sectors instead of lines;
 
+Version 1.51.3:
+• Fixed some bugs in particles engine;
+• Fixed list of startup positions for particles;
+• Fixed core bug that made incorrect frequencies order
+
 Version 1.51.2:
 • Fixed subtitles font size;
 • ADP loader has been rebuilt; policy text now formatted properly;
