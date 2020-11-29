@@ -8,7 +8,7 @@ namespace RD_AAOW
 	/// <summary>
 	/// Класс описывает форму доступа к параметрам программы
 	/// </summary>
-	public partial class ConcurrentDrawParameters:Form
+	public partial class ConcurrentDrawParameters: Form
 		{
 		// Константы и переменные
 		private SupportedLanguages al = Localization.CurrentLanguage;               // Текущий язык интерфейса
@@ -287,14 +287,14 @@ namespace RD_AAOW
 				ObjectsAccelerationField.Value = parameters[psn].ParticlesMetrics.Acceleration;
 				ObjectsEnlargingCoeffField.Value = parameters[psn].ParticlesMetrics.Enlarging;
 				//ObjectsKeepTracksFlag.Checked = parameters[psn].ParticlesMetrics.KeepTracks;
-				
+
 				ObjectsMaxColor.BackColor = Color.FromArgb (parameters[psn].ParticlesMetrics.MaxRed,
 					parameters[psn].ParticlesMetrics.MaxGreen, parameters[psn].ParticlesMetrics.MaxBlue);
 				ColorPicker_Click (ObjectsMaxColor, null);
 				ObjectsMinColor.BackColor = Color.FromArgb (parameters[psn].ParticlesMetrics.MinRed,
 					parameters[psn].ParticlesMetrics.MinGreen, parameters[psn].ParticlesMetrics.MinBlue);
 				ColorPicker_Click (ObjectsMinColor, null);
-				
+
 				ObjectsCountField.Value = parameters[psn].ParticlesMetrics.ObjectsCount;
 				ObjectsTypeCombo.SelectedIndex = (int)parameters[psn].ParticlesMetrics.ObjectsType;
 				ObjectsStartupSideCombo.SelectedIndex = (int)parameters[psn].ParticlesMetrics.StartupPosition;
@@ -1232,7 +1232,8 @@ namespace RD_AAOW
 			Keys.PageDown,					// 38
 
 			Keys.K | Keys.Shift,
-			Keys.E							// 40
+			Keys.E,
+			Keys.Tab						// 41
 
 
 			// Клавиши, обрабатываемые в основном интерфейсе
@@ -1599,6 +1600,11 @@ namespace RD_AAOW
 				case 40:
 					ExtendedCumulation.Checked = !ExtendedCumulation.Checked;
 					hotKeyResult = ExtendedCumulation.Text + " = " + (ExtendedCumulation.Checked ? "1" : "0");
+					break;
+
+				// Запрос текущего значения накопителя кумулятивного эффекта
+				case 41:
+					hotKeyResult = "!CC = 000000";  // Обрабатывается в основном интерфейсе
 					break;
 				}
 

@@ -696,6 +696,10 @@ namespace RD_AAOW
 		/// <param name="SetName">Название настроек</param>
 		public void SaveSettings (string SetName)
 			{
+			if ((SetName == null) || (SetName == "") || (SetName == Localization.LanguageValueName) ||
+				(SetName == AboutForm.LastShownVersionKey))
+				return;
+
 			// Сборка строки настроек
 			string settings = deviceNumber.ToString () + splitter[0].ToString () +
 				paletteNumber.ToString () + splitter[0].ToString () +
@@ -801,6 +805,7 @@ namespace RD_AAOW
 				}
 			s.Remove ("");
 			s.Remove (Localization.LanguageValueName);
+			s.Remove (AboutForm.LastShownVersionKey);
 
 			// Возврат
 			rk.Dispose ();
@@ -814,7 +819,8 @@ namespace RD_AAOW
 		public static void RemoveSettings (string SetName)
 			{
 			// Контроль
-			if ((SetName == null) || (SetName == "") || (SetName == Localization.LanguageValueName))
+			if ((SetName == null) || (SetName == "") || (SetName == Localization.LanguageValueName) ||
+				(SetName == AboutForm.LastShownVersionKey))
 				return;
 
 			// Получение ключа реестра

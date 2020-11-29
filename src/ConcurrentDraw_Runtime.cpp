@@ -49,11 +49,10 @@ CD_API(uchar) GetScaledAmplitudeEx (uint FrequencyLevel)
 	// Переменные
 	uint v, fl = FrequencyLevel;
 
-	// Контроль
-	if (AS->cdChannelLength)
-		fl += 3;
-	else
-		fl++;
+	// Контроль (слияние нижних частот)
+	v = (AS->cdChannelLength) ? 8 : 4;
+	fl = (fl < v) ? v : fl;
+
 	if (fl >= FFT_VALUES_COUNT)
 		fl = FFT_VALUES_COUNT - 1;
 	

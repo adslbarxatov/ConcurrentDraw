@@ -1034,9 +1034,6 @@ namespace RD_AAOW
 					}
 				else
 					{
-					/*mainLayer.Descriptor.DrawImage (firstBMP,
-						new Rectangle (0, (int)cdp.SpectrogramTopOffset, firstBMP.Width, firstBMP.Height),
-						0, 0, firstBMP.Width, firstBMP.Height, GraphicsUnit.Pixel, sgAttributes[1]);*/
 					mainLayer.Descriptor.DrawImage (firstBMP, 0, (int)cdp.SpectrogramTopOffset);
 					}
 
@@ -1059,14 +1056,17 @@ namespace RD_AAOW
 #else
 			if (hotKeyResultText != "")
 				{
+				// Специальные команды
+				if (hotKeyResultText.StartsWith ("!CC"))
+					hotKeyResultText = "CC = " + cumulationCounter.ToString ();
+
+				// Отрисовка и обработка таймаута
 				mainLayer.Descriptor.DrawString (hotKeyResultText, subtitlesFonts[hotKeyTextFontNumber],
 					brushes[1], this.Width - subtitlesSizes[hotKeyTextFontNumber].Width - 50,
 					this.Height - subtitlesSizes[hotKeyTextFontNumber].Height - 30);
 
 				if (hotKeyResultTextShowCounter++ > hotKeyResultCounterLimit)
-					{
 					hotKeyResultText = "";
-					}
 				}
 #endif
 			}
