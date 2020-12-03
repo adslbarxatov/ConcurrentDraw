@@ -702,15 +702,14 @@ htmlError:
 				// Запись значений реестра
 				Registry.SetValue ("HKEY_CLASSES_ROOT\\." + fileExt, "", fileExt + "file");
 				Registry.SetValue ("HKEY_CLASSES_ROOT\\" + fileExt + "file", "", FileTypeName);
-				Registry.SetValue ("HKEY_CLASSES_ROOT\\" + fileExt + "file\\DefaultIcon", "", Application.StartupPath +
-					"\\" + fileExt + ".ico");
+				Registry.SetValue ("HKEY_CLASSES_ROOT\\" + fileExt + "file\\DefaultIcon", "", AppStartupPath +
+					fileExt + ".ico");
 
 				if (Openable)
 					{
 					Registry.SetValue ("HKEY_CLASSES_ROOT\\" + fileExt + "file\\shell", "", "open");
-					//Registry.SetValue ("HKEY_CLASSES_ROOT\\" + fileExt + "file\\shell\\open", "", "&Open");
 					Registry.SetValue ("HKEY_CLASSES_ROOT\\" + fileExt + "file\\shell\\open", "Icon",
-						Application.StartupPath + "\\" + fileExt + ".ico");
+						AppStartupPath + fileExt + ".ico");
 					Registry.SetValue ("HKEY_CLASSES_ROOT\\" + fileExt + "file\\shell\\open\\command", "",
 						"\"" + Application.ExecutablePath + "\" \"%1\"");
 					}
@@ -725,6 +724,22 @@ htmlError:
 				}
 
 			return true;
+			}
+
+		/// <summary>
+		/// Возвращает путь, из которого запущен данный экземпляр приложения,
+		/// с завершающим backslash
+		/// </summary>
+		public static string AppStartupPath
+			{
+			get
+				{
+				string s = Application.StartupPath; // В случае запуска из корня диска таки дорисовывает слэш
+				if (s.EndsWith ("\\"))
+					return s;
+
+				return (s + "\\");
+				}
 			}
 		}
 	}

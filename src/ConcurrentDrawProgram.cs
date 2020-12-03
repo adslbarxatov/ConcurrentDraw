@@ -34,7 +34,7 @@ namespace RD_AAOW
 				}
 
 			// Проверка наличия обязательных компонентов
-			if (!File.Exists (Application.StartupPath + "\\" + ProgramDescription.AssemblyRequirements[0]))
+			if (!File.Exists (AboutForm.AppStartupPath + ProgramDescription.AssemblyRequirements[0]))
 				{
 				if (MessageBox.Show (string.Format (Localization.GetText ("LibraryNotFound", al),
 					ProgramDescription.AssemblyRequirements[0]) + Localization.GetText ("LibraryNotFound_Lib0", al),
@@ -45,7 +45,7 @@ namespace RD_AAOW
 				return;
 				}
 
-			if (!File.Exists (Application.StartupPath + "\\" + ProgramDescription.AssemblyRequirements[1]))
+			if (!File.Exists (AboutForm.AppStartupPath + ProgramDescription.AssemblyRequirements[1]))
 				{
 				if (MessageBox.Show (string.Format (Localization.GetText ("LibraryNotFound", al),
 					ProgramDescription.AssemblyRequirements[1]) + Localization.GetText ("LibraryNotFound_Lib1", al),

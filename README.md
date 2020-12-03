@@ -1,5 +1,5 @@
-# ConcurrentDraw v 1.52
-> PCC: 0007A932F96B0167
+# ConcurrentDraw v 1.52.1
+> PCC: 00099DF36FFF674E
 
 
 A tool for visualization of system audio output
@@ -27,11 +27,11 @@ No additional codecs or applications. Just launch and behold!
 ## Requirements / Требования
 
 Needs Windows XP or newer, Framework 4.0 or newer.
-[BASS library v 2.4.14 or newer](http://www.un4seen.com/) is required.
+Application uses [BASS audio library](http://www.un4seen.com/), that is free only for non-commercial use.
 Interface languages, user manual languages: ru_ru, en_us
 
 Требуется ОС Windows XP и новее, Framework 4.0 и новее.
-Наличие [библиотеки BASS версии 2.4.14 или новее](http://www.un4seen.com/) обязательно.
+Приложение использует [BASS audio library](http://www.un4seen.com/), которая бесплатна только для некоммерческого использования.
 Языки интерфейса и руководства пользователя: ru_ru, en_us
 
 &nbsp;

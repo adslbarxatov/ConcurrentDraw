@@ -3,8 +3,9 @@
 ToDo:
 - Try to use sectors instead of lines;
 
-ToDo:
-- Apply new paths processor
+Version 1.52.1:
+• New paths processor applied;
+• BASS library included into deployment package (it is allowed by developer for non-commercial use)
 
 Version 1.52:
 • Fixed bug in profiles list building;

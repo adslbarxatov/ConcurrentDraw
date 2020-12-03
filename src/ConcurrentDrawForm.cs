@@ -1171,10 +1171,10 @@ namespace RD_AAOW
 
 					try
 						{
-						if (!Directory.Exists (Application.StartupPath + "\\" + screenshotsDir))
-							Directory.CreateDirectory (Application.StartupPath + "\\" + screenshotsDir);
+						if (!Directory.Exists (AboutForm.AppStartupPath + screenshotsDir))
+							Directory.CreateDirectory (AboutForm.AppStartupPath + screenshotsDir);
 
-						mainLayer.Layer.Save (Application.StartupPath + "\\" + screenshotsDir + "\\" +
+						mainLayer.Layer.Save (AboutForm.AppStartupPath + screenshotsDir + "\\" +
 							DateTime.Now.ToString ("dd-MM-yyyy_HH-mm-ss") + ".png", ImageFormat.Png);
 						}
 					catch
