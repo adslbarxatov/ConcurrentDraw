@@ -1,7 +1,12 @@
 ﻿ConcurrentDraw changes log
 
 ToDo:
-- Try to use sectors instead of lines;
+- Add semi-symmetric modes
+
+Version 2.0:
+• Replaced old drawing algorithm for butterfly and perspective histograms; it doesn't contain all known graphic artifacts;
+• Adjusted skipping frequencies area around 0 Hz;
+• Some new modes await applying
 
 Version 1.52.1:
 • New paths processor applied;

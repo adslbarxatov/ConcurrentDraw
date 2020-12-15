@@ -87,7 +87,7 @@ namespace RD_AAOW
 		// Метрики гистограмм
 		private int[] histoX = new int[4],
 			histoY = new int[4];                                // Координаты линий гистограмм
-		private const double butterflyDensity = 2.75;           // Плотность гистограммы-бабочки
+		private const double butterflyDensity = 2.84;			// Плотность гистограммы-бабочки
 		private const double perspectiveDensity = 3.15;         // Плотность гистограммы-перспективы
 																// (даёт полный угол чуть более 90°; 90° <=> 2.84; 80° <=> 3.2)
 
@@ -101,6 +101,7 @@ namespace RD_AAOW
 		private double angle1, angle2;
 		private Bitmap firstBMP;
 		private Pen p;
+		private SolidBrush br;
 
 		// Субтитры
 		private Font[] subtitlesFonts = new Font[2];            // Объекты поддержки текстовых подписей на рендере
@@ -877,24 +878,28 @@ namespace RD_AAOW
 				// Получаем амплитуду
 				amp = ConcurrentDrawLib.GetScaledAmplitude ((uint)(cdp.HistogramFFTValuesCount * i) / 256);
 
+				br = new SolidBrush (Color.FromArgb (90,  ConcurrentDrawLib.GetColorFromPalette ((byte)(4 * amp / 5))));
+
 				// Определяем координаты линий и создаём кисть
 				if (VisualizationModesChecker.IsButterfly (cdp.VisualizationMode))
 					{
 					// Кисть
+					/*
 					p = new Pen (ConcurrentDrawLib.GetColorFromPalette ((byte)(4 * amp / 5)), logoHeight / 80);
 #if VIDEO
 					p.Width = logoHeight / 60;
 #endif
-
+					*/
 					// Радиус и углы поворота по индексу и общему вращению
 					rad = logo[1].Width / 2 + (int)((uint)(logo[1].Width * amp) / 256);
-					angle1 = ArcToRad (i / butterflyDensity);
-					angle2 = ArcToRad (currentHistogramAngle);
+					angle1 = /*ArcToRad*/ i / butterflyDensity;
+					angle2 = /*ArcToRad*/ currentHistogramAngle;
 					if (cdp.SwingingHistogram)
-						angle2 = Math.Sin (angle2) / 2.0;
-					angle2 += ArcToRad (cdp.HistoRotStartAngle);
+						angle2 = RadToArc ( Math.Sin (ArcToRad (  angle2)) / 2.0);
+					angle2 += /*ArcToRad*/ cdp.HistoRotStartAngle;
 
 					// Расчёт координат
+					/*
 					histoX[0] = (int)(logoCenterX + rad * Math.Cos (angle2 + angle1));
 					histoX[1] = 2 * (int)logoCenterX - histoX[0];
 					histoX[2] = (int)(logoCenterX + rad * Math.Cos (angle2 - angle1));
@@ -903,22 +908,26 @@ namespace RD_AAOW
 					histoY[1] = 2 * (int)logoCenterY - histoY[0];
 					histoY[2] = (int)(logoCenterY + rad * Math.Sin (angle2 - angle1));
 					histoY[3] = 2 * (int)logoCenterY - histoY[2];
+					*/
 					}
 				else
 					{
 					// Кисть
+					/*
 					p = new Pen (Color.FromArgb (90, ConcurrentDrawLib.GetColorFromPalette ((byte)(3 * amp / 4))),
 						logoHeight / ((i > 252) ? 90 : 40));    // Костыль для обхода шва на перспективе
+					*/
 
 					// Углы
 					// (двойная длина дуги для того же количества линий)
-					angle1 = ArcToRad (((255 - i) * ((i % 2 == 0) ? 1 : -1)) / perspectiveDensity);
-					angle2 = ArcToRad (currentHistogramAngle + 90);
+					angle1 = /*ArcToRad*/ (((255 - i) * ((i % 2 == 0) ? 1 : -1)) / perspectiveDensity);
+					angle2 = /*ArcToRad*/ (currentHistogramAngle + 90);
 					if (cdp.SwingingHistogram)
-						angle2 = (Math.Sin (angle2 + Math.PI / 2.0) + Math.PI) / 2.0;
-					angle2 += ArcToRad (cdp.HistoRotStartAngle);
+						angle2 =RadToArc ( (Math.Sin (ArcToRad ( angle2 + 90.0)) + Math.PI) / 2.0);
+					angle2 += /*ArcToRad*/ (cdp.HistoRotStartAngle);
 
 					// Координаты
+					/*
 					histoX[0] = (int)(logoCenterX + rad * Math.Cos (angle2 + angle1));
 					histoX[1] = (int)(logoCenterX + logoHeight * Math.Cos (angle2) / 20);
 					histoX[2] = 2 * (int)logoCenterX - histoX[0];
@@ -927,14 +936,25 @@ namespace RD_AAOW
 					histoY[1] = (int)(logoCenterY + logoHeight * Math.Sin (angle2) / 20);
 					histoY[2] = 2 * (int)logoCenterY - histoY[0];
 					histoY[3] = 2 * (int)logoCenterY - histoY[1];
+
+					mainLayer.Descriptor.DrawLine (p, histoX[0], histoY[0], histoX[1], histoY[1]);
+					mainLayer.Descriptor.DrawLine (p, histoX[2], histoY[2], histoX[3], histoY[3]);
+
+					p.Dispose ();
+					*/
 					}
 
-				// Рисуем
-				mainLayer.Descriptor.DrawLine (p, histoX[0], histoY[0], histoX[1], histoY[1]);
-				mainLayer.Descriptor.DrawLine (p, histoX[2], histoY[2], histoX[3], histoY[3]);
+				// Отрисовка
+				mainLayer.Descriptor.FillPie (br, logoCenterX - rad, logoCenterY - rad,
+					2 * rad, 2 * rad, (float)(angle2 - angle1), 1.40625f);
+				mainLayer.Descriptor.FillPie (br, logoCenterX - rad, logoCenterY - rad,
+					2 * rad, 2 * rad, (float)(angle2 + angle1), 1.40625f);
+				mainLayer.Descriptor.FillPie (br, logoCenterX - rad, logoCenterY - rad,
+					2 * rad, 2 * rad, (float)(180f + angle2 - angle1), 1.40625f);
+				mainLayer.Descriptor.FillPie (br, logoCenterX - rad, logoCenterY - rad,
+					2 * rad, 2 * rad, (float)(180f + angle2 + angle1), 1.40625f);
 
-				// Завершено
-				p.Dispose ();
+				br.Dispose ();
 				}
 			}
 
@@ -1075,6 +1095,12 @@ namespace RD_AAOW
 		private double ArcToRad (double Arc)
 			{
 			return Math.PI * Arc / 180.0;
+			}
+
+		// Метод пересчитывает радианы в градусы
+		private double RadToArc (double Arc)
+			{
+			return 180.0 * Arc / Math.PI;
 			}
 
 		// Создание и подготовка слоёв и лого

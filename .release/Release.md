@@ -1,8 +1,4 @@
-_Changes for v 1.52.1_:
-- New paths processor applied;
-- BASS library included into deployment package (it is allowed by developer for non-commercial use);
-- Fixed bug in profiles list building;
-- Fixed bug in Policy acception interface that disallowed to accept it in offline mode at first start;
-- Fixed some bugs in particles engine;
-- Fixed list of startup positions for particles;
-- Fixed core bug that made incorrect frequencies order
+_Changes for v 2.0_:
+- Replaced old drawing algorithm for butterfly and perspective histograms; it doesn't contain all known graphic artifacts;
+- Adjusted skipping frequencies area around 0 Hz;
+- Some new modes await applying

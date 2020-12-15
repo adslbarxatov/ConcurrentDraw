@@ -1,5 +1,5 @@
-# ConcurrentDraw v 1.52.1
-> PCC: 00099DF36FFF674E
+# ConcurrentDraw v 2.0
+> PCC: 00099BF085D9423F
 
 
 A tool for visualization of system audio output
