@@ -87,7 +87,7 @@ namespace RD_AAOW
 		// Метрики гистограмм
 		private int[] histoX = new int[4],
 			histoY = new int[4];                                // Координаты линий гистограмм
-		private const double butterflyDensity = 2.84;			// Плотность гистограммы-бабочки
+		private const double butterflyDensity = 2.84;           // Плотность гистограммы-бабочки
 		private const double perspectiveDensity = 3.15;         // Плотность гистограммы-перспективы
 																// (даёт полный угол чуть более 90°; 90° <=> 2.84; 80° <=> 3.2)
 
@@ -878,7 +878,8 @@ namespace RD_AAOW
 				// Получаем амплитуду
 				amp = ConcurrentDrawLib.GetScaledAmplitude ((uint)(cdp.HistogramFFTValuesCount * i) / 256);
 
-				br = new SolidBrush (Color.FromArgb (90,  ConcurrentDrawLib.GetColorFromPalette ((byte)(4 * amp / 5))));
+				br = new SolidBrush (Color.FromArgb (63 + 3 * amp / 4,
+					ConcurrentDrawLib.GetColorFromPalette ((byte)(4 * amp / 5))));
 
 				// Определяем координаты линий и создаём кисть
 				if (VisualizationModesChecker.IsButterfly (cdp.VisualizationMode))
@@ -891,11 +892,11 @@ namespace RD_AAOW
 #endif
 					*/
 					// Радиус и углы поворота по индексу и общему вращению
-					rad = logo[1].Width / 2 + (int)((uint)(logo[1].Width * amp) / 256);
+					rad = logo[1].Width / 4 + (int)((uint)(logo[1].Width * amp) / 256);
 					angle1 = /*ArcToRad*/ i / butterflyDensity;
 					angle2 = /*ArcToRad*/ currentHistogramAngle;
 					if (cdp.SwingingHistogram)
-						angle2 = RadToArc ( Math.Sin (ArcToRad (  angle2)) / 2.0);
+						angle2 = RadToArc (Math.Sin (ArcToRad (angle2)) / 2.0);
 					angle2 += /*ArcToRad*/ cdp.HistoRotStartAngle;
 
 					// Расчёт координат
@@ -923,7 +924,7 @@ namespace RD_AAOW
 					angle1 = /*ArcToRad*/ (((255 - i) * ((i % 2 == 0) ? 1 : -1)) / perspectiveDensity);
 					angle2 = /*ArcToRad*/ (currentHistogramAngle + 90);
 					if (cdp.SwingingHistogram)
-						angle2 =RadToArc ( (Math.Sin (ArcToRad ( angle2 + 90.0)) + Math.PI) / 2.0);
+						angle2 = RadToArc ((Math.Sin (ArcToRad (angle2 + 90.0)) + Math.PI) / 2.0);
 					angle2 += /*ArcToRad*/ (cdp.HistoRotStartAngle);
 
 					// Координаты
