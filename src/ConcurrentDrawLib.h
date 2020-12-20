@@ -18,8 +18,8 @@
 
 /////////////////////////////////////////////////////
 // Константы
-#define CD_VERSION					2,0,0,0
-#define CD_VERSION_S				"2.0.0.0"
+#define CD_VERSION					2,2,0,0
+#define CD_VERSION_S				"2.2.0.0"
 #define CD_PRODUCT					"BASS adapter for ConcurrentDraw visualization tool"
 #define CD_COMPANY					"RD AAOW"
 
@@ -47,13 +47,13 @@
 #define PEAK_EVALUATION_LOW_EDGE	0
 #define PEAK_EVALUATION_HIGH_EDGE	16
 #define PEAK_EVALUATION_LOW_LEVEL	0xF8
-#define CD_DEFAULT_FFT_SCALE_MULT	40
+#define CD_DEFAULT_FFT_SCALE_MULT	100
 
 #define CD_SECOND_FFT_SCALE_MULT	80.0f	
 #define CD_FFT_EV_METHOD(v)			v * AS->cdFFTScale
 
 #define CD_MIN_FFT_SCALE_MULT		10
-#define CD_MAX_FFT_SCALE_MULT		150
+#define CD_MAX_FFT_SCALE_MULT		200
 
 #define NAMES_DELIMITER_C			'\x1'
 #define NAMES_DELIMITER_S			"\x1"

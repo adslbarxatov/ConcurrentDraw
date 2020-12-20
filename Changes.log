@@ -1,7 +1,10 @@
 ﻿ConcurrentDraw changes log
 
-ToDo:
-- Add semi-symmetric modes
+Version 2.2:
+• Butterfly/perspective: peaks width is now more precise;
+• Added butterfly histogram with only vertical symmetry and 'snail' histogram (butterfly with no symmetry);
+• Some engine improvements applied;
+• Max FFT scale multiplier (internal volume value) is now 200
 
 Version 2.1:
 • Butterfly/perspective: peaks transparency are now depends on their values; it makes higher peaks more remarkable;

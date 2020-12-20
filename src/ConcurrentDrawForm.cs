@@ -873,87 +873,64 @@ namespace RD_AAOW
 			if (VisualizationModesChecker.IsPerspective (cdp.VisualizationMode))
 				rad = (int)Math.Sqrt (this.Width * this.Width + this.Height * this.Height) / 2;     // Радиус для перспективы
 
-			for (int i = 0; i < 256; i++)
+			uint lim = 256;
+			if (cdp.VisualizationMode == VisualizationModes.Butterfly_histogram_with_vertical_symmetry)
+				lim *= 2;
+			if (cdp.VisualizationMode == VisualizationModes.Snail_histogram)
+				lim *= 4;
+
+			for (int i = 0; i < lim; i++)
 				{
 				// Получаем амплитуду
-				amp = ConcurrentDrawLib.GetScaledAmplitude ((uint)(cdp.HistogramFFTValuesCount * i) / 256);
+				amp = ConcurrentDrawLib.GetScaledAmplitude ((uint)(cdp.HistogramFFTValuesCount * i) / lim);
 
 				br = new SolidBrush (Color.FromArgb (63 + 3 * amp / 4,
 					ConcurrentDrawLib.GetColorFromPalette ((byte)(4 * amp / 5))));
 
-				// Определяем координаты линий и создаём кисть
-				if (VisualizationModesChecker.IsButterfly (cdp.VisualizationMode))
+				// Определяем координаты линий 
+				if (VisualizationModesChecker.IsButterflyOrSnail (cdp.VisualizationMode))
 					{
-					// Кисть
-					/*
-					p = new Pen (ConcurrentDrawLib.GetColorFromPalette ((byte)(4 * amp / 5)), logoHeight / 80);
-#if VIDEO
-					p.Width = logoHeight / 60;
-#endif
-					*/
 					// Радиус и углы поворота по индексу и общему вращению
 					rad = logo[1].Width / 4 + (int)((uint)(logo[1].Width * amp) / 256);
-					angle1 = /*ArcToRad*/ i / butterflyDensity;
-					angle2 = /*ArcToRad*/ currentHistogramAngle;
+
+					angle1 = i / butterflyDensity;
+					angle2 = currentHistogramAngle;
 					if (cdp.SwingingHistogram)
 						angle2 = RadToArc (Math.Sin (ArcToRad (angle2)) / 2.0);
-					angle2 += /*ArcToRad*/ cdp.HistoRotStartAngle;
-
-					// Расчёт координат
-					/*
-					histoX[0] = (int)(logoCenterX + rad * Math.Cos (angle2 + angle1));
-					histoX[1] = 2 * (int)logoCenterX - histoX[0];
-					histoX[2] = (int)(logoCenterX + rad * Math.Cos (angle2 - angle1));
-					histoX[3] = 2 * (int)logoCenterX - histoX[2];
-					histoY[0] = (int)(logoCenterY + rad * Math.Sin (angle2 + angle1));
-					histoY[1] = 2 * (int)logoCenterY - histoY[0];
-					histoY[2] = (int)(logoCenterY + rad * Math.Sin (angle2 - angle1));
-					histoY[3] = 2 * (int)logoCenterY - histoY[2];
-					*/
+					angle2 += cdp.HistoRotStartAngle;
+					if (cdp.VisualizationMode == VisualizationModes.Butterfly_histogram_with_vertical_symmetry)
+						angle2 += 90.0;
 					}
 				else
 					{
-					// Кисть
-					/*
-					p = new Pen (Color.FromArgb (90, ConcurrentDrawLib.GetColorFromPalette ((byte)(3 * amp / 4))),
-						logoHeight / ((i > 252) ? 90 : 40));    // Костыль для обхода шва на перспективе
-					*/
-
-					// Углы
-					// (двойная длина дуги для того же количества линий)
-					angle1 = /*ArcToRad*/ (((255 - i) * ((i % 2 == 0) ? 1 : -1)) / perspectiveDensity);
-					angle2 = /*ArcToRad*/ (currentHistogramAngle + 90);
+					// Углы (двойная длина дуги для того же количества линий)
+					angle1 = (((255 - i) * ((i % 2) * 2 - 1)) / perspectiveDensity);
+					angle2 = (currentHistogramAngle + 90);
 					if (cdp.SwingingHistogram)
 						angle2 = RadToArc ((Math.Sin (ArcToRad (angle2 + 90.0)) + Math.PI) / 2.0);
-					angle2 += /*ArcToRad*/ (cdp.HistoRotStartAngle);
-
-					// Координаты
-					/*
-					histoX[0] = (int)(logoCenterX + rad * Math.Cos (angle2 + angle1));
-					histoX[1] = (int)(logoCenterX + logoHeight * Math.Cos (angle2) / 20);
-					histoX[2] = 2 * (int)logoCenterX - histoX[0];
-					histoX[3] = 2 * (int)logoCenterX - histoX[1];
-					histoY[0] = (int)(logoCenterY + rad * Math.Sin (angle2 + angle1));
-					histoY[1] = (int)(logoCenterY + logoHeight * Math.Sin (angle2) / 20);
-					histoY[2] = 2 * (int)logoCenterY - histoY[0];
-					histoY[3] = 2 * (int)logoCenterY - histoY[1];
-
-					mainLayer.Descriptor.DrawLine (p, histoX[0], histoY[0], histoX[1], histoY[1]);
-					mainLayer.Descriptor.DrawLine (p, histoX[2], histoY[2], histoX[3], histoY[3]);
-
-					p.Dispose ();
-					*/
+					angle2 += (cdp.HistoRotStartAngle);
 					}
 
 				// Отрисовка
 				mainLayer.Descriptor.FillPie (br, logoCenterX - rad, logoCenterY - rad,
-					2 * rad, 2 * rad, (float)(angle2 - angle1), 1.40625f);
-				mainLayer.Descriptor.FillPie (br, logoCenterX - rad, logoCenterY - rad,
-					2 * rad, 2 * rad, (float)(angle2 + angle1), 1.40625f);
-				mainLayer.Descriptor.FillPie (br, logoCenterX - rad, logoCenterY - rad,
-					2 * rad, 2 * rad, (float)(180f + angle2 - angle1), 1.40625f);
-				mainLayer.Descriptor.FillPie (br, logoCenterX - rad, logoCenterY - rad,
-					2 * rad, 2 * rad, (float)(180f + angle2 + angle1), 1.40625f);
+					2 * rad, 2 * rad, (float)(angle2 + angle1), 0.8f);
+				// Размер сектора (0.8) дан с двойным нахлёстом (чтобы перекрыть интерференционную сетку)
+				// Родное значение: 360 / 1024 = 0.3515625
+
+				if (cdp.VisualizationMode != VisualizationModes.Snail_histogram)
+					{
+					mainLayer.Descriptor.FillPie (br, logoCenterX - rad, logoCenterY - rad,
+						2 * rad, 2 * rad, (float)(angle2 - angle1), 0.8f);
+					}
+
+				if ((cdp.VisualizationMode == VisualizationModes.Perspective_histogram) ||
+					(cdp.VisualizationMode == VisualizationModes.Butterfly_histogram_with_full_symmetry))
+					{
+					mainLayer.Descriptor.FillPie (br, logoCenterX - rad, logoCenterY - rad,
+						2 * rad, 2 * rad, 180f + (float)(angle2 - angle1), 0.8f);
+					mainLayer.Descriptor.FillPie (br, logoCenterX - rad, logoCenterY - rad,
+						2 * rad, 2 * rad, 180f + (float)(angle2 + angle1), 0.8f);
+					}
 
 				br.Dispose ();
 				}
@@ -985,7 +962,7 @@ namespace RD_AAOW
 			peak = ConcurrentDrawLib.CurrentPeak;
 
 			// Отрисовка гистограммы-бабочки при необходимости
-			if (VisualizationModesChecker.IsButterfly (cdp.VisualizationMode))
+			if (VisualizationModesChecker.IsButterflyOrSnail (cdp.VisualizationMode))
 				DrawButterflyAndPerspective ();
 
 			// Затенение и кумулятивный эффект для остальных режимов

@@ -46,9 +46,19 @@
 		Histogram_with_full_symmetry,
 
 		/// <summary>
-		/// Гистограмма-бабочка
+		/// Гистограмма-бабочка с полной симметрией
 		/// </summary>
-		Butterfly_histogram,
+		Butterfly_histogram_with_full_symmetry,
+
+		/// <summary>
+		/// Гистограмма-бабочка с вертикальной симметрией
+		/// </summary>
+		Butterfly_histogram_with_vertical_symmetry,
+
+		/// <summary>
+		/// Гистограмма-бабочка без симметрии
+		/// </summary>
+		Snail_histogram,
 
 		/// <summary>
 		/// Гистограмма-перспектива
@@ -74,7 +84,7 @@
 		/// <summary>
 		/// Количество доступных режимов визуализации
 		/// </summary>
-		public const uint VisualizationModesCount = 10;
+		public const uint VisualizationModesCount = 12;
 
 		/// <summary>
 		/// Метод возвращает режим спектрограммы по режиму визуализации
@@ -156,10 +166,12 @@
 		/// Метод возвращает true, если режим предполагает гистограмму-бабочку
 		/// </summary>
 		/// <param name="Mode">Режим для проверки</param>
-		/// <returns>Возвращает true в случае, если предполагается гистограмма-бабочка</returns>
-		public static bool IsButterfly (VisualizationModes Mode)
+		/// <returns>Возвращает true в случае, если предполагается гистограмма-бабочка или её аналог</returns>
+		public static bool IsButterflyOrSnail (VisualizationModes Mode)
 			{
-			return (Mode == VisualizationModes.Butterfly_histogram);
+			return (Mode == VisualizationModes.Butterfly_histogram_with_full_symmetry) ||
+				(Mode == VisualizationModes.Butterfly_histogram_with_vertical_symmetry) ||
+				(Mode == VisualizationModes.Snail_histogram);
 			}
 
 		/// <summary>

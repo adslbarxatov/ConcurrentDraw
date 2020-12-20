@@ -316,7 +316,7 @@ namespace RD_AAOW
 				visualizationMode = value;
 				}
 			}
-		private int visualizationMode = (int)VisualizationModes.Butterfly_histogram;
+		private int visualizationMode = (int)VisualizationModes.Butterfly_histogram_with_full_symmetry;
 
 		/// <summary>
 		/// Возвращает или задаёт верхний отступ окна визуализации
@@ -600,7 +600,7 @@ namespace RD_AAOW
 
 				visualizationMode = int.Parse (values[2]);
 				if (Math.Abs (visualizationMode) >= VisualizationModesChecker.VisualizationModesCount)
-					visualizationMode = (int)VisualizationModes.Butterfly_histogram;
+					visualizationMode = (int)VisualizationModes.Butterfly_histogram_with_full_symmetry;
 
 				spectrogramHeight = uint.Parse (values[3]);
 				visualizationWidth = uint.Parse (values[4]);

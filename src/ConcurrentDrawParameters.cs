@@ -234,7 +234,7 @@ namespace RD_AAOW
 				SDPaletteCombo.SelectedIndex = parameters[psn].PaletteNumber;
 
 				if (Math.Abs (parameters[psn].VisualizationMode) >= VisualizationModesChecker.VisualizationModesCount)
-					parameters[psn].VisualizationMode = (int)VisualizationModes.Butterfly_histogram;
+					parameters[psn].VisualizationMode = (int)VisualizationModes.Butterfly_histogram_with_full_symmetry;
 				VisualizationCombo.SelectedIndex = Math.Abs (parameters[psn].VisualizationMode);
 				WithLogoFlag.Checked = (parameters[psn].VisualizationMode >= 0);
 
