@@ -1,5 +1,8 @@
 ﻿ConcurrentDraw changes log
 
+Version 2.2.2:
+• Added ability to 'ask developer' via E-mail for help, or send wish, advice or bug report
+
 Version 2.2:
 • Butterfly/perspective: peaks width is now more precise;
 • Added butterfly histogram with only vertical symmetry and 'snail' histogram (butterfly with no symmetry);
