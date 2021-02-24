@@ -10,14 +10,14 @@ Version 2.2:
 • Max FFT scale multiplier (internal volume value) is now 200
 
 Version 2.1:
-• Butterfly/perspective: peaks transparency are now depends on their values; it makes higher peaks more remarkable;
-• Butterfly/perspective: removed logo drawing artifact (too large cicrle with background color in its center; now
+• Butterfly/perspective: peaks transparency now depends on their values; it makes higher peaks more remarkable;
+• Butterfly/perspective: removed logo drawing artifact (too large circle with background color in its center; now
   it allows logo to leave traces)
 
 Version 2.0:
 • Replaced old drawing algorithm for butterfly and perspective histograms; it doesn't contain all known graphic artifacts;
 • Adjusted skipping frequencies area around 0 Hz;
-• Some new modes await applying
+• Some new modes are waiting for applying
 
 Version 1.52.1:
 • New paths processor applied;
