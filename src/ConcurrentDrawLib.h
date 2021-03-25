@@ -21,7 +21,7 @@
 #define CD_VERSION					2,2,0,0
 #define CD_VERSION_S				"2.2.0.0"
 #define CD_PRODUCT					"BASS adapter for ConcurrentDraw visualization tool"
-#define CD_COMPANY					"RD AAOW"
+#define CD_COMPANY					"RD AAOW FDL"
 
 #define MAX_RECORD_DEVICES			10
 #define MAX_DEVICE_NAME_LENGTH		128

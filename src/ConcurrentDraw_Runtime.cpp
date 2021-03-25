@@ -25,7 +25,6 @@ float *GetDataFromStream (float *CleanData)
 	// Выгрузка максимально доступного объёма данных
 	else
 		{
-		//if (BASS_ChannelGetData (AS->cdChannel, CleanData, BASS_DATA_AVAILABLE) < FFT_CLEAN_VALUES_COUNT)
 		if (BASS_ChannelGetPosition (AS->cdChannel, BASS_POS_BYTE) >= BASS_ChannelGetLength (AS->cdChannel, BASS_POS_BYTE))
 			return NULL;
 
@@ -53,6 +52,7 @@ CD_API(uchar) GetScaledAmplitudeEx (uint FrequencyLevel)
 	v = (AS->cdChannelLength) ? 6 : 3;
 	fl = (fl < v) ? v : fl;
 
+	//fl = (uint)(14796.22 / log10 ((double)fl));
 	if (fl >= FFT_VALUES_COUNT)
 		fl = FFT_VALUES_COUNT - 1;
 	

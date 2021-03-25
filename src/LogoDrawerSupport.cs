@@ -268,18 +268,6 @@ namespace RD_AAOW
 			return Math.Cos (D2R (ArcInDegrees));
 			}
 
-		/*/// <summary>
-		/// Метод возвращает true, если указанная позиция относится к разновидности Flat
-		/// </summary>
-		/// <param name="Position">Стартовая позиция объекта</param>
-		/// <returns></returns>
-		public static bool IsFlat (LogoDrawerObjectStartupPositions Position)
-			{
-			return (Position == LogoDrawerObjectStartupPositions.LeftFlat) ||
-				(Position == LogoDrawerObjectStartupPositions.RightFlat) ||
-				(Position == LogoDrawerObjectStartupPositions.CenterFlat);
-			}*/
-
 		/// <summary>
 		/// Метод возвращает true, если указанная позиция относится к разновидности Left
 		/// </summary>
@@ -287,8 +275,7 @@ namespace RD_AAOW
 		/// <returns></returns>
 		public static bool IsLeft (LogoDrawerObjectStartupPositions Position)
 			{
-			return (Position == LogoDrawerObjectStartupPositions.Left) /*||
-				(Position == LogoDrawerObjectStartupPositions.LeftFlat)*/;
+			return (Position == LogoDrawerObjectStartupPositions.Left);
 			}
 
 		/// <summary>
@@ -583,21 +570,6 @@ namespace RD_AAOW
 		/// От центра во все стороны
 		/// </summary>
 		CenterRandom = 5,
-
-		/*/// <summary>
-		/// От центра по горизонтали
-		/// </summary>
-		CenterFlat = 6,
-
-		/// <summary>
-		/// Слева по горизонтали
-		/// </summary>
-		LeftFlat = 7,
-
-		/// <summary>
-		/// Справа по горизонтали
-		/// </summary>
-		RightFlat = 8,*/
 
 		/// <summary>
 		/// Случайная
