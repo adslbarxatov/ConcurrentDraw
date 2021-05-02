@@ -933,7 +933,9 @@ namespace RD_AAOW
 				g.Dispose ();
 				}
 			else
+				{
 				image = new Bitmap (2, 2);
+				}
 
 			// Контроль
 			if ((speedX > 0) && (x > endX) || (speedX < 0) && (x < endX) ||
@@ -1257,7 +1259,7 @@ namespace RD_AAOW
 			points.Clear ();
 
 			// Формирование изображения
-			if (ρ == 0)
+			if (ρ < 1.0f)
 				image = new Bitmap (2, 2);
 			else
 				image = new Bitmap (2 * (int)ρ, 2 * (int)ρ);

@@ -1,5 +1,5 @@
-# ConcurrentDraw v 2.3
-> PCC: 000A114AA30690DD
+# ConcurrentDraw v 2.3.2
+> PCC: 000A134C88CDD79E
 
 
 The sound and music visualization tool
@@ -9,7 +9,7 @@ The sound and music visualization tool
 
 #
 
-This tool allows you to visualize audio data that comes from system's output
+This tool allows you to visualize audio data that comes from system’s output
 (system mixer or speakers). All sound that you can play on your PC can be drawn.
 No additional codecs or applications. Just launch and behold!
 

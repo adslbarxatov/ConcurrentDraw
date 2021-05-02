@@ -884,8 +884,12 @@ namespace RD_AAOW
 				// Получаем амплитуду
 				amp = ConcurrentDrawLib.GetScaledAmplitude ((uint)(cdp.HistogramFFTValuesCount * i) / lim);
 
-				br = new SolidBrush (Color.FromArgb (63 + 3 * amp / 4,
-					ConcurrentDrawLib.GetColorFromPalette ((byte)(4 * amp / 5))));
+				if (cdp.VisualizationMode == VisualizationModes.Perspective_histogram)
+					br = new SolidBrush (Color.FromArgb (63 + 2 * amp / 4,
+						ConcurrentDrawLib.GetColorFromPalette ((byte)(4 * amp / 5))));
+				else
+					br = new SolidBrush (Color.FromArgb (63 + 3 * amp / 4,
+						ConcurrentDrawLib.GetColorFromPalette ((byte)(4 * amp / 5))));
 
 				// Определяем координаты линий 
 				if (VisualizationModesChecker.IsButterflyOrSnail (cdp.VisualizationMode))

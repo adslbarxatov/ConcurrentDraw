@@ -2,7 +2,11 @@
 
 ToDo:
 - Add logo self-movement?
-- Apply fixed icons
+
+Version 2.3.2:
+• Applied fixed icons;
+• Adjusted draw method for perspective histogram;
+• Fixed minor bug in particles processing algorithm
 
 Version 2.3:
 • New identity applied;
