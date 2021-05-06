@@ -3,6 +3,10 @@
 ToDo:
 - Add logo self-movement?
 
+Version 2.4:
+• Updated “sunrise” palette;
+• Added ability to reverse frequencies order in all modes (except for “logo only”)
+
 Version 2.3.2:
 • Applied fixed icons;
 • Adjusted draw method for perspective histogram;

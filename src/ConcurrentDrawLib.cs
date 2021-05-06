@@ -647,17 +647,19 @@ namespace RD_AAOW
 		/// которое будет использоваться в гистограммах
 		/// </summary>
 		/// <param name="Count">Количество значений</param>
+		/// <param name="Reversed">Флаг разворота порядка частот</param>
 		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
-		private static extern void SetHistogramFFTValuesCountEx (UInt16 Count);
+		private static extern void SetHistogramFFTValuesCountEx (UInt16 Count, byte Reversed);
 
 		/// <summary>
 		/// Метод устанавливает количество значений FFT, 
 		/// которое будет использоваться в гистограммах
 		/// </summary>
 		/// <param name="Count">Количество значений</param>
-		public static void SetHistogramFFTValuesCount (uint Count)
+		/// <param name="Reversed">Флаг разворота порядка частот</param>
+		public static void SetHistogramFFTValuesCount (uint Count, bool Reversed)
 			{
-			SetHistogramFFTValuesCountEx ((UInt16)Count);
+			SetHistogramFFTValuesCountEx ((UInt16)Count, (byte)(Reversed ? 1 : 0));
 			}
 
 		/// <summary>

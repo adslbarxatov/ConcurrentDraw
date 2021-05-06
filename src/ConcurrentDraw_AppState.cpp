@@ -35,6 +35,7 @@ void InitAppState (void)
 	
 	appState.cdFFTScale = (float)CD_DEFAULT_FFT_SCALE_MULT * CD_SECOND_FFT_SCALE_MULT;
 	appState.cdHistogramFFTValuesCount = DEFAULT_FFT_VALUES_COUNT;
+	appState.cdReverseFreqOrder = 0;
 	
 	appState.cdFFTPeak = 0;
 	appState.cdFFTPeakEvLowEdge = PEAK_EVALUATION_LOW_EDGE;

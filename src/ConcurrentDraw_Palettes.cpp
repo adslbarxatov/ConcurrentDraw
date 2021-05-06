@@ -217,10 +217,10 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 		// Рассвет
 		case 4:
 			FP_PALETTE (
-				(0, 0, 2 * i),
-				(0, 3 * i, 2 * (FP_QMAX - i)),
-				(4 * i, FP_AMAX - i, 0),
-				(FP_MAX, 2 * (FP_QMAX + i), 4 * i),
+				(0, i, 2 * i),
+				(0, FP_QMAX + i, 2 * (FP_QMAX - i)),
+				(4 * i, FP_HMAX + i, 0),
+				(FP_MAX, FP_AMAX + i, 4 * i),
 				(0, 3 * i / 4, 0), 8)
 			break;
 

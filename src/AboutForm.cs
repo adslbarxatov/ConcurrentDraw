@@ -519,11 +519,32 @@ htmlError:
 			// Разбор аргументов
 			string[] paths = (string[])e.Argument;
 
+			// Инициализация полосы загрузки
+			SupportedLanguages al = Localization.CurrentLanguage;
+			string report = Localization.GetText ("PackageDownload", al) + Path.GetFileName (paths[1]);
+			((BackgroundWorker)sender).ReportProgress ((int)HardWorkExecutor.ProgressBarSize, report);
+
+			// Отдельная обработка ModDB
+			if (paths[0].Contains ("www.moddb.com"))
+				{
+				string html = AboutForm.GetHTML (paths[0]);
+
+				int left, right;
+				if ((html == "") || ((left = html.IndexOf ("<a href=\"")) < 0) ||
+					((right = html.IndexOf ("/?", left)) < 0))
+					{
+					e.Result = -1;
+					return;
+					}
+
+				paths[0] = "https://www.moddb.com" + html.Substring (left + 9, right - left - 9);
+				}
+
 			// Настройка безопасности соединения
 			ServicePointManager.SecurityProtocol = (SecurityProtocolType)0xFC0;
 			// Принудительно открывает TLS1.0, TLS1.1 и TLS1.2; блокирует SSL3
 
-			// Запрос обновлений
+			// Запрос файла
 			HttpWebRequest rq;
 			try
 				{
@@ -537,11 +558,6 @@ htmlError:
 			rq.Method = "GET";
 			rq.KeepAlive = false;
 			rq.Timeout = 10000;
-
-			// Инициализация полосы загрузки
-			SupportedLanguages al = Localization.CurrentLanguage;
-			string report = Localization.GetText ("PackageDownload", al) + Path.GetFileName (paths[1]);
-			((BackgroundWorker)sender).ReportProgress ((int)HardWorkExecutor.ProgressBarSize, report);
 
 			// Отправка запроса
 			HttpWebResponse resp = null;

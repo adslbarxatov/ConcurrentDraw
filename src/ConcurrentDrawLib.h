@@ -18,8 +18,8 @@
 
 /////////////////////////////////////////////////////
 // Константы
-#define CD_VERSION					2,2,0,0
-#define CD_VERSION_S				"2.2.0.0"
+#define CD_VERSION					2,4,0,0
+#define CD_VERSION_S				"2.4.0.0"
 #define CD_PRODUCT					"BASS adapter for ConcurrentDraw visualization tool"
 #define CD_COMPANY					"RD AAOW FDL"
 
@@ -97,6 +97,7 @@ struct CDSTATE
 
 	float cdFFTScale;				// Масштаб значений FFT
 	uint cdHistogramFFTValuesCount;	// Количество значений FFT, используемых для гистограмм
+	uchar cdReverseFreqOrder;		// Флаг разворота порядка частот на выходе с БПФ
 	uchar cdFFTPeak;				// Текущее пиковое значение
 	uint cdFFTPeakEvLowEdge;		// Нижняя граница диапазона определения пика
 	uint cdFFTPeakEvHighEdge;		// Верхняя граница диапазона определения пика
@@ -195,8 +196,8 @@ CD_API(ulong) GetPaletteBackgroundColorEx ();
 // Функция возвращает версию данной библиотеки
 CD_API(schar *) GetCDLibVersionEx ();
 
-// Функция устанавливает количество значений FFT, которое будет использоваться в гистограммах
-CD_API(void) SetHistogramFFTValuesCountEx (uint Count);
+// Функция устанавливает количество значений FFT, которое будет использоваться в гистограммах, и их порядок
+CD_API(void) SetHistogramFFTValuesCountEx (uint Count, uchar Reversed);
 
 // Функция возвращает длину текущего файлового потока (для аудиовыхода всегда 0)
 CD_API(uint) GetChannelLengthEx ();

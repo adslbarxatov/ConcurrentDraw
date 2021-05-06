@@ -111,17 +111,19 @@ CD_API(schar *) GetCDLibVersionEx ()
 	}
 
 // Функция устанавливает количество значений FFT, которое будет использоваться в гистограммах
-CD_API(void) SetHistogramFFTValuesCountEx (uint Count)
+CD_API(void) SetHistogramFFTValuesCountEx (uint Count, uchar Reversed)
 	{
 	// Установка начального состояния программы (функция срабатывает только один раз
 	// за время жизни программы)
 	InitAppState ();
 
-	// Установка значения
+	// Установка значений
 	AS->cdHistogramFFTValuesCount = Count;
 
 	if ((Count < 16) || (Count > FFT_VALUES_COUNT))
 		AS->cdHistogramFFTValuesCount = DEFAULT_FFT_VALUES_COUNT;
+
+	AS->cdReverseFreqOrder = ((Reversed != 0) ? 1 : 0);
 	}
 
 // Функция возвращает длину текущего файлового потока в миллисекундах (для аудиовыхода всегда 0)

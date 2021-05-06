@@ -312,7 +312,8 @@
 • [W] – переключение флага «Качание гистограммы»;
 • [V] – переключение флага «Волны бит-детектора»;
 • [PageUp] и [PageDown] – изменение высоты поля гистограммы; вместе с [Shift] – изменение размера лого;
-• [E] – переключение флага «Расширенный кумулятивный эффект»</value>
+• [E] – переключение флага «Расширенный кумулятивный эффект»;
+• [F] – переключение флага «Реверс диапазона гистограммы»</value>
   </data>
   <data name="CumulationTab_CEInfoLabel" xml:space="preserve">
     <value>(1 – без кумулятивного эффекта)</value>
@@ -399,5 +400,8 @@
   </data>
   <data name="CumulationTab_ExtendedCumulation" xml:space="preserve">
     <value>Расширенный кумулятивный эффект</value>
+  </data>
+  <data name="HistoTab_ReverseFreqOrderFlag" xml:space="preserve">
+    <value>Развернуть диапазон гистограммы</value>
   </data>
 </root>

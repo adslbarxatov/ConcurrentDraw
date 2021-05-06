@@ -243,10 +243,7 @@ namespace RD_AAOW
 				}
 			set
 				{
-				//if ((value & 0xFFFC) == value)
-				spectrogramHeight = value & 0xFFFC;         // Исправление, связанное с внутренней корректировкой высоты фрейма
-															//else
-															//	spectrogramHeight = (value & 0xFFFC) + 4;	// (см. текст InitializeSpectrogramEx)
+				spectrogramHeight = value & 0xFFFC;
 				}
 			}
 		private uint spectrogramHeight = 256;
@@ -278,10 +275,7 @@ namespace RD_AAOW
 				}
 			set
 				{
-				//if ((value & 0xFFFC) == value)
-				visualizationHeight = value & 0xFFFC;   // Исправление, связанное с внутренней корректировкой высоты фрейма
-														//else
-														//	visualizationHeight = (value & 0xFFFC) + 4;
+				visualizationHeight = value & 0xFFFC;
 				}
 			}
 		private uint visualizationHeight = 0;   // Определяется интерфейсом настроек
@@ -495,6 +489,22 @@ namespace RD_AAOW
 		private bool beatDetectorWaves = false;
 
 		/// <summary>
+		/// Возвращает или задаёт флаг реверса частот в спектре
+		/// </summary>
+		public bool ReverseFreqOrder
+			{
+			get
+				{
+				return reverseFreqOrder;
+				}
+			set
+				{
+				reverseFreqOrder = value;
+				}
+			}
+		private bool reverseFreqOrder = false;
+
+		/// <summary>
 		/// Возвращает или задаёт метрики генерации дополнительных графических объектов
 		/// </summary>
 		public LogoDrawerObjectMetrics ParticlesMetrics
@@ -662,8 +672,8 @@ namespace RD_AAOW
 				histoRotationAccToBeats = (values[45] != "0");
 				extendedCumulativeEffect = (values[46] != "0");
 
-				// Новая для версии 1.50
 				particlesMetrics.Acceleration = uint.Parse (values[31]);
+				reverseFreqOrder = (values[47] != "0");
 				}
 			catch
 				{
@@ -755,7 +765,8 @@ namespace RD_AAOW
 				particlesMetrics.MaxSpeedFluctuation.ToString ());
 
 			settings += (splitter[1].ToString () + (histoRotationAccToBeats ? "RAB" : "0") +
-				splitter[0].ToString () + (extendedCumulativeEffect ? "ECE" : "0"));
+				splitter[0].ToString () + (extendedCumulativeEffect ? "ECE" : "0") +
+				splitter[0].ToString () + (reverseFreqOrder ? "RFO" : "0"));
 
 			// Запись
 			try

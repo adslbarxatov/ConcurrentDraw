@@ -196,7 +196,8 @@ namespace RD_AAOW
 				parameters[SSN].BeatsDetectorHighEdge, parameters[SSN].BeatsDetectorLowLevel,
 				parameters[SSN].FFTScaleMultiplier);
 			ConcurrentDrawLib.SetHistogramFFTValuesCount (parameters[SSN].HistogramRangeMaximum *
-				CDParametersSet.HistogramScaledFrequencyMaximum / CDParametersSet.HistogramFrequencyMaximum);
+				CDParametersSet.HistogramScaledFrequencyMaximum / CDParametersSet.HistogramFrequencyMaximum,
+				parameters[SSN].ReverseFreqOrder);
 
 			// Запуск окна немедленно, ести требуется
 			BCancel.Enabled = !requestRequired;
@@ -264,6 +265,7 @@ namespace RD_AAOW
 
 				ShakeValue.Value = parameters[psn].ShakeEffect;
 				BeatWavesFlag.Checked = parameters[psn].BeatDetectorWaves;
+				ReverseFreqOrderFlag.Checked = parameters[psn].ReverseFreqOrder;
 
 				// Эти параметры перемещены в конец, т.к. могут вызывать ошибки при запусках, не зависящие от программы
 				HistogramRangeField.Value = parameters[psn].HistogramRangeMaximum;
@@ -384,7 +386,8 @@ namespace RD_AAOW
 				parameters[SSN].BeatsDetectorHighEdge, parameters[SSN].BeatsDetectorLowLevel,
 				parameters[SSN].FFTScaleMultiplier);
 			ConcurrentDrawLib.SetHistogramFFTValuesCount (parameters[SSN].HistogramRangeMaximum *
-				CDParametersSet.HistogramScaledFrequencyMaximum / CDParametersSet.HistogramFrequencyMaximum);
+				CDParametersSet.HistogramScaledFrequencyMaximum / CDParametersSet.HistogramFrequencyMaximum,
+				parameters[SSN].ReverseFreqOrder);
 
 			// Завершение
 			BCancel.Enabled = true;
@@ -430,6 +433,7 @@ namespace RD_AAOW
 
 			parameters[psn].ShakeEffect = (uint)ShakeValue.Value;
 			parameters[psn].BeatDetectorWaves = BeatWavesFlag.Checked;
+			parameters[psn].ReverseFreqOrder = ReverseFreqOrderFlag.Checked;
 
 			parameters[psn].FFTScaleMultiplier = (byte)FFTScaleMultiplier.Value;
 			parameters[psn].BeatsDetectorHighEdge = (uint)BDHighEdge.Value;
@@ -606,7 +610,8 @@ namespace RD_AAOW
 				ResetInitialAngle.Enabled = !VisualizationModesChecker.ContainsSGHGorWF (mode);
 			BeatWavesFlag.Enabled = VisualizationModesChecker.ContainsSGHGorWF (mode) || (mode == VisualizationModes.Logo_only);
 
-			HGRangeLabel.Enabled = HistogramRangeField.Enabled = HzLabel.Enabled = (mode != VisualizationModes.Logo_only);
+			HGRangeLabel.Enabled = HistogramRangeField.Enabled = HzLabel.Enabled = ReverseFreqOrderFlag.Enabled =
+				(mode != VisualizationModes.Logo_only);
 			SDDoubleWidthFlag.Enabled = VisualizationModesChecker.ContainsSGorWF (mode);
 
 			LogoCenterXTrack.Enabled = LogoCenterYTrack.Enabled =
@@ -1233,7 +1238,8 @@ namespace RD_AAOW
 
 			Keys.K | Keys.Shift,
 			Keys.E,
-			Keys.Tab						// 41
+			Keys.Tab,
+			Keys.F							// 42
 
 
 			// Клавиши, обрабатываемые в основном интерфейсе
@@ -1483,8 +1489,10 @@ namespace RD_AAOW
 						(AlwaysOnTopFlag.Checked ? (AlwaysOnTopFlag.Text + "\n") : "") +
 						FFTScaleLabel.Text + "\n\n" +
 
-						HGRangeLabel.Text + " 0 – " + (HistogramRangeField.Value *
-							CDParametersSet.HistogramRangeSettingIncrement).ToString () + " " +
+						HGRangeLabel.Text +
+							(ReverseFreqOrderFlag.Checked ? " " : " 0 – ") +
+							(HistogramRangeField.Value * CDParametersSet.HistogramRangeSettingIncrement).ToString () +
+							(ReverseFreqOrderFlag.Checked ? " – 0 " : " ") +
 							HzLabel.Text.Substring (HzLabel.Text.Length - 2) + "\n" +
 						SGHeightLabel.Text + " " + SGHeight.Value.ToString () + " px" +
 						(SDDoubleWidthFlag.Checked ? ("; " + SDDoubleWidthFlag.Text) : "") + "\n" +
@@ -1550,6 +1558,12 @@ namespace RD_AAOW
 				case 33:
 					BeatWavesFlag.Checked = !BeatWavesFlag.Checked;
 					hotKeyResult = BeatWavesFlag.Text + " = " + (BeatWavesFlag.Checked ? "1" : "0");
+					break;
+
+				// Изменение флага Reverse freq order
+				case 42:
+					ReverseFreqOrderFlag.Checked = !ReverseFreqOrderFlag.Checked;
+					hotKeyResult = ReverseFreqOrderFlag.Text + " = " + (ReverseFreqOrderFlag.Checked ? "1" : "0");
 					break;
 
 				#region Изменение размера лого

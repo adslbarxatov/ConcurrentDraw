@@ -293,7 +293,7 @@ Center placement: X = {1:S}; Y = {2:S}</value>
   <data name="HelpKeysText" xml:space="preserve">
     <value>Use next hotkeys:
 • right mouse button or [Space] – get to settings window;
-• double left click or [R] – change colors of 'polymorph' and 'random' palettes;
+• double left click or [R] – change colors of “polymorph” and “random” palettes;
 • [Esc] – close the application or settings window;
 • [Enter] – apply changes in settings window;
 • [M] – cyclically change visualization mode; with [Shift] – backward;
@@ -305,14 +305,15 @@ Center placement: X = {1:S}; Y = {2:S}</value>
 • [&lt; ,] and [&gt; .] – decrease and increase histogram rotation speed; with [Shift] – beats-dependent rotation;
 • [C] – move histogram to the center of window; with [Shift] – move logo;
 • [/ ?] – show this quick user manual;
-• [T] – switch 'Always on top' flag;
+• [T] – switch “Always on top” flag;
 • [K] – increase shake effect power; with [Shift] – decrease it;
 • [I] – request for current settings info;
 • [S] – saving current visualization screen to image file;
-• [W] – switch 'histogram swinging' flag;
-• [V] – switch 'beats waves' flag;
+• [W] – switch “histogram swinging” flag;
+• [V] – switch “beats waves” flag;
 • [PageUp] and [PageDown] – change histogram field's height; with [Shift] – change logo height;
-• [E] – switch 'extended cumulative effect' flag</value>
+• [E] – switch “extended cumulative effect” flag;
+• [F] – switch “reverse histogram range” flag</value>
   </data>
   <data name="CumulationTab_CEInfoLabel" xml:space="preserve">
     <value>(1 – no cumulative effect)</value>
@@ -398,5 +399,8 @@ Do you want to open webpage for downloading the actual library version?</value>
   </data>
   <data name="CumulationTab_ExtendedCumulation" xml:space="preserve">
     <value>Extended cumulative effect</value>
+  </data>
+  <data name="HistoTab_ReverseFreqOrderFlag" xml:space="preserve">
+    <value>Reverse histogram range</value>
   </data>
 </root>

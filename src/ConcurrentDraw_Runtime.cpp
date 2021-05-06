@@ -46,7 +46,11 @@ float *GetDataFromStream (float *CleanData)
 CD_API(uchar) GetScaledAmplitudeEx (uint FrequencyLevel)
 	{
 	// Переменные
-	uint v, fl = FrequencyLevel;
+	int v, fl = FrequencyLevel;	// Защита от переполнения
+
+	// Реверс, если требуется
+	if (AS->cdReverseFreqOrder)
+		fl = AS->cdHistogramFFTValuesCount - fl - 1;
 
 	// Контроль (слияние нижних частот)
 	v = (AS->cdChannelLength) ? 6 : 3;
