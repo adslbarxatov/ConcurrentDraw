@@ -2,6 +2,7 @@
 
 ToDo:
 - Add logo self-movement?
+- Add auto FFT multiplier: auto-adjustment based on current top amplitude with bottom limit
 
 Version 2.4:
 • Updated “sunrise” palette;
