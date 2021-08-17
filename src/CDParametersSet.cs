@@ -557,7 +557,6 @@ namespace RD_AAOW
 			particlesMetrics.Acceleration = 0;
 			particlesMetrics.AsStars = true;
 			particlesMetrics.Enlarging = 0;
-			//particlesMetrics.KeepTracks = false;
 			particlesMetrics.MaxRed = 255;
 			particlesMetrics.MaxGreen = 255;
 			particlesMetrics.MaxBlue = 255;

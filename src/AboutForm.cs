@@ -690,13 +690,14 @@ htmlError:
 
 			// Запрос обновлений
 			HttpWebRequest rq;
+			string html = "";
 			try
 				{
 				rq = (HttpWebRequest)WebRequest.Create (PageLink);
 				}
 			catch
 				{
-				return "";
+				return html;
 				}
 			rq.Method = "GET";
 			rq.KeepAlive = false;
@@ -704,7 +705,6 @@ htmlError:
 
 			// Отправка запроса
 			HttpWebResponse resp = null;
-			string html = "";
 			try
 				{
 				resp = (HttpWebResponse)rq.GetResponse ();
@@ -712,7 +712,7 @@ htmlError:
 			catch
 				{
 				// Любая ошибка здесь будет означать необходимость прекращения проверки
-				return "";
+				return html;
 				}
 
 			// Чтение ответа

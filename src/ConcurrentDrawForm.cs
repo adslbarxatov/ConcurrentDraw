@@ -811,9 +811,10 @@ namespace RD_AAOW
 
 				mainLayer.Descriptor.DrawImage (firstBMP, new Rectangle (0, 0, this.Width, this.Height),
 					0, 0, firstBMP.Width, firstBMP.Height, GraphicsUnit.Pixel, sgAttributes[2]);
+				firstBMP.Dispose ();
 
 				if (++backgroundsCounter >= vf.FramesCount)
-					backgroundsCounter = 0;
+					backgroundsCounter--;
 				}
 			else if ((backgrounds.Count == 0) || firstFilling)
 				{
@@ -824,9 +825,9 @@ namespace RD_AAOW
 			else
 				{
 				mainLayer.Descriptor.DrawImage (backgrounds[backgroundsCounter],
-								new Rectangle (0, 0, this.Width, this.Height),
-								0, 0, backgrounds[backgroundsCounter].Width, backgrounds[backgroundsCounter].Height,
-								GraphicsUnit.Pixel, sgAttributes[2]);
+					new Rectangle (0, 0, this.Width, this.Height),
+					0, 0, backgrounds[backgroundsCounter].Width, backgrounds[backgroundsCounter].Height,
+					GraphicsUnit.Pixel, sgAttributes[2]);
 
 				if (++backgroundsCounter >= backgrounds.Count)
 					backgroundsCounter = 0;

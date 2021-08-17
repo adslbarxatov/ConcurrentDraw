@@ -19,6 +19,8 @@ namespace RD_AAOW
 		private const int DSN = defaultSettingsNumber;
 		private const int SSN = savedSettingsNumber;
 
+		private uint histoRange = 1;
+
 		#region Interface masters
 
 		/// <summary>
@@ -106,9 +108,7 @@ namespace RD_AAOW
 			FFTScaleMultiplier.Value = parameters[DSN].FFTScaleMultiplier;
 
 			// Плотность гистограммы
-			HistogramRangeField.Maximum = (uint)(CDParametersSet.HistogramUsedFrequencyMaximum /
-				CDParametersSet.HistogramRangeSettingIncrement);
-			HistogramRangeField.Value = parameters[DSN].HistogramRangeMaximum;
+			histoRange = parameters[DSN].HistogramRangeMaximum;
 
 			// Кумулятивный эффект
 			CEDecumulationMultiplier.Maximum = (int)CDParametersSet.DecumulationMultiplierMaximum;
@@ -268,7 +268,8 @@ namespace RD_AAOW
 				ReverseFreqOrderFlag.Checked = parameters[psn].ReverseFreqOrder;
 
 				// Эти параметры перемещены в конец, т.к. могут вызывать ошибки при запусках, не зависящие от программы
-				HistogramRangeField.Value = parameters[psn].HistogramRangeMaximum;
+				histoRange = parameters[psn].HistogramRangeMaximum;
+				HistogramRangeField_ValueChanged (null, null);
 				DevicesCombo.SelectedIndex = parameters[psn].DeviceNumber;
 
 				VisWidth.Value = parameters[psn].VisualizationWidth;
@@ -288,7 +289,6 @@ namespace RD_AAOW
 
 				ObjectsAccelerationField.Value = parameters[psn].ParticlesMetrics.Acceleration;
 				ObjectsEnlargingCoeffField.Value = parameters[psn].ParticlesMetrics.Enlarging;
-				//ObjectsKeepTracksFlag.Checked = parameters[psn].ParticlesMetrics.KeepTracks;
 
 				ObjectsMaxColor.BackColor = Color.FromArgb (parameters[psn].ParticlesMetrics.MaxRed,
 					parameters[psn].ParticlesMetrics.MaxGreen, parameters[psn].ParticlesMetrics.MaxBlue);
@@ -362,6 +362,24 @@ namespace RD_AAOW
 
 			// Отмена реинициализации, которая выставляется при загрузке (кроме спецпалитр)
 			logoResetFlag = ConcurrentDrawLib.PaletteRequiresReset (parameters[SSN].PaletteNumber);
+
+			// Загрузка снимка спектра для бит-детектора
+			Bitmap b = new Bitmap (BeatsDetectorImage.Width, BeatsDetectorImage.Height);
+			Graphics g = Graphics.FromImage (b);
+
+			for (uint i = 0; i < b.Width; i++)
+				{
+				Pen p = new Pen (ConcurrentDrawLib.GetColorFromPalette
+					(ConcurrentDrawLib.GetScaledAmplitude (i)));
+				g.DrawLine (p, i, 0, i, BeatsDetectorImage.Height);
+				p.Dispose ();
+				}
+
+			g.Dispose ();
+
+			if (BeatsDetectorImage.BackgroundImage != null)
+				BeatsDetectorImage.BackgroundImage.Dispose ();
+			BeatsDetectorImage.BackgroundImage = b;
 			}
 
 		/// <summary>
@@ -417,7 +435,7 @@ namespace RD_AAOW
 			parameters[psn].SpectrogramDoubleWidth = SDDoubleWidthFlag.Checked;
 			parameters[psn].AlwaysOnTop = AlwaysOnTopFlag.Checked;
 			parameters[psn].SwingingHistogram = SwingingHistogramFlag.Checked;
-			parameters[psn].HistogramRangeMaximum = (uint)HistogramRangeField.Value;
+			parameters[psn].HistogramRangeMaximum = histoRange;
 
 			parameters[psn].DecumulationMultiplier = (byte)CEDecumulationMultiplier.Value;
 			parameters[psn].CumulationSpeed = (byte)CECumulationSpeed.Value;
@@ -440,7 +458,6 @@ namespace RD_AAOW
 			parameters[psn].BeatsDetectorLowEdge = (uint)BDLowEdge.Value;
 			parameters[psn].BeatsDetectorLowLevel = (byte)BDLowLevel.Value;
 
-			// Эти параметры не сохраняются
 			LogoDrawerObjectMetrics ldom = parameters[psn].ParticlesMetrics;
 
 			ldom.MaxSpeed = (uint)ObjectsMaxSpeedField.Value;
@@ -451,7 +468,6 @@ namespace RD_AAOW
 
 			ldom.Acceleration = (uint)ObjectsAccelerationField.Value;
 			ldom.Enlarging = (int)ObjectsEnlargingCoeffField.Value;
-			//ldom.KeepTracks = ObjectsKeepTracksFlag.Checked;
 			ldom.MaxRed = ObjectsMaxColor.BackColor.R;
 			ldom.MaxGreen = ObjectsMaxColor.BackColor.G;
 			ldom.MaxBlue = ObjectsMaxColor.BackColor.B;
@@ -469,7 +485,7 @@ namespace RD_AAOW
 			ldom.StartupPosition = (LogoDrawerObjectStartupPositions)ObjectsStartupSideCombo.SelectedIndex;
 			ldom.MaxSpeedFluctuation = (uint)ObjectsSpeedFluctuationField.Value;
 
-			parameters[psn].ParticlesMetrics = ldom;
+			parameters[psn].ParticlesMetrics = LogoDrawerSupport.AlingMetrics (ldom);
 
 			// Сохранение
 			if (psn == 1)
@@ -610,7 +626,7 @@ namespace RD_AAOW
 				ResetInitialAngle.Enabled = !VisualizationModesChecker.ContainsSGHGorWF (mode);
 			BeatWavesFlag.Enabled = VisualizationModesChecker.ContainsSGHGorWF (mode) || (mode == VisualizationModes.Logo_only);
 
-			HGRangeLabel.Enabled = HistogramRangeField.Enabled = HzLabel.Enabled = ReverseFreqOrderFlag.Enabled =
+			HGRangeLabel.Enabled = HistoRangeUp.Enabled = HistoRangeDown.Enabled = HzLabel.Enabled = ReverseFreqOrderFlag.Enabled =
 				(mode != VisualizationModes.Logo_only);
 			SDDoubleWidthFlag.Enabled = VisualizationModesChecker.ContainsSGorWF (mode);
 
@@ -749,6 +765,7 @@ namespace RD_AAOW
 			if (PaletteImageBox.BackgroundImage != null)
 				PaletteImageBox.BackgroundImage.Dispose ();
 			PaletteImageBox.BackgroundImage = b;
+			//b.Save ("C:\\1\\" + SDPaletteCombo.SelectedIndex.ToString ("D02") + ".png", System.Drawing.Imaging.ImageFormat.Png);
 			}
 
 		/// <summary>
@@ -909,9 +926,22 @@ namespace RD_AAOW
 		// Изменение значения диапазона гистограммы
 		private void HistogramRangeField_ValueChanged (object sender, EventArgs e)
 			{
+			if (sender != null)
+				{
+				Button b = (Button)sender;
+				if ((b.Name == "HistoRangeUp") && (++histoRange > CDParametersSet.HistogramUsedFrequencyMaximum /
+					CDParametersSet.HistogramRangeSettingIncrement))
+					{
+					histoRange = 1;
+					}
+				else if ((b.Name == "HistoRangeDown") && (--histoRange < 1))
+					{
+					histoRange = CDParametersSet.HistogramUsedFrequencyMaximum / CDParametersSet.HistogramRangeSettingIncrement;
+					}
+				}
+
 			HzLabel.Text = string.Format (Localization.GetText ("HistoTab_HzLabelText", al),
-				CDParametersSet.HistogramRangeSettingIncrement,
-				CDParametersSet.HistogramRangeSettingIncrement * (uint)HistogramRangeField.Value);
+				CDParametersSet.HistogramRangeSettingIncrement * histoRange);
 			}
 
 		#endregion
@@ -1319,16 +1349,17 @@ namespace RD_AAOW
 				case 30:
 					if (i == 2)
 						{
-						if (HistogramRangeField.Value < HistogramRangeField.Maximum)
-							HistogramRangeField.Value++;
+						if (++histoRange > CDParametersSet.HistogramUsedFrequencyMaximum /
+										CDParametersSet.HistogramRangeSettingIncrement)
+							histoRange = 1;
 						}
 					else
 						{
-						if (HistogramRangeField.Value > HistogramRangeField.Minimum)
-							HistogramRangeField.Value--;
+						if (--histoRange < 1)
+							histoRange = CDParametersSet.HistogramUsedFrequencyMaximum / CDParametersSet.HistogramRangeSettingIncrement;
 						}
 
-					hotKeyResult = HGRangeLabel.Text + " 0 – " + (HistogramRangeField.Value *
+					hotKeyResult = HGRangeLabel.Text + " 0 – " + (histoRange *
 						CDParametersSet.HistogramRangeSettingIncrement).ToString () + " " +
 						HzLabel.Text.Substring (HzLabel.Text.Length - 2);
 					break;
@@ -1491,7 +1522,7 @@ namespace RD_AAOW
 
 						HGRangeLabel.Text +
 							(ReverseFreqOrderFlag.Checked ? " " : " 0 – ") +
-							(HistogramRangeField.Value * CDParametersSet.HistogramRangeSettingIncrement).ToString () +
+							(histoRange * CDParametersSet.HistogramRangeSettingIncrement).ToString () +
 							(ReverseFreqOrderFlag.Checked ? " – 0 " : " ") +
 							HzLabel.Text.Substring (HzLabel.Text.Length - 2) + "\n" +
 						SGHeightLabel.Text + " " + SGHeight.Value.ToString () + " px" +

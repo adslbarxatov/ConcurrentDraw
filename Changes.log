@@ -3,9 +3,12 @@
 ToDo:
 - Add logo self-movement?
 - Add auto FFT multiplier: auto-adjustment based on current top amplitude with bottom limit
-- Check correctness of autoreset for all on-fly parameters changes;
-- Replace histogram range field with buttons;
-- Bug: if particles colors are flipped, app will crush
+
+Version 2.5:
+• Fixed fails on some variants of particles configuration;
+• Histogram range field replaced with up-down buttons;
+• Removed some old interface elements;
+• Added a snapshot of the current spectrum to the beats detector interface to simplify its configuration
 
 Version 2.4:
 • Updated “sunrise” palette;

@@ -744,7 +744,7 @@ namespace RD_AAOW
 			Random Randomizer, LogoDrawerObjectMetrics Metrics)
 			{
 			// Контроль
-			LogoDrawerObjectMetrics metrics = LogoDrawerSupport.AlingMetrics (Metrics);
+			LogoDrawerObjectMetrics metrics = Metrics; //LogoDrawerSupport.AlingMetrics (Metrics);
 			if (Randomizer == null)
 				return;
 

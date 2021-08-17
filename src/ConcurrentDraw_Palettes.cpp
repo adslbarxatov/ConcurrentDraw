@@ -397,7 +397,7 @@ CD_API(schar *) GetPalettesNamesEx ()
 		"Polymorphic (reversed)" NAMES_DELIMITER_S \
 		"Polymorphic monocolor (reversed)" NAMES_DELIMITER_S \
 		\
-		"Negative" NAMES_DELIMITER_S \
+		"Grey (reversed)" NAMES_DELIMITER_S \
 		"Fire (reversed)" NAMES_DELIMITER_S \
 		"Sea (reversed)" NAMES_DELIMITER_S \
 		"Purple" NAMES_DELIMITER_S \
