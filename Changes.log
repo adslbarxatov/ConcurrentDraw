@@ -8,7 +8,8 @@ Version 2.5:
 • Fixed fails on some variants of particles configuration;
 • Histogram range field replaced with up-down buttons;
 • Removed some old interface elements;
-• Added a snapshot of the current spectrum to the beats detector interface to simplify its configuration
+• Added a snapshot of the current spectrum to the beats detector interface to simplify its configuration;
+• Updated link for user’s manual
 
 Version 2.4:
 • Updated “sunrise” palette;

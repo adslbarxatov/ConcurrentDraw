@@ -1,5 +1,5 @@
-# ConcurrentDraw v 2.5
-> PCC: 000A194A3C84E4AC
+# ConcurrentDraw v 2.5r
+> PCC: 000A194BE0F79CEE
 
 
 The sound and music visualization tool
