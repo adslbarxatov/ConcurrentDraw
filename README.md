@@ -1,5 +1,5 @@
-# ConcurrentDraw v 2.5r
-> PCC: 000A194BE0F79CEE
+# ConcurrentDraw v 2.5.1
+> PCC: 000A194CE6BA0263
 
 
 The sound and music visualization tool
@@ -38,18 +38,17 @@ Interface languages, user manual languages: ru_ru, en_us
 
 
 
-## Development policy and EULA / Политика разработки и EULA
+## [Development policy and EULA / Политика разработки и EULA](https://github.com/adslbarxatov/adp)
 
-This [Policy (ADP)](https://vk.com/@rd_aaow_fdl-adp), its positions, conclusion, EULA and application methods
-describes general rules that we follow in all of our development processes, released applications and implemented
-ideas.
-**It must be acquainted by participants and users before using any of laboratory's products.
-By downloading them, you agree to this Policy**
+This Policy (ADP), its positions, conclusion, EULA and application methods
+describes general rules that we follow in all of our development processes, released applications and implemented ideas.
+**It must be acquainted by participants and users before using any of laboratory’s products.
+By downloading them, you agree and accept this Policy!**
 
-#
+&nbsp;
 
-Данная [Политика (ADP)](https://vk.com/@rd_aaow_fdl-adp), её положения, заключение, EULA и способы применения
+Данная Политика (ADP), её положения, заключение, EULA и способы применения
 описывают общие правила, которым мы следуем во всех наших процессах разработки, вышедших в релиз приложениях
 и реализованных идеях.
-**Обязательна к ознакомлению всем участникам и пользователям перед использованием любого из продуктов лаборатории.
-Загружая их, вы соглашаетесь с этой Политикой**
+**Обязательна к ознакомлению для всех участников и пользователей перед использованием любого из продуктов лаборатории.
+Загружая их, вы соглашаетесь и принимаете эту Политику!**

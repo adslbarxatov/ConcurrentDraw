@@ -214,18 +214,18 @@ Fade out speed multiplier: {1:S}</value>
 
 At first application will start with recommended settings. But you can change:
 • Output device for audio data capturing (stereo mixer recommended);
-• Visualization mode (logo only, spectrogram, histogram, 'butterfly' or 'perspective' histogram, amplitude histogram);
+• Visualization mode (logo only, spectrogram, histogram, “butterfly” or “perspective” histogram, amplitude histogram);
 • Visualization palette;
 • Window size and placement (not less than 128 x 128 px);
-• Spectrogram and histogram height (between 128 and 512 px) and offset from window's top;
+• Spectrogram and histogram height (between 128 and 512 px) and offset from window’s top;
 • Histogram density (how many frequencies will be shown);
 • Histogram rotation parameters;
 • Beats waves effect;
 • Frequencies range and amplitude (loudness) threshold for beats detector;
 • FFT scale multiplier (contrast) for spectrogram and histogram;
-• 'Always on top' window state (turns off when settings window is active);
+• “Always on top” window state (turns off when settings window is active);
 • Logo size and placement;
-• Cumulative effect parameters (background color filling);
+• Cumulative effect parameters (background color filling and extra power for other effects);
 • Visualization shake effect.
 
 Settings will be saved by pressing OK button. They can be changed anytime you need</value>

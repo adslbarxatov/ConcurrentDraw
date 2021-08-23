@@ -21,7 +21,7 @@ namespace RD_AAOW
 		private SupportedLanguages al;
 		private string updatesMessage = "", description = "", policyLoaderCaption = "";
 
-		private const string adpLink = "https://vk.com/@rd_aaow_fdl-adp";           // Ссылка на Политику
+		private const string adpLink = "https://github.com/adslbarxatov/adp";       // Ссылка на Политику
 		private const string labLink1 = "https://vk.com/rd_aaow_fdl";               // Ссылки на лабораторию
 		private const string labLink2 = "https://t.me/rd_aaow_fdl";
 		private const string defaultGitLink = "https://github.com/adslbarxatov/";   // Мастер-ссылка проекта
@@ -235,30 +235,24 @@ namespace RD_AAOW
 			{
 			string html = GetHTML (adpLink);
 			int textLeft = 0, textRight = 0;
-			string header = "";
-			if (((textLeft = html.IndexOf ("<h1")) >= 0) && ((textRight = html.IndexOf ("</h1", textLeft)) >= 0))
-				{
-				// Обрезка
-				header = html.Substring (textLeft, textRight - textLeft);
-				}
 
-			if (((textLeft = html.IndexOf ("<h3")) >= 0) && ((textRight = html.IndexOf ("<script", textLeft)) >= 0))
+			if (((textLeft = html.IndexOf ("<article")) >= 0) && ((textRight = html.IndexOf ("</a>Changes log", textLeft)) >= 0))
 				{
 				// Обрезка
-				html = header + "\r\n\r\n" + html.Substring (textLeft, textRight - textLeft);
+				html = html.Substring (textLeft, textRight - textLeft);
 
 				// Формирование абзацных отступов
-				html = html.Replace ("<br/>", "\r\n\r\n").Replace ("</p>", "\r\n\r\n").Replace ("</li>", "\r\n\r\n").
-					Replace ("</h1>", "\r\n\r\n").Replace ("<h3", "\r\n<h3").Replace ("</h3>", "\r\n\r\n");
+				html = html.Replace ("<br/>", "\r\n").Replace ("</p>", "\r\n").Replace ("</li>", "\r\n").
+					Replace ("</h1>", "\r\n\r\n").Replace ("</h3>", "\r\n").Replace ("<li>", "• ");
 
 				// Удаление вложенных тегов
 				while (((textLeft = html.IndexOf ("<")) >= 0) && ((textRight = html.IndexOf (">", textLeft)) >= 0))
 					html = html.Replace (html.Substring (textLeft, textRight - textLeft + 1), "");
 
-				// Удаление двойных пробелов
-				while (html.IndexOf ("  ") >= 0)
-					html = html.Replace ("  ", " ");
-				html = html.Replace ("\n ", "");
+				// Удаление последних абзацев и замена спецсимволов
+				string ss = System.Text.Encoding.Unicode.GetString (new byte[] { 0x0F, 0xFE });
+				html = html.Replace ("✔" + ss, "✔").Replace ("⚠" + ss, "❢").Replace ("\n\n", "\n");
+				html = html.Substring (0, html.Length - 6);
 				}
 
 			e.Result = html;

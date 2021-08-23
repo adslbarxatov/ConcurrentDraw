@@ -1,8 +1,7 @@
 ﻿ConcurrentDraw changes log
 
-ToDo:
-- Add logo self-movement?
-- Add auto FFT multiplier: auto-adjustment based on current top amplitude with bottom limit
+Version 2.5.1:
+• Updated link and text presenter for ADP
 
 Version 2.5:
 • Fixed fails on some variants of particles configuration;
