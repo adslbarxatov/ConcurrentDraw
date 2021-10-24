@@ -32,11 +32,11 @@ Version 2.3:
 • Added direct lab link
 
 Version 2.2.2:
-• Added ability to 'ask developer' via E-mail for help, or send wish, advice or bug report
+• Added ability to “ask developer” via E-mail for help, or send wish, advice or bug report
 
 Version 2.2:
 • Butterfly/perspective: peaks width is now more precise;
-• Added butterfly histogram with only vertical symmetry and 'snail' histogram (butterfly with no symmetry);
+• Added butterfly histogram with only vertical symmetry and “snail” histogram (butterfly with no symmetry);
 • Some engine improvements applied;
 • Max FFT scale multiplier (internal volume value) is now 200
 
@@ -46,7 +46,7 @@ Version 2.1:
   it allows logo to leave traces)
 
 Version 2.0:
-• Replaced old drawing algorithm for butterfly and perspective histograms; it doesn't contain all known graphic artifacts;
+• Replaced old drawing algorithm for butterfly and perspective histograms; it doesn’t contain all known graphic artifacts;
 • Adjusted skipping frequencies area around 0 Hz;
 • Some new modes are waiting for applying
 
@@ -85,7 +85,7 @@ Version 1.50.1:
 • Video background loader have been rebuilt and now uses memory properly
 
 Version 1.50:
-• Application info interface now able to get last release's changes log;
+• Application info interface now able to get last release’s changes log;
 • Histogram modes are now fully transparent;
 • Some palettes got more smooth transitions between colors than before;
 • Changed math for enlarging and acceleration coeffs of particles: they will be more smooth;
@@ -100,7 +100,7 @@ Version 1.49.1p:
 
 Version 1.49:
 • Shake effect flag replaced with power coefficient (up to 15); [K] key will increase it; with [Shift] it will decrease value;
-• Histogram rotation now can be CCW (with negative angle); as before, can be set with '<' and '>' keys;
+• Histogram rotation now can be CCW (with negative angle); as before, can be set with “<” and “>” keys;
 • Added extended cumulation effect flag. When set, cumulation effect will also increase:
     - speed, size and fluctuation of particles;
     - power of shake effect;
@@ -125,7 +125,7 @@ Version 1.46.2:
 • Some interface improvements applied
 
 Version 1.46:
-• Fixed missing button names in visualization sizes' window;
+• Fixed missing button names in visualization sizes window;
 • [Shift] + [PageUp] and [Shift] + [PageDown] combinations now can change logo height;
 • Logo center alignment now have [Shift] + [C] combination;
 • [PageUp] and [PageDown] keys now can change histogram height;
@@ -139,7 +139,7 @@ Version 1.45.2h:
 
 Version 1.45.1:
 • Updated library versioning;
-• Fixed inability to use beat waves in 'logo only' mode
+• Fixed inability to use beat waves in “logo only” mode
 
 Version 1.45:
 • Added reversed versions of random and polymorph palettes;
@@ -148,15 +148,15 @@ Version 1.45:
 • Localization code for parameters window has been simplified
 
 Version 1.44.1:
-• Beats' waves setting has been reviewed
+• Beats waves setting has been reviewed
 
 Version 1.44:
-• V key now allows you to switch beats' waves flag;
+• V key now allows you to switch beats waves flag;
 • Frequencies skipping code updated for streamed files;
 • Some info tips updated;
 • Amplitude histograms have been removed;
-• Beats' waves are now unavailable in butterfly and perspective histogram modes;
-• Fixed startup rotation angle for perspective histogram with 'swing' flag
+• Beats waves are now unavailable in butterfly and perspective histogram modes;
+• Fixed startup rotation angle for perspective histogram with “swing” flag
 
 Version 1.43.1:
 • Better window fitting for wave effect applied;
@@ -173,18 +173,19 @@ Version 1.42.4:
 • In case of absence of required DLLs application will now offer opening corresponding download pages
 
 Version 1.42.2:
-• Added reversed version of 'Acid' and 'Lemon' palettes
+• Added reversed version of “Acid” and “Lemon” palettes
 
 Version 1.42:
 • Added histogram modes with vertical symmetry;
 • Maximum of FFT multiplier increased to 150;
-• Added ability to specify offset from window's top for spectrograms and histograms;
+• Added ability to specify offset from window’s top for spectrograms and histograms;
 • Fixed minor interface bugs;
 • Added align buttons for spectrogram / histogram height and offset;
 • All spectrogram / histogram setting (including rotation) moved to single tab
 
 Version 1.41.2:
-• Added special skipping range for video rendering mode (0 – 16 Hz) to avoid of black histogram lines: seems like sound files don't contain this range
+• Added special skipping range for video rendering mode (0 – 16 Hz) to avoid of black
+  histogram lines: seems like sound files don’t contain this range
 
 Version 1.41:
 • New FFT values processing method implemented (noise level has been significantly reduced);
@@ -192,24 +193,24 @@ Version 1.41:
 
 Version 1.40u:
 • Application namespace and development environment have been unified;
-• Logo height's max value has been doubled (it now can exceed window's size);
+• Logo height’s max value has been doubled (it now can exceed window’s size);
 • Added auto-adjustment for file streams that aligns FFT data grabbing to video with 25 fps;
 • Added intro length auto-evaluation
 
 Version 1.39:
-• Palettes generation's bug fixed (affects '7 missed calls');
-• Videoguide's link updated;
+• Palettes generation’s bug fixed (affects “7 missed calls”);
+• Videoguide’s link updated;
 • Some texts in parameters window updated;
 • Application parameters window got new appearance
 
 Version 1.38.2:
 • The number of FFT values used by BASS library has been doubled to improve accuracy and smoothness of visualization;
-• Beats detector's range setting updated: now it's more precise
+• Beats detector’s range setting updated: now it’s more precise
 
 Version 1.38:
-• Fixed bug with window height's setting when it cannot be divided by 4;
-• Scale of histogram frequencies range's setting has been doubled;
-• Fixed bug with selection of window's placement and size by mouse when start of selection is to the right and/or below its end
+• Fixed bug with window height’s setting when it cannot be divided by 4;
+• Scale of histogram frequencies range’s setting has been doubled;
+• Fixed bug with selection of window’s placement and size by mouse when start of selection is to the right and/or below its end
 
 Version 1.37.2:
 • Histogram frequencies range setting method has been replaced with decimal one
@@ -220,16 +221,16 @@ Version 1.37:
 
 Version 1.36.5:
 • Visualization types have been unified;
-• 'With logo' flag has been separated from visualization modes and is independent now;
+• “With logo” flag has been separated from visualization modes and is independent now;
 • L key now turns logo on / off;
-• 'La fiesta' palette added;
+• “La fiesta” palette added;
 • Palettes list has been reordered
 
 Version 1.36:
-• Added 'Swinging instead of rotating' flag for butterfly and perspective histograms; W key is for it;
-• Some 'settings' window's bugs fixed;
+• Added “Swinging instead of rotating” flag for butterfly and perspective histograms; W key is for it;
+• Some “settings” window’s bugs fixed;
 • Added direct link to users videoguide in help messages sequence;
-• Logo size (affects histogram radius) changing opened for all butterfly and perspective histograms' submodes
+• Logo size (affects histogram radius) changing opened for all butterfly and perspective histogram submodes
 
 Version 1.35.1:
 • Using Shift key with P, M and H keys will reverse direction of change of palette, mode and range;
@@ -242,18 +243,18 @@ Version 1.35:
     - arrow keys with Shift key will move logo;
     - arrow keys with Shift and Ctrl keys will move it to edges of window;
 • S key now allow you to save current image of visualization to file;
-• '< ,' / '> .' keys allow you to decrease / increase speed of histogram rotation;
+• “< ,” / “> .” keys allow you to decrease / increase speed of histogram rotation;
     - using without Shift key will activate constant increment;
     - using with Shift key will activate beats-dependent rotation;
 • Rotation reset button added to parameters window;
 • Keys processing code has been reviewed;
 • Some fixes for source code of CD library applied;
 • Fixed inability to rotate histogram according to beats detector in visualization modes without logo;
-• Modes without logo and 'logo only' mode are now available in release version
+• Modes without logo and “logo only” mode are now available in release version
 
 Version 1.34.2:
 • Fixed bug when window alignment with arrow buttons caused application crush;
-• Beats detector's 'off' state now will be shown properly
+• Beats detector’s “off” state now will be shown properly
 
 Version 1.34:
 • Effect made by hot keys will now be shown at the visualization window;
@@ -263,8 +264,8 @@ Version 1.33:
 • Hot keys processing code has been reviewed;
 • Using W, A, S, D keys and arrow keys with the Ctrl key will force the application to use the limit of corresponding value;
 • C key will now place logo at the center of visualization;
-• '/ ?' key will now call quick user manual;
-• Visualization window's size maximums removed;
+• “/ ?” key will now call quick user manual;
+• Visualization window’s size maximums removed;
 • Visualization window now cannot cross right and bottom edges of the screen;
 • Quick user manual updated with hot keys descriptions
 
@@ -279,17 +280,17 @@ Version 1.32:
     - M key (will cyclically change visualization modes);
     - P key (will cyclically change palettes);
     - H key (will cyclically change histogram ranges);
-    - T key (will switch 'always on top' flag);
-    - K key (will switch 'shake flag);
+    - T key (will switch “always on top” flag);
+    - K key (will switch “shake” flag);
   They will change settings without calling the parameters window
 
 Version 1.31.2:
 • Graphical improvement applied to symmetric moving spectrogram mode;
-• Beats detector's low triggering level's setting fixed and now cannot be lower than 50% (avoids of detector's rollover)
+• Beats detector’s low triggering level’s setting fixed and now cannot be lower than 50% (avoids of detector’s rollover)
 
 Version 1.31.1:
-• Runtime updater's code reviewed;
-• Drawer's code improved;
+• Runtime updater’s code reviewed;
+• Drawer’s code improved;
 • Symmetric moving spectrogram mode added
 
 Version 1.31:
@@ -297,8 +298,8 @@ Version 1.31:
 
 Version 1.30.2:
 • Cumulative effect opened for spectrograms and histograms;
-• Fadeout effect's code reviewed;
-• Renderer's code reviewed
+• Fadeout effect’s code reviewed;
+• Renderer’s code reviewed
 
 Version 1.30.1:
 • Some code improvements applied;
@@ -313,21 +314,21 @@ Version 1.29.2:
 
 Version 1.29:
 • Logo placement now can be specified manually;
-• Logo's maximum size increased to 100%;
-• Some settings interface's bugs fixed;
+• Logo’s maximum size increased to 100%;
+• Some settings interface’s bugs fixed;
 • Additional graphic objects from FullSilence assembly included (experimentally)
 
 Version 1.28:
 • Bit detector presentation updated;
 • Some redundant code removed;
-• Cumulative effect 'turn off' state moved to the maximum of decumulation speed's trackbar (it's more correct)
+• Cumulative effect “turn off” state moved to the maximum of decumulation speed’s trackbar (it’s more correct)
 
 Version 1.27.2r:
 • Runtime FFT data extractor fixed. Now it will not skip updating frames if there is not enough data in audio buffer.
   This will make spectrogram movement smoother. It will also fix the update step of random / polymorph palettes
 
 Version 1.27:
-• Some 'application parameters' interface fixes applied;
+• Some “application parameters” interface fixes applied;
 • Double width flag added for spectrogram and amplitude modes;
 • Drawing initialization fix applied
 
@@ -341,7 +342,7 @@ Version 1.26.5:
 
 Version 1.26:
 • New palettes got better fitting;
-• 'Purple' and 'Reversed blood' palettes added;
+• “Purple” and “Reversed blood” palettes added;
 • Settings profiling added: settings may be named and saved now
 
 Version 1.25.10:
@@ -350,18 +351,18 @@ Version 1.25.10:
 Version 1.25:
 • Beats detector will decelerate more smoothly now;
 • Transparency setting fully removed;
-• Reversed 'sea' and 'fire' palettes added;
+• Reversed “sea” and “fire” palettes added;
 • Parameters window has been updated with tab control;
-• Decumulation speed's trackbar is more accurate now;
+• Decumulation speed’s trackbar is more accurate now;
 • Other code improvements applied
 
 Version 1.24:
 • Palettes code complete review applied;
 • Lemon palette added;
-• Probability distribution bug fixed: polymorph and random palettes will not 'roll down' anymore
+• Probability distribution bug fixed: polymorph and random palettes will not “roll down” anymore
 
 Version 1.23.7:
-• Some application extensions' bugs fixed
+• Some bugs of application extensions fixed
 
 Version 1.23.2:
 • Some adjustments for palettes added: beats detector will now be properly visible with all default palettes;
@@ -373,7 +374,7 @@ Version 1.23:
 • Palettes code review applied;
 • Negative palette added; modes have been reviewed and now support negative palettes properly;
 • Logo will now be transparent in all modes;
-• Modes without logo will now be supported properly; they aren't available yet
+• Modes without logo will now be supported properly; they aren’t available yet
 
 Version 1.22:
 • Some code improvements applied;
@@ -382,36 +383,36 @@ Version 1.22:
 
 Version 1.21:
 • Incorrect window alignment on large screens fixed;
-• Window size now can be set using list of most common videomodes' sizes;
-• Window size now defines maximum of spectrogram's and histogram's height;
+• Window size now can be set using list of most common videomodes;
+• Window size now defines maximum of spectrogram’s and histogram’s height;
 • Negative palettes implemented (not active yet);
 • Applications development policy (ADP) accordance checked; read application annotation for details;
-• Spectrograms aligned to 8268.75 Hz; 'height' value now works as scale;
+• Spectrograms aligned to 8268.75 Hz; “height” value now works as scale;
 • Beats detector now may be turned off properly
 
 Version 1.20:
 • Rotation math reviewed: histograms rotation is literally rotation now; also it can be used with transparency flag;
-• 'Noise' rotation in beats-according rotation mode fixed;
-• Perspective histogram mode completely reviewed: it's more usable now; also it can be used with transparency flag
+• “Noise” rotation in beats-according rotation mode fixed;
+• Perspective histogram mode completely reviewed: it’s more usable now; also it can be used with transparency flag
 
 Version 1.19:
 • Amplitude threshold (setting) now will be presented in percentage;
 • Window alignment at first launch is more accurate now;
-• Cumulative effect's background changed to full-window rectangle (instead of peaks-fitting ellipse);
-• Added 'perspective histogram' mode;
-• Added 'static amplitude histogram' and 'moving amplitude histogram' modes;
+• Cumulative effect’s background changed to full-window rectangle (instead of peaks-fitting ellipse);
+• Added “perspective histogram” mode;
+• Added “static amplitude histogram” and “moving amplitude histogram” modes;
 • Added [0; 690] Hz histogram range;
 • Some math improvements applied;
 • Some code improvements applied;
-• Some parameters interface's bugs fixed
+• Some parameters interface’s bugs fixed
 
 Version 1.18.1:
-• Fixed incorrect processing of 'no cumulative effect' state
+• Fixed incorrect processing of “no cumulative effect” state
 
 Version 1.18:
 • Some visual improvements applied;
 • Some code improvements applied;
-• Fixed 'random' palette reset failure for histograms and spectrograms on double left click;
+• Fixed “random” palette reset failure for histograms and spectrograms on double left click;
 • Fixed settings misapplying on application startup;
 • Added ability to make logo transparent in butterfly histogram mode (when no rotation enabled);
 • Added shaking beats detector
@@ -421,9 +422,9 @@ Version 1.17.1:
 
 Version 1.17:
 • Sources divided to different files using readability and usability rules;
-• In case of 'polymorph' or 'random' palette logo will be reset anytime you'll change settings;
-• Also 'random' and 'polymorph' palettes may be changed by double mouse click on the main window;
-• Added monocolor variants of 'polymorph' and 'random' palettes
+• In case of “polymorph” or “random” palette logo will be reset anytime you’ll change settings;
+• Also “random” and “polymorph” palettes may be changed by double mouse click on the main window;
+• Added monocolor variants of “polymorph” and “random” palettes
 
 Version 1.16:
 • Some improvements applied;
@@ -433,7 +434,7 @@ Version 1.15:
 • Some minor bugs fixed;
 • Application failure on settings call fixed: forced threads synchronization applied;
 • Max histogram height extended up to 512 px;
-• Beats detector's peaks evaluation is more stable now
+• Beats detector’s peaks evaluation is more stable now
 
 Version 1.14.1:
 • Some code optimizations and improvements applied
@@ -444,13 +445,13 @@ Version 1.14:
 • Not needed drawing preparations removed;
 
 Version 1.13:
-• Beat detector's code optimizations applied;
+• Beat detector’s code optimizations applied;
 • Some minor bugs fixed;
-• Quick logo reset algorithm on settings' changes applied
+• Quick logo reset algorithm on settings changes applied
 
 Version 1.12:
 • Histogram rotation angle is more precise now;
-• 'Beats detector'-based histogram rotation's angle impulse now may be adjusted;
+• “Beats detector”-based histogram rotation’s angle impulse now may be adjusted;
 • Butterfly histogram got full (360 degrees) field and more accurate spikes drawing
 
 Version 1.11:
@@ -458,7 +459,7 @@ Version 1.11:
 • More correct palettes usage applied to butterfly histogram
 
 Version 1.10:
-• Added the ability to set diameter of logo (as a percentage of window's height);
+• Added the ability to set diameter of logo (as a percentage of window’s height);
 • Some interface improvements applied
 
 Version 1.9.1:
@@ -468,7 +469,7 @@ Version 1.9:
 • Added cumulative effect: in case of intensive and dense beats (or other frequencies that are under detector) visualization background will change its color according to selected palette
 
 Version 1.8.1:
-• Added 'Mirror' palette
+• Added “Mirror” palette
 
 Version 1.8:
 • Added ability to set visualization position and size using mouse;
@@ -479,7 +480,7 @@ Version 1.8:
 
 Version 1.7.2:
 • Added OS language auto detection at first launch;
-• Added '7MissedCalls' and 'Sail' palettes;
+• Added “7MissedCalls” and “Sail” palettes;
 • Generic optimizations for file streaming support applied (test mode; still not available for users)
 
 Version 1.7:
@@ -491,33 +492,33 @@ Version 1.7:
 Version 1.6:
 • Code optimizations applied; old unused code removed;
 • Added Russian language and localization support for user interface;
-• Settings are now reset to previous save when you click 'Cancel' button;
-• Logo, 'about' info and quick user manual added to the 'first start' event
+• Settings are now reset to previous save when you click “Cancel” button;
+• Logo, “about” info and quick user manual added to the “first start” event
 
 Version 1.5:
 • Settings interface improvements applied;
 • Added support for adjustable quantity of FFT values for histograms building;
-• Beats detector's behavior updated;
-• Fixed behavior of 'Cancel' button at first start of application;
+• Beats detector’s behavior updated;
+• Fixed behavior of “Cancel” button at first start of application;
 • Code improvements applied;
-• Added user manual at first launch and on '?' button
+• Added user manual at first launch and on “?” button
 
 Version 1.4.1:
 • Added versions checker: now application will launch only with compatible libraries
 
 Version 1.4:
-• Added 'Acid' palette with high contrast on high amplitudes;
-• Added 'Butterfly' histogram mode;
+• Added “Acid” palette with high contrast on high amplitudes;
+• Added “Butterfly” histogram mode;
 • Generic code improvements;
-• Fixed incorrect behavior of main window when it's always on top and user calls settings interface;
+• Fixed incorrect behavior of main window when it’s always on top and user calls settings interface;
 • Fixed logo redraw and placement in different modes
 
 Version 1.3:
 • Generic code improvements;
-• Added support for 'always on top' flag;
+• Added support for “always on top” flag;
 • Added support for adjustable FFT scale multiplier (spectrogram contrast);
 • Added histogram mode up to 22050 Hz;
-• Added high contrast palette 'Sunshine'
+• Added high contrast palette “Sunshine”
 
 Version 1.2 (first publication):
 • Supports getting FFT data from specified audio output using BASS library;
