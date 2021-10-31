@@ -369,7 +369,8 @@ namespace RD_AAOW
 			// Запуск рендеринга
 			if (vm.IsCreated)
 				{
-				HardWorkExecutor hwe = new HardWorkExecutor (RenderVideo, "Total count of frames", "Rendering...");
+				HardWorkExecutor hwe = new HardWorkExecutor (RenderVideo, "Total count of frames",
+					"Rendering...", true, false);
 
 				// Без выхода в основной режим
 				this.Close ();
