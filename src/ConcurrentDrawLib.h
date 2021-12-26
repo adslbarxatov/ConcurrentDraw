@@ -18,10 +18,10 @@
 
 /////////////////////////////////////////////////////
 // Константы
-#define CD_VERSION					2,4,0,0
-#define CD_VERSION_S				"2.4.0.0"
+#define CD_VERSION					2,6,0,0
+#define CD_VERSION_S				"2.6.0.0"
 #define CD_PRODUCT					"BASS adapter for ConcurrentDraw visualization tool"
-#define CD_COMPANY					"RD AAOW FDL"
+#define CD_COMPANY					FDL_COMPANY
 
 #define MAX_RECORD_DEVICES			10
 #define MAX_DEVICE_NAME_LENGTH		128

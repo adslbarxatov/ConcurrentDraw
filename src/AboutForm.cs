@@ -23,6 +23,16 @@ namespace RD_AAOW
 			registryFail = "";
 
 		/// <summary>
+		/// Стандартное название компании
+		/// </summary>
+		public const string DefaultAssemblyCompany = "RD AAOW Free development lab";
+
+		/// <summary>
+		/// Стандартное авторство
+		/// </summary>
+		public const string DefaultAssemblyCopyright = "Nicolay B. aka RD_AAOW";
+
+		/// <summary>
 		/// Ссылка на Политику разработки приложений
 		/// </summary>
 		public const string ADPLink = "https://adslbarxatov.github.io/ADP";
@@ -202,14 +212,22 @@ namespace RD_AAOW
 			HardWorkExecutor hwe;
 			if (!AcceptMode)
 				{
+#if DPMODULE
+				hwe = new HardWorkExecutor (UpdatesChecker, null, null, false, false, false);
+#else
 				hwe = new HardWorkExecutor (UpdatesChecker, null, null, false, false);
+#endif
 				UpdatesTimer.Enabled = true;
 				}
 
 			// Получение Политики
 			else
 				{
+#if DPMODULE
+				hwe = new HardWorkExecutor (PolicyLoader, null, policyLoaderCaption, true, false, true);
+#else
 				hwe = new HardWorkExecutor (PolicyLoader, null, policyLoaderCaption, true, false);
+#endif
 
 				string html = hwe.Result.ToString ();
 				if (html != "")
@@ -659,7 +677,7 @@ policy:
 			resp.Close ();
 
 			// Завершено. Отображение сообщения
-			((BackgroundWorker)sender).ReportProgress (0, Localization.GetText ("PackageSuccess", al));
+			((BackgroundWorker)sender).ReportProgress (-1, Localization.GetText ("PackageSuccess", al));
 			Thread.Sleep (1000);
 
 			e.Result = 0;

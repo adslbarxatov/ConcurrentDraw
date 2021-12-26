@@ -1,5 +1,9 @@
 ﻿ConcurrentDraw changes log
 
+Version 2.6:
+• App got the scalable icons and the digital signature (only self-signed for now);
+• Applied some updates for core assemblies
+
 Version 2.5.17:
 • Updated internal mechanism of checking for updates (applied compatibility with new GitHub theme)
 
