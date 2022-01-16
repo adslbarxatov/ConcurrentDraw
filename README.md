@@ -1,5 +1,5 @@
-# ConcurrentDraw v 2.6
-> PCC: 000B8279EC77A477
+# ConcurrentDraw v 2.6.1
+> PCC: 000D4E9B19B517CD
 
 
 The sound and music visualization tool
@@ -26,13 +26,12 @@ No additional codecs or applications. Just launch and behold!
 
 ## Requirements / Требования
 
-Needs Windows XP or newer, Framework 4.0 or newer.
-Application uses [BASS audio library](http://www.un4seen.com/), that is free only for non-commercial use.
-Interface languages, user manual languages: ru_ru, en_us
+- Windows XP or newer / или новее;
+- [Microsoft .NET Framework 4.0](https://www.microsoft.com/en-us/download/details.aspx?id=17718);
+- [Microsoft VC++ 2010 redistributables](https://www.microsoft.com/en-us/download/details.aspx?id=26999);
+- [BASS audio library](http://www.un4seen.com).
 
-Требуется ОС Windows XP и новее, Framework 4.0 и новее.
-Приложение использует [BASS audio library](http://www.un4seen.com/), которая бесплатна только для некоммерческого использования.
-Языки интерфейса и руководства пользователя: ru_ru, en_us
+Interface languages / языки интерфейса: ru_ru, en_us.
 
 &nbsp;
 

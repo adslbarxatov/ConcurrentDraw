@@ -15,7 +15,7 @@ namespace RD_AAOW
 	/// <summary>
 	/// Класс обеспечивает отображение визуализации проекта
 	/// </summary>
-	public partial class ConcurrentDrawForm: Form
+	public partial class ConcurrentDrawForm:Form
 		{
 		// Доступные фазы отрисовки
 		private enum VisualizationPhases
@@ -1181,10 +1181,10 @@ namespace RD_AAOW
 
 					try
 						{
-						if (!Directory.Exists (AboutForm.AppStartupPath + screenshotsDir))
-							Directory.CreateDirectory (AboutForm.AppStartupPath + screenshotsDir);
+						if (!Directory.Exists (RDGenerics.AppStartupPath + screenshotsDir))
+							Directory.CreateDirectory (RDGenerics.AppStartupPath + screenshotsDir);
 
-						mainLayer.Layer.Save (AboutForm.AppStartupPath + screenshotsDir + "\\" +
+						mainLayer.Layer.Save (RDGenerics.AppStartupPath + screenshotsDir + "\\" +
 							DateTime.Now.ToString ("dd-MM-yyyy_HH-mm-ss") + ".png", ImageFormat.Png);
 						}
 					catch

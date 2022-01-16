@@ -21,7 +21,7 @@ namespace RD_AAOW
 			this.Height = Properties.CDResources.ConcurrentDraw.Height;
 
 			AboutLabel.Text = ProgramDescription.AssemblyTitle + "\n\n" + ProgramDescription.AssemblyDescription + "\n" +
-				"by " + ProgramDescription.AssemblyCopyright + "\nUpdated: " + ProgramDescription.AssemblyLastUpdate;
+				"by " + RDGenerics.AssemblyCopyright + "\nUpdated: " + ProgramDescription.AssemblyLastUpdate;
 			AboutLabel.Left = this.Width - 24 - AboutLabel.Width;
 			AboutLabel.Top = this.Height - 24 - AboutLabel.Height;
 

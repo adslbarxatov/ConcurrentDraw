@@ -581,16 +581,14 @@ namespace RD_AAOW
 				{
 				if (SetName == SavedSetName)
 					{
-					settings = Registry.GetValue (ProgramDescription.AssemblySettingsKey, "", "").ToString ();
+					settings = Registry.GetValue (RDGenerics.AssemblySettingsKey, "", "").ToString ();
 					}
 				else
 					{
-					settings = Registry.GetValue (ProgramDescription.AssemblySettingsKey, SetName, "").ToString ();
+					settings = Registry.GetValue (RDGenerics.AssemblySettingsKey, SetName, "").ToString ();
 					}
 				}
-			catch
-				{
-				}
+			catch { }
 
 			if (settings == "")
 				{
@@ -772,16 +770,14 @@ namespace RD_AAOW
 				{
 				if (SetName == SavedSetName)
 					{
-					Registry.SetValue (ProgramDescription.AssemblySettingsKey, "", settings);
+					Registry.SetValue (RDGenerics.AssemblySettingsKey, "", settings);
 					}
 				else
 					{
-					Registry.SetValue (ProgramDescription.AssemblySettingsKey, SetName, settings);
+					Registry.SetValue (RDGenerics.AssemblySettingsKey, SetName, settings);
 					}
 				}
-			catch
-				{
-				}
+			catch { }
 			}
 
 		/// <summary>
@@ -795,11 +791,9 @@ namespace RD_AAOW
 			try
 				{
 				rk = Registry.LocalMachine.OpenSubKey
-					(ProgramDescription.AssemblySettingsKey.Replace (Registry.LocalMachine.Name + "\\", ""));
+					(RDGenerics.AssemblySettingsKey.Replace (Registry.LocalMachine.Name + "\\", ""));
 				}
-			catch
-				{
-				}
+			catch { }
 			if (rk == null)
 				return new string[] { };
 
@@ -838,11 +832,9 @@ namespace RD_AAOW
 			try
 				{
 				rk = Registry.LocalMachine.OpenSubKey
-					(ProgramDescription.AssemblySettingsKey.Replace (Registry.LocalMachine.Name + "\\", ""), true);
+					(RDGenerics.AssemblySettingsKey.Replace (Registry.LocalMachine.Name + "\\", ""), true);
 				}
-			catch
-				{
-				}
+			catch { }
 			if (rk == null)
 				return;
 
@@ -851,9 +843,7 @@ namespace RD_AAOW
 				{
 				rk.DeleteValue (SetName);
 				}
-			catch
-				{
-				}
+			catch { }
 
 			// Завершено
 			rk.Dispose ();
