@@ -72,8 +72,8 @@ namespace RD_AAOW
 				}
 
 			// Завершение
-			UserManualButton.Enabled = (userManualLink != "");
-			ProjectPageButton.Enabled = (projectLink != "");
+			UserManualButton.Enabled = !string.IsNullOrWhiteSpace (userManualLink);
+			ProjectPageButton.Enabled = !string.IsNullOrWhiteSpace (projectLink);
 			}
 
 		/// <summary>
@@ -152,7 +152,9 @@ namespace RD_AAOW
 					ExitButton.Text = AcceptMode ? "&Принять" : "&ОК";
 					AskDeveloper.Text = "Спросить ра&зработчика";
 					MisacceptButton.Text = "О&тклонить";
-					DescriptionBox.Text = AcceptMode ? "Не удалось получить текст Политики. " +
+
+					if (!desciptionHasBeenUpdated)
+						DescriptionBox.Text = AcceptMode ? "Не удалось получить текст Политики. " +
 						"Попробуйте использовать кнопку перехода в браузер" :
 						"[Проверка обновлений...]\r\n\r\n" + description;
 
@@ -175,8 +177,10 @@ namespace RD_AAOW
 					ExitButton.Text = AcceptMode ? "&Accept" : "&OK";
 					AskDeveloper.Text = "Ask &developer";
 					MisacceptButton.Text = "&Decline";
-					DescriptionBox.Text = AcceptMode ? "Failed to get Policy text. Try button to open it in browser" :
-						"[Checking for updates...]\r\n\r\n" + description;
+
+					if (!desciptionHasBeenUpdated)
+						DescriptionBox.Text = AcceptMode ? "Failed to get Policy text. Try button to open it in browser" :
+							"[Checking for updates...]\r\n\r\n" + description;
 
 					policyLoaderCaption = "Preparing for launch...";
 					registryFail = ProgramDescription.AssemblyMainName +
@@ -693,46 +697,54 @@ policy:
 #endif
 
 		// Контроль сообщения об обновлении
+		private bool desciptionHasBeenUpdated = false;
 		private void UpdatesTimer_Tick (object sender, EventArgs e)
 			{
-			if (updatesMessage != "")
+			if (string.IsNullOrWhiteSpace (updatesMessage))
+				return;
+
+			// Получение описания версии
+			if (!string.IsNullOrWhiteSpace (versionDescription))
 				{
-				// Включение
-				if (UpdatesPageButton.Text == "")
+				description += versionDescription;
+				versionDescription = "";
+				}
+
+			// Обновление состояния
+			if (!desciptionHasBeenUpdated)
+				{
+				DescriptionBox.Text = updatesMessageForText + "\r\n\r\n" + description;
+				desciptionHasBeenUpdated = true;
+				}
+
+			// Включение текста кнопки
+			if (string.IsNullOrWhiteSpace (UpdatesPageButton.Text))
+				{
+				UpdatesPageButton.Text = updatesMessage;
+
+				// Включение кнопки и установка интервала
+				if (!UpdatesPageButton.Enabled)
 					{
-					UpdatesPageButton.Text = updatesMessage;
-
-					// Включение кнопки и установка интервала
-					if (!UpdatesPageButton.Enabled)
+					// Исключение задвоения
+					if (!UpdatesPageButton.Enabled && updatesMessage.Contains ("."))
 						{
-						if (updatesMessage.Contains ("."))
-							{
-							UpdatesTimer.Interval = 1000;
-							UpdatesPageButton.Enabled = true;
-							UpdatesPageButton.Font = new Font (UpdatesPageButton.Font, FontStyle.Bold);
-							}
+						UpdatesTimer.Interval = 1000;
+						UpdatesPageButton.Enabled = true;
+						UpdatesPageButton.Font = new Font (UpdatesPageButton.Font, FontStyle.Bold);
+						}
 
-						// Отключение таймера, если обновлений нет
-						else
-							{
-							DescriptionBox.Text = updatesMessageForText + "\r\n\r\n" + description;
-							UpdatesTimer.Enabled = false;
-							}
+					// Отключение таймера, если обновлений нет
+					else
+						{
+						UpdatesTimer.Enabled = false;
 						}
 					}
+				}
 
-				// Выключение
-				else
-					{
-					UpdatesPageButton.Text = "";
-
-					// Получение описания версии
-					if (versionDescription != "")
-						{
-						DescriptionBox.Text = updatesMessageForText + "\r\n\r\n" + description + versionDescription;
-						versionDescription = "";
-						}
-					}
+			// Выключение
+			else
+				{
+				UpdatesPageButton.Text = "";
 				}
 			}
 
