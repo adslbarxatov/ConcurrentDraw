@@ -8,7 +8,7 @@ namespace RD_AAOW
 	/// <summary>
 	/// Класс описывает форму доступа к параметрам программы
 	/// </summary>
-	public partial class ConcurrentDrawParameters: Form
+	public partial class ConcurrentDrawParameters:Form
 		{
 		// Константы и переменные
 		private SupportedLanguages al = Localization.CurrentLanguage;               // Текущий язык интерфейса
@@ -1269,8 +1269,10 @@ namespace RD_AAOW
 			Keys.K | Keys.Shift,
 			Keys.E,
 			Keys.Tab,
-			Keys.F							// 42
+			Keys.F,							// 42
 
+			Keys.F13,
+			Keys.F14						// 44
 
 			// Клавиши, обрабатываемые в основном интерфейсе
 			// Keys.R,
@@ -1470,12 +1472,6 @@ namespace RD_AAOW
 					break;
 				#endregion
 
-				// Изменение флага Always on top
-				case 11:
-					AlwaysOnTopFlag.Checked = !AlwaysOnTopFlag.Checked;
-					hotKeyResult = AlwaysOnTopFlag.Text + " = " + (AlwaysOnTopFlag.Checked ? "1" : "0");
-					break;
-
 				// Изменение значения силы тряски
 				case 12:
 				case 39:
@@ -1573,6 +1569,14 @@ namespace RD_AAOW
 					break;
 				#endregion
 
+				#region Флаги
+
+				// Изменение флага Always on top
+				case 11:
+					AlwaysOnTopFlag.Checked = !AlwaysOnTopFlag.Checked;
+					hotKeyResult = AlwaysOnTopFlag.Text + " = " + (AlwaysOnTopFlag.Checked ? "1" : "0");
+					break;
+
 				// Изменение флага Swinging histogram
 				case 31:
 					SwingingHistogramFlag.Checked = !SwingingHistogramFlag.Checked;
@@ -1596,6 +1600,19 @@ namespace RD_AAOW
 					ReverseFreqOrderFlag.Checked = !ReverseFreqOrderFlag.Checked;
 					hotKeyResult = ReverseFreqOrderFlag.Text + " = " + (ReverseFreqOrderFlag.Checked ? "1" : "0");
 					break;
+
+				// Переключение флага расширенного кумулятивного эффекта
+				case 40:
+					ExtendedCumulation.Checked = !ExtendedCumulation.Checked;
+					hotKeyResult = ExtendedCumulation.Text + " = " + (ExtendedCumulation.Checked ? "1" : "0");
+					break;
+
+				// Запрос текущего значения накопителя кумулятивного эффекта
+				case 41:
+					hotKeyResult = "!CC = 000000";  // Обрабатывается в основном интерфейсе
+					break;
+
+				#endregion
 
 				#region Изменение размера лого
 				case 34:
@@ -1623,6 +1640,7 @@ namespace RD_AAOW
 					break;
 
 				#region Изменение размера поля гистограммы
+
 				case 37:
 				case 38:
 					if (i == 37)
@@ -1639,18 +1657,27 @@ namespace RD_AAOW
 					hotKeyResult = HistoTab.Text + ": " + SGHeightLabel.Text + " " +
 						SGHeight.Value.ToString () + SGHeightPxLabel.Text;
 					break;
+
 				#endregion
 
-				// Переключение флага расширенного кумулятивного эффекта
-				case 40:
-					ExtendedCumulation.Checked = !ExtendedCumulation.Checked;
-					hotKeyResult = ExtendedCumulation.Text + " = " + (ExtendedCumulation.Checked ? "1" : "0");
-					break;
+				#region Изменение чувствительности БПФ (псевдоклавиши, подаются из события мыши)
 
-				// Запрос текущего значения накопителя кумулятивного эффекта
-				case 41:
-					hotKeyResult = "!CC = 000000";  // Обрабатывается в основном интерфейсе
+				case 43:
+				case 44:
+					if (i == 43)
+						{
+						if (FFTScaleMultiplier.Value < FFTScaleMultiplier.Maximum)
+							FFTScaleMultiplier.Value += 2;
+						}
+					else
+						{
+						if (FFTScaleMultiplier.Value > FFTScaleMultiplier.Minimum)
+							FFTScaleMultiplier.Value -= 2;
+						}
+					hotKeyResult = FFTScaleLabel.Text;
 					break;
+				
+				#endregion
 				}
 
 			// Применение новой настройки

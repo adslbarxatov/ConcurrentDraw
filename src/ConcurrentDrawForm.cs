@@ -151,6 +151,7 @@ namespace RD_AAOW
 				this.Close ();
 				return;
 				}
+			this.MouseWheel += ConcurrentDrawForm_MouseClick;
 			this.Text = ProgramDescription.AssemblyTitle;
 
 			// Запрос параметров (при необходимости вызовет окно настроек)
@@ -1211,8 +1212,20 @@ namespace RD_AAOW
 			if ((e.Button == MouseButtons.Left) && (e.Clicks == 2))
 				ChangeSettingsAndRestart (ChangeSettingsAndRestartModes.RestartDrawingOnly, 0);
 
+			// Вызов окна настроек
 			else if (e.Button == MouseButtons.Right)
 				ChangeSettingsAndRestart (ChangeSettingsAndRestartModes.CallSettingsWindow, 0);
+
+			// Изменение чувствительности БПФ
+			else if (e.Delta != 0)
+				{
+				if (e.Delta > 0)
+					hotKeyResultText = ChangeSettingsAndRestart (ChangeSettingsAndRestartModes.SendHotKeyToSettingsWindow,
+						Keys.F13);
+				else
+					hotKeyResultText = ChangeSettingsAndRestart (ChangeSettingsAndRestartModes.SendHotKeyToSettingsWindow,
+						Keys.F14);
+				}
 #endif
 			}
 
