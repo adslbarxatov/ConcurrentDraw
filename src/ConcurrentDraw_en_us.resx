@@ -294,6 +294,7 @@ Center placement: X = {1:S}; Y = {2:S}</value>
     <value>Use next hotkeys:
 • right mouse button or [Space] – get to settings window;
 • double left click or [R] – change colors of “polymorph” and “random” palettes;
+• mouse wheel – change FFT scale multiplier;
 • [Esc] – close the application or settings window;
 • [Enter] – apply changes in settings window;
 • [M] – cyclically change visualization mode; with [Shift] – backward;
