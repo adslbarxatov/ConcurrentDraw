@@ -53,7 +53,7 @@ CD_API(uchar) GetScaledAmplitudeEx (uint FrequencyLevel)
 		fl = AS->cdHistogramFFTValuesCount - fl - 1;
 
 	// Контроль (слияние нижних частот)
-	v = (AS->cdChannelLength) ? 6 : 3;
+	v = 3;	// (AS->cdChannelLength) ? 6 : 3;
 	fl = (fl < v) ? v : fl;
 
 	//fl = (uint)(14796.22 / log10 ((double)fl));

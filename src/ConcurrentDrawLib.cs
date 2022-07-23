@@ -333,7 +333,7 @@ namespace RD_AAOW
 			Int16 e = InitializeSpectrogramEx ((UInt16)FrameWidth, (UInt16)FrameHeight,
 				(Byte)PaletteNumber, (Byte)Mode, (byte)(DoubleWidth ? 1 : 0));
 
-			paletteBackgroundColor = Color.FromArgb ((int)GetPaletteBackgroundColorEx ());	// Обновляется после инициализации
+			paletteBackgroundColor = Color.FromArgb ((int)GetPaletteBackgroundColorEx ());  // Обновляется после инициализации
 
 			return (SpectrogramInitializationErrors)e;
 			}

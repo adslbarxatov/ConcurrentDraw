@@ -15,6 +15,13 @@ namespace RD_AAOW
 		private const string SavedSetName = "\x2";
 
 		/// <summary>
+		/// Константа, содержащая максимальную частоту гистограммы, 
+		/// масштабированную в количество значений FFT с учётом масштаба.
+		/// Должна соответствовать описанию из CDLib
+		/// </summary>
+		public const uint HistogramScaledFrequencyMaximum = 8192 * HistogramRangeSettingIncrement;
+
+		/// <summary>
 		/// Возвращает или задаёт флаг, требующий расположения окна поверх остальных
 		/// </summary>
 		public bool AlwaysOnTop
@@ -124,12 +131,6 @@ namespace RD_AAOW
 		/// Константа, содержащая максимальную частоту гистограммы в герцах, обрабатываемую программой
 		/// </summary>
 		public const uint HistogramUsedFrequencyMaximum = 11025;
-
-		/// <summary>
-		/// Константа, содержащая максимальную частоту гистограммы, 
-		/// масштабированную в количество значений FFT с учётом масштаба
-		/// </summary>
-		public const uint HistogramScaledFrequencyMaximum = 4096 * HistogramRangeSettingIncrement;
 
 		/// <summary>
 		/// Константа, содержащая шаг изменения границы диапазона частот гистограммы

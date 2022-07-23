@@ -18,8 +18,8 @@
 
 /////////////////////////////////////////////////////
 // Константы
-#define CD_VERSION					2,7,0,0
-#define CD_VERSION_S				"2.7.0.0"
+#define CD_VERSION					2,7,2,0
+#define CD_VERSION_S				"2.7.2.0"
 #define CD_PRODUCT					"BASS adapter for ConcurrentDraw"
 #define CD_COMPANY					FDL_COMPANY
 
@@ -27,9 +27,9 @@
 #define MAX_DEVICE_NAME_LENGTH		128
 
 #define DEFAULT_FFT_VALUES_COUNT	256
-#define FFT_VALUES_COUNT			4096
-#define FFT_MODE					BASS_DATA_FFT8192
-#define FFT_CLEAN_VALUES_COUNT		8192
+#define FFT_VALUES_COUNT			8192	// Для отрисовки напрямую
+#define FFT_MODE					BASS_DATA_FFT16384
+#define FFT_CLEAN_VALUES_COUNT		8192	// Для отрисовки из файла
 #define FFT_CLEAN_MODE				BASS_DATA_FFT16384
 
 #define MINFRAMEWIDTH				128

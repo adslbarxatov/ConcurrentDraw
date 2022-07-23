@@ -60,8 +60,8 @@ namespace RD_AAOW
 			if (ConcurrentDrawLib.CDLibVersion != ProgramDescription.AssemblyLibVersion)
 				{
 				if (MessageBox.Show (string.Format (Localization.GetText ("LibraryIsIncompatible", al),
-						ProgramDescription.AssemblyRequirements[0], ConcurrentDrawLib.CDLibVersion,
-						ProgramDescription.AssemblyLibVersion) +
+						ProgramDescription.AssemblyRequirements[0], "(" + ConcurrentDrawLib.CDLibVersion + ") ",
+						" (" + ProgramDescription.AssemblyLibVersion + ")") +
 						Localization.GetText ("LibraryNotFound_Lib0", al), ProgramDescription.AssemblyTitle,
 						MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
 					{

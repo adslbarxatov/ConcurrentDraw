@@ -1,15 +1,23 @@
 // Общий заголовок
 #include "ConcurrentDrawLib.h"
 
+// Список поддерживаемых версий BASS
+ulong SupportedBASSVersions[] = {
+	0x02040E00,
+	0x02040F00,
+	0x02041007
+	};
+
 // Функция проверяет версию библиотеки BASS
 ulong BASSVersionIsCorrect ()
 	{
 	ulong v = BASS_GetVersion ();
+	uint i;
 
 	// Перебор допустимых версий
-	if ((v == 0x02040E00) ||
-		(v == 0x02040F00))
-		return v;
+	for (i = 0; i < sizeof (SupportedBASSVersions) / sizeof (ulong); i++)
+		if (v == SupportedBASSVersions[i])
+			return v;
 
 	return 0;
 	}
