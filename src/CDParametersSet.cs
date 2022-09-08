@@ -575,10 +575,10 @@ namespace RD_AAOW
 				return;
 
 			// Запрос
-			string settings = "";
+			string settings;
 
 			// Возврат последнего сохранённого набора настроек
-			try
+			/*try
 				{
 				if (SetName == SavedSetName)
 					{
@@ -589,7 +589,12 @@ namespace RD_AAOW
 					settings = Registry.GetValue (RDGenerics.AssemblySettingsKey, SetName, "").ToString ();
 					}
 				}
-			catch { }
+			catch { }*/
+
+			if (SetName == SavedSetName)
+				settings = RDGenerics.GetAppSettingsValue ("");
+			else
+				settings = RDGenerics.GetAppSettingsValue (SetName);
 
 			if (settings == "")
 				{
@@ -673,9 +678,7 @@ namespace RD_AAOW
 				particlesMetrics.Acceleration = uint.Parse (values[31]);
 				reverseFreqOrder = (values[47] != "0");
 				}
-			catch
-				{
-				}
+			catch { }
 			}
 
 		/// <summary>
@@ -767,7 +770,7 @@ namespace RD_AAOW
 				splitter[0].ToString () + (reverseFreqOrder ? "RFO" : "0"));
 
 			// Запись
-			try
+			/*try
 				{
 				if (SetName == SavedSetName)
 					{
@@ -778,7 +781,12 @@ namespace RD_AAOW
 					Registry.SetValue (RDGenerics.AssemblySettingsKey, SetName, settings);
 					}
 				}
-			catch { }
+			catch { }*/
+
+			if (SetName == SavedSetName)
+				RDGenerics.SetAppSettingsValue ("", settings);
+			else
+				RDGenerics.SetAppSettingsValue (SetName, settings);
 			}
 
 		/// <summary>

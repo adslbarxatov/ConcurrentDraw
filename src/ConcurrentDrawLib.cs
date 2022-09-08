@@ -461,10 +461,16 @@ namespace RD_AAOW
 			{
 			get
 				{
-				string names = GetPalettesNamesEx ();
-				return names.Split (splitter, StringSplitOptions.RemoveEmptyEntries);
+				if (palettesNames.Length < 1)
+					{
+					string names = GetPalettesNamesEx ();
+					palettesNames = names.Split (splitter, StringSplitOptions.RemoveEmptyEntries);
+					}
+
+				return palettesNames;
 				}
 			}
+		private static string[] palettesNames = new string[] { };
 
 		/// <summary>
 		/// Функция возвращает ограничивающие размеры фреймов спектрограмм

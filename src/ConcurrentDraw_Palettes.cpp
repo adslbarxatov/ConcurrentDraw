@@ -373,6 +373,7 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 	}
 
 // Функция возвращает названия доступных палитр
+static char palettesNames[512];
 CD_API(schar *) GetPalettesNamesEx ()
 	{
 	#define PALETTES_NAMES	("Adobe Audition" NAMES_DELIMITER_S \
@@ -405,7 +406,10 @@ CD_API(schar *) GetPalettesNamesEx ()
 		"Acid (reversed)" NAMES_DELIMITER_S \
 		"Lemon (reversed)")
 
-	return PALETTES_NAMES;
+	if (!palettesNames[0])
+		sprintf (palettesNames, PALETTES_NAMES);
+
+	return palettesNames;
 	}
 
 // Функция получает указанный цвет из текущей палитры

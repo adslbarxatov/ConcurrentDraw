@@ -6,33 +6,39 @@ CD_API(uchar) GetDevicesEx (schar **Devices)
 	{
 	// Переменные
 	BASS_DEVICEINFO info;
-	uchar i, pos, lastLength;
-	uchar devicesCount = 0;
+	uchar pos, lastLength;
+	uchar i, j, aliveDevicesCount = 0;
 
 	// Получение количества устройств
-	for (devicesCount = 0; devicesCount < MAX_RECORD_DEVICES; devicesCount++)
-		{
-		if (!BASS_RecordGetDeviceInfo (devicesCount, &info))
-			{
-			break;
-			}
-		}
-
-	if (devicesCount == 0)
-		return devicesCount;	// Нет доступных устройств
-
-	// Разметка массива имён
-	if ((*Devices = (schar *)malloc (devicesCount * MAX_DEVICE_NAME_LENGTH)) == NULL)
-		return 0;
-	memset (*Devices, 0x00, devicesCount * MAX_DEVICE_NAME_LENGTH);
-
-	// Получение имён
-	for (i = pos = 0; i < devicesCount; i++)
+	for (i = 0; i < MAX_RECORD_DEVICES; i++)
 		{
 		if (!BASS_RecordGetDeviceInfo (i, &info))
 			{
-			free (*Devices);
-			return 0;	// Фигня какая-то
+			if (aliveDevicesCount > 0)	// До получения первого живого не прерырвать
+				break;
+			}
+		else 
+			{
+			aliveDevicesCount++;
+			}
+		}
+
+	if (aliveDevicesCount == 0)
+		return 0;	// Нет доступных устройств
+
+	// Разметка массива имён
+	if ((*Devices = (schar *)malloc (aliveDevicesCount * MAX_DEVICE_NAME_LENGTH)) == NULL)
+		return 0;
+	memset (*Devices, 0x00, aliveDevicesCount * MAX_DEVICE_NAME_LENGTH);
+
+	// Получение имён
+	for (j = pos = 0; j < i; j++)
+		{
+		if (!BASS_RecordGetDeviceInfo (j, &info))
+			{
+			/*free (*Devices);
+			return 0;	// Фигня какая-то*/
+			continue;
 			}
 
 		lastLength = min (strlen (info.name), MAX_DEVICE_NAME_LENGTH - 1);
@@ -42,7 +48,7 @@ CD_API(uchar) GetDevicesEx (schar **Devices)
 		}
 
 	// Завершено
-	return devicesCount;
+	return aliveDevicesCount;
 	}
 
 // Функция возвращает текущий фрейм спектрограммы
