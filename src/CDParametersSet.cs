@@ -578,19 +578,6 @@ namespace RD_AAOW
 			string settings;
 
 			// Возврат последнего сохранённого набора настроек
-			/*try
-				{
-				if (SetName == SavedSetName)
-					{
-					settings = Registry.GetValue (RDGenerics.AssemblySettingsKey, "", "").ToString ();
-					}
-				else
-					{
-					settings = Registry.GetValue (RDGenerics.AssemblySettingsKey, SetName, "").ToString ();
-					}
-				}
-			catch { }*/
-
 			if (SetName == SavedSetName)
 				settings = RDGenerics.GetAppSettingsValue ("");
 			else
@@ -770,19 +757,6 @@ namespace RD_AAOW
 				splitter[0].ToString () + (reverseFreqOrder ? "RFO" : "0"));
 
 			// Запись
-			/*try
-				{
-				if (SetName == SavedSetName)
-					{
-					Registry.SetValue (RDGenerics.AssemblySettingsKey, "", settings);
-					}
-				else
-					{
-					Registry.SetValue (RDGenerics.AssemblySettingsKey, SetName, settings);
-					}
-				}
-			catch { }*/
-
 			if (SetName == SavedSetName)
 				RDGenerics.SetAppSettingsValue ("", settings);
 			else

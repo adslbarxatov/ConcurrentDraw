@@ -1,5 +1,5 @@
-# ConcurrentDraw v 2.7.142
-> PCC: 000CA2C32B0A5713
+# ConcurrentDraw v 3.0
+> PCC: 0009F4A82E061BB2
 
 
 The sound and music visualization tool
@@ -26,8 +26,8 @@ No additional codecs or applications. Just launch and behold!
 
 ## Requirements / Требования
 
-- Windows XP or newer / или новее;
-- [Microsoft .NET Framework 4.0](https://microsoft.com/en-us/download/details.aspx?id=17718);
+- Windows 7 or newer / или новее;
+- [Microsoft .NET Framework 4.8](https://go.microsoft.com/fwlink/?linkid=2088631);
 - [Microsoft Visual C++ 2015 – 2022 redistributable](https://aka.ms/vs/17/release/vc_redist.x86.exe);
 - [BASS audio library](http://un4seen.com).
 

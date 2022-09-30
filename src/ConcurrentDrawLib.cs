@@ -452,7 +452,7 @@ namespace RD_AAOW
 		/// </summary>
 		/// <returns>Названия палитр</returns>
 		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
-		private static extern string GetPalettesNamesEx ();
+		private static extern IntPtr GetPalettesNamesEx ();
 
 		/// <summary>
 		/// Возвращает список доступных палитр
@@ -463,7 +463,7 @@ namespace RD_AAOW
 				{
 				if (palettesNames.Length < 1)
 					{
-					string names = GetPalettesNamesEx ();
+					string names = Marshal.PtrToStringAnsi (GetPalettesNamesEx ());
 					palettesNames = names.Split (splitter, StringSplitOptions.RemoveEmptyEntries);
 					}
 
@@ -635,7 +635,7 @@ namespace RD_AAOW
 		/// </summary>
 		/// <returns></returns>
 		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
-		private static extern string GetCDLibVersionEx ();
+		private static extern IntPtr GetCDLibVersionEx ();
 
 		/// <summary>
 		/// Возвращает версию библиотеки CDLib.dll
@@ -644,7 +644,7 @@ namespace RD_AAOW
 			{
 			get
 				{
-				return GetCDLibVersionEx ();
+				return Marshal.PtrToStringAnsi (GetCDLibVersionEx ());
 				}
 			}
 

@@ -129,7 +129,7 @@ namespace RD_AAOW
 				}
 			}
 
-		#region Extended
+#region Extended
 
 #if !ANDROID
 
@@ -335,6 +335,6 @@ namespace RD_AAOW
 			return GetText (FormName + "_" + ControlName, Language);
 			}
 
-		#endregion
+#endregion
 		}
 	}

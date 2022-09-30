@@ -13,7 +13,7 @@ namespace RD_AAOW
 	/// <summary>
 	/// Класс описывает интерфейс отображения сведений о программе
 	/// </summary>
-	public partial class AboutForm:Form
+	public partial class AboutForm: Form
 		{
 		// Переменные
 		private string projectLink, updatesLink, userManualLink;
@@ -23,6 +23,7 @@ namespace RD_AAOW
 			startDownload = "", packageFail = "", fileWriteFail = "", versionDescription = "",
 			adpRevision = "";
 		private bool accepted = false;              // Флаг принятия Политики
+		private const string toolName = "DPArray";
 
 		private static string[][] locale = new string[][] { new string [] {
 
@@ -46,9 +47,9 @@ namespace RD_AAOW
 			"• включите запуск от имени администратора для всех пользователей в настройках совместимости.\n\n" +
 			"После этого перезапустите программу и повторите попытку",
 
-			"Инструмент развёртки пакетов DPModule не найден на этом ПК. Перейти к его загрузке?" +
-			"\n\nВы можете обновить этот продукт прямо из DPModule или вернуться сюда после его установки. " +
-			"Также Вы можете ознакомиться с презентацией DPModule на YouTube, нажав кнопку «Нет»",
+			"Инструмент развёртки пакетов " + toolName + " не найден на этом ПК. Перейти к его загрузке?" +
+			"\n\nВы можете обновить этот продукт прямо из " + toolName + " или вернуться сюда после его установки. " +
+			"Также Вы можете ознакомиться с презентацией " + toolName + " на YouTube, нажав кнопку «Нет»",
 
 			"Не удалось загрузить пакет развёртки. Проверьте Ваше подключение к Интернету",
 			"Не удалось сохранить пакет развёртки. Проверьте Ваши права доступа",
@@ -98,9 +99,10 @@ namespace RD_AAOW
 			"• enable running as administrator for all users in compatibility settings.\n\n" +
 			"Then restart the program and try again",
 
-			"DPModule, the packages deployment tool isn’t installed on this PC. " +
-			"Download it?\n\nYou can update this product directly from DPModule or come back here " +
-			"after installing it. Also you can view the DPModule presentation on YouTube by pressing “No” button",
+			toolName + ", the packages deployment tool isn’t installed on this PC. " +
+			"Download it?\n\nYou can update this product directly from " + toolName + " or come back here " +
+			"after installing it. Also you can view the " + toolName + " presentation on YouTube by pressing " +
+			"“No” button",
 
 			"Failed to download deployment package. Check your internet connection",
 			"Failed to save deployment package. Check your user access rights",
@@ -156,11 +158,12 @@ namespace RD_AAOW
 			userManualLink = (UserManualLink == null) ? "" : UserManualLink;
 
 			projectLink = RDGenerics.AssemblyGitLink + ProgramDescription.AssemblyMainName;
-			updatesLink = RDGenerics.AssemblyGitLink + ProgramDescription.AssemblyMainName + RDGenerics.GitUpdatesSublink;
+			updatesLink = RDGenerics.AssemblyGitLink + ProgramDescription.AssemblyMainName +
+				RDGenerics.GitUpdatesSublink;
 
 			// Загрузка окружения
-			AboutLabel.Text = ProgramDescription.AssemblyTitle + "\n" + ProgramDescription.AssemblyDescription + "\n\n" +
-				RDGenerics.AssemblyCopyright + "\nv " + ProgramDescription.AssemblyVersion +
+			AboutLabel.Text = ProgramDescription.AssemblyTitle + "\n" + ProgramDescription.AssemblyDescription +
+				"\n\n" + RDGenerics.AssemblyCopyright + "\nv " + ProgramDescription.AssemblyVersion +
 				"; " + ProgramDescription.AssemblyLastUpdate;
 
 			if (AppIcon != null)
@@ -237,29 +240,30 @@ namespace RD_AAOW
 				return 1;
 
 			// Настройка контролов
-			UserManualButton.Text = locale[(int)al][0];
-			ProjectPageButton.Text = locale[(int)al][1];
-			UpdatesPageButton.Text = locale[(int)al][2];
-			ADPButton.Text = locale[(int)al][AcceptMode ? 3 : 4];
-			ExitButton.Text = locale[(int)al][AcceptMode ? 5 : 6];
-			AskDeveloper.Text = locale[(int)al][7];
-			MisacceptButton.Text = locale[(int)al][8];
+			int i = (int)al;
+			UserManualButton.Text = locale[i][0];
+			ProjectPageButton.Text = locale[i][1];
+			UpdatesPageButton.Text = locale[i][2];
+			ADPButton.Text = locale[i][AcceptMode ? 3 : 4];
+			ExitButton.Text = locale[i][AcceptMode ? 5 : 6];
+			AskDeveloper.Text = locale[i][7];
+			MisacceptButton.Text = locale[i][8];
 
 			if (!desciptionHasBeenUpdated)
-				DescriptionBox.Text = locale[(int)al][AcceptMode ? 9 : 10] + description;
+				DescriptionBox.Text = locale[i][AcceptMode ? 9 : 10] + description;
 
-			policyLoaderCaption = locale[(int)al][11];
-			registryFail = ProgramDescription.AssemblyMainName + locale[(int)al][12];
-			dpModuleAbsence = locale[(int)al][13];
-			packageFail = locale[(int)al][14];
-			fileWriteFail = locale[(int)al][15];
-			startDownload = locale[(int)al][16];
+			policyLoaderCaption = locale[i][11];
+			registryFail = ProgramDescription.AssemblyMainName + locale[i][12];
+			dpModuleAbsence = locale[i][13];
+			packageFail = locale[i][14];
+			fileWriteFail = locale[i][15];
+			startDownload = locale[i][16];
 
 			if (ToLaboratoryCombo.Items.Count < 1)
 				ToLaboratoryCombo.Items.AddRange (RDGenerics.GetCommunitiesNames (al != SupportedLanguages.ru_ru));
 			ToLaboratoryCombo.SelectedIndex = 0;
 
-			this.Text = locale[(int)al][AcceptMode ? 17 : 18];
+			this.Text = locale[i][AcceptMode ? 17 : 18];
 
 			// Запуск проверки обновлений
 			HardWorkExecutor hwe;
@@ -296,11 +300,15 @@ namespace RD_AAOW
 				}
 
 			// Настройка контролов
-			UserManualButton.Visible = ProjectPageButton.Visible = UpdatesPageButton.Visible =
+			UserManualButton.Visible = ProjectPageButton.Visible =
 				AskDeveloper.Visible = ToLaboratory.Visible = !AcceptMode;
+
 #if DPMODULE
 			UpdatesPageButton.Visible = false;
+#else
+			UpdatesPageButton.Visible = !AcceptMode;
 #endif
+
 			MisacceptButton.Visible = AcceptMode;
 
 			// Запуск
@@ -341,7 +349,7 @@ namespace RD_AAOW
 		// Метод получает Политику разработки
 		private void PolicyLoader (object sender, DoWorkEventArgs e)
 			{
-			string html = GetHTML (RDGenerics.ADPLink + (al == SupportedLanguages.ru_ru ? "/ru" : ""));
+			string html = GetHTML (RDGenerics.GetADPLink (al == SupportedLanguages.ru_ru));
 			int textLeft, textRight;
 
 			if (((textLeft = html.IndexOf ("code\">")) >= 0) &&
@@ -424,7 +432,7 @@ namespace RD_AAOW
 			{
 			try
 				{
-				Process.Start (RDGenerics.ADPLink);
+				Process.Start (RDGenerics.GetADPLink (al == SupportedLanguages.ru_ru));
 				}
 			catch { }
 			}
@@ -435,7 +443,7 @@ namespace RD_AAOW
 			switch (ToLaboratoryCombo.SelectedIndex)
 				{
 				default:
-					link = RDGenerics.DPModuleLink;
+					link = RDGenerics.GetDPArrayLink (al == SupportedLanguages.ru_ru);
 					break;
 
 				case 1:
@@ -467,9 +475,11 @@ namespace RD_AAOW
 		// Загрузка пакета обновления изнутри приложения
 		private void UpdatesPageButton_Click (object sender, EventArgs e)
 			{
+#if !DPMODULE
+
 			// Контроль наличия DPModule
 			string dpmv = RDGenerics.GetAppSettingsValue (LastShownVersionKey, ADPRevisionPath);
-			string downloadLink = RDGenerics.DPModuleStorageLink;
+			string downloadLink;
 			string packagePath = Environment.GetFolderPath (Environment.SpecialFolder.Desktop) + "\\";
 
 			if (string.IsNullOrWhiteSpace (dpmv))
@@ -484,14 +494,13 @@ namespace RD_AAOW
 					case DialogResult.No:
 						try
 							{
-							Process.Start (RDGenerics.DPModuleUserManualLink);
+							Process.Start (RDGenerics.DPArrayUserManualLink);
 							}
 						catch { }
 						return;
 					}
 
-				downloadLink = RDGenerics.DPModuleDirectLink;
-				packagePath += "DPModule.sfx.exe";
+				downloadLink = RDGenerics.DPArrayDirectLink;
 				}
 			else
 				{
@@ -499,9 +508,11 @@ namespace RD_AAOW
 					MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
 					return;
 
-				downloadLink += ("/raw/master/Packages/" + ProgramDescription.AssemblyMainName + ".dp");
-				packagePath += (ProgramDescription.AssemblyMainName + ".dp");
+				downloadLink = RDGenerics.DPArrayPackageLink;
 				}
+
+			int l = downloadLink.LastIndexOf ('/');
+			packagePath += downloadLink.Substring (l + 1);
 
 			// Запуск загрузки
 			HardWorkExecutor hwe = new HardWorkExecutor (PackageLoader, downloadLink, packagePath, "0");
@@ -533,7 +544,8 @@ namespace RD_AAOW
 
 			if (!string.IsNullOrWhiteSpace (msg))
 				{
-				MessageBox.Show (msg, ProgramDescription.AssemblyTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				MessageBox.Show (msg, ProgramDescription.AssemblyTitle, MessageBoxButtons.OK,
+					MessageBoxIcon.Exclamation);
 				return;
 				}
 
@@ -543,6 +555,8 @@ namespace RD_AAOW
 				Process.Start (packagePath);
 				}
 			catch { }
+
+#endif
 			}
 
 		// Метод-исполнитель проверки обновлений
@@ -650,7 +664,7 @@ namespace RD_AAOW
 
 // Получение обновлений Политики (ошибки игнорируются)
 policy:
-			html = GetHTML (RDGenerics.ADPLink);
+			html = GetHTML (RDGenerics.GetADPLink (al == SupportedLanguages.ru_ru));
 			if (((i = html.IndexOf ("<title")) >= 0) && ((j = html.IndexOf ("</title", i)) >= 0))
 				{
 				// Обрезка
@@ -778,8 +792,8 @@ policy:
 				FS.WriteByte ((byte)b);
 
 				if ((length != 0) && (current++ % 0x1000 == 0))
-					((BackgroundWorker)sender).ReportProgress ((int)(HardWorkExecutor.ProgressBarSize * current / length),
-						report);  // Возврат прогресса
+					((BackgroundWorker)sender).ReportProgress ((int)(HardWorkExecutor.ProgressBarSize *
+						current / length), report);  // Возврат прогресса
 
 				// Завершение работы, если получено требование от диалога
 				if (((BackgroundWorker)sender).CancellationPending)
@@ -940,8 +954,9 @@ policy:
 			string fileExt = FileExtension.ToLower ().Replace (".", "");
 
 			// Контроль
-			if (ShowWarning && (MessageBox.Show (locale[(int)Localization.CurrentLanguage][27], ProgramDescription.AssemblyTitle,
-				MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.No))
+			if (ShowWarning && (MessageBox.Show (locale[(int)Localization.CurrentLanguage][27],
+				ProgramDescription.AssemblyTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) ==
+				DialogResult.No))
 				return false;
 
 			// Выполнение
@@ -988,14 +1003,16 @@ policy:
 		/// <param name="ShowWarning">Флаг указывает, что необходимо отобразить предупреждение перед регистрацией</param>
 		/// <param name="FileIcon">Ресурс, хранящий значок формата файла</param>
 		/// <returns>Возвращает true в случае успеха</returns>
-		public static bool RegisterProtocol (string ProtocolCode, string ProtocolName, Icon FileIcon, bool ShowWarning)
+		public static bool RegisterProtocol (string ProtocolCode, string ProtocolName, Icon FileIcon,
+			bool ShowWarning)
 			{
 			// Подготовка
 			string protocol = ProtocolCode.ToLower ().Replace (".", "");
 
 			// Контроль
-			if (ShowWarning && (MessageBox.Show (locale[(int)Localization.CurrentLanguage][28], ProgramDescription.AssemblyTitle,
-				MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.No))
+			if (ShowWarning && (MessageBox.Show (locale[(int)Localization.CurrentLanguage][28],
+				ProgramDescription.AssemblyTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) ==
+				DialogResult.No))
 				return false;
 
 			// Выполнение

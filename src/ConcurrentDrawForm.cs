@@ -89,7 +89,7 @@ namespace RD_AAOW
 			histoY = new int[4];                                // Координаты линий гистограмм
 		private const double butterflyDensity = 2.84;           // Плотность гистограммы-бабочки
 		private const double perspectiveDensity = 3.15;         // Плотность гистограммы-перспективы
-																// (даёт полный угол чуть более 90°; 90° <=> 2.84; 80° <=> 3.2)
+											// (даёт полный угол чуть более 90°; 90° <=> 2.84; 80° <=> 3.2)
 
 		// Дополнительные графические объекты
 		private List<ILogoDrawerObject> objects =
@@ -984,7 +984,12 @@ namespace RD_AAOW
 				{
 				// Волны
 				if (cdp.BeatDetectorWaves && (peak > cdp.BeatsDetectorLowLevel))
+					{
 					beatWaves.Add (0);
+
+					if (beatWaves.Count >= 40)
+						beatWaves.RemoveAt (0);
+					}
 
 				for (int i = 0; i < beatWaves.Count; i++)
 					{
@@ -997,7 +1002,7 @@ namespace RD_AAOW
 						beatWaves[i]++;
 						}
 
-					if (beatWaves[i] >= 253)
+					if (beatWaves[i] >= 190)
 						beatWaves.RemoveAt (i);
 
 					p.Dispose ();

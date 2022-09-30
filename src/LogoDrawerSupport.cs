@@ -43,12 +43,12 @@ namespace RD_AAOW
 		/// </summary>
 		public void Dispose ()
 			{
-			if (isInited)
-				{
-				descriptor.Dispose ();
-				layer.Dispose ();
-				isInited = false;
-				}
+			if (!isInited)
+				return;
+
+			descriptor.Dispose ();
+			layer.Dispose ();
+			isInited = false;
 			}
 
 		/// <summary>
@@ -110,7 +110,7 @@ namespace RD_AAOW
 		/// <summary>
 		/// Доля поля текста
 		/// </summary>
-		public const double TextFieldPart = 3.0 / 8.0;              // Часть поля отрисовки, занимаемая текстом
+		public const double TextFieldPart = 3.0 / 8.0;          // Часть поля отрисовки, занимаемая текстом
 
 		/// <summary>
 		/// Метод приводит исходные метрики объекта к допустимым диапазонам
@@ -424,8 +424,9 @@ namespace RD_AAOW
 		private void LogoDrawerStringInit (string Text, Font TextFont, uint TimeoutPause, uint LetterWidth, uint Type)
 			{
 			stringText = Text;
-			if ((stringText == null) || (stringText == ""))
+			if (string.IsNullOrWhiteSpace (stringText))
 				stringText = " ";
+
 			stringLength = (uint)stringText.Length;
 
 			stringFont = TextFont;
