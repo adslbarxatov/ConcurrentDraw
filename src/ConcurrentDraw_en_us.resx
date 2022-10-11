@@ -117,9 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AlreadyStarted" xml:space="preserve">
-    <value>{0:S} is already running</value>
-  </data>
   <data name="BASS_ERROR_BUSY" xml:space="preserve">
     <value>Requested device is busy or in use by another application</value>
   </data>
@@ -343,12 +340,12 @@ Center placement: X = {1:S}; Y = {2:S}</value>
   <data name="LibraryNotFound_Lib0" xml:space="preserve">
     <value>.
 
-Do you want to open webpage for downloading the actual application assembly?</value>
+Do you want to open project’s webpage to download it manually?</value>
   </data>
   <data name="LibraryNotFound_Lib1" xml:space="preserve">
     <value>.
 
-Do you want to open webpage for downloading the actual library version?</value>
+Do you want to open its webpage to download the actual version?</value>
   </data>
   <data name="LogoTab_BeatWavesFlag" xml:space="preserve">
     <value>Beats waves</value>

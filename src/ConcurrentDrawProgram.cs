@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Threading;
 using System.Windows.Forms;
 
 namespace RD_AAOW
@@ -20,53 +19,55 @@ namespace RD_AAOW
 			Application.EnableVisualStyles ();
 			Application.SetCompatibleTextRenderingDefault (false);
 
-			// Запрос языка приложения
+			// Язык интерфейса и контроль XPR
 			SupportedLanguages al = Localization.CurrentLanguage;
+			if (!Localization.IsXPRClassAcceptable)
+				return;
 
 			// Проверка запуска единственной копии
-			bool result;
-			Mutex instance = new Mutex (true, ProgramDescription.AssemblyTitle, out result);
-			if (!result)
-				{
-				MessageBox.Show (string.Format (Localization.GetText ("AlreadyStarted", al), ProgramDescription.AssemblyTitle),
-					ProgramDescription.AssemblyTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+			if (!RDGenerics.IsThisInstanceUnique (al == SupportedLanguages.ru_ru))
 				return;
-				}
 
 			// Проверка наличия обязательных компонентов
-			if (!File.Exists (RDGenerics.AppStartupPath + ProgramDescription.AssemblyRequirements[0]))
-				{
-				if (MessageBox.Show (string.Format (Localization.GetText ("LibraryNotFound", al),
-					ProgramDescription.AssemblyRequirements[0]) + Localization.GetText ("LibraryNotFound_Lib0", al),
-					ProgramDescription.AssemblyTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
+			for (int i = 0; i < ProgramDescription.AssemblyRequirements.Length; i++)
+				if (!File.Exists (RDGenerics.AppStartupPath + ProgramDescription.AssemblyRequirements[i]))
 					{
-					AboutForm af = new AboutForm (null);
-					}
-				return;
-				}
+					if (MessageBox.Show (string.Format (Localization.GetText ("LibraryNotFound", al),
+						ProgramDescription.AssemblyRequirements[i]) +
+						Localization.GetText ("LibraryNotFound_Lib" + i.ToString (), al),
+						ProgramDescription.AssemblyTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) ==
+						DialogResult.Yes)
+						{
+						AboutForm af = new AboutForm (i == 0 ? null : "http://un4seen.com");
+						}
 
-			if (!File.Exists (RDGenerics.AppStartupPath + ProgramDescription.AssemblyRequirements[1]))
+					return;
+					}
+
+			/*if (!File.Exists (RDGenerics.AppStartupPath + ProgramDescription.AssemblyRequirements[1]))
 				{
 				if (MessageBox.Show (string.Format (Localization.GetText ("LibraryNotFound", al),
 					ProgramDescription.AssemblyRequirements[1]) + Localization.GetText ("LibraryNotFound_Lib1", al),
-					ProgramDescription.AssemblyTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
+					ProgramDescription.AssemblyTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) ==
+					DialogResult.Yes)
 					{
-					AboutForm af = new AboutForm ("http://www.un4seen.com");
+					AboutForm af = new AboutForm ("http://un4seen.com");
 					}
 				return;
-				}
+				}*/
 
 			// Проверка корреткности версии библиотеки CDLib.dll (BASS проверяется позже)
 			if (ConcurrentDrawLib.CDLibVersion != ProgramDescription.AssemblyLibVersion)
 				{
 				if (MessageBox.Show (string.Format (Localization.GetText ("LibraryIsIncompatible", al),
-						ProgramDescription.AssemblyRequirements[0], "(" + ConcurrentDrawLib.CDLibVersion + ") ",
-						" (" + ProgramDescription.AssemblyLibVersion + ")") +
-						Localization.GetText ("LibraryNotFound_Lib0", al), ProgramDescription.AssemblyTitle,
-						MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
+					ProgramDescription.AssemblyRequirements[0], "(" + ConcurrentDrawLib.CDLibVersion + ") ",
+					" (" + ProgramDescription.AssemblyLibVersion + ")") +
+					Localization.GetText ("LibraryNotFound_Lib0", al), ProgramDescription.AssemblyTitle,
+					MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
 					{
 					AboutForm af = new AboutForm (null);
 					}
+
 				return;
 				}
 

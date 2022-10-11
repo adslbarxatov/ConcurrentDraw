@@ -1,5 +1,11 @@
 ﻿ConcurrentDraw changes log
 
+Version 3.0.2:
+• XPR control has been implemented;
+• Adjusted the control of single active copy;
+• Adjusted the requirements control;
+• Adjusted the logo behavior
+
 Version 3.0:
 • Rebuilding the app for the MSVC RTL 143 (2022);
   - Fixed possible memory breach based on string values marshalling;
