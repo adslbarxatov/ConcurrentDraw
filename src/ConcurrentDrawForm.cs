@@ -15,7 +15,7 @@ namespace RD_AAOW
 	/// <summary>
 	/// Класс обеспечивает отображение визуализации проекта
 	/// </summary>
-	public partial class ConcurrentDrawForm:Form
+	public partial class ConcurrentDrawForm: Form
 		{
 		// Доступные фазы отрисовки
 		private enum VisualizationPhases
@@ -89,7 +89,7 @@ namespace RD_AAOW
 			histoY = new int[4];                                // Координаты линий гистограмм
 		private const double butterflyDensity = 2.84;           // Плотность гистограммы-бабочки
 		private const double perspectiveDensity = 3.15;         // Плотность гистограммы-перспективы
-											// (даёт полный угол чуть более 90°; 90° <=> 2.84; 80° <=> 3.2)
+																// (даёт полный угол чуть более 90°; 90° <=> 2.84; 80° <=> 3.2)
 
 		// Дополнительные графические объекты
 		private List<ILogoDrawerObject> objects =
@@ -465,9 +465,10 @@ namespace RD_AAOW
 					break;
 				}
 
-			if (err != "")
+			if (!string.IsNullOrWhiteSpace (err))
 				{
-				MessageBox.Show (err, ProgramDescription.AssemblyTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				/*MessageBox.Shw (err, ProgramDescription.AssemblyTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);*/
+				RDGenerics.MessageBox (RDMessageTypes.Warning, err);
 				return result;
 				}
 
@@ -498,9 +499,11 @@ namespace RD_AAOW
 					throw new Exception ("Application failure. Debug required at point 3");
 				}
 
-			if (err != "")
+			if (!string.IsNullOrWhiteSpace (err))
 				{
-				MessageBox.Show (err, ProgramDescription.AssemblyTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				/*MessageBox.Shw (err, ProgramDescription.AssemblyTitle, MessageBoxButtons.OK,
+					MessageBoxIcon.Exclamation);*/
+				RDGenerics.MessageBox (RDMessageTypes.Warning, err);
 				return result;
 				}
 
@@ -1195,8 +1198,10 @@ namespace RD_AAOW
 						}
 					catch
 						{
-						MessageBox.Show (Localization.GetText ("ScreenshotFailure", cdp.CurrentInterfaceLanguage),
-							ProgramDescription.AssemblyTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+						/*MessageBox.Shw (Localization.GetText ("ScreenshotFailure", cdp.CurrentInterfaceLanguage),
+							ProgramDescription.AssemblyTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);*/
+						RDGenerics.MessageBox (RDMessageTypes.Warning,
+							Localization.GetText ("ScreenshotFailure", cdp.CurrentInterfaceLanguage));
 						}
 					break;
 

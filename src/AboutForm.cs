@@ -49,7 +49,7 @@ namespace RD_AAOW
 
 			"Инструмент развёртки пакетов " + toolName + " не найден на этом ПК. Перейти к его загрузке?" +
 			"\n\nВы можете обновить этот продукт прямо из " + toolName + " или вернуться сюда после его установки. " +
-			"Также Вы можете ознакомиться с презентацией " + toolName + " на YouTube, нажав кнопку «Нет»",
+			"Также Вы можете ознакомиться с презентацией " + toolName + " на YouTube, нажав кнопку «Видео»",
 
 			"Не удалось загрузить пакет развёртки. Проверьте Ваше подключение к Интернету",
 			"Не удалось сохранить пакет развёртки. Проверьте Ваши права доступа",
@@ -77,6 +77,8 @@ namespace RD_AAOW
 			"текущего местоположения приложения.\n\nУбедитесь, что вы не будете менять расположение " +
 			"этого приложения перед использованием этой функции.\n\nВы хотите продолжить?",		// 28
 
+			"&Видео",	// 29
+
 			}, new string [] {
 
 			"&User manual",
@@ -102,7 +104,7 @@ namespace RD_AAOW
 			toolName + ", the packages deployment tool isn’t installed on this PC. " +
 			"Download it?\n\nYou can update this product directly from " + toolName + " or come back here " +
 			"after installing it. Also you can view the " + toolName + " presentation on YouTube by pressing " +
-			"“No” button",
+			"“Video” button",
 
 			"Failed to download deployment package. Check your internet connection",
 			"Failed to save deployment package. Check your user access rights",
@@ -129,6 +131,8 @@ namespace RD_AAOW
 			"Warning: required protocols will be registered using current app location.\n\n" +
 			"Make sure you will not change location of this application before using this feature.\n\n" +
 			"Do you want to continue?",			// 28
+
+			"&Video",	// 29
 
 			} };
 
@@ -301,7 +305,7 @@ namespace RD_AAOW
 
 			// Настройка контролов
 			UserManualButton.Visible = ProjectPageButton.Visible =
-				AskDeveloper.Visible = ToLaboratory.Visible = !AcceptMode;
+				AskDeveloper.Visible = !AcceptMode;
 
 #if DPMODULE
 			UpdatesPageButton.Visible = false;
@@ -326,8 +330,9 @@ namespace RD_AAOW
 					WindowsPrincipal principal = new WindowsPrincipal (identity);
 					if (!principal.IsInRole (WindowsBuiltInRole.Administrator))
 						{
-						MessageBox.Show (registryFail, ProgramDescription.AssemblyTitle, MessageBoxButtons.OK,
-							MessageBoxIcon.Exclamation);
+						/*MessageBox.Shw (registryFail, ProgramDescription.AssemblyTitle, MessageBoxButtons.OK,
+							MessageBoxIcon.Exclamation);*/
+						RDGenerics.MessageBox (RDMessageTypes.Warning, registryFail);
 						}
 					}
 
@@ -338,8 +343,9 @@ namespace RD_AAOW
 				}
 			catch
 				{
-				MessageBox.Show (registryFail, ProgramDescription.AssemblyTitle, MessageBoxButtons.OK,
-					MessageBoxIcon.Exclamation);
+				/*MessageBox.Shw (registryFail, ProgramDescription.AssemblyTitle, MessageBoxButtons.OK,
+					MessageBoxIcon.Exclamation);*/
+				RDGenerics.MessageBox (RDMessageTypes.Warning, registryFail);
 				}
 
 			// Завершение
@@ -353,7 +359,7 @@ namespace RD_AAOW
 			int textLeft, textRight;
 
 			if (((textLeft = html.IndexOf ("code\">")) >= 0) &&
-				((textRight = html.IndexOf ("<script", textLeft)) >= 0))
+				((textRight = html.IndexOf ("<footer", textLeft)) >= 0))
 				{
 				// Обрезка
 				textLeft += 6;
@@ -486,13 +492,19 @@ namespace RD_AAOW
 			if (string.IsNullOrWhiteSpace (dpmv))
 				{
 				// Выбор варианта обработки
-				switch (MessageBox.Show (dpModuleAbsence, ProgramDescription.AssemblyTitle,
-					MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question))
+				switch (/*MessageBox.Shw (dpModuleAbsence, ProgramDescription.AssemblyTitle,
+					MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question)*/
+
+					RDGenerics.MessageBox (RDMessageTypes.Question, dpModuleAbsence,
+						Localization.GetDefaultButtonName (Localization.DefaultButtons.Yes),
+						locale[(int)al][29], Localization.GetDefaultButtonName (Localization.DefaultButtons.Cancel))
+
+					)
 					{
-					case DialogResult.Cancel:
+					case RDMessageButtons.ButtonThree:   //DialogResult.Cancel:
 						return;
 
-					case DialogResult.No:
+					case RDMessageButtons.ButtonTwo:  //DialogResult.No:
 						try
 							{
 							Process.Start (RDGenerics.DPArrayUserManualLink);
@@ -505,8 +517,13 @@ namespace RD_AAOW
 				}
 			else
 				{
-				if (MessageBox.Show (startDownload, ProgramDescription.AssemblyTitle,
+				/*if (MessageBox.Shw (startDownload, ProgramDescription.AssemblyTitle,
 					MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+					return;*/
+				if (RDGenerics.MessageBox (RDMessageTypes.Question, startDownload,
+					Localization.GetDefaultButtonName (Localization.DefaultButtons.Yes),
+					Localization.GetDefaultButtonName (Localization.DefaultButtons.No)) !=
+					RDMessageButtons.ButtonOne)
 					return;
 
 				downloadLink = RDGenerics.DPArrayPackageLink;
@@ -545,8 +562,9 @@ namespace RD_AAOW
 
 			if (!string.IsNullOrWhiteSpace (msg))
 				{
-				MessageBox.Show (msg, ProgramDescription.AssemblyTitle, MessageBoxButtons.OK,
-					MessageBoxIcon.Exclamation);
+				/*MessageBox.Shw (msg, ProgramDescription.AssemblyTitle, MessageBoxButtons.OK,
+					MessageBoxIcon.Exclamation);*/
+				RDGenerics.MessageBox (RDMessageTypes.Warning, msg);
 				return;
 				}
 
@@ -955,9 +973,14 @@ policy:
 			string fileExt = FileExtension.ToLower ().Replace (".", "");
 
 			// Контроль
-			if (ShowWarning && (MessageBox.Show (locale[(int)Localization.CurrentLanguage][27],
+			/*if (ShowWarning && (MessageBox.Shw (locale[(int)Localization.CurrentLanguage][27],
 				ProgramDescription.AssemblyTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) ==
 				DialogResult.No))
+				return false;*/
+			if (ShowWarning && (RDGenerics.MessageBox (RDMessageTypes.Warning,
+				locale[(int)Localization.CurrentLanguage][27],
+				Localization.GetDefaultButtonName (Localization.DefaultButtons.Yes),
+				Localization.GetDefaultButtonName (Localization.DefaultButtons.No)) == RDMessageButtons.ButtonTwo))
 				return false;
 
 			// Выполнение
@@ -1012,9 +1035,14 @@ policy:
 			string protocol = ProtocolCode.ToLower ().Replace (".", "");
 
 			// Контроль
-			if (ShowWarning && (MessageBox.Show (locale[(int)Localization.CurrentLanguage][28],
+			/*if (ShowWarning && (MessageBox.Shw (locale[(int)Localization.CurrentLanguage][28],
 				ProgramDescription.AssemblyTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) ==
 				DialogResult.No))
+				return false;*/
+			if (ShowWarning && (RDGenerics.MessageBox (RDMessageTypes.Warning,
+				locale[(int)Localization.CurrentLanguage][28],
+				Localization.GetDefaultButtonName (Localization.DefaultButtons.Yes),
+				Localization.GetDefaultButtonName (Localization.DefaultButtons.No)) == RDMessageButtons.ButtonTwo))
 				return false;
 
 			// Выполнение

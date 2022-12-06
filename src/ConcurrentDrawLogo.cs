@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Text;
 using System.Windows.Forms;
 
 namespace RD_AAOW
@@ -30,7 +29,7 @@ namespace RD_AAOW
 
 			this.Width = Properties.DPModuleResources.DeploymentPackages.Width;
 			this.Height = Properties.DPModuleResources.DeploymentPackages.Height;
-			this.BackColor = ProgramDescription.MasterBackColor;
+			this.BackColor = RDGenerics.GetInterfaceColor (RDInterfaceColors.LightGrey);
 
 			gb = Graphics.FromHwnd (this.Handle);
 
@@ -44,12 +43,12 @@ namespace RD_AAOW
 			b = new Bitmap (this.Width, this.Height);
 			g = Graphics.FromImage (b);
 			g.FillRectangle (new SolidBrush (this.BackColor), 0, 0, this.Width, this.Height);
-			g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
+			//g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
 
 #if DPMODULE
-			f = new Font ("Arial", 11.0f, FontStyle.Bold | FontStyle.Italic);
+			f = new Font ("Calibri", 12.5f, FontStyle.Bold | FontStyle.Italic);
 #else
-			f = new Font ("Arial", 11.0f, FontStyle.Bold);
+			f = new Font ("Calibri", 12.5f, FontStyle.Bold);
 #endif
 
 			// Надпись
@@ -78,7 +77,7 @@ namespace RD_AAOW
 			// Отрисовка
 			g.DrawImage (Properties.CDResources.ConcurrentDraw, 0, 0);
 
-			SolidBrush c = new SolidBrush (Color.FromArgb (32, 32, 32));
+			SolidBrush c = new SolidBrush (RDGenerics.GetInterfaceColor (RDInterfaceColors.DefaultText));
 			g.DrawString (title, f, c, this.Width - 18 - sz.Width, this.Height - 18 - sz.Height);
 			c.Dispose ();
 
@@ -92,7 +91,7 @@ namespace RD_AAOW
 		// Завершение
 #if DPMODULE
 		private int pos = 0;
-		private SolidBrush br = new SolidBrush (ProgramDescription.MasterTextColor);
+		private SolidBrush br = new SolidBrush (RDGenerics.GetInterfaceColor (RDInterfaceColors.DefaultText));
 #endif
 
 		private void MainTimer_Tick (object sender, EventArgs e)
@@ -121,12 +120,13 @@ namespace RD_AAOW
 					}
 
 				// Подпись
-				byte r = (byte)((ProgramDescription.MasterBackColor.R - ProgramDescription.MasterTextColor.R) *
-					(pos / 30.0) + ProgramDescription.MasterTextColor.R);
-				SolidBrush c = new SolidBrush (Color.FromArgb (r, r, r));
+				Color c = RDGenerics.GetInterfaceColor (RDInterfaceColors.DefaultText);
+				byte r = (byte)((RDGenerics.GetInterfaceColor (RDInterfaceColors.LightGrey).R - c.R) *
+					(pos / 30.0) + c.R);
+				SolidBrush s = new SolidBrush (Color.FromArgb (r, r, r));
 
-				g.DrawString (title, f, c, this.Width - 18 - sz.Width, this.Height - 18 - sz.Height);
-				c.Dispose ();
+				g.DrawString (title, f, s, this.Width - 18 - sz.Width, this.Height - 18 - sz.Height);
+				s.Dispose ();
 
 				// Отрисовка на фоне
 				g.DrawImage (Properties.DPModuleResources.DeploymentPackages, 0, 0);

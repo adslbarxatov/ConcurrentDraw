@@ -32,11 +32,18 @@ namespace RD_AAOW
 			for (int i = 0; i < ProgramDescription.AssemblyRequirements.Length; i++)
 				if (!File.Exists (RDGenerics.AppStartupPath + ProgramDescription.AssemblyRequirements[i]))
 					{
-					if (MessageBox.Show (string.Format (Localization.GetText ("LibraryNotFound", al),
+					/*if (MessageBox.Shw (string.Format (Localization.GetText ("LibraryNotFound", al),
 						ProgramDescription.AssemblyRequirements[i]) +
 						Localization.GetText ("LibraryNotFound_Lib" + i.ToString (), al),
 						ProgramDescription.AssemblyTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) ==
-						DialogResult.Yes)
+						DialogResult.Yes)*/
+					if (RDGenerics.MessageBox (RDMessageTypes.Question,
+						string.Format (Localization.GetText ("LibraryNotFound", al),
+						ProgramDescription.AssemblyRequirements[i]) +
+						Localization.GetText ("LibraryNotFound_Lib" + i.ToString (), al),
+						Localization.GetDefaultButtonName (Localization.DefaultButtons.Yes),
+						Localization.GetDefaultButtonName (Localization.DefaultButtons.No)) ==
+						RDMessageButtons.ButtonOne)
 						{
 						AboutForm af = new AboutForm (i == 0 ? null : "http://un4seen.com");
 						}
@@ -46,7 +53,7 @@ namespace RD_AAOW
 
 			/*if (!File.Exists (RDGenerics.AppStartupPath + ProgramDescription.AssemblyRequirements[1]))
 				{
-				if (MessageBox.Show (string.Format (Localization.GetText ("LibraryNotFound", al),
+				if (MessageBox.Shw (string.Format (Localization.GetText ("LibraryNotFound", al),
 					ProgramDescription.AssemblyRequirements[1]) + Localization.GetText ("LibraryNotFound_Lib1", al),
 					ProgramDescription.AssemblyTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) ==
 					DialogResult.Yes)
@@ -59,11 +66,19 @@ namespace RD_AAOW
 			// Проверка корреткности версии библиотеки CDLib.dll (BASS проверяется позже)
 			if (ConcurrentDrawLib.CDLibVersion != ProgramDescription.AssemblyLibVersion)
 				{
-				if (MessageBox.Show (string.Format (Localization.GetText ("LibraryIsIncompatible", al),
+				/*if (MessageBox.Shw (string.Format (Localization.GetText ("LibraryIsIncompatible", al),
 					ProgramDescription.AssemblyRequirements[0], "(" + ConcurrentDrawLib.CDLibVersion + ") ",
 					" (" + ProgramDescription.AssemblyLibVersion + ")") +
 					Localization.GetText ("LibraryNotFound_Lib0", al), ProgramDescription.AssemblyTitle,
-					MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
+					MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)*/
+				if (RDGenerics.MessageBox (RDMessageTypes.Question,
+					string.Format (Localization.GetText ("LibraryIsIncompatible", al),
+					ProgramDescription.AssemblyRequirements[0], "(" + ConcurrentDrawLib.CDLibVersion + ") ",
+					" (" + ProgramDescription.AssemblyLibVersion + ")") +
+					Localization.GetText ("LibraryNotFound_Lib0", al),
+					Localization.GetDefaultButtonName (Localization.DefaultButtons.Yes),
+					Localization.GetDefaultButtonName (Localization.DefaultButtons.No)) ==
+					RDMessageButtons.ButtonOne)
 					{
 					AboutForm af = new AboutForm (null);
 					}
@@ -72,9 +87,9 @@ namespace RD_AAOW
 				}
 
 			// Отображение справки и запроса на принятие Политики
-			if (!ProgramDescription.AcceptEULA ())
+			if (!RDGenerics.AcceptEULA ())
 				return;
-			ProgramDescription.ShowAbout (true);
+			RDGenerics.ShowAbout (true);
 
 			// Запуск
 			Application.Run (new ConcurrentDrawForm ());

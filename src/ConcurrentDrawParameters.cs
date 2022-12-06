@@ -224,7 +224,7 @@ namespace RD_AAOW
 					ConcurrentDrawLogo cdl = new ConcurrentDrawLogo ();
 					cdl.Dispose ();
 
-					ProgramDescription.ShowAbout (true);    // Справка на случай первого запуска
+					RDGenerics.ShowAbout (true);    // Справка на случай первого запуска
 					req = true;
 					}
 				}
@@ -349,8 +349,9 @@ namespace RD_AAOW
 			// Контроль возможности запуска
 			if (!DevicesCombo.Enabled)
 				{
-				MessageBox.Show (Localization.GetText ("NoCompatibleDevices", al), ProgramDescription.AssemblyTitle,
-					MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				/*MessageBox.Shw (Localization.GetText ("NoCompatibleDevices", al), ProgramDescription.AssemblyTitle,
+					MessageBoxButtons.OK, MessageBoxIcon.Exclamation);*/
+				RDGenerics.MessageBox (RDMessageTypes.Warning, Localization.GetText ("NoCompatibleDevices", al));
 				this.Close ();
 				return;
 				}
@@ -520,7 +521,7 @@ namespace RD_AAOW
 			ConcurrentDrawLogo cdl = new ConcurrentDrawLogo ();
 			cdl.Dispose ();
 
-			ProgramDescription.ShowAbout (false);
+			RDGenerics.ShowAbout (false);
 			}
 
 		// Изменение языка интерфейса
@@ -1166,8 +1167,9 @@ namespace RD_AAOW
 			// Контроль
 			if (ProfileCombo.Items.Contains (ProfileCombo.Text) || (ProfileCombo.Text == ""))
 				{
-				MessageBox.Show (Localization.GetText ("CDP_ProfileError", al), ProgramDescription.AssemblyTitle,
-					MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				/*MessageBox.Shw (Localization.GetText ("CDP_ProfileError", al), ProgramDescription.AssemblyTitle,
+					MessageBoxButtons.OK, MessageBoxIcon.Exclamation);*/
+				RDGenerics.MessageBox (RDMessageTypes.Warning, Localization.GetText ("CDP_ProfileError", al));
 				return;
 				}
 
@@ -1187,8 +1189,12 @@ namespace RD_AAOW
 			if (ProfileCombo.SelectedIndex <= SSN)
 				return;
 
-			if (MessageBox.Show (Localization.GetText ("CDP_ProfileRemove", al), ProgramDescription.AssemblyTitle,
+			/*if (MessageBox.Shw (Localization.GetText ("CDP_ProfileRemove", al), ProgramDescription.AssemblyTitle,
 				MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.No)
+				return;*/
+			if (RDGenerics.MessageBox (RDMessageTypes.Question, Localization.GetText ("CDP_ProfileRemove", al),
+				Localization.GetDefaultButtonName (Localization.DefaultButtons.YesNoFocus),
+				Localization.GetDefaultButtonName (Localization.DefaultButtons.No)) == RDMessageButtons.ButtonTwo)
 				return;
 
 			// Удаление
@@ -1506,11 +1512,15 @@ namespace RD_AAOW
 
 				#region Запрос всех настроек
 				case 23:
-					MessageBox.Show (DevicesLabel.Text + " " + DevicesCombo.Text + "\n" +
+					/*MessageBox.Shw (*/
+					RDGenerics.MessageBox (RDMessageTypes.Information,
+						DevicesLabel.Text + " " + DevicesCombo.Text + "\n" +
 						VisTypeLabel.Text + " " + VisualizationCombo.Text +
 						(WithLogoFlag.Checked ? (" + " + WithLogoFlag.Text + "\n") : "\n") +
-						VisSizeLabel.Text + " " + VisWidth.Value.ToString () + " x " + VisHeight.Value.ToString () + " px\n" +
-						VisLeftTopLabel.Text + " " + VisLeft.Value.ToString () + " x " + VisTop.Value.ToString () + " px\n" +
+						VisSizeLabel.Text + " " + VisWidth.Value.ToString () + " x " + 
+							VisHeight.Value.ToString () + " px\n" +
+						VisLeftTopLabel.Text + " " + VisLeft.Value.ToString () + " x " + 
+							VisTop.Value.ToString () + " px\n" +
 						PaletteLabel.Text + " " + SDPaletteCombo.Text + "\n" +
 						ShakeLabel.Text + " " + ShakeValue.Value.ToString () + "\n" +
 						(AlwaysOnTopFlag.Checked ? (AlwaysOnTopFlag.Text + "\n") : "") +
@@ -1533,8 +1543,8 @@ namespace RD_AAOW
 
 						BDSettings.Text + "\n\n" +
 
-						CESettings.Text,
-						ProgramDescription.AssemblyTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
+						CESettings.Text/*,
+						ProgramDescription.AssemblyTitle, MessageBoxButtons.OK, MessageBoxIcon.Information*/);
 					break;
 				#endregion
 
