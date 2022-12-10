@@ -19,13 +19,6 @@ namespace RD_AAOW
 		private object parameters;                              // Параметры инициализации потока
 		private bool alwaysOnTop = false;                       // Флаг принудительного размещения поверх всех окон
 
-		/*// Цветовая схема
-		private Color backColor = Color.FromArgb (224, 224, 224);
-		private Color foreColor = Color.FromArgb (32, 32, 32);
-		private Color greenColor = Color.FromArgb (0, 160, 80);
-		private Color greyColor = Color.FromArgb (160, 160, 160);
-		private Color darkColor = Color.FromArgb (80, 80, 80);*/
-
 		/// <summary>
 		/// Длина шкалы прогресса
 		/// </summary>

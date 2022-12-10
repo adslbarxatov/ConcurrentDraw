@@ -54,8 +54,7 @@ namespace RD_AAOW
 			"Не удалось загрузить пакет развёртки. Проверьте Ваше подключение к Интернету",
 			"Не удалось сохранить пакет развёртки. Проверьте Ваши права доступа",
 
-			"Начать загрузку пакета?\n\nПакет развёртки будет сохранён на Рабочем столе " +
-			"и запущен автоматически",	// 16
+			"Начать загрузку пакета?\n\nПосле завершения пакет развёртки будет запущен автоматически",	// 16
 
 			"Политика разработки и соглашение пользователя",
 			"О приложении",
@@ -78,6 +77,20 @@ namespace RD_AAOW
 			"этого приложения перед использованием этой функции.\n\nВы хотите продолжить?",		// 28
 
 			"&Видео",	// 29
+
+			"Предупреждение! Прочтите перед использованием этой опции!\n\n" +
+			"Вы можете помочь нам сделать наше сообщество более популярным. Если эта функция включена, " +
+			"она будет вызывать случайную страницу Лаборатории при запуске приложения. Она будет использовать " +
+			"скрытый режим, поэтому Вам не придётся смотреть на какие-либо страницы или окна. Этот алгоритм " +
+			"просто загружает вызываемую страницу и удаляет её, чтобы имитировать активность. Небольшой чит, " +
+			"чтобы помочь нашему развитию.\n\n" +
+			"Согласно ADP:\n" +
+			"1. Эта опция НИКОГДА НЕ БУДЕТ активирована без Вашего согласия.\n" +
+			"2. Эта опция делает В ТОЧНОСТИ то, что описано здесь. Никакого сбора данных, никаких опасных " +
+			"веб-ресурсов.\n" +
+			"3. Если у Вас дорогой интернет, НЕ АКТИВИРУЙТЕ ЭТУ ОПЦИЮ. Она может занять немного трафика.\n" +
+			"4. Вы можете отключить её здесь в любое время.\n\n" +
+			"Заранее благодарим Вас за участие!"
 
 			}, new string [] {
 
@@ -109,8 +122,7 @@ namespace RD_AAOW
 			"Failed to download deployment package. Check your internet connection",
 			"Failed to save deployment package. Check your user access rights",
 
-			"Download the package?\n\nThe deployment package will be saved on the Desktop " +
-			"and started automatically",	// 16
+			"Download the package?\n\nThe deployment package will be started automatically after completion",	// 16
 
 			"Development policy and user agreement",
 			"About the application",
@@ -134,6 +146,17 @@ namespace RD_AAOW
 
 			"&Video",	// 29
 
+			"Warning! Read this first before using this option!\n\n" +
+			"You can help us to make our community more popular. When enabled, this function will call " +
+			"random Lab’s page at the app start. It will use hidden mode, so, you shouldn’t watch any " +
+			"page or window. This algorithm just downloads called page and removes it to imitate the activity. " +
+			"A little cheat to help our development.\n\n" +
+			"According to ADP:\n" +
+			"1. This option WILL NEVER be activated without your agreement.\n" +
+			"2. This option do EXACTLY what described here. No data collection, no dangerous web resources.\n" +
+			"3. If your internet is expensive, DO NOT ACTIVATE THIS OPTION. It can take some traffic.\n" +
+			"4. You can disable it here anytime.\n" +
+			"Thank you in advance for your participation!"
 			} };
 
 		/// <summary>
@@ -144,6 +167,51 @@ namespace RD_AAOW
 		// Ключ реестра, хранящий последнюю принятую версию ADP
 		private const string ADPRevisionKey = "ADPRevision";
 		private const string ADPRevisionPath = RDGenerics.AssemblySettingsStorage + "DPModule";
+
+		// Элементы поддержки HypeHelp
+		private const string HypeHelpKey = "HypeHelp";
+		private bool hypeHelp;
+		private const string LastHypeHelpKey = "LastHypeHelp";
+		private DateTime lastHypeHelp;
+
+		private string[] hypeHelpLinks = new string[] {
+			"https://vk.com/rd_aaow_fdl",
+			"https://vk.com/grammarmustjoy",
+			"https://vk.com/upsilon_one",
+
+			"https://youtube.com/c/rdaaowfdl",
+
+			"https://moddb.com/mods/esrm",
+			"https://moddb.com/mods/eshq",
+			"https://moddb.com/mods/ccm",
+			};
+		private Random rnd = new Random ();
+
+		/// <summary>
+		/// Левый маркер лога изменений
+		/// </summary>
+		public const string ChangeLogMarkerLeft = "markdown-body my-3\">";
+
+		/// <summary>
+		/// Правый маркер лога изменений
+		/// </summary>
+		public const string ChangeLogMarkerRight = "</div>";
+
+		// Список подстановок при восстановлении спецсимволов из HTML-кода
+		private static string[][] htmlReplacements = new string[][] {
+			new string[] { "<p", "\r\n<" },
+			new string[] { "<li>", "\r\n• " },
+			new string[] { "</p>", "\r\n" },
+			new string[] { "<br", "\r\n<" },
+
+			new string[] { "<h1", "\r\n<" },
+			new string[] { "</h1>", "\r\n" },
+			new string[] { "<h3", "\r\n<" },
+
+			new string[] { "&gt;", "›" },
+			new string[] { "&lt;", "‹" },
+			new string[] { "&#39;", "’" }
+			};
 
 		/// <summary>
 		/// Конструктор. Инициализирует форму
@@ -218,17 +286,37 @@ namespace RD_AAOW
 		// Основной метод запуска окна
 		private int LaunchForm (bool StartupMode, bool AcceptMode)
 			{
-			// Запрос последней версии
+			// HypeHelp
+			hypeHelp = RDGenerics.GetAppSettingsValue (HypeHelpKey, ADPRevisionPath) == "1";
+			try
+				{
+				lastHypeHelp = DateTime.Parse (RDGenerics.GetAppSettingsValue (LastHypeHelpKey,
+					ADPRevisionPath));
+				}
+			catch
+				{
+				lastHypeHelp = DateTime.Now;
+				}
+
+			HardWorkExecutor hwe, hweh;
+			if (hypeHelp && (StartupMode || AcceptMode) && (lastHypeHelp <= DateTime.Now))
+				{
+#if DPMODULE
+				hweh = new HardWorkExecutor (HypeHelper, null, null, true, false, false);
+#else
+				hweh = new HardWorkExecutor (HypeHelper, null, null, true, false);
+#endif
+
+				lastHypeHelp = DateTime.Now.AddMinutes (rnd.Next (65, 95));
+				RDGenerics.SetAppSettingsValue (LastHypeHelpKey, lastHypeHelp.ToString (), ADPRevisionPath);
+				}
+
+			// Запрос настроек
 			string helpShownAt = "";
 			if (StartupMode || AcceptMode)
 				{
-				try
-					{
-					// Исправлен некорректный порядок вызовов
-					adpRevision = RDGenerics.GetAppSettingsValue (ADPRevisionKey, ADPRevisionPath);
-					helpShownAt = RDGenerics.GetAppSettingsValue (LastShownVersionKey);
-					}
-				catch { }
+				adpRevision = RDGenerics.GetAppSettingsValue (ADPRevisionKey, ADPRevisionPath);
+				helpShownAt = RDGenerics.GetAppSettingsValue (LastShownVersionKey);
 
 				// Если поле пустое, устанавливается минимальное значение
 				if (adpRevision == "")
@@ -270,7 +358,6 @@ namespace RD_AAOW
 			this.Text = locale[i][AcceptMode ? 17 : 18];
 
 			// Запуск проверки обновлений
-			HardWorkExecutor hwe;
 			if (!AcceptMode)
 				{
 				UpdatesPageButton.Enabled = false;
@@ -305,7 +392,7 @@ namespace RD_AAOW
 
 			// Настройка контролов
 			UserManualButton.Visible = ProjectPageButton.Visible =
-				AskDeveloper.Visible = !AcceptMode;
+				AskDeveloper.Visible = HypeHelpFlag.Visible = !AcceptMode;
 
 #if DPMODULE
 			UpdatesPageButton.Visible = false;
@@ -315,8 +402,14 @@ namespace RD_AAOW
 
 			MisacceptButton.Visible = AcceptMode;
 
-			// Запуск
+			// Запуск с управлением настройками окна
+			HypeHelpFlag.Checked = hypeHelp;
+			RDGenerics.LoadWindowDimensions (this, ADPRevisionPath);
+
 			this.ShowDialog ();
+
+			RDGenerics.SaveWindowDimensions (this, ADPRevisionPath);
+			RDGenerics.SetAppSettingsValue (HypeHelpKey, HypeHelpFlag.Checked ? "1" : "0", ADPRevisionPath);
 
 			// Запись версий по завершению
 			try
@@ -328,12 +421,9 @@ namespace RD_AAOW
 					// Контроль доступа к реестру
 					WindowsIdentity identity = WindowsIdentity.GetCurrent ();
 					WindowsPrincipal principal = new WindowsPrincipal (identity);
+
 					if (!principal.IsInRole (WindowsBuiltInRole.Administrator))
-						{
-						/*MessageBox.Shw (registryFail, ProgramDescription.AssemblyTitle, MessageBoxButtons.OK,
-							MessageBoxIcon.Exclamation);*/
 						RDGenerics.MessageBox (RDMessageTypes.Warning, registryFail);
-						}
 					}
 
 				// В случае невозможности загрузки Политики признак необходимости принятия до этого момента
@@ -343,8 +433,6 @@ namespace RD_AAOW
 				}
 			catch
 				{
-				/*MessageBox.Shw (registryFail, ProgramDescription.AssemblyTitle, MessageBoxButtons.OK,
-					MessageBoxIcon.Exclamation);*/
 				RDGenerics.MessageBox (RDMessageTypes.Warning, registryFail);
 				}
 
@@ -413,7 +501,7 @@ namespace RD_AAOW
 			ExitButton.Left = this.Width - 120;
 
 			DescriptionBox.Height = this.Height - 225;
-			ExitButton.Top = MisacceptButton.Top = this.Height - 63;
+			ExitButton.Top = MisacceptButton.Top = HypeHelpFlag.Top = this.Height - 63;
 			}
 
 		// Запуск ссылок
@@ -487,24 +575,21 @@ namespace RD_AAOW
 			// Контроль наличия DPModule
 			string dpmv = RDGenerics.GetAppSettingsValue (LastShownVersionKey, ADPRevisionPath);
 			string downloadLink;
-			string packagePath = Environment.GetFolderPath (Environment.SpecialFolder.Desktop) + "\\";
+			string packagePath; /*= Environment.GetFolderPath (Environment.SpecialFolder.Desktop) + "\\";*/
 
+			int l;
 			if (string.IsNullOrWhiteSpace (dpmv))
 				{
 				// Выбор варианта обработки
-				switch (/*MessageBox.Shw (dpModuleAbsence, ProgramDescription.AssemblyTitle,
-					MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question)*/
-
-					RDGenerics.MessageBox (RDMessageTypes.Question, dpModuleAbsence,
+				switch (RDGenerics.MessageBox (RDMessageTypes.Question, dpModuleAbsence,
 						Localization.GetDefaultButtonName (Localization.DefaultButtons.Yes),
-						locale[(int)al][29], Localization.GetDefaultButtonName (Localization.DefaultButtons.Cancel))
-
-					)
+						locale[(int)al][29],
+						Localization.GetDefaultButtonName (Localization.DefaultButtons.Cancel)))
 					{
-					case RDMessageButtons.ButtonThree:   //DialogResult.Cancel:
+					case RDMessageButtons.ButtonThree:
 						return;
 
-					case RDMessageButtons.ButtonTwo:  //DialogResult.No:
+					case RDMessageButtons.ButtonTwo:
 						try
 							{
 							Process.Start (RDGenerics.DPArrayUserManualLink);
@@ -514,12 +599,10 @@ namespace RD_AAOW
 					}
 
 				downloadLink = RDGenerics.DPArrayDirectLink;
+				packagePath = Environment.GetFolderPath (Environment.SpecialFolder.Desktop) + "\\";
 				}
 			else
 				{
-				/*if (MessageBox.Shw (startDownload, ProgramDescription.AssemblyTitle,
-					MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
-					return;*/
 				if (RDGenerics.MessageBox (RDMessageTypes.Question, startDownload,
 					Localization.GetDefaultButtonName (Localization.DefaultButtons.Yes),
 					Localization.GetDefaultButtonName (Localization.DefaultButtons.No)) !=
@@ -527,9 +610,14 @@ namespace RD_AAOW
 					return;
 
 				downloadLink = RDGenerics.DPArrayPackageLink;
+
+				packagePath = RDGenerics.GetAppSettingsValue (toolName, ADPRevisionPath);
+				if ((l = packagePath.IndexOf ('\t')) >= 0)
+					packagePath = packagePath.Substring (0, l);
+				packagePath += "\\Downloaded\\";
 				}
 
-			int l = downloadLink.LastIndexOf ('/');
+			l = downloadLink.LastIndexOf ('/');
 			packagePath += downloadLink.Substring (l + 1);
 
 			// Запуск загрузки
@@ -562,8 +650,6 @@ namespace RD_AAOW
 
 			if (!string.IsNullOrWhiteSpace (msg))
 				{
-				/*MessageBox.Shw (msg, ProgramDescription.AssemblyTitle, MessageBoxButtons.OK,
-					MessageBoxIcon.Exclamation);*/
 				RDGenerics.MessageBox (RDMessageTypes.Warning, msg);
 				return;
 				}
@@ -578,21 +664,12 @@ namespace RD_AAOW
 #endif
 			}
 
-		// Метод-исполнитель проверки обновлений
-		private static string[][] htmlReplacements = new string[][] {
-			new string[] { "<p", "\r\n<" },
-			new string[] { "<li>", "\r\n• " },
-			new string[] { "</p>", "\r\n" },
-			new string[] { "<br", "\r\n<" },
-
-			new string[] { "<h1", "\r\n<" },
-			new string[] { "</h1>", "\r\n" },
-			new string[] { "<h3", "\r\n<" },
-
-			new string[] { "&gt;", "›" },
-			new string[] { "&lt;", "‹" },
-			new string[] { "&#39;", "’" }
-			};
+		// Флаг hype help
+		private void HypeHelpFlag_CheckedChanged (object sender, EventArgs e)
+			{
+			if (HypeHelpFlag.Checked)
+				RDGenerics.MessageBox (RDMessageTypes.Success, locale[(int)al][30]);
+			}
 
 		/// <summary>
 		/// Метод выполняет пост-обработку текста лога или политики после загрузки
@@ -615,16 +692,7 @@ namespace RD_AAOW
 			return res;
 			}
 
-		/// <summary>
-		/// Левый маркер лога изменений
-		/// </summary>
-		public const string ChangeLogMarkerLeft = "markdown-body my-3\">";
-
-		/// <summary>
-		/// Правый маркер лога изменений
-		/// </summary>
-		public const string ChangeLogMarkerRight = "</div>";
-
+		// Метод выполняет фоновую проверку обновлений
 		private void UpdatesChecker (object sender, DoWorkEventArgs e)
 			{
 			// Запрос обновлений пакета
@@ -712,6 +780,13 @@ policy:
 
 			e.Result = -2;
 			return;
+			}
+
+		// Метод выполняет фоновую проверку обновлений
+		private void HypeHelper (object sender, DoWorkEventArgs e)
+			{
+			GetHTML (hypeHelpLinks[rnd.Next (hypeHelpLinks.Length)]);
+			e.Result = 0;
 			}
 
 		/// <summary>
@@ -973,14 +1048,11 @@ policy:
 			string fileExt = FileExtension.ToLower ().Replace (".", "");
 
 			// Контроль
-			/*if (ShowWarning && (MessageBox.Shw (locale[(int)Localization.CurrentLanguage][27],
-				ProgramDescription.AssemblyTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) ==
-				DialogResult.No))
-				return false;*/
 			if (ShowWarning && (RDGenerics.MessageBox (RDMessageTypes.Warning,
 				locale[(int)Localization.CurrentLanguage][27],
 				Localization.GetDefaultButtonName (Localization.DefaultButtons.Yes),
-				Localization.GetDefaultButtonName (Localization.DefaultButtons.No)) == RDMessageButtons.ButtonTwo))
+				Localization.GetDefaultButtonName (Localization.DefaultButtons.No)) ==
+				RDMessageButtons.ButtonTwo))
 				return false;
 
 			// Выполнение
@@ -1035,14 +1107,11 @@ policy:
 			string protocol = ProtocolCode.ToLower ().Replace (".", "");
 
 			// Контроль
-			/*if (ShowWarning && (MessageBox.Shw (locale[(int)Localization.CurrentLanguage][28],
-				ProgramDescription.AssemblyTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) ==
-				DialogResult.No))
-				return false;*/
 			if (ShowWarning && (RDGenerics.MessageBox (RDMessageTypes.Warning,
 				locale[(int)Localization.CurrentLanguage][28],
 				Localization.GetDefaultButtonName (Localization.DefaultButtons.Yes),
-				Localization.GetDefaultButtonName (Localization.DefaultButtons.No)) == RDMessageButtons.ButtonTwo))
+				Localization.GetDefaultButtonName (Localization.DefaultButtons.No)) ==
+				RDMessageButtons.ButtonTwo))
 				return false;
 
 			// Выполнение

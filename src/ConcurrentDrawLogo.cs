@@ -169,6 +169,16 @@ namespace RD_AAOW
 			this.Close ();
 			}
 
+		private void ConcurrentDrawLogo_MouseEnter (object sender, EventArgs e)
+			{
+			//this.Close ();
+			}
+
+		private void ConcurrentDrawLogo_MouseLeave (object sender, EventArgs e)
+			{
+			this.Close ();
+			}
+
 		private void ConcurrentDrawLogo_KeyDown (object sender, KeyEventArgs e)
 			{
 			this.Close ();

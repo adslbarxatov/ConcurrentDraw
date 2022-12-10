@@ -72,17 +72,6 @@ namespace RD_AAOW
 	/// </summary>
 	public partial class RDMessageForm: Form
 		{
-		/*// Цветовая схема
-		private Color[] colorScheme = new Color[] {
-			Color.FromArgb (224, 224, 224),		// Стандартный фон
-			Color.FromArgb (32, 32, 32),		// Стандартный текст
-
-			Color.FromArgb (224, 224, 255),		// Вопрос
-			Color.FromArgb (255, 255, 224),		// Предупреждение
-			Color.FromArgb (255, 224, 224),		// Ошибка
-			Color.FromArgb (224, 255, 224),		// Успех
-			};*/
-
 		// Прочее
 		private bool exitAllowed = false;
 
@@ -205,21 +194,17 @@ namespace RD_AAOW
 
 				if (windowType != RDMessageTypes.LanguageSelector)
 					{
-					/*string check = Message.Replace ("\n", "");
-					if ((check.Length > 150) || (Message.Length - check.Length > 5))
-						{
-						Label01.Width += this.Width;
-						this.Width *= 2;
-						}*/
-
-					Label01.Height = (Label01.GetLineFromCharIndex (int.MaxValue) + 2) *
-						TextRenderer.MeasureText ("X", Label01.Font).Height;
+					// Определение ширины
 					if ((Message.Replace ("\n", "").Replace ("\r", "").Length > 150) &&
 						(TextRenderer.MeasureText (Message, Label01.Font).Width > Label01.Width))
 						{
 						Label01.Width += this.Width;
 						this.Width *= 2;
 						}
+
+					// Определение высоты
+					Label01.Height = (Label01.GetLineFromCharIndex (int.MaxValue) + 2) *
+						TextRenderer.MeasureText ("X", Label01.Font).Height;
 					this.Height = Label01.Height + 57;
 					Button01.Top = Button02.Top = Button03.Top = this.Height - 48;
 					}
@@ -302,11 +287,19 @@ namespace RD_AAOW
 				LanguagesCombo.BackColor = this.BackColor;
 				}
 
+			// Запуск
+			this.StartPosition = FormStartPosition.CenterParent;
+			this.ShowDialog ();
+			}
+
+		private void RDMessageForm_Shown (object sender, EventArgs e)
+			{
+			// Отмена центрирования на родительское окно, если это невозможно
+			if (this.Left == 0)
+				this.CenterToScreen ();
+
 			// Запуск отрисовки
 			CreateBackground (this);
-
-			// Запуск
-			this.ShowDialog ();
 			}
 
 		// Выбор размера
