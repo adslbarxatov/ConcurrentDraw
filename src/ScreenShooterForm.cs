@@ -6,7 +6,7 @@ namespace RD_AAOW
 	/// <summary>
 	/// Начальная форма программы
 	/// </summary>
-	public partial class ScreenShooterForm:Form
+	public partial class ScreenShooterForm: Form
 		{
 		// Параметры
 		private Point start;

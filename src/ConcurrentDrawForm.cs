@@ -89,7 +89,7 @@ namespace RD_AAOW
 			histoY = new int[4];                                // Координаты линий гистограмм
 		private const double butterflyDensity = 2.84;           // Плотность гистограммы-бабочки
 		private const double perspectiveDensity = 3.15;         // Плотность гистограммы-перспективы
-																// (даёт полный угол чуть более 90°; 90° <=> 2.84; 80° <=> 3.2)
+														// (даёт полный угол чуть более 90°; 90° <=> 2.84; 80° <=> 3.2)
 
 		// Дополнительные графические объекты
 		private List<ILogoDrawerObject> objects =
@@ -402,31 +402,31 @@ namespace RD_AAOW
 				{
 				case SoundStreamInitializationErrors.BASS_ERROR_ALREADY:
 				case SoundStreamInitializationErrors.BASS_ERROR_BUSY:
-					err = Localization.GetText ("BASS_ERROR_BUSY", cdp.CurrentInterfaceLanguage);
+					err = Localization.GetText ("BASS_ERROR_BUSY"/*, cdp.CurrentInterfaceLanguage*/);
 					break;
 
 				case SoundStreamInitializationErrors.BASS_ERROR_NOTAVAIL:
-					err = Localization.GetText ("BASS_ERROR_NOTAVAIL", cdp.CurrentInterfaceLanguage);
+					err = Localization.GetText ("BASS_ERROR_NOTAVAIL"/*, cdp.CurrentInterfaceLanguage*/);
 					break;
 
 				case SoundStreamInitializationErrors.BASS_ERROR_DEVICE:
-					err = Localization.GetText ("BASS_ERROR_DEVICE", cdp.CurrentInterfaceLanguage);
+					err = Localization.GetText ("BASS_ERROR_DEVICE"/*, cdp.CurrentInterfaceLanguage*/);
 					break;
 
 				case SoundStreamInitializationErrors.BASS_ERROR_DRIVER:
-					err = Localization.GetText ("BASS_ERROR_DRIVER", cdp.CurrentInterfaceLanguage);
+					err = Localization.GetText ("BASS_ERROR_DRIVER"/*, cdp.CurrentInterfaceLanguage*/);
 					break;
 
 				case SoundStreamInitializationErrors.BASS_ERROR_DX:
-					err = Localization.GetText ("BASS_ERROR_DX", cdp.CurrentInterfaceLanguage);
+					err = Localization.GetText ("BASS_ERROR_DX");
 					break;
 
 				case SoundStreamInitializationErrors.BASS_ERROR_FORMAT:
-					err = Localization.GetText ("BASS_ERROR_FORMAT", cdp.CurrentInterfaceLanguage);
+					err = Localization.GetText ("BASS_ERROR_FORMAT");
 					break;
 
 				case SoundStreamInitializationErrors.BASS_ERROR_MEM:
-					err = Localization.GetText ("BASS_ERROR_MEM", cdp.CurrentInterfaceLanguage);
+					err = Localization.GetText ("BASS_ERROR_MEM");
 					break;
 
 				default:
@@ -437,7 +437,7 @@ namespace RD_AAOW
 				case SoundStreamInitializationErrors.BASS_ERROR_NO3D:
 				case SoundStreamInitializationErrors.BASS_ERROR_UNKNOWN:
 					// Возникает при выборе стереомикшера при включённом микрофоне (почему-то)
-					err = Localization.GetText ("DeviceBehaviorIsInvalid", cdp.CurrentInterfaceLanguage);
+					err = Localization.GetText ("DeviceBehaviorIsInvalid");
 					result = 1;     // Запросить настройку приложения
 					break;
 
@@ -446,18 +446,18 @@ namespace RD_AAOW
 					throw new Exception ("Application failure. Debug required at point 2");
 
 				case SoundStreamInitializationErrors.BASS_InvalidDLLVersion:
-					err = string.Format (Localization.GetText ("LibraryIsIncompatible", cdp.CurrentInterfaceLanguage),
+					err = string.Format (Localization.GetText ("LibraryIsIncompatible"),
 						ProgramDescription.AssemblyRequirements[1], "", "");
 					break;
 
 				case SoundStreamInitializationErrors.BASS_ERROR_FILEOPEN:
-					err = string.Format (Localization.GetText ("BASS_ERROR_FILEOPEN", cdp.CurrentInterfaceLanguage),
+					err = string.Format (Localization.GetText ("BASS_ERROR_FILEOPEN"),
 						OFAudio.FileName);
 					break;
 
 				case SoundStreamInitializationErrors.BASS_ERROR_FILEFORM:
 				case SoundStreamInitializationErrors.BASS_ERROR_CODEC:
-					err = string.Format (Localization.GetText ("BASS_ERROR_CODEC", cdp.CurrentInterfaceLanguage),
+					err = string.Format (Localization.GetText ("BASS_ERROR_CODEC"),
 						OFAudio.FileName);
 					break;
 
@@ -467,7 +467,6 @@ namespace RD_AAOW
 
 			if (!string.IsNullOrWhiteSpace (err))
 				{
-				/*MessageBox.Shw (err, ProgramDescription.AssemblyTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);*/
 				RDGenerics.MessageBox (RDMessageTypes.Warning, err);
 				return result;
 				}
@@ -489,7 +488,7 @@ namespace RD_AAOW
 					break;
 
 				case SpectrogramInitializationErrors.NotEnoughMemory:
-					err = Localization.GetText ("BASS_ERROR_MEM", cdp.CurrentInterfaceLanguage);
+					err = Localization.GetText ("BASS_ERROR_MEM");
 					break;
 
 				default:
@@ -501,8 +500,6 @@ namespace RD_AAOW
 
 			if (!string.IsNullOrWhiteSpace (err))
 				{
-				/*MessageBox.Shw (err, ProgramDescription.AssemblyTitle, MessageBoxButtons.OK,
-					MessageBoxIcon.Exclamation);*/
 				RDGenerics.MessageBox (RDMessageTypes.Warning, err);
 				return result;
 				}
@@ -1198,16 +1195,14 @@ namespace RD_AAOW
 						}
 					catch
 						{
-						/*MessageBox.Shw (Localization.GetText ("ScreenshotFailure", cdp.CurrentInterfaceLanguage),
-							ProgramDescription.AssemblyTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);*/
-						RDGenerics.MessageBox (RDMessageTypes.Warning,
-							Localization.GetText ("ScreenshotFailure", cdp.CurrentInterfaceLanguage));
+						RDGenerics.LocalizedMessageBox (RDMessageTypes.Warning, "ScreenshotFailure");
 						}
 					break;
 
 				// Другие настройки (с передачей результата выполнения из окна настроек)
 				default:
-					hotKeyResultText = ChangeSettingsAndRestart (ChangeSettingsAndRestartModes.SendHotKeyToSettingsWindow,
+					hotKeyResultText =
+						ChangeSettingsAndRestart (ChangeSettingsAndRestartModes.SendHotKeyToSettingsWindow,
 						e.KeyCode | e.Modifiers);
 					break;
 				}

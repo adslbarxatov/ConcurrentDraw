@@ -8,10 +8,10 @@ namespace RD_AAOW
 	/// <summary>
 	/// Класс описывает форму доступа к параметрам программы
 	/// </summary>
-	public partial class ConcurrentDrawParameters:Form
+	public partial class ConcurrentDrawParameters: Form
 		{
 		// Константы и переменные
-		private SupportedLanguages al = Localization.CurrentLanguage;               // Текущий язык интерфейса
+		/*private SupportedLanguages al = Localization.CurrentLanguage;               // Текущий язык интерфейса*/
 		private List<CDParametersSet> parameters = new List<CDParametersSet> ();    // Наборы сохранённых параметров
 
 		private const int defaultSettingsNumber = 0;
@@ -58,7 +58,7 @@ namespace RD_AAOW
 			DevicesCombo.Items.AddRange (ConcurrentDrawLib.AvailableDevices);
 			if (DevicesCombo.Items.Count < 1)
 				{
-				DevicesCombo.Items.Add (Localization.GetText ("CDP_NoDevices", al));
+				DevicesCombo.Items.Add (Localization.GetText ("CDP_NoDevices"));
 				DevicesCombo.Enabled = DevicesLabel.Enabled = false;
 				}
 			DevicesCombo.SelectedIndex = parameters[DSN].DeviceNumber;
@@ -135,7 +135,8 @@ namespace RD_AAOW
 			LanguageCombo.Items.AddRange (Localization.LanguagesNames);
 			try
 				{
-				LanguageCombo.SelectedIndex = (int)al;          // По умолчанию - язык системы или английский
+				LanguageCombo.SelectedIndex = (int)Localization.CurrentLanguage;
+				// По умолчанию - язык системы или английский
 				}
 			catch
 				{
@@ -314,33 +315,33 @@ namespace RD_AAOW
 		// Применение языковой настройки к окну
 		private void LocalizeForm ()
 			{
-			this.Text = ProgramDescription.AssemblyMainName + " – " + Localization.GetText ("CDP_Name", al);
+			this.Text = ProgramDescription.AssemblyMainName + " – " + Localization.GetText ("CDP_Name");
 
-			GenericTab.Text = Localization.GetText ("MainTabControl_GenericTab", al);
-			Localization.SetControlsText (GenericTab, al);
+			GenericTab.Text = Localization.GetText ("MainTabControl_GenericTab");
+			Localization.SetControlsText (GenericTab);
 			FFTScaleMultiplier_ValueChanged (null, null);
 
-			HistoTab.Text = Localization.GetText ("MainTabControl_HistoTab", al);
-			Localization.SetControlsText (HistoTab, al);
+			HistoTab.Text = Localization.GetText ("MainTabControl_HistoTab");
+			Localization.SetControlsText (HistoTab);
 			HistogramRangeField_ValueChanged (null, null);
 
-			LogoTab.Text = Localization.GetText ("MainTabControl_LogoTab", al);
-			Localization.SetControlsText (LogoTab, al);
+			LogoTab.Text = Localization.GetText ("MainTabControl_LogoTab");
+			Localization.SetControlsText (LogoTab);
 			LogoCenterXTrack_ValueChanged (null, null);
 
-			BeatsTab.Text = Localization.GetText ("MainTabControl_BeatsTab", al);
+			BeatsTab.Text = Localization.GetText ("MainTabControl_BeatsTab");
 			BDLowEdge_ValueChanged (BDLowEdge, null);
 
-			CumulationTab.Text = Localization.GetText ("MainTabControl_CumulationTab", al);
-			Localization.SetControlsText (CumulationTab, al);
+			CumulationTab.Text = Localization.GetText ("MainTabControl_CumulationTab");
+			Localization.SetControlsText (CumulationTab);
 			CESpeed_ValueChanged (null, null);
 
-			ParticlesTab.Text = Localization.GetText ("MainTabControl_ParticlesTab", al);
-			Localization.SetControlsText (ParticlesTab, al);
+			ParticlesTab.Text = Localization.GetText ("MainTabControl_ParticlesTab");
+			Localization.SetControlsText (ParticlesTab);
 
-			Localization.SetControlsText (this, al);
-			ProfileCombo.Items[DSN] = Localization.GetText ("CDP_ProfileDefault", al);
-			ProfileCombo.Items[SSN] = Localization.GetText ("CDP_ProfileSaved", al);
+			Localization.SetControlsText (this);
+			ProfileCombo.Items[DSN] = Localization.GetText ("CDP_ProfileDefault");
+			ProfileCombo.Items[SSN] = Localization.GetText ("CDP_ProfileSaved");
 			}
 
 		// Контроль наличия доступных устройств
@@ -349,9 +350,7 @@ namespace RD_AAOW
 			// Контроль возможности запуска
 			if (!DevicesCombo.Enabled)
 				{
-				/*MessageBox.Shw (Localization.GetText ("NoCompatibleDevices", al), ProgramDescription.AssemblyTitle,
-					MessageBoxButtons.OK, MessageBoxIcon.Exclamation);*/
-				RDGenerics.MessageBox (RDMessageTypes.Warning, Localization.GetText ("NoCompatibleDevices", al));
+				RDGenerics.LocalizedMessageBox (RDMessageTypes.Warning, "NoCompatibleDevices");
 				this.Close ();
 				return;
 				}
@@ -527,7 +526,7 @@ namespace RD_AAOW
 		// Изменение языка интерфейса
 		private void LanguageCombo_SelectedIndexChanged (object sender, EventArgs e)
 			{
-			Localization.CurrentLanguage = al = (SupportedLanguages)LanguageCombo.SelectedIndex;
+			Localization.CurrentLanguage = /*al = */(SupportedLanguages)LanguageCombo.SelectedIndex;
 			LocalizeForm ();
 			}
 
@@ -552,7 +551,7 @@ namespace RD_AAOW
 		private void SelectWindowSize_Click (object sender, EventArgs e)
 			{
 			// Запрос размеров
-			WindowSizeForm wsf = new WindowSizeForm ((uint)VisWidth.Maximum, (uint)VisHeight.Maximum, al);
+			WindowSizeForm wsf = new WindowSizeForm ((uint)VisWidth.Maximum, (uint)VisHeight.Maximum/*, al*/);
 
 			// Перенос
 			if (wsf.Selected)
@@ -562,7 +561,7 @@ namespace RD_AAOW
 				}
 			}
 
-		/// <summary>
+		/*/// <summary>
 		/// Возвращает текущий язык интерфейса
 		/// </summary>
 		public SupportedLanguages CurrentInterfaceLanguage
@@ -571,7 +570,7 @@ namespace RD_AAOW
 				{
 				return al;
 				}
-			}
+			}*/
 
 		#endregion
 
@@ -783,7 +782,8 @@ namespace RD_AAOW
 		// Изменение множителя значений БПФ
 		private void FFTScaleMultiplier_ValueChanged (object sender, EventArgs e)
 			{
-			FFTScaleLabel.Text = string.Format (Localization.GetText ("CDP_FFTScaleLabel", al), FFTScaleMultiplier.Value);
+			FFTScaleLabel.Text = string.Format (Localization.GetText ("CDP_FFTScaleLabel"),
+				FFTScaleMultiplier.Value);
 			}
 
 		#endregion
@@ -941,7 +941,7 @@ namespace RD_AAOW
 					}
 				}
 
-			HzLabel.Text = string.Format (Localization.GetText ("HistoTab_HzLabelText", al),
+			HzLabel.Text = string.Format (Localization.GetText ("HistoTab_HzLabelText"),
 				CDParametersSet.HistogramRangeSettingIncrement * histoRange);
 			}
 
@@ -1002,10 +1002,11 @@ namespace RD_AAOW
 		// Изменение координат центра лого
 		private void LogoCenterXTrack_ValueChanged (object sender, EventArgs e)
 			{
-			LogoCenterLabel.Text = string.Format (Localization.GetText ("CDP_LogoCenterText", al),
+			LogoCenterLabel.Text = string.Format (Localization.GetText ("CDP_LogoCenterText"),
 				LogoHeightPercentage.Value.ToString (),
 				LogoCenterXTrack.Enabled ? (LogoCenterXTrack.Value / 100.0).ToString () : "0.5",
-				LogoCenterYTrack.Enabled ? ((LogoCenterYTrack.Maximum - LogoCenterYTrack.Value) / 100.0).ToString () : "0.5");
+				LogoCenterYTrack.Enabled ? ((LogoCenterYTrack.Maximum - LogoCenterYTrack.Value) /
+				100.0).ToString () : "0.5");
 			logoResetFlag = true;
 			}
 
@@ -1029,13 +1030,19 @@ namespace RD_AAOW
 				BDHighEdge.Value = BDLowEdge.Value;
 
 			if ((BDLowEdge.Value == BDHighEdge.Value) && (BDHighEdge.Value == 0))
-				BDSettings.Text = Localization.GetText ("CDP_BDNo", al);
+				BDSettings.Text = Localization.GetText ("CDP_BDNo");
 			else
-				BDSettings.Text = string.Format (Localization.GetText ("CDP_BDSettingsText", al),
-					(CDParametersSet.HistogramFrequencyMaximum * BDLowEdge.Value /      // Используется только первая четверть
-					(CDParametersSet.HistogramScaledFrequencyMaximum / CDParametersSet.HistogramRangeSettingIncrement)).ToString (),
+				BDSettings.Text = string.Format (Localization.GetText ("CDP_BDSettingsText"),
+					(CDParametersSet.HistogramFrequencyMaximum * BDLowEdge.Value /
+					// Используется только первая четверть
+
+					(CDParametersSet.HistogramScaledFrequencyMaximum /
+					CDParametersSet.HistogramRangeSettingIncrement)).ToString (),
+
 					(CDParametersSet.HistogramFrequencyMaximum * BDHighEdge.Value /
-					(CDParametersSet.HistogramScaledFrequencyMaximum / CDParametersSet.HistogramRangeSettingIncrement)).ToString (),
+					(CDParametersSet.HistogramScaledFrequencyMaximum /
+					CDParametersSet.HistogramRangeSettingIncrement)).ToString (),
+
 					(100 * BDLowLevel.Value / 255).ToString ());
 			}
 
@@ -1093,11 +1100,11 @@ namespace RD_AAOW
 			{
 			if (CEDecumulationMultiplier.Value == CEDecumulationMultiplier.Maximum)
 				{
-				CESettings.Text = Localization.GetText ("CDP_CENo", al);
+				CESettings.Text = Localization.GetText ("CDP_CENo");
 				}
 			else
 				{
-				CESettings.Text = string.Format (Localization.GetText ("CDP_CESettingsText", al),
+				CESettings.Text = string.Format (Localization.GetText ("CDP_CESettingsText"),
 					CECumulationSpeed.Value.ToString (), (CEDecumulationMultiplier.Value /
 					(double)CEDecumulationMultiplier.Maximum).ToString ());
 				}
@@ -1167,9 +1174,7 @@ namespace RD_AAOW
 			// Контроль
 			if (ProfileCombo.Items.Contains (ProfileCombo.Text) || (ProfileCombo.Text == ""))
 				{
-				/*MessageBox.Shw (Localization.GetText ("CDP_ProfileError", al), ProgramDescription.AssemblyTitle,
-					MessageBoxButtons.OK, MessageBoxIcon.Exclamation);*/
-				RDGenerics.MessageBox (RDMessageTypes.Warning, Localization.GetText ("CDP_ProfileError", al));
+				RDGenerics.LocalizedMessageBox (RDMessageTypes.Warning, "CDP_ProfileError");
 				return;
 				}
 
@@ -1189,12 +1194,8 @@ namespace RD_AAOW
 			if (ProfileCombo.SelectedIndex <= SSN)
 				return;
 
-			/*if (MessageBox.Shw (Localization.GetText ("CDP_ProfileRemove", al), ProgramDescription.AssemblyTitle,
-				MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.No)
-				return;*/
-			if (RDGenerics.MessageBox (RDMessageTypes.Question, Localization.GetText ("CDP_ProfileRemove", al),
-				Localization.GetDefaultButtonName (Localization.DefaultButtons.YesNoFocus),
-				Localization.GetDefaultButtonName (Localization.DefaultButtons.No)) == RDMessageButtons.ButtonTwo)
+			if (RDGenerics.LocalizedMessageBox (RDMessageTypes.Question, "CDP_ProfileRemove",
+				Localization.DefaultButtons.YesNoFocus, Localization.DefaultButtons.No) == RDMessageButtons.ButtonTwo)
 				return;
 
 			// Удаление
@@ -1517,9 +1518,9 @@ namespace RD_AAOW
 						DevicesLabel.Text + " " + DevicesCombo.Text + "\n" +
 						VisTypeLabel.Text + " " + VisualizationCombo.Text +
 						(WithLogoFlag.Checked ? (" + " + WithLogoFlag.Text + "\n") : "\n") +
-						VisSizeLabel.Text + " " + VisWidth.Value.ToString () + " x " + 
+						VisSizeLabel.Text + " " + VisWidth.Value.ToString () + " x " +
 							VisHeight.Value.ToString () + " px\n" +
-						VisLeftTopLabel.Text + " " + VisLeft.Value.ToString () + " x " + 
+						VisLeftTopLabel.Text + " " + VisLeft.Value.ToString () + " x " +
 							VisTop.Value.ToString () + " px\n" +
 						PaletteLabel.Text + " " + SDPaletteCombo.Text + "\n" +
 						ShakeLabel.Text + " " + ShakeValue.Value.ToString () + "\n" +
@@ -1686,8 +1687,8 @@ namespace RD_AAOW
 						}
 					hotKeyResult = FFTScaleLabel.Text;
 					break;
-				
-				#endregion
+
+					#endregion
 				}
 
 			// Применение новой настройки

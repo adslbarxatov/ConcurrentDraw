@@ -20,27 +20,22 @@ namespace RD_AAOW
 			Application.SetCompatibleTextRenderingDefault (false);
 
 			// Язык интерфейса и контроль XPR
-			SupportedLanguages al = Localization.CurrentLanguage;
-			if (!Localization.IsXPRClassAcceptable)
+			/*SupportedLanguages al = Localization.CurrentLanguage;*/
+			if (!Localization.IsXPUNClassAcceptable)
 				return;
 
 			// Проверка запуска единственной копии
-			if (!RDGenerics.IsThisInstanceUnique (al == SupportedLanguages.ru_ru))
+			if (!RDGenerics.IsThisInstanceUnique (Localization.IsCurrentLanguageRuRu))
 				return;
 
 			// Проверка наличия обязательных компонентов
 			for (int i = 0; i < ProgramDescription.AssemblyRequirements.Length; i++)
 				if (!File.Exists (RDGenerics.AppStartupPath + ProgramDescription.AssemblyRequirements[i]))
 					{
-					/*if (MessageBox.Shw (string.Format (Localization.GetText ("LibraryNotFound", al),
-						ProgramDescription.AssemblyRequirements[i]) +
-						Localization.GetText ("LibraryNotFound_Lib" + i.ToString (), al),
-						ProgramDescription.AssemblyTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) ==
-						DialogResult.Yes)*/
 					if (RDGenerics.MessageBox (RDMessageTypes.Question,
-						string.Format (Localization.GetText ("LibraryNotFound", al),
+						string.Format (Localization.GetText ("LibraryNotFound"),
 						ProgramDescription.AssemblyRequirements[i]) +
-						Localization.GetText ("LibraryNotFound_Lib" + i.ToString (), al),
+						Localization.GetText ("LibraryNotFound_Lib" + i.ToString ()),
 						Localization.GetDefaultButtonName (Localization.DefaultButtons.Yes),
 						Localization.GetDefaultButtonName (Localization.DefaultButtons.No)) ==
 						RDMessageButtons.ButtonOne)
@@ -51,31 +46,14 @@ namespace RD_AAOW
 					return;
 					}
 
-			/*if (!File.Exists (RDGenerics.AppStartupPath + ProgramDescription.AssemblyRequirements[1]))
-				{
-				if (MessageBox.Shw (string.Format (Localization.GetText ("LibraryNotFound", al),
-					ProgramDescription.AssemblyRequirements[1]) + Localization.GetText ("LibraryNotFound_Lib1", al),
-					ProgramDescription.AssemblyTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) ==
-					DialogResult.Yes)
-					{
-					AboutForm af = new AboutForm ("http://un4seen.com");
-					}
-				return;
-				}*/
-
 			// Проверка корреткности версии библиотеки CDLib.dll (BASS проверяется позже)
 			if (ConcurrentDrawLib.CDLibVersion != ProgramDescription.AssemblyLibVersion)
 				{
-				/*if (MessageBox.Shw (string.Format (Localization.GetText ("LibraryIsIncompatible", al),
-					ProgramDescription.AssemblyRequirements[0], "(" + ConcurrentDrawLib.CDLibVersion + ") ",
-					" (" + ProgramDescription.AssemblyLibVersion + ")") +
-					Localization.GetText ("LibraryNotFound_Lib0", al), ProgramDescription.AssemblyTitle,
-					MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)*/
 				if (RDGenerics.MessageBox (RDMessageTypes.Question,
-					string.Format (Localization.GetText ("LibraryIsIncompatible", al),
+					string.Format (Localization.GetText ("LibraryIsIncompatible"),
 					ProgramDescription.AssemblyRequirements[0], "(" + ConcurrentDrawLib.CDLibVersion + ") ",
 					" (" + ProgramDescription.AssemblyLibVersion + ")") +
-					Localization.GetText ("LibraryNotFound_Lib0", al),
+					Localization.GetText ("LibraryNotFound_Lib0"),
 					Localization.GetDefaultButtonName (Localization.DefaultButtons.Yes),
 					Localization.GetDefaultButtonName (Localization.DefaultButtons.No)) ==
 					RDMessageButtons.ButtonOne)

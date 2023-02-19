@@ -8,7 +8,7 @@ namespace RD_AAOW
 	/// <summary>
 	/// Форма обеспечивает доступ к стандартным размерам окна приложения
 	/// </summary>
-	public partial class WindowSizeForm:Form
+	public partial class WindowSizeForm: Form
 		{
 		// Доступные размеры
 		private List<Point> availableSizes = new List<Point> ();
@@ -40,19 +40,18 @@ namespace RD_AAOW
 		/// <summary>
 		/// Конструктор. Запускает форму выбора размера
 		/// </summary>
-		/// <param name="InterfaceLanguage">Язык интерфейса</param>
 		/// <param name="MaxHeight">Максимальная высота окна</param>
 		/// <param name="MaxWidth">Максимальная ширина окна</param>
-		public WindowSizeForm (uint MaxWidth, uint MaxHeight, SupportedLanguages InterfaceLanguage)
+		public WindowSizeForm (uint MaxWidth, uint MaxHeight/*, SupportedLanguages InterfaceLanguage*/)
 			{
 			// Инициализация
 			InitializeComponent ();
 			this.AcceptButton = BOK;
 			this.CancelButton = BCancel;
 
-			this.Text = Localization.GetText ("CDP_WindowSize", InterfaceLanguage);
-			BOK.Text = Localization.GetText ("ConcurrentDrawParameters_BOK", InterfaceLanguage);
-			BCancel.Text = Localization.GetText ("ConcurrentDrawParameters_BCancel", InterfaceLanguage);
+			this.Text = Localization.GetText ("CDP_WindowSize");
+			BOK.Text = Localization.GetText ("ConcurrentDrawParameters_BOK");
+			BCancel.Text = Localization.GetText ("ConcurrentDrawParameters_BCancel");
 
 			availableSizes.Add (new Point (640, 360));
 			availableSizes.Add (new Point (640, 480));
@@ -66,7 +65,8 @@ namespace RD_AAOW
 			availableSizes.Add (new Point ((int)MaxWidth, (int)MaxHeight));
 
 			for (int i = 0; i < availableSizes.Count; i++)
-				SizesCombo.Items.Add (availableSizes[i].X.ToString () + " x " + availableSizes[i].Y.ToString () + " px");
+				SizesCombo.Items.Add (availableSizes[i].X.ToString () + " x " +
+					availableSizes[i].Y.ToString () + " px");
 			SizesCombo.SelectedIndex = 0;
 
 			// Запуск
