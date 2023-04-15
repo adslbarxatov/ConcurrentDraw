@@ -11,7 +11,6 @@ namespace RD_AAOW
 	public partial class ConcurrentDrawParameters: Form
 		{
 		// Константы и переменные
-		/*private SupportedLanguages al = Localization.CurrentLanguage;               // Текущий язык интерфейса*/
 		private List<CDParametersSet> parameters = new List<CDParametersSet> ();    // Наборы сохранённых параметров
 
 		private const int defaultSettingsNumber = 0;
@@ -526,7 +525,7 @@ namespace RD_AAOW
 		// Изменение языка интерфейса
 		private void LanguageCombo_SelectedIndexChanged (object sender, EventArgs e)
 			{
-			Localization.CurrentLanguage = /*al = */(SupportedLanguages)LanguageCombo.SelectedIndex;
+			Localization.CurrentLanguage = (SupportedLanguages)LanguageCombo.SelectedIndex;
 			LocalizeForm ();
 			}
 
@@ -551,7 +550,7 @@ namespace RD_AAOW
 		private void SelectWindowSize_Click (object sender, EventArgs e)
 			{
 			// Запрос размеров
-			WindowSizeForm wsf = new WindowSizeForm ((uint)VisWidth.Maximum, (uint)VisHeight.Maximum/*, al*/);
+			WindowSizeForm wsf = new WindowSizeForm ((uint)VisWidth.Maximum, (uint)VisHeight.Maximum);
 
 			// Перенос
 			if (wsf.Selected)
@@ -560,17 +559,6 @@ namespace RD_AAOW
 				VisHeight.Value = wsf.WindowSize.Height;
 				}
 			}
-
-		/*/// <summary>
-		/// Возвращает текущий язык интерфейса
-		/// </summary>
-		public SupportedLanguages CurrentInterfaceLanguage
-			{
-			get
-				{
-				return al;
-				}
-			}*/
 
 		#endregion
 
@@ -1195,7 +1183,7 @@ namespace RD_AAOW
 				return;
 
 			if (RDGenerics.LocalizedMessageBox (RDMessageTypes.Question, "CDP_ProfileRemove",
-				Localization.DefaultButtons.YesNoFocus, Localization.DefaultButtons.No) == RDMessageButtons.ButtonTwo)
+				LzDefaultTextValues.Button_YesNoFocus, LzDefaultTextValues.Button_No) == RDMessageButtons.ButtonTwo)
 				return;
 
 			// Удаление
@@ -1513,7 +1501,6 @@ namespace RD_AAOW
 
 				#region Запрос всех настроек
 				case 23:
-					/*MessageBox.Shw (*/
 					RDGenerics.MessageBox (RDMessageTypes.Information,
 						DevicesLabel.Text + " " + DevicesCombo.Text + "\n" +
 						VisTypeLabel.Text + " " + VisualizationCombo.Text +
@@ -1544,8 +1531,7 @@ namespace RD_AAOW
 
 						BDSettings.Text + "\n\n" +
 
-						CESettings.Text/*,
-						ProgramDescription.AssemblyTitle, MessageBoxButtons.OK, MessageBoxIcon.Information*/);
+						CESettings.Text);
 					break;
 				#endregion
 

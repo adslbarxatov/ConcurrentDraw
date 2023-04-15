@@ -19,13 +19,12 @@ namespace RD_AAOW
 			Application.EnableVisualStyles ();
 			Application.SetCompatibleTextRenderingDefault (false);
 
-			// Язык интерфейса и контроль XPR
-			/*SupportedLanguages al = Localization.CurrentLanguage;*/
+			// Язык интерфейса и контроль XPUN
 			if (!Localization.IsXPUNClassAcceptable)
 				return;
 
 			// Проверка запуска единственной копии
-			if (!RDGenerics.IsThisInstanceUnique (Localization.IsCurrentLanguageRuRu))
+			if (!RDGenerics.IsAppInstanceUnique (true))
 				return;
 
 			// Проверка наличия обязательных компонентов
@@ -36,8 +35,8 @@ namespace RD_AAOW
 						string.Format (Localization.GetText ("LibraryNotFound"),
 						ProgramDescription.AssemblyRequirements[i]) +
 						Localization.GetText ("LibraryNotFound_Lib" + i.ToString ()),
-						Localization.GetDefaultButtonName (Localization.DefaultButtons.Yes),
-						Localization.GetDefaultButtonName (Localization.DefaultButtons.No)) ==
+						Localization.GetDefaultText (LzDefaultTextValues.Button_Yes),
+						Localization.GetDefaultText (LzDefaultTextValues.Button_No)) ==
 						RDMessageButtons.ButtonOne)
 						{
 						AboutForm af = new AboutForm (i == 0 ? null : "http://un4seen.com");
@@ -54,8 +53,8 @@ namespace RD_AAOW
 					ProgramDescription.AssemblyRequirements[0], "(" + ConcurrentDrawLib.CDLibVersion + ") ",
 					" (" + ProgramDescription.AssemblyLibVersion + ")") +
 					Localization.GetText ("LibraryNotFound_Lib0"),
-					Localization.GetDefaultButtonName (Localization.DefaultButtons.Yes),
-					Localization.GetDefaultButtonName (Localization.DefaultButtons.No)) ==
+					Localization.GetDefaultText (LzDefaultTextValues.Button_Yes),
+					Localization.GetDefaultText (LzDefaultTextValues.Button_No)) ==
 					RDMessageButtons.ButtonOne)
 					{
 					AboutForm af = new AboutForm (null);

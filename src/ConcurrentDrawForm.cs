@@ -17,6 +17,8 @@ namespace RD_AAOW
 	/// </summary>
 	public partial class ConcurrentDrawForm: Form
 		{
+		// Общие параметры
+
 		// Доступные фазы отрисовки
 		private enum VisualizationPhases
 			{
@@ -36,65 +38,115 @@ namespace RD_AAOW
 			Visualization = 5
 			}
 
-		// Общие переменные и константы
-		private VisualizationPhases currentPhase =
-			VisualizationPhases.LayersPrecache;                 // Текущая фаза отрисовки
-		private bool logoFirstShowMade = false;                 // Флаг, указывающий на выполненное первое отображение лого
-		private uint steps = 0;                                 // Счётчик шагов отрисовки
-		private Random rnd = new Random ();                     // ГПСЧ
-		private ConcurrentDrawParameters cdp;                   // Параметры работы программы
-		private const string screenshotsDir = "CDScreenshots";  // Папка для скриншотов
+		// Текущая фаза отрисовки
+		private VisualizationPhases currentPhase = VisualizationPhases.LayersPrecache;
+
+		// Флаг, указывающий на выполненное первое отображение лого
+		private bool logoFirstShowMade = false;
+
+		// Счётчик шагов отрисовки
+		private uint steps = 0;
+
+		// ГПСЧ
+		private Random rnd = new Random ();
+
+		// Параметры работы программы
+		private ConcurrentDrawParameters cdp;
+
+		// Папка для скриншотов
+		private const string screenshotsDir = "CDScreenshots";
 
 		// Графика
-		private LogoDrawerLayer mainLayer;                      // Базовый слой изображения
-		private ColorMatrix[] colorMatrix =
-			new ColorMatrix[3];                                 // Полупрозрачные цветовые матрицы для спектрограмм
-		private ImageAttributes[] sgAttributes =
-			new ImageAttributes[3];                             // Атрибуты изображений спектрограмм
 
-		private List<Graphics> gr = new List<Graphics> ();      // Объекты-отрисовщики
+		// Базовый слой изображения
+		private LogoDrawerLayer mainLayer;
+
+		// Полупрозрачные цветовые матрицы для спектрограмм
+		private ColorMatrix[] colorMatrix = new ColorMatrix[3];
+
+		// Атрибуты изображений спектрограмм
+		private ImageAttributes[] sgAttributes = new ImageAttributes[3];
+
+		// Объекты-отрисовщики
+		private List<Graphics> gr = new List<Graphics> ();
 		private List<SolidBrush> brushes = new List<SolidBrush> ();
 		private List<Bitmap> logo = new List<Bitmap> ();
 
 		// Бит-детектор
-		private const int logoIdleSpeed = 2;                    // Наименьшая скорость вращения лого
 
+		// Наименьшая скорость вращения лого
+		private const int logoIdleSpeed = 2;
+
+		// Импульс вращения лого
 #if VIDEO
 		private const int logoSpeedImpulse = 60;
 #else
 		private const int logoSpeedImpulse = 50;
 #endif
-		private const float beatsDetAngleMultiplier =
-			150.0f / logoSpeedImpulse;                          // Множитель для расчёта угла дуги бит-детектора
-		private List<int> beatWaves = new List<int> ();         // Волны бит-детектора
+
+		// Множитель для расчёта угла дуги бит-детектора
+		private const float beatsDetAngleMultiplier = 150.0f / logoSpeedImpulse;
+
+		// Смещения волн бит-детектора
+		private List<int> beatWaves = new List<int> ();
 
 		// Лого
-		private int currentLogoAngleDelta = 0,                  // Текущий угол приращения поворота лого
-			currentLogoAngle = 0;                               // Текущий угол поворота лого (для бит-детектора)
-		private double currentHistogramAngle = 0.0;             // Текущий угол поворота гистограммы-бабочки
-		private uint logoHeight,                                // Текущий диаметр лого
-			logoCenterX, logoCenterY;                           // Текущие координаты центра лого
-		private const int fillingOpacity = 15;                  // Непрозрачность кумулятивного эффекта и эффекта fadeout
-		private bool firstFilling = true;                       // Флаг, указывающий на необходимость инициализации кисти фона
+
+		// Текущий угол приращения поворота лого
+		private int currentLogoAngleDelta = 0;
+
+		// Текущий угол поворота лого (для бит-детектора)
+		private int currentLogoAngle = 0;
+
+		// Текущий угол поворота гистограммы-бабочки
+		private double currentHistogramAngle = 0.0;
+
+		// Текущий диаметр лого
+		private uint logoHeight;
+
+		// Текущие координаты центра лого
+		private uint logoCenterX, logoCenterY;
+
+		// Непрозрачность кумулятивного эффекта и эффекта fadeout
+		private const int fillingOpacity = 15;
+
+		// Флаг, указывающий на необходимость инициализации кисти фона
+		private bool firstFilling = true;
 
 		// Кумулятивный эффект
-		private byte peak;                                      // Пиковое значение для расчёта битовых порогов
-		private uint cumulationCounter;                         // Накопитель, обеспечивающий кумулятивный эффект
-		private const uint cumulationDivisor = 100,             // Граница и масштаб накопителя
-			cumulationLimit = 255 * cumulationDivisor;
-		private uint cumulation;                                // Дополнительная переменная для хранения текущего состояния эффекта
+
+		// Пиковое значение для расчёта битовых порогов
+		private byte peak;
+
+		// Накопитель, обеспечивающий кумулятивный эффект
+		private uint cumulationCounter;
+
+		// Граница и масштаб накопителя
+		private const uint cumulationDivisor = 100;
+		private const uint cumulationLimit = 255 * cumulationDivisor;
+
+		// Дополнительная переменная для хранения текущего состояния эффекта
+		private uint cumulation;
 
 		// Метрики гистограмм
-		private int[] histoX = new int[4],
-			histoY = new int[4];                                // Координаты линий гистограмм
-		private const double butterflyDensity = 2.84;           // Плотность гистограммы-бабочки
-		private const double perspectiveDensity = 3.15;         // Плотность гистограммы-перспективы
-														// (даёт полный угол чуть более 90°; 90° <=> 2.84; 80° <=> 3.2)
+
+		// Координаты линий гистограмм
+		//private int[] histoX = new int[4], histoY = new int[4];
+
+		// Плотность гистограммы-бабочки
+		private const double butterflyDensity = 2.84;
+
+		// Плотность гистограммы-перспективы
+		// (даёт полный угол чуть более 90°; 90° <=> 2.84; 80° <=> 3.2)
+		private const double perspectiveDensity = 3.15;
 
 		// Дополнительные графические объекты
-		private List<ILogoDrawerObject> objects =
-			new List<ILogoDrawerObject> ();                     // Визуальные объекты
-		private LogoDrawerLayer objectsLayer;                   // Слой визуальных объектов
+
+		// Визуальные объекты
+		private List<ILogoDrawerObject> objects = new List<ILogoDrawerObject> ();
+
+		// Слой визуальных объектов
+		private LogoDrawerLayer objectsLayer;
 
 		// Вспомогательные переменные
 		private int rad, amp;
@@ -103,13 +155,14 @@ namespace RD_AAOW
 		private Pen p;
 		private SolidBrush br;
 
-		// Субтитры
-		private Font[] subtitlesFonts = new Font[2];            // Объекты поддержки текстовых подписей на рендере
+		// Объекты поддержки текстовых подписей на рендере
+		private Font[] subtitlesFonts = new Font[2];
 		private SizeF[] subtitlesSizes = new SizeF[2];
 
 #if !VIDEO
-		private string hotKeyResultText = "";                   // Замена субтитрам, позволяющая отображать
-		private uint hotKeyResultTextShowCounter = 0;           // результат настройки горячими клавишами
+		// Замена субтитрам, позволяющая отображать результат настройки горячими клавишами
+		private string hotKeyResultText = "";
+		private uint hotKeyResultTextShowCounter = 0;
 		private const uint hotKeyResultCounterLimit = 100;
 		private const int hotKeyTextFontNumber = 0;
 #else
@@ -402,19 +455,19 @@ namespace RD_AAOW
 				{
 				case SoundStreamInitializationErrors.BASS_ERROR_ALREADY:
 				case SoundStreamInitializationErrors.BASS_ERROR_BUSY:
-					err = Localization.GetText ("BASS_ERROR_BUSY"/*, cdp.CurrentInterfaceLanguage*/);
+					err = Localization.GetText ("BASS_ERROR_BUSY");
 					break;
 
 				case SoundStreamInitializationErrors.BASS_ERROR_NOTAVAIL:
-					err = Localization.GetText ("BASS_ERROR_NOTAVAIL"/*, cdp.CurrentInterfaceLanguage*/);
+					err = Localization.GetText ("BASS_ERROR_NOTAVAIL");
 					break;
 
 				case SoundStreamInitializationErrors.BASS_ERROR_DEVICE:
-					err = Localization.GetText ("BASS_ERROR_DEVICE"/*, cdp.CurrentInterfaceLanguage*/);
+					err = Localization.GetText ("BASS_ERROR_DEVICE");
 					break;
 
 				case SoundStreamInitializationErrors.BASS_ERROR_DRIVER:
-					err = Localization.GetText ("BASS_ERROR_DRIVER"/*, cdp.CurrentInterfaceLanguage*/);
+					err = Localization.GetText ("BASS_ERROR_DRIVER");
 					break;
 
 				case SoundStreamInitializationErrors.BASS_ERROR_DX:

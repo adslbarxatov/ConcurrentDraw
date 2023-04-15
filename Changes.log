@@ -1,5 +1,9 @@
 ConcurrentDraw: changes log
 
+Version 3.2:
+• The text tips processing code has been refactored, some methods have been unified and simplified;
+• Removed some redundant code
+
 Version 3.1.7:
 • Updated the HypeHelp mechanics
 

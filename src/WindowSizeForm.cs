@@ -42,7 +42,7 @@ namespace RD_AAOW
 		/// </summary>
 		/// <param name="MaxHeight">Максимальная высота окна</param>
 		/// <param name="MaxWidth">Максимальная ширина окна</param>
-		public WindowSizeForm (uint MaxWidth, uint MaxHeight/*, SupportedLanguages InterfaceLanguage*/)
+		public WindowSizeForm (uint MaxWidth, uint MaxHeight)
 			{
 			// Инициализация
 			InitializeComponent ();
