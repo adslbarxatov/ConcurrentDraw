@@ -339,6 +339,9 @@ namespace RD_AAOW
 			Localization.SetControlsText (ParticlesTab);
 
 			Localization.SetControlsText (this);
+			BCancel.Text = Localization.GetDefaultText (LzDefaultTextValues.Button_Cancel);
+			BOK.Text = Localization.GetDefaultText (LzDefaultTextValues.Button_OK);
+
 			ProfileCombo.Items[DSN] = Localization.GetText ("CDP_ProfileDefault");
 			ProfileCombo.Items[SSN] = Localization.GetText ("CDP_ProfileSaved");
 			}

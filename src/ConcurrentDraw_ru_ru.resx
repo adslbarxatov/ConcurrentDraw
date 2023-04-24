@@ -157,9 +157,6 @@
   <data name="MainTabControl_BeatsTab" xml:space="preserve">
     <value>Детектор бито́в</value>
   </data>
-  <data name="ConcurrentDrawParameters_BCancel" xml:space="preserve">
-    <value>От&amp;мена</value>
-  </data>
   <data name="CDP_CENo" xml:space="preserve">
     <value>Без кумулятивного эффекта</value>
   </data>
@@ -184,9 +181,6 @@
   </data>
   <data name="CDP_NoDevices" xml:space="preserve">
     <value>(нет подходящих устройств)</value>
-  </data>
-  <data name="ConcurrentDrawParameters_BOK" xml:space="preserve">
-    <value>&amp;ОК</value>
   </data>
   <data name="GenericTab_PaletteLabel" xml:space="preserve">
     <value>Палитра:</value>

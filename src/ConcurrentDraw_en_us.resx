@@ -157,9 +157,6 @@ Amplitude threshold: {2:D}%</value>
   <data name="MainTabControl_BeatsTab" xml:space="preserve">
     <value>Beats detection</value>
   </data>
-  <data name="ConcurrentDrawParameters_BCancel" xml:space="preserve">
-    <value>&amp;Cancel</value>
-  </data>
   <data name="CDP_CENo" xml:space="preserve">
     <value>No cumulative effect</value>
   </data>
@@ -184,9 +181,6 @@ Fade out speed multiplier: {1:S}</value>
   </data>
   <data name="CDP_NoDevices" xml:space="preserve">
     <value>(no compatible devices)</value>
-  </data>
-  <data name="ConcurrentDrawParameters_BOK" xml:space="preserve">
-    <value>&amp;OK</value>
   </data>
   <data name="GenericTab_PaletteLabel" xml:space="preserve">
     <value>Palette:</value>
