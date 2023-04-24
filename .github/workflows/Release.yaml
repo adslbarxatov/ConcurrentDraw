@@ -39,7 +39,7 @@ jobs:
 # Загрузка бинарных файлов в релиз
       - name: Upload release asset
         id: upload-release-asset
-        uses: actions/github-script@v6
+        uses: actions/github-script@v3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
