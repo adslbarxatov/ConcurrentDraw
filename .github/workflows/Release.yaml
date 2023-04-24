@@ -15,7 +15,7 @@ jobs:
     
 # Константы, используемые далее по тексту
     env:
-      PROJ: ConcurrentDraw
+      PROJ: ${{ github.event.repository.name }}
       TAG: '3.2.2'
 
     steps:
@@ -26,20 +26,20 @@ jobs:
 # Формирование релиза
       - name: Create release
         id: create_release
-        uses: actions/create-release@v1
+        uses: ncipollo/release-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ env.TAG }}
-          release_name: ${{ env.PROJ }} v ${{ env.TAG }}
-          body_path: .release/Release.md
+          tag: v${{ env.TAG }}
+          name: ${{ env.PROJ }} v ${{ env.TAG }}
+          bodyFile: .release/Release.md
           draft: false
           prerelease: false
 
 # Загрузка бинарных файлов в релиз
       - name: Upload release asset
         id: upload-release-asset
-        uses: actions/github-script@v3
+        uses: actions/github-script@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
