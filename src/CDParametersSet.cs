@@ -1,6 +1,6 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace RD_AAOW
 	{
@@ -10,9 +10,15 @@ namespace RD_AAOW
 	public class CDParametersSet
 		{
 		// Параметры
-		private char[] splitter = new char[] { '|', ';' };
-		private const string DefaultSetName = "\x1";
-		private const string SavedSetName = "\x2";
+		private static char[] splitter = new char[] { '|', ';' };
+		private const string defaultSettingsName = "\x1";
+		private const string savedSettingsName = "\x2";
+		/*private const string settingsListName = "\x1F";*/
+
+		private const string settingsFileExtension = ".cds";
+		private const string settingsFilesSubdir = "Settings\\";
+		private static List<string> settingsNames = new List<string> ();
+
 
 		/// <summary>
 		/// Константа, содержащая максимальную частоту гистограммы, 
@@ -529,11 +535,11 @@ namespace RD_AAOW
 		public CDParametersSet (bool DefaultSettings)
 			{
 			if (DefaultSettings)
-				InitParametersSet (DefaultSetName);
+				InitParametersSet (defaultSettingsName);
 			else
-				InitParametersSet (SavedSetName);
+				InitParametersSet (savedSettingsName);
 
-			GetSettingsNames ();
+			/*GetSettingsNames ();*/
 			}
 
 		/// <summary>
@@ -571,19 +577,32 @@ namespace RD_AAOW
 			particlesMetrics.MaxSpeedFluctuation = 0;
 
 			// Возврат стандартного набора настроек
-			if (SetName == DefaultSetName)
+			if (SetName == defaultSettingsName)
 				return;
 
 			// Запрос
 			string settings;
 
 			// Возврат последнего сохранённого набора настроек
-			if (SetName == SavedSetName)
+			if (SetName == savedSettingsName)
+				{
 				settings = RDGenerics.GetAppSettingsValue ("");
+				}
 			else
-				settings = RDGenerics.GetAppSettingsValue (SetName);
+				{
+				/*settings = RDGenerics.GetAppSettingsValue (SetName);*/
+				try
+					{
+					settings = File.ReadAllText (RDGenerics.AppStartupPath + settingsFilesSubdir +
+						SetName + settingsFileExtension);
+					}
+				catch
+					{
+					settings = "";
+					}
+				}
 
-			if (settings == "")
+			if (string.IsNullOrWhiteSpace (settings))
 				{
 				initFailure = true;
 				return;
@@ -685,7 +704,7 @@ namespace RD_AAOW
 		/// </summary>
 		public void SaveSettings ()
 			{
-			SaveSettings (SavedSetName);
+			SaveSettings (savedSettingsName);
 			}
 
 		/// <summary>
@@ -757,10 +776,25 @@ namespace RD_AAOW
 				splitter[0].ToString () + (reverseFreqOrder ? "RFO" : "0"));
 
 			// Запись
-			if (SetName == SavedSetName)
+			if (SetName == savedSettingsName)
+				{
 				RDGenerics.SetAppSettingsValue ("", settings);
+				}
 			else
-				RDGenerics.SetAppSettingsValue (SetName, settings);
+				{
+				try
+					{
+					if (!Directory.Exists (RDGenerics.AppStartupPath + settingsFilesSubdir))
+						Directory.CreateDirectory (RDGenerics.AppStartupPath + settingsFilesSubdir);
+
+					File.WriteAllText (RDGenerics.AppStartupPath + settingsFilesSubdir +
+						SetName + settingsFileExtension, settings);
+					}
+				catch
+					{
+					}
+				/*RDGenerics.SetAppSettingsValue (SetName, settings);*/
+				}
 			}
 
 		/// <summary>
@@ -769,7 +803,7 @@ namespace RD_AAOW
 		/// <returns>Список имён наборов настроек</returns>
 		public static string[] GetSettingsNames ()
 			{
-			// Получение ключа реестра
+			/* Получение ключа реестра
 			RegistryKey rk = null;
 			try
 				{
@@ -796,7 +830,29 @@ namespace RD_AAOW
 
 			// Возврат
 			rk.Dispose ();
-			return s.ToArray ();
+			return s.ToArray ();*/
+
+			// Защита
+			if (settingsNames.Count > 0)
+				return settingsNames.ToArray ();
+
+			// Получение списка файлов
+			string[] files = new string[] { };
+			try
+				{
+				files = Directory.GetFiles (RDGenerics.AppStartupPath + settingsFilesSubdir,
+					"*" + settingsFileExtension);
+				}
+			catch
+				{
+				return files;
+				}
+
+			// Обработка и возврат
+			for (int i = 0; i < files.Length; i++)
+				settingsNames.Add (Path.GetFileNameWithoutExtension (files[i]));
+
+			return settingsNames.ToArray ();
 			}
 
 		/// <summary>
@@ -805,7 +861,7 @@ namespace RD_AAOW
 		/// <param name="SetName">Удаляемый набор настроек</param>
 		public static void RemoveSettings (string SetName)
 			{
-			// Контроль
+			/* Контроль
 			if ((SetName == null) || (SetName == "") || (SetName == Localization.LanguageValueName) ||
 				(SetName == AboutForm.LastShownVersionKey))
 				return;
@@ -829,7 +885,19 @@ namespace RD_AAOW
 			catch { }
 
 			// Завершено
-			rk.Dispose ();
+			rk.Dispose ();*/
+
+			if (!settingsNames.Contains (SetName))
+				return;
+
+			try
+				{
+				File.Delete (RDGenerics.AppStartupPath + settingsFilesSubdir +
+					SetName + settingsFileExtension);
+				}
+			catch { }
+
+			settingsNames.Remove (SetName);
 			}
 		}
 	}

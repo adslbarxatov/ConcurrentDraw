@@ -352,7 +352,7 @@ namespace RD_AAOW
 			// Контроль возможности запуска
 			if (!DevicesCombo.Enabled)
 				{
-				RDGenerics.LocalizedMessageBox (RDMessageTypes.Warning, "NoCompatibleDevices");
+				RDGenerics.LocalizedMessageBox (RDMessageTypes.Warning_Center, "NoCompatibleDevices");
 				this.Close ();
 				return;
 				}
@@ -1165,7 +1165,7 @@ namespace RD_AAOW
 			// Контроль
 			if (ProfileCombo.Items.Contains (ProfileCombo.Text) || (ProfileCombo.Text == ""))
 				{
-				RDGenerics.LocalizedMessageBox (RDMessageTypes.Warning, "CDP_ProfileError");
+				RDGenerics.LocalizedMessageBox (RDMessageTypes.Warning_Center, "CDP_ProfileError");
 				return;
 				}
 
@@ -1185,7 +1185,7 @@ namespace RD_AAOW
 			if (ProfileCombo.SelectedIndex <= SSN)
 				return;
 
-			if (RDGenerics.LocalizedMessageBox (RDMessageTypes.Question, "CDP_ProfileRemove",
+			if (RDGenerics.LocalizedMessageBox (RDMessageTypes.Question_Center, "CDP_ProfileRemove",
 				LzDefaultTextValues.Button_YesNoFocus, LzDefaultTextValues.Button_No) == RDMessageButtons.ButtonTwo)
 				return;
 
@@ -1504,7 +1504,7 @@ namespace RD_AAOW
 
 				#region Запрос всех настроек
 				case 23:
-					RDGenerics.MessageBox (RDMessageTypes.Information,
+					RDGenerics.MessageBox (RDMessageTypes.Information_Left,
 						DevicesLabel.Text + " " + DevicesCombo.Text + "\n" +
 						VisTypeLabel.Text + " " + VisualizationCombo.Text +
 						(WithLogoFlag.Checked ? (" + " + WithLogoFlag.Text + "\n") : "\n") +

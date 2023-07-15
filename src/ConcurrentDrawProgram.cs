@@ -31,7 +31,7 @@ namespace RD_AAOW
 			for (int i = 0; i < ProgramDescription.AssemblyRequirements.Length; i++)
 				if (!File.Exists (RDGenerics.AppStartupPath + ProgramDescription.AssemblyRequirements[i]))
 					{
-					if (RDGenerics.MessageBox (RDMessageTypes.Question,
+					if (RDGenerics.MessageBox (RDMessageTypes.Question_Center,
 						string.Format (Localization.GetText ("LibraryNotFound"),
 						ProgramDescription.AssemblyRequirements[i]) +
 						Localization.GetText ("LibraryNotFound_Lib" + i.ToString ()),
@@ -48,7 +48,7 @@ namespace RD_AAOW
 			// Проверка корреткности версии библиотеки CDLib.dll (BASS проверяется позже)
 			if (ConcurrentDrawLib.CDLibVersion != ProgramDescription.AssemblyLibVersion)
 				{
-				if (RDGenerics.MessageBox (RDMessageTypes.Question,
+				if (RDGenerics.MessageBox (RDMessageTypes.Question_Center,
 					string.Format (Localization.GetText ("LibraryIsIncompatible"),
 					ProgramDescription.AssemblyRequirements[0], "(" + ConcurrentDrawLib.CDLibVersion + ") ",
 					" (" + ProgramDescription.AssemblyLibVersion + ")") +

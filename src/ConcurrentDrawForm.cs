@@ -130,9 +130,6 @@ namespace RD_AAOW
 
 		// Метрики гистограмм
 
-		// Координаты линий гистограмм
-		//private int[] histoX = new int[4], histoY = new int[4];
-
 		// Плотность гистограммы-бабочки
 		private const double butterflyDensity = 2.84;
 
@@ -520,7 +517,8 @@ namespace RD_AAOW
 
 			if (!string.IsNullOrWhiteSpace (err))
 				{
-				RDGenerics.MessageBox (RDMessageTypes.Warning, err);
+				this.TopMost = false;
+				RDGenerics.MessageBox (RDMessageTypes.Warning_Left, err);
 				return result;
 				}
 
@@ -553,7 +551,8 @@ namespace RD_AAOW
 
 			if (!string.IsNullOrWhiteSpace (err))
 				{
-				RDGenerics.MessageBox (RDMessageTypes.Warning, err);
+				this.TopMost = false;
+				RDGenerics.MessageBox (RDMessageTypes.Warning_Left, err);
 				return result;
 				}
 
@@ -1248,7 +1247,7 @@ namespace RD_AAOW
 						}
 					catch
 						{
-						RDGenerics.LocalizedMessageBox (RDMessageTypes.Warning, "ScreenshotFailure");
+						RDGenerics.LocalizedMessageBox (RDMessageTypes.Warning_Center, "ScreenshotFailure");
 						}
 					break;
 

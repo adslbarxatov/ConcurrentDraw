@@ -166,7 +166,7 @@ namespace RD_AAOW
 		// Досрочное закрытие
 		private void ConcurrentDrawLogo_Click (object sender, EventArgs e)
 			{
-			this.Close ();
+			//this.Close ();
 			}
 
 		private void ConcurrentDrawLogo_MouseEnter (object sender, EventArgs e)
@@ -176,12 +176,12 @@ namespace RD_AAOW
 
 		private void ConcurrentDrawLogo_MouseLeave (object sender, EventArgs e)
 			{
-			this.Close ();
+			//this.Close ();
 			}
 
 		private void ConcurrentDrawLogo_KeyDown (object sender, KeyEventArgs e)
 			{
-			this.Close ();
+			//this.Close ();
 			}
 		}
 	}
