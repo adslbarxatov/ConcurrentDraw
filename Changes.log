@@ -1,5 +1,8 @@
 ConcurrentDraw: changes log
 
+ToDo:
+- Screenshots to the desktop
+
 Version 3.3:
 • Rewritten settings operator: it should fix problems with requiring administrator rights;
 • Updated the interface of message boxes;
