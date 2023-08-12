@@ -50,6 +50,8 @@ namespace RD_AAOW
 				parameters.Add (new CDParametersSet (s[i]));
 				ProfileCombo.Items.Add (s[i]);
 				}
+			ProfileCombo.Enabled = ApplyProfile.Enabled = AddProfile.Enabled = RemoveProfile.Enabled =
+				RDGenerics.IsStartupPathAccessible;
 
 			// Настройка контролов
 
@@ -1505,34 +1507,34 @@ namespace RD_AAOW
 				#region Запрос всех настроек
 				case 23:
 					RDGenerics.MessageBox (RDMessageTypes.Information_Left,
-						DevicesLabel.Text + " " + DevicesCombo.Text + "\n" +
+						DevicesLabel.Text + " " + DevicesCombo.Text + Localization.RN +
 						VisTypeLabel.Text + " " + VisualizationCombo.Text +
-						(WithLogoFlag.Checked ? (" + " + WithLogoFlag.Text + "\n") : "\n") +
+						(WithLogoFlag.Checked ? (" + " + WithLogoFlag.Text + Localization.RN) : Localization.RN) +
 						VisSizeLabel.Text + " " + VisWidth.Value.ToString () + " x " +
-							VisHeight.Value.ToString () + " px\n" +
+							VisHeight.Value.ToString () + " px" + Localization.RN +
 						VisLeftTopLabel.Text + " " + VisLeft.Value.ToString () + " x " +
-							VisTop.Value.ToString () + " px\n" +
-						PaletteLabel.Text + " " + SDPaletteCombo.Text + "\n" +
-						ShakeLabel.Text + " " + ShakeValue.Value.ToString () + "\n" +
-						(AlwaysOnTopFlag.Checked ? (AlwaysOnTopFlag.Text + "\n") : "") +
-						FFTScaleLabel.Text + "\n\n" +
+							VisTop.Value.ToString () + " px" + Localization.RN +
+						PaletteLabel.Text + " " + SDPaletteCombo.Text + Localization.RN +
+						ShakeLabel.Text + " " + ShakeValue.Value.ToString () + Localization.RN +
+						(AlwaysOnTopFlag.Checked ? (AlwaysOnTopFlag.Text + Localization.RN) : "") +
+						FFTScaleLabel.Text + Localization.RNRN +
 
 						HGRangeLabel.Text +
 							(ReverseFreqOrderFlag.Checked ? " " : " 0 – ") +
 							(histoRange * CDParametersSet.HistogramRangeSettingIncrement).ToString () +
 							(ReverseFreqOrderFlag.Checked ? " – 0 " : " ") +
-							HzLabel.Text.Substring (HzLabel.Text.Length - 2) + "\n" +
+							HzLabel.Text.Substring (HzLabel.Text.Length - 2) + Localization.RN +
 						SGHeightLabel.Text + " " + SGHeight.Value.ToString () + " px" +
-						(SDDoubleWidthFlag.Checked ? ("; " + SDDoubleWidthFlag.Text) : "") + "\n" +
-						SGTopOffsetLabel.Text + " " + SGTopOffset.Value.ToString () + " px\n" +
+						(SDDoubleWidthFlag.Checked ? ("; " + SDDoubleWidthFlag.Text) : "") + Localization.RN +
+						SGTopOffsetLabel.Text + " " + SGTopOffset.Value.ToString () + " px" + Localization.RN +
 						(HistoRotAccToBeats.Checked ? HistoRotAccToBeats.Text : HistoRotSpeed.Text) + " " +
-						HistoRotSpeedAngle.Value.ToString () + "°\n" +
-						(SwingingHistogramFlag.Checked ? (SwingingHistogramFlag.Text + "\n") : "") +
+						HistoRotSpeedAngle.Value.ToString () + "°" + Localization.RN +
+						(SwingingHistogramFlag.Checked ? (SwingingHistogramFlag.Text + Localization.RN) : "") +
 
-						"\n" + LogoCenterLabel.Text +
-						(BeatWavesFlag.Checked ? ("\n" + BeatWavesFlag.Text) : "") + "\n\n" +
+						Localization.RN + LogoCenterLabel.Text +
+						(BeatWavesFlag.Checked ? (Localization.RN + BeatWavesFlag.Text) : "") + Localization.RNRN +
 
-						BDSettings.Text + "\n\n" +
+						BDSettings.Text + Localization.RNRN +
 
 						CESettings.Text);
 					break;

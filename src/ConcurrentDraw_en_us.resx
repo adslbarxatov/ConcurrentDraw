@@ -316,14 +316,8 @@ Center placement: X = {1:S}; Y = {2:S}</value>
   <data name="CDP_BDNo" xml:space="preserve">
     <value>No beats detection</value>
   </data>
-  <data name="ScreenshotFailure" xml:space="preserve">
-    <value>Failed to save visualization screenshot: application placement is unavailable for writing</value>
-  </data>
   <data name="HistoTab_SwingingHistogramFlag" xml:space="preserve">
     <value>Swinging instead of rotating</value>
-  </data>
-  <data name="HelpVideo" xml:space="preserve">
-    <value>Do you want to view users videoguide on our YouTube channel?</value>
   </data>
   <data name="GenericTab_WithLogoFlag" xml:space="preserve">
     <value>Logo</value>

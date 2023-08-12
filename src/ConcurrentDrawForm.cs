@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
 using System.Windows.Forms;
 
 #if VIDEO
-using System.ComponentModel;
+	using System.ComponentModel;
 #endif
 
 // Классы
@@ -53,8 +52,8 @@ namespace RD_AAOW
 		// Параметры работы программы
 		private ConcurrentDrawParameters cdp;
 
-		// Папка для скриншотов
-		private const string screenshotsDir = "CDScreenshots";
+		/* Папка для скриншотов
+		private const string screenshotsDir = "CDScreenshots";*/
 
 		// Графика
 
@@ -202,7 +201,10 @@ namespace RD_AAOW
 				return;
 				}
 			this.MouseWheel += ConcurrentDrawForm_MouseClick;
+
 			this.Text = ProgramDescription.AssemblyTitle;
+			if (!RDGenerics.IsRegistryAccessible || !RDGenerics.IsStartupPathAccessible)
+				this.Text += Localization.GetDefaultText (LzDefaultTextValues.Message_LimitedFunctionality);
 
 			// Запрос параметров (при необходимости вызовет окно настроек)
 			cdp = new ConcurrentDrawParameters ((uint)this.Width, (uint)this.Height);
@@ -1234,20 +1236,23 @@ namespace RD_AAOW
 
 				// Сохранение скриншота визуализации
 				case Keys.S:
-					mainLayer.Descriptor.DrawString (ProgramDescription.AssemblyTitle, subtitlesFonts[hotKeyTextFontNumber],
-						brushes[1], 0, 0);
+					mainLayer.Descriptor.DrawString (ProgramDescription.AssemblyTitle,
+						subtitlesFonts[hotKeyTextFontNumber], brushes[1], 0, 0);
 
+					string ssFile = Environment.GetFolderPath (Environment.SpecialFolder.Desktop) + "\\" +
+						DateTime.Now.ToString ("dd-MM-yyyy_HH-mm-ss") + ".png";
 					try
 						{
-						if (!Directory.Exists (RDGenerics.AppStartupPath + screenshotsDir))
-							Directory.CreateDirectory (RDGenerics.AppStartupPath + screenshotsDir);
+						/*if (!Directory.Exists (RDGenerics.AppStartupPath + screenshotsDir))
+							Directory.CreateDirectory (RDGenerics.AppStartupPath + screenshotsDir);*/
 
-						mainLayer.Layer.Save (RDGenerics.AppStartupPath + screenshotsDir + "\\" +
-							DateTime.Now.ToString ("dd-MM-yyyy_HH-mm-ss") + ".png", ImageFormat.Png);
+						mainLayer.Layer.Save (/*RDGenerics.AppStartupPath + screenshotsDir + "\\" +
+							DateTime.Now.ToString ("dd-MM-yyyy_HH-mm-ss") + ".png"*/ssFile, ImageFormat.Png);
 						}
 					catch
 						{
-						RDGenerics.LocalizedMessageBox (RDMessageTypes.Warning_Center, "ScreenshotFailure");
+						RDGenerics.MessageBox (RDMessageTypes.Warning_Center,
+							Localization.GetFileProcessingMessage (ssFile, LzFileProcessingMessageTypes.Save_Failure));
 						}
 					break;
 

@@ -35,11 +35,7 @@ CD_API(uchar) GetDevicesEx (schar **Devices)
 	for (j = pos = 0; j < i; j++)
 		{
 		if (!BASS_RecordGetDeviceInfo (j, &info))
-			{
-			/*free (*Devices);
-			return 0;	// Фигня какая-то*/
 			continue;
-			}
 
 		lastLength = min (strlen (info.name), MAX_DEVICE_NAME_LENGTH - 1);
 		memcpy (*Devices + pos, info.name, lastLength);

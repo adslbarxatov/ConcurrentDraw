@@ -317,14 +317,8 @@
   <data name="CDP_BDNo" xml:space="preserve">
     <value>Бит-детектор отключён</value>
   </data>
-  <data name="ScreenshotFailure" xml:space="preserve">
-    <value>Не удалось сохранить снимок визуализации: расположение программы недоступно для записи</value>
-  </data>
   <data name="HistoTab_SwingingHistogramFlag" xml:space="preserve">
     <value>Качание вместо вращения</value>
-  </data>
-  <data name="HelpVideo" xml:space="preserve">
-    <value>Хотите ознакомиться с видеоинструкцией для пользователей на нашем YouTube-канале?</value>
   </data>
   <data name="GenericTab_WithLogoFlag" xml:space="preserve">
     <value>Лого</value>
