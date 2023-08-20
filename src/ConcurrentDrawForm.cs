@@ -52,9 +52,6 @@ namespace RD_AAOW
 		// Параметры работы программы
 		private ConcurrentDrawParameters cdp;
 
-		/* Папка для скриншотов
-		private const string screenshotsDir = "CDScreenshots";*/
-
 		// Графика
 
 		// Базовый слой изображения
@@ -1243,11 +1240,7 @@ namespace RD_AAOW
 						DateTime.Now.ToString ("dd-MM-yyyy_HH-mm-ss") + ".png";
 					try
 						{
-						/*if (!Directory.Exists (RDGenerics.AppStartupPath + screenshotsDir))
-							Directory.CreateDirectory (RDGenerics.AppStartupPath + screenshotsDir);*/
-
-						mainLayer.Layer.Save (/*RDGenerics.AppStartupPath + screenshotsDir + "\\" +
-							DateTime.Now.ToString ("dd-MM-yyyy_HH-mm-ss") + ".png"*/ssFile, ImageFormat.Png);
+						mainLayer.Layer.Save (ssFile, ImageFormat.Png);
 						}
 					catch
 						{

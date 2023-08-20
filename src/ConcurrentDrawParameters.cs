@@ -384,6 +384,9 @@ namespace RD_AAOW
 			if (BeatsDetectorImage.BackgroundImage != null)
 				BeatsDetectorImage.BackgroundImage.Dispose ();
 			BeatsDetectorImage.BackgroundImage = b;
+
+			// Загрузка расположения окна
+			RDGenerics.LoadWindowDimensions (this);
 			}
 
 		/// <summary>
@@ -413,8 +416,13 @@ namespace RD_AAOW
 
 			// Завершение
 			BCancel.Enabled = true;
-			if (this.Visible)   // Исключает инвалидацию при вызове из обработчика горячих клавиш
+
+			// Исключает инвалидацию при вызове из обработчика горячих клавиш
+			if (this.Visible)
+				{
+				RDGenerics.SaveWindowDimensions (this);
 				this.Close ();
+				}
 			}
 
 		private void SetSettings (uint ParametersSetNumber, string ParametersSetName)

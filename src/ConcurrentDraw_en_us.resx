@@ -389,4 +389,7 @@ Do you want to open its webpage to download the actual version?</value>
   <data name="HistoTab_ReverseFreqOrderFlag" xml:space="preserve">
     <value>Reverse histogram range</value>
   </data>
+  <data name="cdsfile" xml:space="preserve">
+    <value>ConcurrentDraw profile file</value>
+  </data>
 </root>

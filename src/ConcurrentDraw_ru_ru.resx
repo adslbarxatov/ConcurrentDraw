@@ -390,4 +390,7 @@
   <data name="HistoTab_ReverseFreqOrderFlag" xml:space="preserve">
     <value>Развернуть диапазон гистограммы</value>
   </data>
+  <data name="cdsfile" xml:space="preserve">
+    <value>Файл профиля ConcurrentDraw</value>
+  </data>
 </root>

@@ -13,9 +13,12 @@ namespace RD_AAOW
 		private static char[] splitter = new char[] { '|', ';' };
 		private const string defaultSettingsName = "\x1";
 		private const string savedSettingsName = "\x2";
-		/*private const string settingsListName = "\x1F";*/
 
-		private const string settingsFileExtension = ".cds";
+		/// <summary>
+		/// Возвращает расширение файла настроек программы
+		/// </summary>
+		public const string SettingsFileExtension = ".cds";
+
 		private const string settingsFilesSubdir = "Settings\\";
 		private static List<string> settingsNames = new List<string> ();
 
@@ -538,8 +541,6 @@ namespace RD_AAOW
 				InitParametersSet (defaultSettingsName);
 			else
 				InitParametersSet (savedSettingsName);
-
-			/*GetSettingsNames ();*/
 			}
 
 		/// <summary>
@@ -590,11 +591,10 @@ namespace RD_AAOW
 				}
 			else
 				{
-				/*settings = RDGenerics.GetAppSettingsValue (SetName);*/
 				try
 					{
 					settings = File.ReadAllText (RDGenerics.AppStartupPath + settingsFilesSubdir +
-						SetName + settingsFileExtension);
+						SetName + SettingsFileExtension);
 					}
 				catch
 					{
@@ -788,12 +788,9 @@ namespace RD_AAOW
 						Directory.CreateDirectory (RDGenerics.AppStartupPath + settingsFilesSubdir);
 
 					File.WriteAllText (RDGenerics.AppStartupPath + settingsFilesSubdir +
-						SetName + settingsFileExtension, settings);
+						SetName + SettingsFileExtension, settings);
 					}
-				catch
-					{
-					}
-				/*RDGenerics.SetAppSettingsValue (SetName, settings);*/
+				catch { }
 				}
 			}
 
@@ -803,35 +800,6 @@ namespace RD_AAOW
 		/// <returns>Список имён наборов настроек</returns>
 		public static string[] GetSettingsNames ()
 			{
-			/* Получение ключа реестра
-			RegistryKey rk = null;
-			try
-				{
-				rk = Registry.LocalMachine.OpenSubKey
-					(RDGenerics.AssemblySettingsKey.Replace (Registry.LocalMachine.Name + "\\", ""));
-				}
-			catch { }
-			if (rk == null)
-				return new string[] { };
-
-			// Получение списка
-			List<string> s = null;
-			try
-				{
-				s = new List<string> (rk.GetValueNames ());
-				}
-			catch
-				{
-				return new string[] { };
-				}
-			s.Remove ("");
-			s.Remove (Localization.LanguageValueName);
-			s.Remove (AboutForm.LastShownVersionKey);
-
-			// Возврат
-			rk.Dispose ();
-			return s.ToArray ();*/
-
 			// Защита
 			if (settingsNames.Count > 0)
 				return settingsNames.ToArray ();
@@ -841,7 +809,7 @@ namespace RD_AAOW
 			try
 				{
 				files = Directory.GetFiles (RDGenerics.AppStartupPath + settingsFilesSubdir,
-					"*" + settingsFileExtension);
+					"*" + SettingsFileExtension);
 				}
 			catch
 				{
@@ -861,39 +829,13 @@ namespace RD_AAOW
 		/// <param name="SetName">Удаляемый набор настроек</param>
 		public static void RemoveSettings (string SetName)
 			{
-			/* Контроль
-			if ((SetName == null) || (SetName == "") || (SetName == Localization.LanguageValueName) ||
-				(SetName == AboutForm.LastShownVersionKey))
-				return;
-
-			// Получение ключа реестра
-			RegistryKey rk = null;
-			try
-				{
-				rk = Registry.LocalMachine.OpenSubKey
-					(RDGenerics.AssemblySettingsKey.Replace (Registry.LocalMachine.Name + "\\", ""), true);
-				}
-			catch { }
-			if (rk == null)
-				return;
-
-			// Удаление
-			try
-				{
-				rk.DeleteValue (SetName);
-				}
-			catch { }
-
-			// Завершено
-			rk.Dispose ();*/
-
 			if (!settingsNames.Contains (SetName))
 				return;
 
 			try
 				{
 				File.Delete (RDGenerics.AppStartupPath + settingsFilesSubdir +
-					SetName + settingsFileExtension);
+					SetName + SettingsFileExtension);
 				}
 			catch { }
 

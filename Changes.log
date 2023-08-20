@@ -1,5 +1,9 @@
 ConcurrentDraw: changes log
 
+Version 3.3.6:
+• Added the obvious URLs for videoguide and for text guide;
+• Settings window now able to save its position
+
 Version 3.3.5:
 • Fixed some issues with the Policy loader where it would sometimes ask for multiple confirmations;
 • Implemented the access rights checker: it will test the availability of the Windows registry
