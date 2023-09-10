@@ -1,5 +1,9 @@
 ConcurrentDraw: changes log
 
+Version 3.3.9:
+• New identity has been applied;
+• Fixed some missing text tips
+
 Version 3.3.6:
 • Added the obvious URLs for videoguide and for text guide;
 • Settings window now able to save its position

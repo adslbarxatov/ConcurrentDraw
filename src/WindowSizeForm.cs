@@ -32,10 +32,10 @@ namespace RD_AAOW
 			{
 			get
 				{
-				return new Size (availableSizes[SizesCombo.SelectedIndex].X,
-					availableSizes[SizesCombo.SelectedIndex].Y);
+				return windowSize;
 				}
 			}
+		private Size windowSize = new Size (0, 0);
 
 		/// <summary>
 		/// Конструктор. Запускает форму выбора размера
@@ -46,13 +46,16 @@ namespace RD_AAOW
 			{
 			// Инициализация
 			InitializeComponent ();
-			this.AcceptButton = BOK;
-			this.CancelButton = BCancel;
 
 			this.Text = Localization.GetText ("CDP_WindowSize");
-			BOK.Text = Localization.GetText ("ConcurrentDrawParameters_BOK");
-			BCancel.Text = Localization.GetText ("ConcurrentDrawParameters_BCancel");
 
+			BOK.Text = Localization.GetDefaultText (LzDefaultTextValues.Button_OK);
+			this.AcceptButton = BOK;
+			
+			BCancel.Text = Localization.GetDefaultText (LzDefaultTextValues.Button_Cancel);
+			this.CancelButton = BCancel;
+
+			availableSizes.Clear ();
 			availableSizes.Add (new Point (640, 360));
 			availableSizes.Add (new Point (640, 480));
 			availableSizes.Add (new Point (800, 450));
@@ -65,7 +68,7 @@ namespace RD_AAOW
 			availableSizes.Add (new Point ((int)MaxWidth, (int)MaxHeight));
 
 			for (int i = 0; i < availableSizes.Count; i++)
-				SizesCombo.Items.Add (availableSizes[i].X.ToString () + " x " +
+				SizesCombo.Items.Add (availableSizes[i].X.ToString () + " × " +
 					availableSizes[i].Y.ToString () + " px");
 			SizesCombo.SelectedIndex = 0;
 
@@ -76,7 +79,10 @@ namespace RD_AAOW
 		// Выбор размера
 		private void BOK_Click (object sender, EventArgs e)
 			{
+			windowSize = new Size (availableSizes[SizesCombo.SelectedIndex].X,
+					availableSizes[SizesCombo.SelectedIndex].Y);
 			selected = true;
+
 			this.Close ();
 			}
 
