@@ -695,22 +695,22 @@ namespace RD_AAOW
 						//case LogoDrawerObjectTypes.Pictures:
 						//case LogoDrawerObjectTypes.RotatingPictures:
 						case LogoDrawerObjectTypes.Spheres:
-							objects[i] = new LogoDrawerSphere ((uint)this.Width, (uint)this.Height, logoCenterX, logoCenterY,
-								rnd, ldom);
+							objects[i] = new LogoDrawerSphere ((uint)this.Width, (uint)this.Height,
+								logoCenterX, logoCenterY,								rnd, ldom);
 							break;
 
 						case LogoDrawerObjectTypes.Polygons:
 						case LogoDrawerObjectTypes.Stars:
 						case LogoDrawerObjectTypes.RotatingPolygons:
 						case LogoDrawerObjectTypes.RotatingStars:
-							objects[i] = new LogoDrawerSquare ((uint)this.Width, (uint)this.Height, logoCenterX, logoCenterY,
-								rnd, ldom);
+							objects[i] = new LogoDrawerSquare ((uint)this.Width, (uint)this.Height,
+								logoCenterX, logoCenterY,								rnd, ldom);
 							break;
 
 						case LogoDrawerObjectTypes.Letters:
 						case LogoDrawerObjectTypes.RotatingLetters:
-							objects[i] = new LogoDrawerLetter ((uint)this.Width, (uint)this.Height, logoCenterX, logoCenterY,
-								rnd, ldom);
+							objects[i] = new LogoDrawerLetter ((uint)this.Width, (uint)this.Height,
+								logoCenterX, logoCenterY,								rnd, ldom);
 							break;
 						}
 					}
@@ -1084,7 +1084,8 @@ namespace RD_AAOW
 			if (VisualizationModesChecker.ContainsSGHGorWF (cdp.VisualizationMode))
 				{
 				// Получение текущего фрейма спектрограммы
-				firstBMP = ConcurrentDrawLib.CurrentSpectrogramFrame (!VisualizationModesChecker.ContainsSGonly (cdp.VisualizationMode));
+				firstBMP = ConcurrentDrawLib.CurrentSpectrogramFrame
+					(!VisualizationModesChecker.ContainsSGonly (cdp.VisualizationMode));
 
 				// Отрисовка фрейма
 				if (VisualizationModesChecker.ContainsSGonly (cdp.VisualizationMode))

@@ -1,5 +1,8 @@
 ConcurrentDraw: changes log
 
+Version 3.3.12:
+• Completed the process of version control unification
+
 Version 3.3.11:
 • Updates and fixes have been applied to the update polling mechanism, as well as to other auxiliary functions
 
