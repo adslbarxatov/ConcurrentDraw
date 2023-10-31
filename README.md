@@ -1,25 +1,20 @@
-# ConcurrentDraw v 3.3.11
-> PCC: 000B17FC2459AEF0
+# ConcurrentDraw
 
+## Description
 
-
-The sound and music visualization tool
-
-Утилита визуализации звука и музыки
-
-
-#
-
-This tool allows you to visualize audio data that comes from system’s output
+The sound and music visualization tool. The app allows you to visualize audio data that comes from system’s output
 (system mixer or speakers). All sound that you can play on your PC can be drawn.
-No additional codecs or applications. Just launch and behold!
+No additional codecs are required
 
-#
+&nbsp;
 
-Этот инструмент позволяет визуализировать аудиоданные из системного выхода
+
+
+## Описание
+
+Утилита визуализации звука и музыки. Этот инструмент позволяет визуализировать аудиоданные из системного выхода
 (микшера или динамиков). Любой звук, который можно воспроизвести на Вашем ПК,
-может быть нарисован. Никаких дополнительных кодеков или приложений. Просто
-запускаем и созерцаем!
+может быть нарисован. Никаких дополнительных кодеков при этом не требуется
 
 &nbsp;
 
