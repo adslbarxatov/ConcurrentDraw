@@ -1,6 +1,7 @@
 ConcurrentDraw: changes log
 
-Version 3.3.12:
+Version 3.3.13:
+• The offline quick help has been discontinued;
 • Completed the process of version control unification
 
 Version 3.3.11:

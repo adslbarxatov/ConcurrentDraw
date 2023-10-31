@@ -526,13 +526,18 @@ namespace RD_AAOW
 			}
 		private bool logoResetFlag = false;
 
-		// Метод отображает быструю справку по использованию
+		// Методы отображают быструю справку по использованию
 		private void BHelp_Click (object sender, EventArgs e)
 			{
 			ConcurrentDrawLogo cdl = new ConcurrentDrawLogo ();
 			cdl.Dispose ();
 
 			RDGenerics.ShowAbout (false);
+			}
+
+		private void BKeys_Click (object sender, EventArgs e)
+			{
+			RDGenerics.LocalizedMessageBox (RDMessageTypes.Success_Left, "HelpKeysText");
 			}
 
 		// Изменение языка интерфейса
