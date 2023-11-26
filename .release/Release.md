@@ -1,4 +1,3 @@
-_Changes for v 3.3.13_:
-- The offline quick help has been discontinued;
-- Completed the process of version control unification;
-- Screenshots will now be saved to the desktop
+_Changes for v 3.3.14_:
+- Added a new version of offline help;
+- Completed the process of version control unification
