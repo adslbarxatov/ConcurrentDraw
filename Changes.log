@@ -1,5 +1,11 @@
 ConcurrentDraw: changes log
 
+Version 3.4:
+• Core updates have been applied;
+• Fixed the background color reset;
+• Fixed some graphics issues;
+• Adjusted the library version control
+
 Version 3.3.14:
 • Added a new version of offline help
 

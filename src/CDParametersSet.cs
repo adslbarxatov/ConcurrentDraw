@@ -713,7 +713,7 @@ namespace RD_AAOW
 		/// <param name="SetName">Название настроек</param>
 		public void SaveSettings (string SetName)
 			{
-			if ((SetName == null) || (SetName == "") || (SetName == Localization.LanguageValueName) ||
+			if ((SetName == null) || (SetName == "") || (SetName == RDLocale.LanguageValueName) ||
 				(SetName == AboutForm.LastShownVersionKey))
 				return;
 

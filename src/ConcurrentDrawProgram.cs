@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Windows.Forms;
 
 namespace RD_AAOW
@@ -20,7 +19,7 @@ namespace RD_AAOW
 			Application.SetCompatibleTextRenderingDefault (false);
 
 			// Язык интерфейса и контроль XPUN
-			if (!Localization.IsXPUNClassAcceptable)
+			if (!RDLocale.IsXPUNClassAcceptable)
 				return;
 
 			// Проверка запуска единственной копии
@@ -28,6 +27,7 @@ namespace RD_AAOW
 				return;
 
 			// Проверка наличия обязательных компонентов
+			/*
 			for (int i = 0; i < ProgramDescription.AssemblyRequirements.Length; i++)
 				if (!File.Exists (RDGenerics.AppStartupPath + ProgramDescription.AssemblyRequirements[i]))
 					{
@@ -44,11 +44,14 @@ namespace RD_AAOW
 
 					return;
 					}
+			*/
+			if (!RDGenerics.CheckLibraries (ProgramDescription.AssemblyRequirements, true))
+				return;
 
 			// Проверка корреткности версии библиотеки CDLib.dll (BASS проверяется позже)
 			if (ConcurrentDrawLib.CDLibVersion != ProgramDescription.AssemblyLibVersion)
 				{
-				if (RDGenerics.MessageBox (RDMessageTypes.Question_Center,
+				/*if (RDGenerics.MessageBox (RDMessageTypes.Question_Center,
 					string.Format (Localization.GetText ("LibraryIsIncompatible"),
 					ProgramDescription.AssemblyRequirements[0], "(" + ConcurrentDrawLib.CDLibVersion + ") ",
 					" (" + ProgramDescription.AssemblyLibVersion + ")") +
@@ -58,7 +61,10 @@ namespace RD_AAOW
 					RDMessageButtons.ButtonOne)
 					{
 					AboutForm af = new AboutForm (null);
-					}
+					}*/
+				RDGenerics.MessageBox (RDMessageTypes.Error_Center,
+					string.Format (RDLocale.GetDefaultText (RDLDefaultTexts.MessageFormat_IncompatibleLibrary_Fmt),
+					ProgramDescription.AssemblyRequirementsCDL, ProgramDescription.AssemblyVersion));
 
 				return;
 				}

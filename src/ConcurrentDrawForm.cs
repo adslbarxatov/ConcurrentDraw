@@ -201,7 +201,7 @@ namespace RD_AAOW
 
 			this.Text = ProgramDescription.AssemblyTitle;
 			if (!RDGenerics.IsRegistryAccessible || !RDGenerics.IsStartupPathAccessible)
-				this.Text += Localization.GetDefaultText (LzDefaultTextValues.Message_LimitedFunctionality);
+				this.Text += RDLocale.GetDefaultText (RDLDefaultTexts.Message_LimitedFunctionality);
 
 			// Запрос параметров (при необходимости вызовет окно настроек)
 			cdp = new ConcurrentDrawParameters ((uint)this.Width, (uint)this.Height);
@@ -451,31 +451,31 @@ namespace RD_AAOW
 				{
 				case SoundStreamInitializationErrors.BASS_ERROR_ALREADY:
 				case SoundStreamInitializationErrors.BASS_ERROR_BUSY:
-					err = Localization.GetText ("BASS_ERROR_BUSY");
+					err = RDLocale.GetText ("BASS_ERROR_BUSY");
 					break;
 
 				case SoundStreamInitializationErrors.BASS_ERROR_NOTAVAIL:
-					err = Localization.GetText ("BASS_ERROR_NOTAVAIL");
+					err = RDLocale.GetText ("BASS_ERROR_NOTAVAIL");
 					break;
 
 				case SoundStreamInitializationErrors.BASS_ERROR_DEVICE:
-					err = Localization.GetText ("BASS_ERROR_DEVICE");
+					err = RDLocale.GetText ("BASS_ERROR_DEVICE");
 					break;
 
 				case SoundStreamInitializationErrors.BASS_ERROR_DRIVER:
-					err = Localization.GetText ("BASS_ERROR_DRIVER");
+					err = RDLocale.GetText ("BASS_ERROR_DRIVER");
 					break;
 
 				case SoundStreamInitializationErrors.BASS_ERROR_DX:
-					err = Localization.GetText ("BASS_ERROR_DX");
+					err = RDLocale.GetText ("BASS_ERROR_DX");
 					break;
 
 				case SoundStreamInitializationErrors.BASS_ERROR_FORMAT:
-					err = Localization.GetText ("BASS_ERROR_FORMAT");
+					err = RDLocale.GetText ("BASS_ERROR_FORMAT");
 					break;
 
 				case SoundStreamInitializationErrors.BASS_ERROR_MEM:
-					err = Localization.GetText ("BASS_ERROR_MEM");
+					err = RDLocale.GetText ("BASS_ERROR_MEM");
 					break;
 
 				default:
@@ -486,7 +486,7 @@ namespace RD_AAOW
 				case SoundStreamInitializationErrors.BASS_ERROR_NO3D:
 				case SoundStreamInitializationErrors.BASS_ERROR_UNKNOWN:
 					// Возникает при выборе стереомикшера при включённом микрофоне (почему-то)
-					err = Localization.GetText ("DeviceBehaviorIsInvalid");
+					err = RDLocale.GetText ("DeviceBehaviorIsInvalid");
 					result = 1;     // Запросить настройку приложения
 					break;
 
@@ -495,18 +495,18 @@ namespace RD_AAOW
 					throw new Exception ("Application failure. Debug required at point 2");
 
 				case SoundStreamInitializationErrors.BASS_InvalidDLLVersion:
-					err = string.Format (Localization.GetText ("LibraryIsIncompatible"),
+					err = string.Format (RDLocale.GetText ("LibraryIsIncompatible"),
 						ProgramDescription.AssemblyRequirements[1], "", "");
 					break;
 
 				case SoundStreamInitializationErrors.BASS_ERROR_FILEOPEN:
-					err = string.Format (Localization.GetText ("BASS_ERROR_FILEOPEN"),
+					err = string.Format (RDLocale.GetText ("BASS_ERROR_FILEOPEN"),
 						OFAudio.FileName);
 					break;
 
 				case SoundStreamInitializationErrors.BASS_ERROR_FILEFORM:
 				case SoundStreamInitializationErrors.BASS_ERROR_CODEC:
-					err = string.Format (Localization.GetText ("BASS_ERROR_CODEC"),
+					err = string.Format (RDLocale.GetText ("BASS_ERROR_CODEC"),
 						OFAudio.FileName);
 					break;
 
@@ -538,7 +538,7 @@ namespace RD_AAOW
 					break;
 
 				case SpectrogramInitializationErrors.NotEnoughMemory:
-					err = Localization.GetText ("BASS_ERROR_MEM");
+					err = RDLocale.GetText ("BASS_ERROR_MEM");
 					break;
 
 				default:
@@ -696,7 +696,7 @@ namespace RD_AAOW
 						//case LogoDrawerObjectTypes.RotatingPictures:
 						case LogoDrawerObjectTypes.Spheres:
 							objects[i] = new LogoDrawerSphere ((uint)this.Width, (uint)this.Height,
-								logoCenterX, logoCenterY,								rnd, ldom);
+								logoCenterX, logoCenterY, rnd, ldom);
 							break;
 
 						case LogoDrawerObjectTypes.Polygons:
@@ -704,13 +704,13 @@ namespace RD_AAOW
 						case LogoDrawerObjectTypes.RotatingPolygons:
 						case LogoDrawerObjectTypes.RotatingStars:
 							objects[i] = new LogoDrawerSquare ((uint)this.Width, (uint)this.Height,
-								logoCenterX, logoCenterY,								rnd, ldom);
+								logoCenterX, logoCenterY, rnd, ldom);
 							break;
 
 						case LogoDrawerObjectTypes.Letters:
 						case LogoDrawerObjectTypes.RotatingLetters:
 							objects[i] = new LogoDrawerLetter ((uint)this.Width, (uint)this.Height,
-								logoCenterX, logoCenterY,								rnd, ldom);
+								logoCenterX, logoCenterY, rnd, ldom);
 							break;
 						}
 					}
@@ -925,7 +925,8 @@ namespace RD_AAOW
 
 			// Отрисовка
 			if (VisualizationModesChecker.IsPerspective (cdp.VisualizationMode))
-				rad = (int)Math.Sqrt (this.Width * this.Width + this.Height * this.Height) / 2;     // Радиус для перспективы
+				// Радиус для перспективы
+				rad = (int)Math.Sqrt (this.Width * this.Width + this.Height * this.Height) / 2;
 
 			uint lim = 256;
 			if (cdp.VisualizationMode == VisualizationModes.Butterfly_histogram_with_vertical_symmetry)
@@ -942,14 +943,14 @@ namespace RD_AAOW
 					br = new SolidBrush (Color.FromArgb (63 + 2 * amp / 4,
 						ConcurrentDrawLib.GetColorFromPalette ((byte)(4 * amp / 5))));
 				else
-					br = new SolidBrush (Color.FromArgb (63 + 3 * amp / 4,
+					br = new SolidBrush (Color.FromArgb (15 * (1 + amp / 16),
 						ConcurrentDrawLib.GetColorFromPalette ((byte)(4 * amp / 5))));
 
 				// Определяем координаты линий 
 				if (VisualizationModesChecker.IsButterflyOrSnail (cdp.VisualizationMode))
 					{
 					// Радиус и углы поворота по индексу и общему вращению
-					rad = logo[1].Width / 4 + (int)((uint)(logo[1].Width * amp) / 256);
+					rad = logo[1].Width / 8 + (int)((uint)(logo[1].Width * amp) / 256);
 
 					angle1 = i / butterflyDensity;
 					angle2 = currentHistogramAngle;
@@ -1246,7 +1247,10 @@ namespace RD_AAOW
 					catch
 						{
 						RDGenerics.MessageBox (RDMessageTypes.Warning_Center,
-							Localization.GetFileProcessingMessage (ssFile, LzFileProcessingMessageTypes.Save_Failure));
+							/*Localization.GetFileProcessingMessage (ssFile, LzFileProcessingMessageTypes.Save_Failure)
+							*/
+							string.Format (RDLocale.GetDefaultText (RDLDefaultTexts.Message_SaveFailure_Fmt),
+							ssFile));
 						}
 					break;
 
@@ -1437,6 +1441,10 @@ namespace RD_AAOW
 			// Подготовка субтитров
 			subtitlesFonts[0] = new Font ("Arial Narrow", this.Width / 50, FontStyle.Bold);
 			subtitlesFonts[1] = new Font ("Arial", this.Width / 40, FontStyle.Bold);
+
+			// Сброс фона
+			firstFilling = true;
+			ApplyCumulativeEffect (VisualizationModesChecker.IsPerspective (cdp.VisualizationMode));
 
 			// Перезапуск алгоритма таймера
 			currentPhase = VisualizationPhases.LayersPrecache;

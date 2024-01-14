@@ -47,12 +47,12 @@ namespace RD_AAOW
 			// Инициализация
 			InitializeComponent ();
 
-			this.Text = Localization.GetText ("CDP_WindowSize");
+			this.Text = RDLocale.GetText ("CDP_WindowSize");
 
-			BOK.Text = Localization.GetDefaultText (LzDefaultTextValues.Button_OK);
+			BOK.Text = RDLocale.GetDefaultText (RDLDefaultTexts.Button_OK);
 			this.AcceptButton = BOK;
-			
-			BCancel.Text = Localization.GetDefaultText (LzDefaultTextValues.Button_Cancel);
+
+			BCancel.Text = RDLocale.GetDefaultText (RDLDefaultTexts.Button_Cancel);
 			this.CancelButton = BCancel;
 
 			availableSizes.Clear ();

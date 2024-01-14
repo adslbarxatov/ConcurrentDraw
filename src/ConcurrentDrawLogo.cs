@@ -54,12 +54,12 @@ namespace RD_AAOW
 			// Надпись
 			title = ProgramDescription.AssemblyTitle +
 #if DPMODULE
-				Localization.RN + ProgramDescription.AssemblyDescription +
+				RDLocale.RN + ProgramDescription.AssemblyDescription +
 #else
-				Localization.RNRN + ProgramDescription.AssemblyDescription +
-				Localization.RN + "by " + RDGenerics.AssemblyCopyright +
+				RDLocale.RNRN + ProgramDescription.AssemblyDescription +
+				RDLocale.RN + "by " + RDGenerics.AssemblyCopyright +
 #endif
-				Localization.RN + "Updated: " + ProgramDescription.AssemblyLastUpdate;
+				RDLocale.RN + "Updated: " + ProgramDescription.AssemblyLastUpdate;
 			sz = g.MeasureString (title, f);
 
 
