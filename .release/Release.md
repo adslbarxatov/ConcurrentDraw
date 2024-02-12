@@ -1,6 +1,6 @@
-_Changes for v 3.4_:
+_Changes for v 3.4.1_:
+- Added localized video guides;
+- Added own webpage;
 - Core updates have been applied;
 - Fixed the background color reset;
-- Fixed some graphics issues;
-- Adjusted the library version control;
-- Added a new version of offline help
+- Adjusted the library version control

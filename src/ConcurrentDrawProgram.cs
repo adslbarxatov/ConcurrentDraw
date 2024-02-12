@@ -63,8 +63,8 @@ namespace RD_AAOW
 					AboutForm af = new AboutForm (null);
 					}*/
 				RDGenerics.MessageBox (RDMessageTypes.Error_Center,
-					string.Format (RDLocale.GetDefaultText (RDLDefaultTexts.MessageFormat_IncompatibleLibrary_Fmt),
-					ProgramDescription.AssemblyRequirementsCDL, ProgramDescription.AssemblyVersion));
+					string.Format (RDLocale.GetDefaultText (RDLDefaultTexts.MessageFormat_WrongVersion_Fmt),
+					ProgramDescription.AssemblyRequirementsCDL));
 
 				return;
 				}

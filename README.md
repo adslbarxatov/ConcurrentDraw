@@ -2,9 +2,8 @@
 
 ## Description
 
-The sound and music visualization tool. The app allows you to visualize audio data that comes from system’s output
-(system mixer or speakers). All sound that you can play on your PC can be drawn.
-No additional codecs are required
+The sound and music visualization tool.
+More info you can find on [its own page](https://adslbarxatov.github.io/ConcurrentDraw)
 
 &nbsp;
 
@@ -12,9 +11,8 @@ No additional codecs are required
 
 ## Описание
 
-Утилита визуализации звука и музыки. Этот инструмент позволяет визуализировать аудиоданные из системного выхода
-(микшера или динамиков). Любой звук, который можно воспроизвести на Вашем ПК,
-может быть нарисован. Никаких дополнительных кодеков при этом не требуется
+Утилита визуализации звука и музыки.
+Больше информации можно найти на [его отдельной странице](https://adslbarxatov.github.io/ConcurrentDraw/ru)
 
 &nbsp;
 
