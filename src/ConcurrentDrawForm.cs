@@ -1247,8 +1247,6 @@ namespace RD_AAOW
 					catch
 						{
 						RDGenerics.MessageBox (RDMessageTypes.Warning_Center,
-							/*Localization.GetFileProcessingMessage (ssFile, LzFileProcessingMessageTypes.Save_Failure)
-							*/
 							string.Format (RDLocale.GetDefaultText (RDLDefaultTexts.Message_SaveFailure_Fmt),
 							ssFile));
 						}

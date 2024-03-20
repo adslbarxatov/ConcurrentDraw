@@ -27,41 +27,12 @@ namespace RD_AAOW
 				return;
 
 			// Проверка наличия обязательных компонентов
-			/*
-			for (int i = 0; i < ProgramDescription.AssemblyRequirements.Length; i++)
-				if (!File.Exists (RDGenerics.AppStartupPath + ProgramDescription.AssemblyRequirements[i]))
-					{
-					if (RDGenerics.MessageBox (RDMessageTypes.Question_Center,
-						string.Format (Localization.GetText ("LibraryNotFound"),
-						ProgramDescription.AssemblyRequirements[i]) +
-						Localization.GetText ("LibraryNotFound_Lib" + i.ToString ()),
-						Localization.GetDefaultText (LzDefaultTextValues.Button_Yes),
-						Localization.GetDefaultText (LzDefaultTextValues.Button_No)) ==
-						RDMessageButtons.ButtonOne)
-						{
-						AboutForm af = new AboutForm (i == 0 ? null : "http://un4seen.com");
-						}
-
-					return;
-					}
-			*/
 			if (!RDGenerics.CheckLibraries (ProgramDescription.AssemblyRequirements, true))
 				return;
 
 			// Проверка корреткности версии библиотеки CDLib.dll (BASS проверяется позже)
 			if (ConcurrentDrawLib.CDLibVersion != ProgramDescription.AssemblyLibVersion)
 				{
-				/*if (RDGenerics.MessageBox (RDMessageTypes.Question_Center,
-					string.Format (Localization.GetText ("LibraryIsIncompatible"),
-					ProgramDescription.AssemblyRequirements[0], "(" + ConcurrentDrawLib.CDLibVersion + ") ",
-					" (" + ProgramDescription.AssemblyLibVersion + ")") +
-					Localization.GetText ("LibraryNotFound_Lib0"),
-					Localization.GetDefaultText (LzDefaultTextValues.Button_Yes),
-					Localization.GetDefaultText (LzDefaultTextValues.Button_No)) ==
-					RDMessageButtons.ButtonOne)
-					{
-					AboutForm af = new AboutForm (null);
-					}*/
 				RDGenerics.MessageBox (RDMessageTypes.Error_Center,
 					string.Format (RDLocale.GetDefaultText (RDLDefaultTexts.MessageFormat_WrongVersion_Fmt),
 					ProgramDescription.AssemblyRequirementsCDL));

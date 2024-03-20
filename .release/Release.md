@@ -1,6 +1,4 @@
-_Changes for v 3.4.1_:
+_Changes for v 3.4.2_:
+- Update for XPUN has been applied;
 - Added localized video guides;
-- Added own webpage;
-- Core updates have been applied;
-- Fixed the background color reset;
-- Adjusted the library version control
+- Added the own webpage
