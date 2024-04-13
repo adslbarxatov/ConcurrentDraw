@@ -660,7 +660,7 @@ namespace RD_AAOW
 	public class LogoDrawerSphere: IDisposable, ILogoDrawerObject
 		{
 		// Переменные и константы
-		private Random rnd;             // ГПСЧ (обязательно извне)
+		/*private Ran dom rnd;             // ГПСЧ (обязательно извне)*/
 		private int maxFluctuation;     // Максимальный дребезг скорости
 		private int endX;               // Конечная позиция по горизонтали
 		private int endY;               // Конечная позиция по вертикали
@@ -737,32 +737,33 @@ namespace RD_AAOW
 		/// </summary>
 		/// <param name="ScreenWidth">Ширина экрана</param>
 		/// <param name="ScreenHeight">Высота экрана</param>
-		/// <param name="Randomizer">Внешний ГПСЧ</param>
 		/// <param name="Metrics">Метрики генерации объекта</param>
 		/// <param name="ScreenCenterX">Абсцисса изменённого центра экрана</param>
 		/// <param name="ScreenCenterY">Ордината изменённого центра экрана</param>
 		public LogoDrawerSphere (uint ScreenWidth, uint ScreenHeight, uint ScreenCenterX, uint ScreenCenterY,
-			Random Randomizer, LogoDrawerObjectMetrics Metrics)
+			/*Ran dom Ran domizer,*/ LogoDrawerObjectMetrics Metrics)
 			{
 			// Контроль
 			LogoDrawerObjectMetrics metrics = Metrics; //LogoDrawerSupport.AlingMetrics (Metrics);
-			if (Randomizer == null)
-				return;
+			/*if (Ran domizer == null)
+				return;*/
 
 			// Получение изображения
-			rnd = Randomizer;
+			/*rnd = Ran domizer;*/
 			maxFluctuation = (int)metrics.MaxSpeedFluctuation;
-			ρ = rnd.Next ((int)metrics.MinSize, (int)metrics.MaxSize);
+			ρ = RDGenerics.RND.Next ((int)metrics.MinSize, (int)metrics.MaxSize);
 
-			objectBrush = new SolidBrush (Color.FromArgb (10, rnd.Next (metrics.MinRed, metrics.MaxRed + 1),
-				rnd.Next (metrics.MinGreen, metrics.MaxGreen + 1), rnd.Next (metrics.MinBlue, metrics.MaxBlue + 1)));
+			objectBrush = new SolidBrush (Color.FromArgb (10,
+				RDGenerics.RND.Next (metrics.MinRed, metrics.MaxRed + 1),
+				RDGenerics.RND.Next (metrics.MinGreen, metrics.MaxGreen + 1),
+				RDGenerics.RND.Next (metrics.MinBlue, metrics.MaxBlue + 1)));
 
 			// Получение координат
 			switch (metrics.StartupPosition)
 				{
 				case LogoDrawerObjectStartupPositions.Left:
 				case LogoDrawerObjectStartupPositions.Right:
-					speedX = rnd.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
+					speedX = RDGenerics.RND.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
 					speedY = 0;
 
 					if (LogoDrawerSupport.IsLeft (metrics.StartupPosition))
@@ -777,13 +778,13 @@ namespace RD_AAOW
 						speedX *= -1;
 						}
 
-					endY = y = rnd.Next ((int)(ScreenHeight + ρ)) - (int)(ρ / 2);
+					endY = y = RDGenerics.RND.Next ((int)(ScreenHeight + ρ)) - (int)(ρ / 2);
 					break;
 
 				case LogoDrawerObjectStartupPositions.Top:
 				case LogoDrawerObjectStartupPositions.Bottom:
 					speedX = 0;
-					speedY = rnd.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
+					speedY = RDGenerics.RND.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
 
 					if (metrics.StartupPosition == LogoDrawerObjectStartupPositions.Top)
 						{
@@ -797,7 +798,7 @@ namespace RD_AAOW
 						speedY *= -1;
 						}
 
-					endX = x = rnd.Next ((int)(ScreenWidth + ρ)) - (int)(ρ / 2);
+					endX = x = RDGenerics.RND.Next ((int)(ScreenWidth + ρ)) - (int)(ρ / 2);
 					break;
 
 				case LogoDrawerObjectStartupPositions.LeftTop:
@@ -806,8 +807,8 @@ namespace RD_AAOW
 				case LogoDrawerObjectStartupPositions.RightBottom:
 					while ((speedX == 0) && (speedY == 0))
 						{
-						speedX = rnd.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
-						speedY = rnd.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
+						speedX = RDGenerics.RND.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
+						speedY = RDGenerics.RND.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
 						}
 
 					if ((metrics.StartupPosition == LogoDrawerObjectStartupPositions.LeftTop) ||
@@ -843,8 +844,8 @@ namespace RD_AAOW
 				default:
 					while ((speedX == 0) && (speedY == 0))
 						{
-						speedX = rnd.Next (-(int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
-						speedY = rnd.Next (-(int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
+						speedX = RDGenerics.RND.Next (-(int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
+						speedY = RDGenerics.RND.Next (-(int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
 
 						if (metrics.MaxSpeed == 0)
 							break;
@@ -875,8 +876,8 @@ namespace RD_AAOW
 						}
 					else
 						{
-						x = rnd.Next ((int)(ScreenWidth + ρ)) - (int)(ρ / 2);
-						y = rnd.Next ((int)(ScreenHeight + ρ)) - (int)(ρ / 2);
+						x = RDGenerics.RND.Next ((int)(ScreenWidth + ρ)) - (int)(ρ / 2);
+						y = RDGenerics.RND.Next ((int)(ScreenHeight + ρ)) - (int)(ρ / 2);
 						}
 
 					if (metrics.StartupPosition != LogoDrawerObjectStartupPositions.ToCenterRandom)
@@ -910,10 +911,10 @@ namespace RD_AAOW
 				return;
 
 			// Смещение  с ускорением
-			x += ((int)speedX + rnd.Next (-maxFluctuation, maxFluctuation + 1));
+			x += ((int)speedX + RDGenerics.RND.Next (-maxFluctuation, maxFluctuation + 1));
 			speedX += Acceleration * initSpeedX / 10.0f;
 
-			y += ((int)speedY + rnd.Next (-maxFluctuation, maxFluctuation + 1));
+			y += ((int)speedY + RDGenerics.RND.Next (-maxFluctuation, maxFluctuation + 1));
 			speedY += Acceleration * initSpeedY / 10.0f;    // Пропорциональное смещение
 
 			if ((Enlarging > 0) || (Enlarging < 0) && (ρ > -Enlarging + 2))
@@ -951,7 +952,7 @@ namespace RD_AAOW
 	public class LogoDrawerSquare: IDisposable, ILogoDrawerObject
 		{
 		// Переменные и константы
-		private Random rnd;             // ГПСЧ (обязательно извне)
+		/*private Ran dom rnd;             // ГПСЧ (обязательно извне)*/
 		private int maxFluctuation;     // Максимальный дребезг скорости
 		private float speedX, initSpeedX;   // Скорость горизонтального смещения, начальная скорость
 		private float speedY, initSpeedY;   // Скорость вертикального смещения, начальная скорость
@@ -1030,30 +1031,29 @@ namespace RD_AAOW
 		/// </summary>
 		/// <param name="ScreenWidth">Ширина экрана</param>
 		/// <param name="ScreenHeight">Высота экрана</param>
-		/// <param name="Randomizer">Внешний ГПСЧ</param>
 		/// <param name="Metrics">Метрики генерации объекта</param>
 		/// <param name="ScreenCenterX">Абсцисса изменённого центра экрана</param>
 		/// <param name="ScreenCenterY">Ордината изменённого центра экрана</param>
 		public LogoDrawerSquare (uint ScreenWidth, uint ScreenHeight, uint ScreenCenterX, uint ScreenCenterY,
-			Random Randomizer, LogoDrawerObjectMetrics Metrics)
+			/*Ran dom Ran domizer,*/ LogoDrawerObjectMetrics Metrics)
 			{
 			// Контроль
 			LogoDrawerObjectMetrics metrics = Metrics;  // LogoDrawerSupport.AlingMetrics (Metrics);
-			if (Randomizer == null)
-				return;
+			/*if (Ran domizer == null)
+				return;*/
 
 			// Генерация параметров изображения
-			rnd = Randomizer;
+			/*rnd = Ran domizer;*/
 			star = metrics.AsStars;
 			rotation = metrics.Rotation;
 			sidesCount = metrics.PolygonsSidesCount;
-			ρ = rnd.Next ((int)metrics.MinSize, (int)metrics.MaxSize + 1);
+			ρ = RDGenerics.RND.Next ((int)metrics.MinSize, (int)metrics.MaxSize + 1);
 
 			if (rotation)
 				{
-				φ = rnd.Next (0, 360);
-				speedOfRotation = rnd.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
-				speedOfRotation *= ((rnd.Next (2) == 0) ? -1 : 1);
+				φ = RDGenerics.RND.Next (0, 360);
+				speedOfRotation = RDGenerics.RND.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
+				speedOfRotation *= ((RDGenerics.RND.Next (2) == 0) ? -1 : 1);
 				}
 			else
 				{
@@ -1063,15 +1063,17 @@ namespace RD_AAOW
 
 			maxFluctuation = (int)metrics.MaxSpeedFluctuation;
 
-			objectBrush = new SolidBrush (Color.FromArgb (255, rnd.Next (metrics.MinRed, metrics.MaxRed + 1),
-				rnd.Next (metrics.MinGreen, metrics.MaxGreen + 1), rnd.Next (metrics.MinBlue, metrics.MaxBlue + 1)));
+			objectBrush = new SolidBrush (Color.FromArgb (255,
+				RDGenerics.RND.Next (metrics.MinRed, metrics.MaxRed + 1),
+				RDGenerics.RND.Next (metrics.MinGreen, metrics.MaxGreen + 1),
+				RDGenerics.RND.Next (metrics.MinBlue, metrics.MaxBlue + 1)));
 
 			// Получение координат
 			switch (metrics.StartupPosition)
 				{
 				case LogoDrawerObjectStartupPositions.Left:
 				case LogoDrawerObjectStartupPositions.Right:
-					speedX = rnd.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
+					speedX = RDGenerics.RND.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
 					speedY = 0;
 
 					if (LogoDrawerSupport.IsLeft (metrics.StartupPosition))
@@ -1086,13 +1088,13 @@ namespace RD_AAOW
 						speedX *= -1;
 						}
 
-					endY = y = rnd.Next ((int)(ScreenHeight + 2 * ρ)) - (int)ρ;
+					endY = y = RDGenerics.RND.Next ((int)(ScreenHeight + 2 * ρ)) - (int)ρ;
 					break;
 
 				case LogoDrawerObjectStartupPositions.Top:
 				case LogoDrawerObjectStartupPositions.Bottom:
 					speedX = 0;
-					speedY = rnd.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
+					speedY = RDGenerics.RND.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
 
 					if (metrics.StartupPosition == LogoDrawerObjectStartupPositions.Top)
 						{
@@ -1106,7 +1108,7 @@ namespace RD_AAOW
 						speedY *= -1;
 						}
 
-					endX = x = rnd.Next ((int)(ScreenWidth + 2 * ρ)) - (int)ρ;
+					endX = x = RDGenerics.RND.Next ((int)(ScreenWidth + 2 * ρ)) - (int)ρ;
 					break;
 
 				case LogoDrawerObjectStartupPositions.LeftTop:
@@ -1115,8 +1117,8 @@ namespace RD_AAOW
 				case LogoDrawerObjectStartupPositions.RightBottom:
 					while ((speedX == 0) && (speedY == 0))
 						{
-						speedX = rnd.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
-						speedY = rnd.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
+						speedX = RDGenerics.RND.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
+						speedY = RDGenerics.RND.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
 						}
 
 					if ((metrics.StartupPosition == LogoDrawerObjectStartupPositions.LeftTop) ||
@@ -1152,8 +1154,8 @@ namespace RD_AAOW
 				default:
 					while ((speedX == 0) && (speedY == 0))
 						{
-						speedX = rnd.Next (-(int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
-						speedY = rnd.Next (-(int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
+						speedX = RDGenerics.RND.Next (-(int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
+						speedY = RDGenerics.RND.Next (-(int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
 
 						if (metrics.MaxSpeed == 0)
 							break;
@@ -1184,8 +1186,8 @@ namespace RD_AAOW
 						}
 					else
 						{
-						x = rnd.Next ((int)(ScreenWidth + 2 * ρ)) - (int)ρ;
-						y = rnd.Next ((int)(ScreenHeight + 2 * ρ)) - (int)ρ;
+						x = RDGenerics.RND.Next ((int)(ScreenWidth + 2 * ρ)) - (int)ρ;
+						y = RDGenerics.RND.Next ((int)(ScreenHeight + 2 * ρ)) - (int)ρ;
 						}
 
 					if (metrics.StartupPosition != LogoDrawerObjectStartupPositions.ToCenterRandom)
@@ -1218,10 +1220,10 @@ namespace RD_AAOW
 				return;
 
 			// Смещение  с ускорением
-			x += ((int)speedX + rnd.Next (-maxFluctuation, maxFluctuation + 1));
+			x += ((int)speedX + RDGenerics.RND.Next (-maxFluctuation, maxFluctuation + 1));
 			speedX += Acceleration * initSpeedX / 10.0f;
 
-			y += ((int)speedY + rnd.Next (-maxFluctuation, maxFluctuation + 1));
+			y += ((int)speedY + RDGenerics.RND.Next (-maxFluctuation, maxFluctuation + 1));
 			speedY += Acceleration * initSpeedY / 10.0f;
 
 			if (rotation)
@@ -1282,7 +1284,7 @@ namespace RD_AAOW
 	public class LogoDrawerLetter: IDisposable, ILogoDrawerObject
 		{
 		// Переменные и константы
-		private Random rnd;             // ГПСЧ (обязательно извне)
+		/*private Ran dom rnd;             // ГПСЧ (обязательно извне)*/
 		private int maxFluctuation;     // Максимальный дребезг скорости
 		private float speedX, initSpeedX;   // Скорость горизонтального смещения, начальная скорость
 		private float speedY, initSpeedY;   // Скорость вертикального смещения, начальная скорость
@@ -1356,26 +1358,25 @@ namespace RD_AAOW
 		/// </summary>
 		/// <param name="ScreenWidth">Ширина экрана</param>
 		/// <param name="ScreenHeight">Высота экрана</param>
-		/// <param name="Randomizer">Внешний ГПСЧ</param>
 		/// <param name="Metrics">Метрики генерации объекта</param>
 		/// <param name="ScreenCenterX">Абсцисса изменённого центра экрана</param>
 		/// <param name="ScreenCenterY">Ордината изменённого центра экрана</param>
 		public LogoDrawerLetter (uint ScreenWidth, uint ScreenHeight, uint ScreenCenterX, uint ScreenCenterY,
-			Random Randomizer, LogoDrawerObjectMetrics Metrics)
+			/*Ran dom Ran domizer,*/ LogoDrawerObjectMetrics Metrics)
 			{
 			// Контроль
 			LogoDrawerObjectMetrics metrics = Metrics;  // LogoDrawerSupport.AlingMetrics (Metrics);
-			if (Randomizer == null)
-				return;
+			/*if (Ran domizer == null)
+				return;*/
 
 			// Генерация параметров изображения
-			rnd = Randomizer;
+			/*rnd = Ran domizer;*/
 
-			φ = rnd.Next (0, 360);
+			φ = RDGenerics.RND.Next (0, 360);
 			if (metrics.Rotation)
 				{
-				speedOfRotation = rnd.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
-				speedOfRotation *= ((rnd.Next (2) == 0) ? -1 : 1);
+				speedOfRotation = RDGenerics.RND.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
+				speedOfRotation *= ((RDGenerics.RND.Next (2) == 0) ? -1 : 1);
 				}
 			else
 				{
@@ -1384,15 +1385,17 @@ namespace RD_AAOW
 			maxFluctuation = (int)metrics.MaxSpeedFluctuation;
 
 			// Генерация изображения
-			SolidBrush sb = new SolidBrush (Color.FromArgb (rnd.Next (128, 256), rnd.Next (metrics.MinRed, metrics.MaxRed + 1),
-				rnd.Next (metrics.MinGreen, metrics.MaxGreen + 1), rnd.Next (metrics.MinBlue, metrics.MaxBlue + 1)));
-			int size = rnd.Next ((int)metrics.MinSize, (int)metrics.MaxSize + 1);
+			SolidBrush sb = new SolidBrush (Color.FromArgb (RDGenerics.RND.Next (128, 256),
+				RDGenerics.RND.Next (metrics.MinRed, metrics.MaxRed + 1),
+				RDGenerics.RND.Next (metrics.MinGreen, metrics.MaxGreen + 1),
+				RDGenerics.RND.Next (metrics.MinBlue, metrics.MaxBlue + 1)));
+			int size = RDGenerics.RND.Next ((int)metrics.MinSize, (int)metrics.MaxSize + 1);
 
 			sourceImage = new Bitmap (size * 2, size * 2);
 			Graphics g = Graphics.FromImage (sourceImage);
 
 			Font f = new Font ("Arial Black", size, FontStyle.Bold);
-			string s = Encoding.GetEncoding (1251).GetString (new byte[] { (byte)rnd.Next (192, 192 + 32) });
+			string s = Encoding.GetEncoding (1251).GetString (new byte[] { (byte)RDGenerics.RND.Next (192, 192 + 32) });
 			SizeF sz = g.MeasureString (s, f);
 
 			g.DrawString (s, f, sb, (sourceImage.Width - sz.Width) / 2, (sourceImage.Height - sz.Height) / 2);
@@ -1406,7 +1409,7 @@ namespace RD_AAOW
 				{
 				case LogoDrawerObjectStartupPositions.Left:
 				case LogoDrawerObjectStartupPositions.Right:
-					speedX = rnd.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
+					speedX = RDGenerics.RND.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
 					speedY = 0;
 
 					if (LogoDrawerSupport.IsLeft (metrics.StartupPosition))
@@ -1421,13 +1424,13 @@ namespace RD_AAOW
 						speedX *= -1;
 						}
 
-					endY = y = rnd.Next ((int)ScreenHeight + sourceImage.Height) - sourceImage.Height / 2;
+					endY = y = RDGenerics.RND.Next ((int)ScreenHeight + sourceImage.Height) - sourceImage.Height / 2;
 					break;
 
 				case LogoDrawerObjectStartupPositions.Top:
 				case LogoDrawerObjectStartupPositions.Bottom:
 					speedX = 0;
-					speedY = rnd.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
+					speedY = RDGenerics.RND.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
 
 					if (metrics.StartupPosition == LogoDrawerObjectStartupPositions.Top)
 						{
@@ -1441,7 +1444,7 @@ namespace RD_AAOW
 						speedY *= -1;
 						}
 
-					endX = x = rnd.Next ((int)ScreenWidth + sourceImage.Width) - sourceImage.Width / 2;
+					endX = x = RDGenerics.RND.Next ((int)ScreenWidth + sourceImage.Width) - sourceImage.Width / 2;
 					break;
 
 				case LogoDrawerObjectStartupPositions.LeftTop:
@@ -1450,8 +1453,8 @@ namespace RD_AAOW
 				case LogoDrawerObjectStartupPositions.RightBottom:
 					while ((speedX == 0) && (speedY == 0))
 						{
-						speedX = rnd.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
-						speedY = rnd.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
+						speedX = RDGenerics.RND.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
+						speedY = RDGenerics.RND.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
 						}
 
 					if ((metrics.StartupPosition == LogoDrawerObjectStartupPositions.LeftTop) ||
@@ -1487,8 +1490,8 @@ namespace RD_AAOW
 				default:
 					while ((speedX == 0) && (speedY == 0))
 						{
-						speedX = rnd.Next (-(int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
-						speedY = rnd.Next (-(int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
+						speedX = RDGenerics.RND.Next (-(int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
+						speedY = RDGenerics.RND.Next (-(int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
 
 						if (metrics.MaxSpeed == 0)
 							break;
@@ -1519,8 +1522,8 @@ namespace RD_AAOW
 						}
 					else
 						{
-						x = rnd.Next ((int)ScreenWidth + sourceImage.Width) - sourceImage.Width / 2;
-						y = rnd.Next ((int)ScreenHeight + sourceImage.Height) - sourceImage.Height / 2;
+						x = RDGenerics.RND.Next ((int)ScreenWidth + sourceImage.Width) - sourceImage.Width / 2;
+						y = RDGenerics.RND.Next ((int)ScreenHeight + sourceImage.Height) - sourceImage.Height / 2;
 						}
 
 					if (metrics.StartupPosition != LogoDrawerObjectStartupPositions.ToCenterRandom)
@@ -1554,10 +1557,10 @@ namespace RD_AAOW
 				return;
 
 			// Смещение  с ускорением
-			x += ((int)speedX + rnd.Next (-maxFluctuation, maxFluctuation + 1));
+			x += ((int)speedX + RDGenerics.RND.Next (-maxFluctuation, maxFluctuation + 1));
 			speedX += Acceleration * initSpeedX / 10.0f;
 
-			y += ((int)speedY + rnd.Next (-maxFluctuation, maxFluctuation + 1));
+			y += ((int)speedY + RDGenerics.RND.Next (-maxFluctuation, maxFluctuation + 1));
 			speedY += Acceleration * initSpeedY / 10.0f;
 
 			φ += speedOfRotation;
@@ -1591,7 +1594,7 @@ namespace RD_AAOW
 	public class LogoDrawerPicture: IDisposable, ILogoDrawerObject
 		{
 		// Переменные и константы
-		private Random rnd;             // ГПСЧ (обязательно извне)
+		/*private Ran dom rnd;             // ГПСЧ (обязательно извне)*/
 		private int maxFluctuation;     // Максимальный дребезг скорости
 		private float speedX, initSpeedX;   // Скорость горизонтального смещения, начальная скорость
 		private float speedY, initSpeedY;   // Скорость вертикального смещения, начальная скорость
@@ -1665,27 +1668,26 @@ namespace RD_AAOW
 		/// </summary>
 		/// <param name="ScreenWidth">Ширина экрана</param>
 		/// <param name="ScreenHeight">Высота экрана</param>
-		/// <param name="Randomizer">Внешний ГПСЧ</param>
 		/// <param name="Metrics">Метрики генерации объекта</param>
 		/// <param name="PicturesPath">Директория с изображениями</param>
 		/// <param name="ScreenCenterX">Абсцисса изменённого центра экрана</param>
 		/// <param name="ScreenCenterY">Ордината изменённого центра экрана</param>
 		public LogoDrawerPicture (uint ScreenWidth, uint ScreenHeight, uint ScreenCenterX, uint ScreenCenterY,
-			Random Randomizer, LogoDrawerObjectMetrics Metrics, string PicturesPath)
+			/*Ran dom Ran domizer,*/ LogoDrawerObjectMetrics Metrics, string PicturesPath)
 			{
 			// Контроль
 			LogoDrawerObjectMetrics metrics = Metrics;  // LogoDrawerSupport.AlingMetrics (Metrics);
-			if (Randomizer == null)
-				return;
+			/*if (Ran domizer == null)
+				return;*/
 
 			// Генерация параметров изображения
-			rnd = Randomizer;
+			/*rnd = Ran domizer;*/
 
 			if (metrics.Rotation)
 				{
-				speedOfRotation = rnd.Next ((int)metrics.MinSpeed / 4, (int)metrics.MaxSpeed / 4 + 1);
-				speedOfRotation *= ((rnd.Next (2) == 0) ? -1 : 1);
-				φ = rnd.Next (0, 360);
+				speedOfRotation = RDGenerics.RND.Next ((int)metrics.MinSpeed / 4, (int)metrics.MaxSpeed / 4 + 1);
+				speedOfRotation *= ((RDGenerics.RND.Next (2) == 0) ? -1 : 1);
+				φ = RDGenerics.RND.Next (0, 360);
 				}
 			else
 				{
@@ -1699,8 +1701,10 @@ namespace RD_AAOW
 			try
 				{
 				string[] files = Directory.GetFiles (PicturesPath);
-				Bitmap b = (Bitmap)Bitmap.FromFile (files[(files.Length > 1) ? rnd.Next (files.Length) : 0]);
-				int size = rnd.Next ((int)metrics.MinSize, (int)metrics.MaxSize);
+				Bitmap b = (Bitmap)Bitmap.FromFile (files[(files.Length > 1) ?
+					RDGenerics.RND.Next (files.Length) : 0]);
+
+				int size = RDGenerics.RND.Next ((int)metrics.MinSize, (int)metrics.MaxSize);
 				Bitmap b2 = new Bitmap (b, (int)((double)size * (double)b.Width / (double)b.Height), size);
 
 				sourceImage = new Bitmap (2 * b2.Width, 2 * b2.Height);
@@ -1722,7 +1726,7 @@ namespace RD_AAOW
 				{
 				case LogoDrawerObjectStartupPositions.Left:
 				case LogoDrawerObjectStartupPositions.Right:
-					speedX = rnd.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
+					speedX = RDGenerics.RND.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
 					speedY = 0;
 
 					if (LogoDrawerSupport.IsLeft (metrics.StartupPosition))
@@ -1737,13 +1741,14 @@ namespace RD_AAOW
 						speedX *= -1;
 						}
 
-					endY = y = rnd.Next ((int)ScreenHeight + sourceImage.Height) - sourceImage.Height / 2;
+					endY = y = RDGenerics.RND.Next ((int)ScreenHeight + sourceImage.Height) -
+						sourceImage.Height / 2;
 					break;
 
 				case LogoDrawerObjectStartupPositions.Top:
 				case LogoDrawerObjectStartupPositions.Bottom:
 					speedX = 0;
-					speedY = rnd.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
+					speedY = RDGenerics.RND.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
 
 					if (metrics.StartupPosition == LogoDrawerObjectStartupPositions.Top)
 						{
@@ -1757,7 +1762,8 @@ namespace RD_AAOW
 						speedY *= -1;
 						}
 
-					endX = x = rnd.Next ((int)ScreenWidth + sourceImage.Width) - sourceImage.Width / 2;
+					endX = x = RDGenerics.RND.Next ((int)ScreenWidth + sourceImage.Width) -
+						sourceImage.Width / 2;
 					break;
 
 				case LogoDrawerObjectStartupPositions.LeftTop:
@@ -1766,8 +1772,8 @@ namespace RD_AAOW
 				case LogoDrawerObjectStartupPositions.RightBottom:
 					while ((speedX == 0) && (speedY == 0))
 						{
-						speedX = rnd.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
-						speedY = rnd.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
+						speedX = RDGenerics.RND.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
+						speedY = RDGenerics.RND.Next ((int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
 						}
 
 					if ((metrics.StartupPosition == LogoDrawerObjectStartupPositions.LeftTop) ||
@@ -1803,8 +1809,8 @@ namespace RD_AAOW
 				default:
 					while ((speedX == 0) && (speedY == 0))
 						{
-						speedX = rnd.Next (-(int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
-						speedY = rnd.Next (-(int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
+						speedX = RDGenerics.RND.Next (-(int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
+						speedY = RDGenerics.RND.Next (-(int)metrics.MinSpeed, (int)metrics.MaxSpeed + 1);
 
 						if (metrics.MaxSpeed == 0)
 							break;
@@ -1835,8 +1841,8 @@ namespace RD_AAOW
 						}
 					else
 						{
-						x = rnd.Next ((int)ScreenWidth + sourceImage.Width) - sourceImage.Width / 2;
-						y = rnd.Next ((int)ScreenHeight + sourceImage.Height) - sourceImage.Height / 2;
+						x = RDGenerics.RND.Next ((int)ScreenWidth + sourceImage.Width) - sourceImage.Width / 2;
+						y = RDGenerics.RND.Next ((int)ScreenHeight + sourceImage.Height) - sourceImage.Height / 2;
 						}
 
 					if (metrics.StartupPosition != LogoDrawerObjectStartupPositions.ToCenterRandom)
@@ -1870,10 +1876,10 @@ namespace RD_AAOW
 				return;
 
 			// Смещение  с ускорением
-			x += ((int)speedX + rnd.Next (-maxFluctuation, maxFluctuation + 1));
+			x += ((int)speedX + RDGenerics.RND.Next (-maxFluctuation, maxFluctuation + 1));
 			speedX += Acceleration * initSpeedX / 10.0f;
 
-			y += ((int)speedY + rnd.Next (-maxFluctuation, maxFluctuation + 1));
+			y += ((int)speedY + RDGenerics.RND.Next (-maxFluctuation, maxFluctuation + 1));
 			speedY += Acceleration * initSpeedY / 10.0f;
 
 			φ += speedOfRotation;

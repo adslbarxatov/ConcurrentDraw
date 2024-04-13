@@ -46,8 +46,8 @@ namespace RD_AAOW
 		// Счётчик шагов отрисовки
 		private uint steps = 0;
 
-		// ГПСЧ
-		private Random rnd = new Random ();
+		/* ГПСЧ
+		private Ran dom rnd = new Ran dom ();*/
 
 		// Параметры работы программы
 		private ConcurrentDrawParameters cdp;
@@ -677,7 +677,7 @@ namespace RD_AAOW
 
 			// Фиктивная инициализация
 			if (objects.Count < cdp.ParticlesMetrics.ObjectsCount)
-				objects.Add (new LogoDrawerLetter (0, 0, logoCenterX, logoCenterY, null, ldom));
+				objects.Add (new LogoDrawerLetter (0, 0, logoCenterX, logoCenterY, ldom));
 
 			for (int i = 0; i < objects.Count; i++)
 				{
@@ -696,7 +696,7 @@ namespace RD_AAOW
 						//case LogoDrawerObjectTypes.RotatingPictures:
 						case LogoDrawerObjectTypes.Spheres:
 							objects[i] = new LogoDrawerSphere ((uint)this.Width, (uint)this.Height,
-								logoCenterX, logoCenterY, rnd, ldom);
+								logoCenterX, logoCenterY, ldom);
 							break;
 
 						case LogoDrawerObjectTypes.Polygons:
@@ -704,13 +704,13 @@ namespace RD_AAOW
 						case LogoDrawerObjectTypes.RotatingPolygons:
 						case LogoDrawerObjectTypes.RotatingStars:
 							objects[i] = new LogoDrawerSquare ((uint)this.Width, (uint)this.Height,
-								logoCenterX, logoCenterY, rnd, ldom);
+								logoCenterX, logoCenterY, ldom);
 							break;
 
 						case LogoDrawerObjectTypes.Letters:
 						case LogoDrawerObjectTypes.RotatingLetters:
 							objects[i] = new LogoDrawerLetter ((uint)this.Width, (uint)this.Height,
-								logoCenterX, logoCenterY, rnd, ldom);
+								logoCenterX, logoCenterY, ldom);
 							break;
 						}
 					}
@@ -730,8 +730,8 @@ namespace RD_AAOW
 				if (cumulation > 0)
 					amp += (int)cumulation * amp / 192;
 
-				gr[0].DrawImage (mainLayer.Layer, mainLayer.Left + rnd.Next (-amp, amp),
-					mainLayer.Top + rnd.Next (-amp, amp));
+				gr[0].DrawImage (mainLayer.Layer, mainLayer.Left + RDGenerics.RND.Next (-amp, amp),
+					mainLayer.Top + RDGenerics.RND.Next (-amp, amp));
 				}
 			else
 				{
