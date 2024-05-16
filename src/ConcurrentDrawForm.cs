@@ -46,9 +46,6 @@ namespace RD_AAOW
 		// Счётчик шагов отрисовки
 		private uint steps = 0;
 
-		/* ГПСЧ
-		private Ran dom rnd = new Ran dom ();*/
-
 		// Параметры работы программы
 		private ConcurrentDrawParameters cdp;
 
@@ -200,7 +197,8 @@ namespace RD_AAOW
 			this.MouseWheel += ConcurrentDrawForm_MouseClick;
 
 			this.Text = ProgramDescription.AssemblyTitle;
-			if (!RDGenerics.IsRegistryAccessible || !RDGenerics.IsStartupPathAccessible)
+			/*if (!RDGenerics.IsRegistryAccessible || !RDGenerics.IsStartupPathAccessible)*/
+			if (!RDGenerics.AppHasAccessRights (false, false))
 				this.Text += RDLocale.GetDefaultText (RDLDefaultTexts.Message_LimitedFunctionality);
 
 			// Запрос параметров (при необходимости вызовет окно настроек)

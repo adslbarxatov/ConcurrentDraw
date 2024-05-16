@@ -51,7 +51,8 @@ namespace RD_AAOW
 				ProfileCombo.Items.Add (s[i]);
 				}
 			ProfileCombo.Enabled = ApplyProfile.Enabled = AddProfile.Enabled = RemoveProfile.Enabled =
-				RDGenerics.IsStartupPathAccessible;
+				RDGenerics.AppHasAccessRights (false, false);
+			/*RDGenerics.IsStartupPathAccessible;*/
 
 			// Настройка контролов
 

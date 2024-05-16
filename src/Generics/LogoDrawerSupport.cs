@@ -110,7 +110,7 @@ namespace RD_AAOW
 		/// <summary>
 		/// Доля поля текста
 		/// </summary>
-		public const double TextFieldPart = 3.0 / 8.0;          // Часть поля отрисовки, занимаемая текстом
+		public const double TextFieldPart = 3.0 / 8.0;		// Часть поля отрисовки, занимаемая текстом
 
 		/// <summary>
 		/// Метод приводит исходные метрики объекта к допустимым диапазонам
@@ -660,14 +660,13 @@ namespace RD_AAOW
 	public class LogoDrawerSphere: IDisposable, ILogoDrawerObject
 		{
 		// Переменные и константы
-		/*private Ran dom rnd;             // ГПСЧ (обязательно извне)*/
-		private int maxFluctuation;     // Максимальный дребезг скорости
-		private int endX;               // Конечная позиция по горизонтали
-		private int endY;               // Конечная позиция по вертикали
-		private float speedX, initSpeedX;   // Горизонтальная скорость, начальная скорость
-		private float speedY, initSpeedY;   // Вертикальная скорость, начальная скорость
-		private float ρ;                // Радиус описанной окружности для объекта
-		private SolidBrush objectBrush; // Кисть для отрисовки объекта
+		private int maxFluctuation;			// Максимальный дребезг скорости
+		private int endX;					// Конечная позиция по горизонтали
+		private int endY;					// Конечная позиция по вертикали
+		private float speedX, initSpeedX;	// Горизонтальная скорость, начальная скорость
+		private float speedY, initSpeedY;	// Вертикальная скорость, начальная скорость
+		private float ρ;					// Радиус описанной окружности для объекта
+		private SolidBrush objectBrush;		// Кисть для отрисовки объекта
 
 		/// <summary>
 		/// Статус инициализации объекта
@@ -741,15 +740,12 @@ namespace RD_AAOW
 		/// <param name="ScreenCenterX">Абсцисса изменённого центра экрана</param>
 		/// <param name="ScreenCenterY">Ордината изменённого центра экрана</param>
 		public LogoDrawerSphere (uint ScreenWidth, uint ScreenHeight, uint ScreenCenterX, uint ScreenCenterY,
-			/*Ran dom Ran domizer,*/ LogoDrawerObjectMetrics Metrics)
+			LogoDrawerObjectMetrics Metrics)
 			{
 			// Контроль
-			LogoDrawerObjectMetrics metrics = Metrics; //LogoDrawerSupport.AlingMetrics (Metrics);
-			/*if (Ran domizer == null)
-				return;*/
+			LogoDrawerObjectMetrics metrics = Metrics;
 
 			// Получение изображения
-			/*rnd = Ran domizer;*/
 			maxFluctuation = (int)metrics.MaxSpeedFluctuation;
 			ρ = RDGenerics.RND.Next ((int)metrics.MinSize, (int)metrics.MaxSize);
 
@@ -952,7 +948,6 @@ namespace RD_AAOW
 	public class LogoDrawerSquare: IDisposable, ILogoDrawerObject
 		{
 		// Переменные и константы
-		/*private Ran dom rnd;             // ГПСЧ (обязательно извне)*/
 		private int maxFluctuation;     // Максимальный дребезг скорости
 		private float speedX, initSpeedX;   // Скорость горизонтального смещения, начальная скорость
 		private float speedY, initSpeedY;   // Скорость вертикального смещения, начальная скорость
@@ -1035,15 +1030,12 @@ namespace RD_AAOW
 		/// <param name="ScreenCenterX">Абсцисса изменённого центра экрана</param>
 		/// <param name="ScreenCenterY">Ордината изменённого центра экрана</param>
 		public LogoDrawerSquare (uint ScreenWidth, uint ScreenHeight, uint ScreenCenterX, uint ScreenCenterY,
-			/*Ran dom Ran domizer,*/ LogoDrawerObjectMetrics Metrics)
+			LogoDrawerObjectMetrics Metrics)
 			{
 			// Контроль
-			LogoDrawerObjectMetrics metrics = Metrics;  // LogoDrawerSupport.AlingMetrics (Metrics);
-			/*if (Ran domizer == null)
-				return;*/
+			LogoDrawerObjectMetrics metrics = Metrics;
 
 			// Генерация параметров изображения
-			/*rnd = Ran domizer;*/
 			star = metrics.AsStars;
 			rotation = metrics.Rotation;
 			sidesCount = metrics.PolygonsSidesCount;
@@ -1284,7 +1276,6 @@ namespace RD_AAOW
 	public class LogoDrawerLetter: IDisposable, ILogoDrawerObject
 		{
 		// Переменные и константы
-		/*private Ran dom rnd;             // ГПСЧ (обязательно извне)*/
 		private int maxFluctuation;     // Максимальный дребезг скорости
 		private float speedX, initSpeedX;   // Скорость горизонтального смещения, начальная скорость
 		private float speedY, initSpeedY;   // Скорость вертикального смещения, начальная скорость
@@ -1362,16 +1353,12 @@ namespace RD_AAOW
 		/// <param name="ScreenCenterX">Абсцисса изменённого центра экрана</param>
 		/// <param name="ScreenCenterY">Ордината изменённого центра экрана</param>
 		public LogoDrawerLetter (uint ScreenWidth, uint ScreenHeight, uint ScreenCenterX, uint ScreenCenterY,
-			/*Ran dom Ran domizer,*/ LogoDrawerObjectMetrics Metrics)
+			LogoDrawerObjectMetrics Metrics)
 			{
 			// Контроль
-			LogoDrawerObjectMetrics metrics = Metrics;  // LogoDrawerSupport.AlingMetrics (Metrics);
-			/*if (Ran domizer == null)
-				return;*/
+			LogoDrawerObjectMetrics metrics = Metrics;
 
 			// Генерация параметров изображения
-			/*rnd = Ran domizer;*/
-
 			φ = RDGenerics.RND.Next (0, 360);
 			if (metrics.Rotation)
 				{
@@ -1594,7 +1581,6 @@ namespace RD_AAOW
 	public class LogoDrawerPicture: IDisposable, ILogoDrawerObject
 		{
 		// Переменные и константы
-		/*private Ran dom rnd;             // ГПСЧ (обязательно извне)*/
 		private int maxFluctuation;     // Максимальный дребезг скорости
 		private float speedX, initSpeedX;   // Скорость горизонтального смещения, начальная скорость
 		private float speedY, initSpeedY;   // Скорость вертикального смещения, начальная скорость
@@ -1673,16 +1659,12 @@ namespace RD_AAOW
 		/// <param name="ScreenCenterX">Абсцисса изменённого центра экрана</param>
 		/// <param name="ScreenCenterY">Ордината изменённого центра экрана</param>
 		public LogoDrawerPicture (uint ScreenWidth, uint ScreenHeight, uint ScreenCenterX, uint ScreenCenterY,
-			/*Ran dom Ran domizer,*/ LogoDrawerObjectMetrics Metrics, string PicturesPath)
+			LogoDrawerObjectMetrics Metrics, string PicturesPath)
 			{
 			// Контроль
-			LogoDrawerObjectMetrics metrics = Metrics;  // LogoDrawerSupport.AlingMetrics (Metrics);
-			/*if (Ran domizer == null)
-				return;*/
+			LogoDrawerObjectMetrics metrics = Metrics;
 
 			// Генерация параметров изображения
-			/*rnd = Ran domizer;*/
-
 			if (metrics.Rotation)
 				{
 				speedOfRotation = RDGenerics.RND.Next ((int)metrics.MinSpeed / 4, (int)metrics.MaxSpeed / 4 + 1);

@@ -1,5 +1,3 @@
-_Changes for v 3.4.5_:
-- Updated HypeHelp and Updates checker mechanics: this should fix apps freezing immediately after launch (on some PCs);
-- Updated the HypeHelp links list;
-- Update for XPUN has been applied;
-- Added localized video guides
+_Changes for v 3.4.6_:
+- The application has been retargeted to .NET Framework 4.8.1;
+- Updated HypeHelp and Updates checker mechanics: this should fix apps freezing immediately after launch (on some PCs)
