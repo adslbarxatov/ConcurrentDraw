@@ -587,7 +587,7 @@ namespace RD_AAOW
 			// Возврат последнего сохранённого набора настроек
 			if (SetName == savedSettingsName)
 				{
-				settings = RDGenerics.GetAppSettingsValue ("");
+				settings = RDGenerics.GetAppRegistryValue ("");
 				}
 			else
 				{
@@ -778,7 +778,7 @@ namespace RD_AAOW
 			// Запись
 			if (SetName == savedSettingsName)
 				{
-				RDGenerics.SetAppSettingsValue ("", settings);
+				RDGenerics.SetAppRegistryValue ("", settings);
 				}
 			else
 				{

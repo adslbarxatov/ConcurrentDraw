@@ -1,5 +1,8 @@
 ConcurrentDraw: changes log
 
+Version 3.4.7:
+• Implemented the new App about interface
+
 Version 3.4.6:
 • The application has been retargeted to .NET Framework 4.8.1
 
