@@ -197,7 +197,6 @@ namespace RD_AAOW
 			this.MouseWheel += ConcurrentDrawForm_MouseClick;
 
 			this.Text = ProgramDescription.AssemblyTitle;
-			/*if (!RDGenerics.IsRegistryAccessible || !RDGenerics.IsStartupPathAccessible)*/
 			if (!RDGenerics.AppHasAccessRights (false, false))
 				this.Text += RDLocale.GetDefaultText (RDLDefaultTexts.Message_LimitedFunctionality);
 
