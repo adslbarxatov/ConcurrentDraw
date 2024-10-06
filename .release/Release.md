@@ -1,4 +1,3 @@
-_Changes for v 3.5_:
-- The new identity has been applied;
-- The “App about” interface has been updated;
-- `XPUN` update has been applied
+_Changes for v 3.5.1_:
+- Current updates have been applied;
+- The new identity has been applied
