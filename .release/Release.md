@@ -1,3 +1,2 @@
-_Changes for v 3.5.1_:
-- Current updates have been applied;
-- The new identity has been applied
+_Changes for v 3.5.2_:
+- The “App about” interface has been updated
