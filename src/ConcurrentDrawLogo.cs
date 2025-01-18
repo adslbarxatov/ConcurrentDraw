@@ -29,7 +29,7 @@ namespace RD_AAOW
 
 			this.Width = Properties.DPModuleResources.DeploymentPackages.Width;
 			this.Height = Properties.DPModuleResources.DeploymentPackages.Height;
-			this.BackColor = RDGenerics.GetInterfaceColor (RDInterfaceColors.LightGrey);
+			this.BackColor = RDInterface.GetInterfaceColor (RDInterfaceColors.LightGrey);
 
 			gb = Graphics.FromHwnd (this.Handle);
 
@@ -77,7 +77,7 @@ namespace RD_AAOW
 			// Отрисовка
 			g.DrawImage (Properties.CDResources.ConcurrentDraw, 0, 0);
 
-			SolidBrush c = new SolidBrush (RDGenerics.GetInterfaceColor (RDInterfaceColors.DefaultText));
+			SolidBrush c = new SolidBrush (RDInterface.GetInterfaceColor (RDInterfaceColors.DefaultText));
 			g.DrawString (title, f, c, this.Width - 18 - sz.Width, this.Height - 18 - sz.Height);
 			c.Dispose ();
 
@@ -91,7 +91,7 @@ namespace RD_AAOW
 		// Завершение
 #if DPMODULE
 		private int pos = 0;
-		private SolidBrush br = new SolidBrush (RDGenerics.GetInterfaceColor (RDInterfaceColors.DefaultText));
+		private SolidBrush br = new SolidBrush (RDInterface.GetInterfaceColor (RDInterfaceColors.DefaultText));
 #endif
 
 		private void MainTimer_Tick (object sender, EventArgs e)
@@ -120,8 +120,8 @@ namespace RD_AAOW
 					}
 
 				// Подпись
-				Color c = RDGenerics.GetInterfaceColor (RDInterfaceColors.DefaultText);
-				byte r = (byte)((RDGenerics.GetInterfaceColor (RDInterfaceColors.LightGrey).R - c.R) *
+				Color c = RDInterface.GetInterfaceColor (RDInterfaceColors.DefaultText);
+				byte r = (byte)((RDInterface.GetInterfaceColor (RDInterfaceColors.LightGrey).R - c.R) *
 					(pos / 30.0) + c.R);
 				SolidBrush s = new SolidBrush (Color.FromArgb (r, r, r));
 

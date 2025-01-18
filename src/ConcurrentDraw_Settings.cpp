@@ -1,6 +1,9 @@
 // Общий заголовок
 #include "ConcurrentDrawLib.h"
 
+// Переменные
+HBITMAP localBitmap;
+
 // Функция получает имена устройств вывода звука (массив символов по 128 на имя)
 CD_API(uchar) GetDevicesEx (schar **Devices)
 	{
@@ -50,12 +53,35 @@ CD_API(uchar) GetDevicesEx (schar **Devices)
 // Функция возвращает текущий фрейм спектрограммы
 CD_API(HBITMAP) GetSpectrogramFrameEx ()
 	{
-	// Контроль
+	/*// Контроль
 	if (!AS->sgBMP)
 		return NULL;
 
 	// Завершено
-	return AS->sgBMP;
+	return AS->sgBMP;*/
+
+	// Инициализация описателя
+	AS->sgBMPInfo.cd_bmpinfo.header.biSize = sizeof (BITMAPINFOHEADER);
+	AS->sgBMPInfo.cd_bmpinfo.header.biWidth = AS->sgFrameWidth;
+	AS->sgBMPInfo.cd_bmpinfo.header.biHeight = AS->sgFrameHeight;
+	AS->sgBMPInfo.cd_bmpinfo.header.biPlanes = 1;
+	AS->sgBMPInfo.cd_bmpinfo.header.biBitCount = 8;
+	AS->sgBMPInfo.cd_bmpinfo.header.biClrUsed = AS->sgBMPInfo.cd_bmpinfo.header.biClrImportant = CD_BMPINFO_COLORS_COUNT;
+
+	/*FillPaletteEx (0);*/
+
+	// Создание BITMAP
+	if (localBitmap)
+		{
+		DeleteObject (localBitmap);
+		localBitmap = NULL;
+		}
+
+	localBitmap = CreateDIBSection (NULL, (BITMAPINFO *)&AS->sgBMPInfo, DIB_RGB_COLORS,
+		(void **)&AS->sgBufferOut, NULL, 0);
+	memcpy (AS->sgBufferOut, AS->sgBufferDraw, AS->sgFrameWidth * AS->sgFrameHeight);
+
+	return localBitmap;
 	}
 
 // Функция возвращает значение амплитуды на указанном уровне

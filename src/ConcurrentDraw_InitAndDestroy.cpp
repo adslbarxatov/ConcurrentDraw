@@ -9,6 +9,9 @@ ulong SupportedBASSVersions[] = {
 	0x02041100,
 	};
 
+float FFT[FFT_CLEAN_VALUES_COUNT];
+float fftSumma[FFT_CLEAN_VALUES_COUNT];
+
 // Функция проверяет версию библиотеки BASS
 ulong BASSVersionIsCorrect ()
 	{
@@ -124,24 +127,27 @@ CD_API(sint) InitializeSpectrogramEx (uint FrameWidth, uint FrameHeight, uchar P
 		(FrameHeight < MINFRAMEHEIGHT) || (FrameHeight > MAXFRAMEHEIGHT))
 		return -3;
 
-	if (!AS->cdChannel)		// Канал должен быть инициализирован
+	// Канал должен быть инициализирован
+	if (!AS->cdChannel)
 		return -1;
 
-	if (AS->sgBMP)			// Спектрограмма не должна быть занята
+	// Спектрограмма не должна быть занята
+	/*if (AS->sgBMP)*/
+	if (AS->sgBufferDraw)
 		return -2;
 
 	AS->sgFrameWidth = FrameWidth & 0xFFFC;		// Хрен знает, почему, но CreateDIBSection не понимает размеры,
-	//if (AS->sgFrameWidth != FrameWidth)
-	//	AS->sgFrameWidth += 4;
+	/*//if (AS->sgFrameWidth != FrameWidth)
+	//	AS->sgFrameWidth += 4;*/
 
 	AS->sgFrameHeight = FrameHeight & 0xFFFC;	// которые не делятся на 4
-	//if (AS->sgFrameHeight != FrameHeight)
-	//	AS->sgFrameHeight += 4;
+	/*//if (AS->sgFrameHeight != FrameHeight)
+	//	AS->sgFrameHeight += 4;*/
 
 	AS->sgSpectrogramMode = SpectrogramMode;
 	AS->sgSpectrogramStep = 1 + (Flags & 0x1);
 
-	// Инициализация описателя
+	/*// Инициализация описателя
 	AS->sgBMPInfo.cd_bmpinfo.header.biSize = sizeof (BITMAPINFOHEADER);
 	AS->sgBMPInfo.cd_bmpinfo.header.biWidth = AS->sgFrameWidth;
 	AS->sgBMPInfo.cd_bmpinfo.header.biHeight = AS->sgFrameHeight;
@@ -152,8 +158,17 @@ CD_API(sint) InitializeSpectrogramEx (uint FrameWidth, uint FrameHeight, uchar P
 	FillPaletteEx (PaletteNumber);
 
 	// Создание BITMAP
-	if ((AS->sgBMP = CreateDIBSection (NULL, (BITMAPINFO *)&AS->sgBMPInfo, DIB_RGB_COLORS, (void **)&AS->sgBuffer, NULL, 0)) == NULL)
+	if ((AS->sgBMP = CreateDIBSection (NULL, (BITMAPINFO *)&AS->sgBMPInfo, DIB_RGB_COLORS,
+		(void **)&AS->sgBuffer, NULL, 0)) == NULL)
+		return -4;*/
+	// Инициализация буфера изображения
+	FillPaletteEx (PaletteNumber);
+
+	AS->sgBufferDraw = (void *)malloc (AS->sgFrameWidth * AS->sgFrameHeight);
+	if (!AS->sgBufferDraw)
 		return -4;
+
+	memset (AS->sgBufferDraw, 0x00, AS->sgFrameWidth * AS->sgFrameHeight);
 
 	// Завершено
 	return 0;
@@ -170,12 +185,20 @@ CD_API(void) DestroySpectrogramEx ()
 	while (AS->updating);
 
 	// Сброс
-	if (AS->sgBMP)
+	/*if (AS->sgBMP)
 		{
 		AS->sgSpectrogramMode = 0;
 		
 		DeleteObject (AS->sgBMP);
 		AS->sgBMP = NULL;
+		}*/
+
+	if (AS->sgBufferDraw)
+		{
+		AS->sgSpectrogramMode = 0;
+
+		free (AS->sgBufferDraw);
+		AS->sgBufferDraw = NULL;
 		}
 	}
 
@@ -183,13 +206,11 @@ CD_API(void) DestroySpectrogramEx ()
 CD_API(sint) DumpSpectrogramFromFileEx (schar *SoundFileName)
 	{
 	// Переменные
-	float FFT[FFT_CLEAN_VALUES_COUNT],
-		fftSumma[FFT_CLEAN_VALUES_COUNT];
 	float max = 0.0f;
 	sint i;
 	FILE *FO;
-	schar ColumnName[MAX_DEVICE_NAME_LENGTH],
-		TableFileName[256];
+	schar ColumnName[MAX_DEVICE_NAME_LENGTH];
+	schar TableFileName[256];
 
 	// Пробуем открыть файлы
 	if (i = InitializeFileStreamEx (SoundFileName))

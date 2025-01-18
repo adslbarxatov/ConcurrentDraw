@@ -514,7 +514,7 @@ namespace RD_AAOW
 			if (!string.IsNullOrWhiteSpace (err))
 				{
 				this.TopMost = false;
-				RDGenerics.MessageBox (RDMessageTypes.Warning_Left, err);
+				RDInterface.MessageBox (RDMessageTypes.Warning_Left, err);
 				return result;
 				}
 
@@ -548,7 +548,7 @@ namespace RD_AAOW
 			if (!string.IsNullOrWhiteSpace (err))
 				{
 				this.TopMost = false;
-				RDGenerics.MessageBox (RDMessageTypes.Warning_Left, err);
+				RDInterface.MessageBox (RDMessageTypes.Warning_Left, err);
 				return result;
 				}
 
@@ -573,8 +573,8 @@ namespace RD_AAOW
 
 				// Вращение лого
 				case VisualizationPhases.LogoRotation:
-					if (logoFirstShowMade)
-						currentPhase = VisualizationPhases.PreVisualization;
+					/*if (logoFirstShowMade)*/
+					currentPhase = VisualizationPhases.PreVisualization;
 
 					RotatingLogo ();
 					break;
@@ -1101,6 +1101,14 @@ namespace RD_AAOW
 				}
 
 			// Отрисовка текстовых подписей
+			/*mainLayer.Descriptor.DrawString (ConcurrentDrawLib.GetMasterPaletteColor (1).ToArgb().ToString ("X8") + ", " +
+				ConcurrentDrawLib.GetMasterPaletteColor (64).ToArgb ().ToString ("X8") + ", " +
+				ConcurrentDrawLib.GetMasterPaletteColor (128).ToArgb ().ToString ("X8") + ", " +
+				ConcurrentDrawLib.GetMasterPaletteColor (192).ToArgb ().ToString ("X8") + ", " +
+				ConcurrentDrawLib.GetMasterPaletteColor (255).ToArgb ().ToString ("X8"),
+				subtitlesFonts[hotKeyTextFontNumber],
+				brushes[1], 0, this.Height - subtitlesSizes[hotKeyTextFontNumber].Height - 30);*/
+
 #if VIDEO
 			if (showSubtitlesNow)
 				{
@@ -1243,7 +1251,7 @@ namespace RD_AAOW
 						}
 					catch
 						{
-						RDGenerics.MessageBox (RDMessageTypes.Warning_Center,
+						RDInterface.MessageBox (RDMessageTypes.Warning_Center,
 							string.Format (RDLocale.GetDefaultText (RDLDefaultTexts.Message_SaveFailure_Fmt),
 							ssFile));
 						}

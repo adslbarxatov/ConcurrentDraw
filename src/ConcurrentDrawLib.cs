@@ -376,6 +376,7 @@ namespace RD_AAOW
 			Bitmap b = Bitmap.FromHbitmap (bmp);
 			if (Transparent)
 				b.MakeTransparent (paletteBackgroundColor);
+
 			return b;
 			}
 

@@ -1,5 +1,5 @@
 # ConcurrentDraw: руководство пользователя
-> **ƒ** &nbsp;RD AAOW FDL; 13.02.2024; 1:48
+> **ƒ** &nbsp;RD AAOW FDL; 18.01.2025; 21:53
 
 
 
@@ -7,7 +7,7 @@
 
 - [Общие сведения](#section-1)
 - [Ссылки для загрузки](https://adslbarxatov.github.io/DPArray/ru#concurrentdraw)
-- [Видеоруководство](https://youtube.com/watch?v=0_78MtyTAdA)
+- [Видеоруководство](https://youtube.com/watch?v=vFKAfOkVs_s)
 - [English version](https://adslbarxatov.github.io/ConcurrentDraw)
 
 ---

@@ -33,7 +33,7 @@ namespace RD_AAOW
 			// Проверка корреткности версии библиотеки CDLib.dll (BASS проверяется позже)
 			if (ConcurrentDrawLib.CDLibVersion != ProgramDescription.AssemblyLibVersion)
 				{
-				RDGenerics.MessageBox (RDMessageTypes.Error_Center,
+				RDInterface.MessageBox (RDMessageTypes.Error_Center,
 					string.Format (RDLocale.GetDefaultText (RDLDefaultTexts.MessageFormat_WrongVersion_Fmt),
 					ProgramDescription.AssemblyRequirementsCDL));
 
@@ -41,9 +41,9 @@ namespace RD_AAOW
 				}
 
 			// Отображение справки и запроса на принятие Политики
-			if (!RDGenerics.AcceptEULA ())
+			if (!RDInterface.AcceptEULA ())
 				return;
-			if (!RDGenerics.ShowAbout (true))
+			if (!RDInterface.ShowAbout (true))
 				RDGenerics.RegisterFileAssociations (true);
 
 			// Запуск

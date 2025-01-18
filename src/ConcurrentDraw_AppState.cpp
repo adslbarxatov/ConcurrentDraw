@@ -28,7 +28,7 @@ void InitAppState (void)
 	appState.cdChannelBPF = 0;
 	appState.cdFFTTimer = NULL;
 	appState.updating = 0;
-	appState.sgBMP = NULL;
+	/*appState.sgBMP = NULL;*/
 	
 	appState.sgCurrentPosition = 0;
 	appState.sgSpectrogramMode = 0;

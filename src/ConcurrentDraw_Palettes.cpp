@@ -129,12 +129,12 @@ void FillPalette_PolymorphRandom (uchar Reversed, uchar Polymorph, uchar Monocol
 		{
 		for (j = 0; j < 4; j++)
 			{
-			AS->sgBMPInfo.cd_bmpinfo.colors[j * FP_QMAX + i].rgbRed = ((FP_QMAX - 1 - i) * AS->cdPolymorphColors[j].rgbRed +
-				i * AS->cdPolymorphColors[j + 1].rgbRed) / FP_QMAX;
-			AS->sgBMPInfo.cd_bmpinfo.colors[j * FP_QMAX + i].rgbGreen = ((FP_QMAX - 1 - i) * AS->cdPolymorphColors[j].rgbGreen +
-				i * AS->cdPolymorphColors[j + 1].rgbGreen) / FP_QMAX;
-			AS->sgBMPInfo.cd_bmpinfo.colors[j * FP_QMAX + i].rgbBlue = ((FP_QMAX - 1 - i) * AS->cdPolymorphColors[j].rgbBlue +
-				i * AS->cdPolymorphColors[j + 1].rgbBlue) / FP_QMAX;
+			AS->sgBMPInfo.cd_bmpinfo.colors[j * FP_QMAX + i].rgbRed = ((FP_QMAX - 1 - i) *
+				AS->cdPolymorphColors[j].rgbRed + i * AS->cdPolymorphColors[j + 1].rgbRed) / FP_QMAX;
+			AS->sgBMPInfo.cd_bmpinfo.colors[j * FP_QMAX + i].rgbGreen = ((FP_QMAX - 1 - i) *
+				AS->cdPolymorphColors[j].rgbGreen + i * AS->cdPolymorphColors[j + 1].rgbGreen) / FP_QMAX;
+			AS->sgBMPInfo.cd_bmpinfo.colors[j * FP_QMAX + i].rgbBlue = ((FP_QMAX - 1 - i) *
+				AS->cdPolymorphColors[j].rgbBlue + i * AS->cdPolymorphColors[j + 1].rgbBlue) / FP_QMAX;
 			}
 		}
 
@@ -366,7 +366,8 @@ CD_API(void) FillPaletteEx (uchar PaletteNumber)
 
 		// Полиморфная и случайная
 		FP_SPECIAL_PALETTES
-			FillPalette_PolymorphRandom (0x4 - (PaletteNumber & 0x4), PaletteNumber & 0x2 & polymorphResetNotRequired, PaletteNumber & 0x1);
+			FillPalette_PolymorphRandom (0x4 - (PaletteNumber & 0x4), PaletteNumber & 0x2 & polymorphResetNotRequired,
+				PaletteNumber & 0x1);
 			AS->cdPolymorphUpdateCounter = PaletteNumber & 0x2;
 			break;
 		}

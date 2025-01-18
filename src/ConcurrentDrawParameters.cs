@@ -226,7 +226,7 @@ namespace RD_AAOW
 					ConcurrentDrawLogo cdl = new ConcurrentDrawLogo ();
 					cdl.Dispose ();
 
-					RDGenerics.ShowAbout (true);    // Справка на случай первого запуска
+					RDInterface.ShowAbout (true);    // Справка на случай первого запуска
 					req = true;
 					}
 				}
@@ -354,7 +354,7 @@ namespace RD_AAOW
 			// Контроль возможности запуска
 			if (!DevicesCombo.Enabled)
 				{
-				RDGenerics.LocalizedMessageBox (RDMessageTypes.Warning_Center, "NoCompatibleDevices");
+				RDInterface.LocalizedMessageBox (RDMessageTypes.Warning_Center, "NoCompatibleDevices");
 				this.Close ();
 				return;
 				}
@@ -532,12 +532,12 @@ namespace RD_AAOW
 			ConcurrentDrawLogo cdl = new ConcurrentDrawLogo ();
 			cdl.Dispose ();
 
-			RDGenerics.ShowAbout (false);
+			RDInterface.ShowAbout (false);
 			}
 
 		private void BKeys_Click (object sender, EventArgs e)
 			{
-			RDGenerics.LocalizedMessageBox (RDMessageTypes.Success_Left, "HelpKeysText");
+			RDInterface.LocalizedMessageBox (RDMessageTypes.Success_Left, "HelpKeysText");
 			}
 
 		// Изменение языка интерфейса
@@ -1180,7 +1180,7 @@ namespace RD_AAOW
 			// Контроль
 			if (ProfileCombo.Items.Contains (ProfileCombo.Text) || (ProfileCombo.Text == ""))
 				{
-				RDGenerics.LocalizedMessageBox (RDMessageTypes.Warning_Center, "CDP_ProfileError");
+				RDInterface.LocalizedMessageBox (RDMessageTypes.Warning_Center, "CDP_ProfileError");
 				return;
 				}
 
@@ -1200,7 +1200,7 @@ namespace RD_AAOW
 			if (ProfileCombo.SelectedIndex <= SSN)
 				return;
 
-			if (RDGenerics.LocalizedMessageBox (RDMessageTypes.Question_Center, "CDP_ProfileRemove",
+			if (RDInterface.LocalizedMessageBox (RDMessageTypes.Question_Center, "CDP_ProfileRemove",
 				RDLDefaultTexts.Button_YesNoFocus, RDLDefaultTexts.Button_No) == RDMessageButtons.ButtonTwo)
 				return;
 
@@ -1519,7 +1519,7 @@ namespace RD_AAOW
 
 				#region Запрос всех настроек
 				case 23:
-					RDGenerics.MessageBox (RDMessageTypes.Information_Left,
+					RDInterface.MessageBox (RDMessageTypes.Information_Left,
 						DevicesLabel.Text + " " + DevicesCombo.Text + RDLocale.RN +
 						VisTypeLabel.Text + " " + VisualizationCombo.Text +
 						(WithLogoFlag.Checked ? (" + " + WithLogoFlag.Text + RDLocale.RN) : RDLocale.RN) +

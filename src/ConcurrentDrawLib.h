@@ -18,8 +18,8 @@
 
 /////////////////////////////////////////////////////
 // Константы
-#define CD_VERSION					3,5,0,0
-#define CD_VERSION_S				"3.5.0.0"
+#define CD_VERSION					3,6,0,0
+#define CD_VERSION_S				"3.6.0.0"
 #define CD_PRODUCT					"BASS adapter for ConcurrentDraw"
 #define CD_COMPANY					FDL_COMPANY
 
@@ -87,8 +87,10 @@ struct CDSTATE
 	MMRESULT cdFFTTimer;			// Дескриптор таймера запроса данных из буфера
 	uchar updating;					// Флаг, указывающий на незавершённость последнего процесса обновления FFT
 
-	HBITMAP sgBMP;					// Дескриптор BITMAP спектральной диаграммы
-	uchar *sgBuffer;				// Буфер спектральной диаграммы
+	/*HBITMAP sgBMP;					// Дескриптор BITMAP спектральной диаграммы*/
+	/*uchar PaletteNumberOut;			// Номер палитры для вывода изображения*/
+	uchar *sgBufferDraw;			// Буфер спектральной диаграммы для отрисовки
+	uchar *sgBufferOut;				// Буфер спектральной диаграммы для возврата изображения
 	uint sgFrameWidth;				// Размеры изображения спектрограммы
 	uint sgFrameHeight;
 	uint sgCurrentPosition;			// Текущая позиция на статичной спектрограмме
