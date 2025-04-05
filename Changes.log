@@ -1,6 +1,9 @@
 ConcurrentDraw: changes log
 
-Version 3.5.5:
+Version 3.6.1:
+• Current updates have been applied
+
+Version 3.6:
 • The startup logo rotation has been skipped;
 • Fixed the inability to update the palette of histograms and spectrograms in runtime;
 • Core assemblies have been updated;

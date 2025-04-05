@@ -40,8 +40,8 @@ namespace RD_AAOW
 		// Текущая фаза отрисовки
 		private VisualizationPhases currentPhase = VisualizationPhases.LayersPrecache;
 
-		// Флаг, указывающий на выполненное первое отображение лого
-		private bool logoFirstShowMade = false;
+		/*// Флаг, указывающий на выполненное первое отображение лого
+		private bool logoFirstShowMade = false;*/
 
 		// Счётчик шагов отрисовки
 		private uint steps = 0;
@@ -594,7 +594,7 @@ namespace RD_AAOW
 							logo[1].Width, this.Height - cdp.SpectrogramHeight);
 						}
 
-					logoFirstShowMade = true;
+					/*logoFirstShowMade = true;*/
 					currentLogoAngleDelta = -logoIdleSpeed;
 					currentPhase++;
 					break;
@@ -830,6 +830,10 @@ namespace RD_AAOW
 		// Метод обрабатывает кумулятивный эффект и затенение изображения
 		private void ApplyCumulativeEffect (bool MaxFilling)
 			{
+			/*// Контроль
+			if (cdp.DecumulationSpeed == CDParametersSet.DecumulationMultiplierMaximum)
+				return;*/
+
 			// Обработка кумулятивного значения
 			uint oldCC = cumulationCounter;
 
@@ -1101,13 +1105,6 @@ namespace RD_AAOW
 				}
 
 			// Отрисовка текстовых подписей
-			/*mainLayer.Descriptor.DrawString (ConcurrentDrawLib.GetMasterPaletteColor (1).ToArgb().ToString ("X8") + ", " +
-				ConcurrentDrawLib.GetMasterPaletteColor (64).ToArgb ().ToString ("X8") + ", " +
-				ConcurrentDrawLib.GetMasterPaletteColor (128).ToArgb ().ToString ("X8") + ", " +
-				ConcurrentDrawLib.GetMasterPaletteColor (192).ToArgb ().ToString ("X8") + ", " +
-				ConcurrentDrawLib.GetMasterPaletteColor (255).ToArgb ().ToString ("X8"),
-				subtitlesFonts[hotKeyTextFontNumber],
-				brushes[1], 0, this.Height - subtitlesSizes[hotKeyTextFontNumber].Height - 30);*/
 
 #if VIDEO
 			if (showSubtitlesNow)

@@ -1,6 +1,4 @@
-_Changes for v 3.6_:
+_Changes for v 3.6.1_:
+- Current updates have been applied;
 - The startup logo rotation has been skipped;
-- Fixed the inability to update the palette of histograms and spectrograms in runtime;
-- Core assemblies have been updated;
-- Videoguide has been updated;
-- Access and appearance of the Lab Policy have been updated
+- Fixed the inability to update the palette of histograms and spectrograms in runtime
