@@ -18,8 +18,8 @@
 
 /////////////////////////////////////////////////////
 // Константы
-#define CD_VERSION					3,6,0,0
-#define CD_VERSION_S				"3.6.0.0"
+#define CD_VERSION					3,7,0,0
+#define CD_VERSION_S				"3.7.0.0"
 #define CD_PRODUCT					"BASS adapter for ConcurrentDraw"
 #define CD_COMPANY					FDL_COMPANY
 

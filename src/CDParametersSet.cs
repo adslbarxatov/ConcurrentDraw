@@ -10,7 +10,7 @@ namespace RD_AAOW
 	public class CDParametersSet
 		{
 		// Параметры
-		private static char[] splitter = new char[] { '|', ';' };
+		private static char[] splitter = [ '|', ';' ];
 		private const string defaultSettingsName = "\x1";
 		private const string savedSettingsName = "\x2";
 
@@ -20,7 +20,7 @@ namespace RD_AAOW
 		public const string SettingsFileExtension = ".cds";
 
 		private const string settingsFilesSubdir = "Settings\\";
-		private static List<string> settingsNames = new List<string> ();
+		private static List<string> settingsNames = [];
 
 
 		/// <summary>
@@ -805,7 +805,7 @@ namespace RD_AAOW
 				return settingsNames.ToArray ();
 
 			// Получение списка файлов
-			string[] files = new string[] { };
+			string[] files = [];
 			try
 				{
 				files = Directory.GetFiles (RDGenerics.AppStartupPath + settingsFilesSubdir,

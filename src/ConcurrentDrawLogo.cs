@@ -27,16 +27,16 @@ namespace RD_AAOW
 			// Настройка контролов
 #if DPMODULE
 
-			this.Width = Properties.DPModuleResources.DeploymentPackages.Width;
-			this.Height = Properties.DPModuleResources.DeploymentPackages.Height;
+			this.Width = /*Properties.*/DPArrayResources.DeploymentPackages.Width;
+			this.Height = /*Properties.*/DPArrayResources.DeploymentPackages.Height;
 			this.BackColor = RDInterface.GetInterfaceColor (RDInterfaceColors.LightGrey);
 
 			gb = Graphics.FromHwnd (this.Handle);
 
 #else
 
-			this.Width = Properties.CDResources.ConcurrentDraw.Width;
-			this.Height = Properties.CDResources.ConcurrentDraw.Height;
+			this.Width = ConcurrentDrawResources.ConcurrentDraw.Width;
+			this.Height = ConcurrentDrawResources.ConcurrentDraw.Height;
 
 #endif
 
@@ -75,7 +75,7 @@ namespace RD_AAOW
 #if !DPMODULE
 
 			// Отрисовка
-			g.DrawImage (Properties.CDResources.ConcurrentDraw, 0, 0);
+			g.DrawImage (ConcurrentDrawResources.ConcurrentDraw, 0, 0);
 
 			SolidBrush c = new SolidBrush (RDInterface.GetInterfaceColor (RDInterfaceColors.DefaultText));
 			g.DrawString (title, f, c, this.Width - 18 - sz.Width, this.Height - 18 - sz.Height);
@@ -129,7 +129,7 @@ namespace RD_AAOW
 				s.Dispose ();
 
 				// Отрисовка на фоне
-				g.DrawImage (Properties.DPModuleResources.DeploymentPackages, 0, 0);
+				g.DrawImage (/*Properties.*/DPArrayResources.DeploymentPackages, 0, 0);
 				gb.DrawImage (b, 0, 0);
 				}
 

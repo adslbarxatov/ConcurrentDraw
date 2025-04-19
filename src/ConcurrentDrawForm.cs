@@ -61,9 +61,9 @@ namespace RD_AAOW
 		private ImageAttributes[] sgAttributes = new ImageAttributes[3];
 
 		// Объекты-отрисовщики
-		private List<Graphics> gr = new List<Graphics> ();
-		private List<SolidBrush> brushes = new List<SolidBrush> ();
-		private List<Bitmap> logo = new List<Bitmap> ();
+		private List<Graphics> gr = [];
+		private List<SolidBrush> brushes = [];
+		private List<Bitmap> logo = [];
 
 		// Бит-детектор
 
@@ -81,7 +81,7 @@ namespace RD_AAOW
 		private const float beatsDetAngleMultiplier = 150.0f / logoSpeedImpulse;
 
 		// Смещения волн бит-детектора
-		private List<int> beatWaves = new List<int> ();
+		private List<int> beatWaves = [];
 
 		// Лого
 
@@ -133,7 +133,7 @@ namespace RD_AAOW
 		// Дополнительные графические объекты
 
 		// Визуальные объекты
-		private List<ILogoDrawerObject> objects = new List<ILogoDrawerObject> ();
+		private List<ILogoDrawerObject> objects = [];
 
 		// Слой визуальных объектов
 		private LogoDrawerLayer objectsLayer;
@@ -1137,13 +1137,13 @@ namespace RD_AAOW
 			}
 
 		// Метод пересчитывает градусы в радианы
-		private double ArcToRad (double Arc)
+		private static double ArcToRad (double Arc)
 			{
 			return Math.PI * Arc / 180.0;
 			}
 
 		// Метод пересчитывает радианы в градусы
-		private double RadToArc (double Arc)
+		private static double RadToArc (double Arc)
 			{
 			return 180.0 * Arc / Math.PI;
 			}

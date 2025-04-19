@@ -11,7 +11,7 @@ namespace RD_AAOW
 	public partial class WindowSizeForm: Form
 		{
 		// Доступные размеры
-		private List<Point> availableSizes = new List<Point> ();
+		private List<Point> availableSizes = [];
 
 		/// <summary>
 		/// Возвращает флаг, указывающий на успешное задание размера

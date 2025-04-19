@@ -11,7 +11,7 @@ namespace RD_AAOW
 	public partial class ConcurrentDrawParameters: Form
 		{
 		// Константы и переменные
-		private List<CDParametersSet> parameters = new List<CDParametersSet> ();    // Наборы сохранённых параметров
+		private List<CDParametersSet> parameters = [];	// Наборы сохранённых параметров
 
 		private const int defaultSettingsNumber = 0;
 		private const int savedSettingsNumber = 1;
@@ -1226,8 +1226,7 @@ namespace RD_AAOW
 			}
 
 		// Список доступных клавиш
-		private static List<Keys> allowedHotKeys = new List<Keys>
-			{
+		private static List<Keys> allowedHotKeys = [
 			Keys.M,
 			Keys.P,
 			Keys.H,						// 2
@@ -1285,14 +1284,14 @@ namespace RD_AAOW
 			Keys.F,							// 42
 
 			Keys.F13,
-			Keys.F14						// 44
+			Keys.F14,						// 44
 
 			// Клавиши, обрабатываемые в основном интерфейсе
 			// Keys.R,
 			// Keys.S,
 			// Keys.Escape,
 			// Keys.Space,
-		};
+			];
 
 		/// <summary>
 		/// Метод обрабатывает нажатие горячей клавиши на главном экране

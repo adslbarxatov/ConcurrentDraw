@@ -212,7 +212,7 @@ namespace RD_AAOW
 	public class ConcurrentDrawLib
 		{
 		// Переменные
-		private static char[] splitter = new char[] { '\x1' };
+		private static char[] splitter = [ '\x1' ];
 
 		/// <summary>
 		/// Функция получает имена устройств вывода звука (массив символов по 128 на имя)
@@ -232,7 +232,7 @@ namespace RD_AAOW
 				// Запрос устройств
 				IntPtr devs = IntPtr.Zero;
 				if (GetDevicesEx (ref devs) == 0)
-					return new string[] { };
+					return [];
 
 				string devices = Marshal.PtrToStringAnsi (devs);
 				return devices.Split (splitter, StringSplitOptions.RemoveEmptyEntries);
@@ -472,7 +472,7 @@ namespace RD_AAOW
 				return palettesNames;
 				}
 			}
-		private static string[] palettesNames = new string[] { };
+		private static string[] palettesNames = [];
 
 		/// <summary>
 		/// Функция возвращает ограничивающие размеры фреймов спектрограмм
@@ -488,7 +488,7 @@ namespace RD_AAOW
 			get
 				{
 				UInt64 v = GetSpectrogramFrameMetricsEx ();
-				return (uint)((GetSpectrogramFrameMetricsEx () >> 48) & 0xFFFF);
+				return (uint)((v >> 48) & 0xFFFF);
 				}
 			}
 

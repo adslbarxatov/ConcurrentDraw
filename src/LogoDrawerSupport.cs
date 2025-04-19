@@ -110,7 +110,8 @@ namespace RD_AAOW
 		/// <summary>
 		/// Доля поля текста
 		/// </summary>
-		public const double TextFieldPart = 3.0 / 8.0;		// Часть поля отрисовки, занимаемая текстом
+		public const double TextFieldPart = 3.0 / 8.0;
+		// Часть поля отрисовки, занимаемая текстом
 
 		/// <summary>
 		/// Метод приводит исходные метрики объекта к допустимым диапазонам
@@ -659,14 +660,26 @@ namespace RD_AAOW
 	/// </summary>
 	public class LogoDrawerSphere: IDisposable, ILogoDrawerObject
 		{
-		// Переменные и константы
-		private int maxFluctuation;			// Максимальный дребезг скорости
-		private int endX;					// Конечная позиция по горизонтали
-		private int endY;					// Конечная позиция по вертикали
-		private float speedX, initSpeedX;	// Горизонтальная скорость, начальная скорость
-		private float speedY, initSpeedY;	// Вертикальная скорость, начальная скорость
-		private float ρ;					// Радиус описанной окружности для объекта
-		private SolidBrush objectBrush;		// Кисть для отрисовки объекта
+		// Максимальный дребезг скорости
+		private int maxFluctuation;
+
+		// Конечная позиция по горизонтали
+		private int endX;
+
+		// Конечная позиция по вертикали
+		private int endY;
+
+		// Горизонтальная скорость, начальная скорость
+		private float speedX, initSpeedX;
+
+		// Вертикальная скорость, начальная скорость
+		private float speedY, initSpeedY;
+
+		// Радиус описанной окружности для объекта
+		private float ρ;
+
+		// Кисть для отрисовки объекта
+		private SolidBrush objectBrush;
 
 		/// <summary>
 		/// Статус инициализации объекта
@@ -878,10 +891,11 @@ namespace RD_AAOW
 
 					if (metrics.StartupPosition != LogoDrawerObjectStartupPositions.ToCenterRandom)
 						{
+						// Фикс против преждевременного 'перепрыгивания' порога
 						endX = (speedX > 0) ? ((int)(ScreenWidth + ρ + speedX) + maxFluctuation) :
-							(-(int)(ρ - speedX) - maxFluctuation);      // Фикс против преждевременного
+							(-(int)(ρ - speedX) - maxFluctuation);
 						endY = (speedY > 0) ? ((int)(ScreenHeight + ρ + speedY) + maxFluctuation) :
-							(-(int)(ρ - speedY) - maxFluctuation);      // 'перепрыгивания' порога
+							(-(int)(ρ - speedY) - maxFluctuation);
 						}
 
 					break;
@@ -891,8 +905,9 @@ namespace RD_AAOW
 			initSpeedX = Math.Sign (speedX);
 			initSpeedY = (speedX * speedY == 0.0f) ? 1 : (speedY / Math.Abs (speedX));
 
+			// Генерация изображения
 			isInited = true;
-			Move (0, 0);        // Генерация изображения
+			Move (0, 0);
 			}
 
 		/// <summary>
@@ -910,8 +925,9 @@ namespace RD_AAOW
 			x += ((int)speedX + RDGenerics.RND.Next (-maxFluctuation, maxFluctuation + 1));
 			speedX += Acceleration * initSpeedX / 10.0f;
 
+			// Пропорциональное смещение
 			y += ((int)speedY + RDGenerics.RND.Next (-maxFluctuation, maxFluctuation + 1));
-			speedY += Acceleration * initSpeedY / 10.0f;    // Пропорциональное смещение
+			speedY += Acceleration * initSpeedY / 10.0f;
 
 			if ((Enlarging > 0) || (Enlarging < 0) && (ρ > -Enlarging + 2))
 				ρ += Enlarging / 10.0f;
@@ -947,19 +963,41 @@ namespace RD_AAOW
 	/// </summary>
 	public class LogoDrawerSquare: IDisposable, ILogoDrawerObject
 		{
-		// Переменные и константы
-		private int maxFluctuation;     // Максимальный дребезг скорости
-		private float speedX, initSpeedX;   // Скорость горизонтального смещения, начальная скорость
-		private float speedY, initSpeedY;   // Скорость вертикального смещения, начальная скорость
-		private int speedOfRotation;    // Скорость вращения
-		private uint sidesCount;        // Количество сторон многоугольника
-		private int endX;               // Конечная позиция по горизонтали
-		private int endY;               // Конечная позиция по вертикали
-		private bool star;              // Флаг преобразования многоугольника в звезду
-		private float ρ;                // Радиус описанной окружности для объекта
-		private int φ;                  // Угол поворота объекта
-		private SolidBrush objectBrush; // Кисть для отрисовки объекта
-		private bool rotation;          // Флаг вращения объекта
+		// Максимальный дребезг скорости
+		private int maxFluctuation;
+
+		// Скорость горизонтального смещения, начальная скорость
+		private float speedX, initSpeedX;
+
+		// Скорость вертикального смещения, начальная скорость
+		private float speedY, initSpeedY;
+
+		// Скорость вращения
+		private int speedOfRotation;
+
+		// Количество сторон многоугольника
+		private uint sidesCount;
+
+		// Конечная позиция по горизонтали
+		private int endX;
+
+		// Конечная позиция по вертикали
+		private int endY;
+
+		// Флаг преобразования многоугольника в звезду
+		private bool star;
+
+		// Радиус описанной окружности для объекта
+		private float ρ;
+
+		// Угол поворота объекта
+		private int φ;
+
+		// Кисть для отрисовки объекта
+		private SolidBrush objectBrush;
+
+		// Флаг вращения объекта
+		private bool rotation;
 
 		/// <summary>
 		/// Статус инициализации объекта
@@ -1049,7 +1087,8 @@ namespace RD_AAOW
 				}
 			else
 				{
-				φ = (360 * 3) / (metrics.PolygonsSidesCount * 4);   // Ориентация вверх
+				// Ориентация вверх
+				φ = (360 * 3) / (metrics.PolygonsSidesCount * 4);
 				speedOfRotation = 0;
 				}
 
@@ -1196,8 +1235,9 @@ namespace RD_AAOW
 			initSpeedX = Math.Sign (speedX);
 			initSpeedY = (speedX * speedY == 0.0f) ? 1 : (speedY / Math.Abs (speedX));
 
+			// Инициализация отрисовки
 			isInited = true;
-			Move (0, 0);            // Инициализация отрисовки
+			Move (0, 0);
 			}
 
 		/// <summary>
@@ -1235,7 +1275,7 @@ namespace RD_AAOW
 				image.Dispose ();
 
 			// Сборка фрейма
-			List<Point> points = new List<Point> ();
+			List<Point> points = [];
 			for (int i = 0; i < sidesCount; i++)
 				{
 				points.Add (new Point ((int)(ρ - ρ * LogoDrawerSupport.Cosinus ((double)φ +
@@ -1275,14 +1315,26 @@ namespace RD_AAOW
 	/// </summary>
 	public class LogoDrawerLetter: IDisposable, ILogoDrawerObject
 		{
-		// Переменные и константы
-		private int maxFluctuation;     // Максимальный дребезг скорости
-		private float speedX, initSpeedX;   // Скорость горизонтального смещения, начальная скорость
-		private float speedY, initSpeedY;   // Скорость вертикального смещения, начальная скорость
-		private int speedOfRotation;    // Скорость вращения
-		private int endX;               // Конечная позиция по горизонтали
-		private int endY;               // Конечная позиция по вертикали
-		private int φ;                  // Угол поворота объекта
+		// Максимальный дребезг скорости
+		private int maxFluctuation;
+
+		// Скорость горизонтального смещения, начальная скорость
+		private float speedX, initSpeedX;
+
+		// Скорость вертикального смещения, начальная скорость
+		private float speedY, initSpeedY;
+
+		// Скорость вращения
+		private int speedOfRotation;
+
+		// Конечная позиция по горизонтали
+		private int endX;
+
+		// Конечная позиция по вертикали
+		private int endY;
+
+		// Угол поворота объекта
+		private int φ;
 
 		/// <summary>
 		/// Статус инициализации объекта
@@ -1580,14 +1632,26 @@ namespace RD_AAOW
 	/// </summary>
 	public class LogoDrawerPicture: IDisposable, ILogoDrawerObject
 		{
-		// Переменные и константы
-		private int maxFluctuation;     // Максимальный дребезг скорости
-		private float speedX, initSpeedX;   // Скорость горизонтального смещения, начальная скорость
-		private float speedY, initSpeedY;   // Скорость вертикального смещения, начальная скорость
-		private int speedOfRotation;    // Скорость вращения
-		private int endX;               // Конечная позиция по горизонтали
-		private int endY;               // Конечная позиция по вертикали
-		private int φ;                  // Угол поворота объекта
+		// Максимальный дребезг скорости
+		private int maxFluctuation;
+
+		// Скорость горизонтального смещения, начальная скорость
+		private float speedX, initSpeedX;
+
+		// Скорость вертикального смещения, начальная скорость
+		private float speedY, initSpeedY;
+
+		// Скорость вертикального смещения, начальная скорость
+		private int speedOfRotation;
+
+		// Конечная позиция по горизонтали
+		private int endX;
+
+		// Конечная позиция по вертикали
+		private int endY;
+
+		// Угол поворота объекта
+		private int φ;
 
 		/// <summary>
 		/// Статус инициализации объекта
