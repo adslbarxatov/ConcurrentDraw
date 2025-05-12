@@ -212,14 +212,14 @@ namespace RD_AAOW
 	public class ConcurrentDrawLib
 		{
 		// Переменные
-		private static char[] splitter = [ '\x1' ];
+		private static char[] splitter = ['\x1'];
 
 		/// <summary>
 		/// Функция получает имена устройств вывода звука (массив символов по 128 на имя)
 		/// </summary>
 		/// <param name="Devices">Названия устройств</param>
 		/// <returns>Количество доступных устройств</returns>
-		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
+		[DllImport (ProgramDescription.AssemblyCDL)]
 		private static extern Byte GetDevicesEx (ref IntPtr Devices);
 
 		/// <summary>
@@ -246,15 +246,13 @@ namespace RD_AAOW
 		/// </summary>
 		/// <param name="DeviceNumber">Номер звукового выхода</param>
 		/// <returns>-10 - некорректная версия BASS, положительные коды ошибок и -1 - ошибки BASS</returns>
-		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
+		[DllImport (ProgramDescription.AssemblyCDL)]
 		private static extern Int16 InitializeSoundStreamEx (Byte DeviceNumber);
 
 		/// <summary>
 		/// Функция запускает процесс считывания данных из звукового файла
 		/// </summary>
-		/// <param name="FileName"></param>
-		/// <returns></returns>
-		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
+		[DllImport (ProgramDescription.AssemblyCDL)]
 		private static extern Int16 InitializeFileStreamEx (string FileName);
 
 		/// <summary>
@@ -280,7 +278,7 @@ namespace RD_AAOW
 		/// <summary>
 		/// Функция завершает процесс считывания
 		/// </summary>
-		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
+		[DllImport (ProgramDescription.AssemblyCDL)]
 		private static extern void DestroySoundStreamEx ();
 
 		/// <summary>
@@ -294,7 +292,7 @@ namespace RD_AAOW
 		/// <summary>
 		/// Функция выполняет ручное обновление данных FFT вместо встроенного таймера
 		/// </summary>
-		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
+		[DllImport (ProgramDescription.AssemblyCDL)]
 		private static extern void UpdateFFTDataEx ();
 
 		/// <summary>
@@ -314,7 +312,7 @@ namespace RD_AAOW
 		/// <param name="SpectrogramMode">Режим спектрограммы</param>
 		/// <param name="Flags">Флаги инициализации: b0 = double width</param>
 		/// <returns>0 в случае успеха или отрицательный код ошибки</returns>
-		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
+		[DllImport (ProgramDescription.AssemblyCDL)]
 		private static extern Int16 InitializeSpectrogramEx (UInt16 FrameWidth, UInt16 FrameHeight,
 			Byte PaletteNumber, Byte SpectrogramMode, Byte Flags);
 
@@ -343,7 +341,7 @@ namespace RD_AAOW
 		/// <summary>
 		/// Функция удаляет активную спектрограмму
 		/// </summary>
-		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
+		[DllImport (ProgramDescription.AssemblyCDL)]
 		private static extern void DestroySpectrogramEx ();
 
 		/// <summary>
@@ -358,7 +356,7 @@ namespace RD_AAOW
 		/// Функция возвращает текущий фрейм спектрограммы
 		/// </summary>
 		/// <returns>Возвращает HBITMAP или NULL в случае ошибки</returns>
-		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
+		[DllImport (ProgramDescription.AssemblyCDL)]
 		private static extern IntPtr GetSpectrogramFrameEx ();
 
 		/// <summary>
@@ -384,7 +382,7 @@ namespace RD_AAOW
 		/// Функция возвращает текущее значение пика
 		/// </summary>
 		/// <returns>Значение пика</returns>
-		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
+		[DllImport (ProgramDescription.AssemblyCDL)]
 		private static extern Byte GetCurrentPeakEx ();
 
 		/// <summary>
@@ -405,7 +403,7 @@ namespace RD_AAOW
 		/// <param name="HighEdge">Верхняя граница диапазона определения пика</param>
 		/// <param name="LowLevel">Наименьшая амплитуда, на которой определяется пик</param>
 		/// <param name="FFTScaleMultiplier">Множитель масштаба FFT-значений</param>
-		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
+		[DllImport (ProgramDescription.AssemblyCDL)]
 		private static extern void SetPeakEvaluationParametersEx (UInt16 LowEdge, UInt16 HighEdge,
 			Byte LowLevel, Byte FFTScaleMultiplier);
 
@@ -427,7 +425,7 @@ namespace RD_AAOW
 		/// </summary>
 		/// <param name="Brightness">Требуемая яркость</param>
 		/// <returns>Цвет в представлении ARGB</returns>
-		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
+		[DllImport (ProgramDescription.AssemblyCDL)]
 		private static extern UInt32 GetMasterPaletteColorEx (Byte Brightness);
 
 		/// <summary>
@@ -453,7 +451,7 @@ namespace RD_AAOW
 		/// Функция возвращает названия доступных палитр
 		/// </summary>
 		/// <returns>Названия палитр</returns>
-		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
+		[DllImport (ProgramDescription.AssemblyCDL)]
 		private static extern IntPtr GetPalettesNamesEx ();
 
 		/// <summary>
@@ -477,7 +475,7 @@ namespace RD_AAOW
 		/// <summary>
 		/// Функция возвращает ограничивающие размеры фреймов спектрограмм
 		/// </summary>
-		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
+		[DllImport (ProgramDescription.AssemblyCDL)]
 		private static extern UInt64 GetSpectrogramFrameMetricsEx ();
 
 		/// <summary>
@@ -528,7 +526,7 @@ namespace RD_AAOW
 		/// <summary>
 		/// Функция возвращает стандартные метрики определения пикового значения
 		/// </summary>
-		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
+		[DllImport (ProgramDescription.AssemblyCDL)]
 		private static extern UInt32 GetDefaultPeakEvaluationParametersEx ();
 
 		/// <summary>
@@ -579,7 +577,7 @@ namespace RD_AAOW
 		/// Функция возвращает масштабированное значение амплитуды на указанной частоте
 		/// </summary>
 		/// <param name="FrequencyLevel">Уровень, соответствующий требуемой частоте в масштабе</param>
-		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
+		[DllImport (ProgramDescription.AssemblyCDL)]
 		private static extern Byte GetScaledAmplitudeEx (UInt16 FrequencyLevel);
 
 		/// <summary>
@@ -595,7 +593,7 @@ namespace RD_AAOW
 		/// Функция формирует палитру (вручную, если спектрограмма не используется)
 		/// </summary>
 		/// <param name="PaletteNumber">Номер палитры</param>
-		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
+		[DllImport (ProgramDescription.AssemblyCDL)]
 		private static extern void FillPaletteEx (Byte PaletteNumber);
 
 		/// <summary>
@@ -612,14 +610,14 @@ namespace RD_AAOW
 		/// </summary>
 		/// <param name="ColorNumber">Номер цвета в палитре</param>
 		/// <returns>Цвет в представлении ARGB</returns>
-		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
+		[DllImport (ProgramDescription.AssemblyCDL)]
 		private static extern UInt32 GetColorFromPaletteEx (Byte ColorNumber);
 
 		/// <summary>
 		/// Функция получает цвет фона текущей палитры
 		/// </summary>
 		/// <returns>Цвет в представлении ARGB</returns>
-		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
+		[DllImport (ProgramDescription.AssemblyCDL)]
 		private static extern UInt32 GetPaletteBackgroundColorEx ();
 
 		/// <summary>
@@ -632,14 +630,14 @@ namespace RD_AAOW
 			return Color.FromArgb ((int)GetColorFromPaletteEx (ColorNumber));
 			}
 
-		/// <summary>
+		/*/// <summary>
 		/// Функция возвращает версию библиотеки CDLib.dll
 		/// </summary>
 		/// <returns></returns>
-		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
-		private static extern IntPtr GetCDLibVersionEx ();
+		[DllImport (ProgramDescription.AssemblyCDL)]
+		private static extern IntPtr GetCDLibVersionEx ();*/
 
-		/// <summary>
+		/*/// <summary>
 		/// Возвращает версию библиотеки CDLib.dll
 		/// </summary>
 		public static string CDLibVersion
@@ -648,7 +646,7 @@ namespace RD_AAOW
 				{
 				return Marshal.PtrToStringAnsi (GetCDLibVersionEx ());
 				}
-			}
+			}*/
 
 		/// <summary>
 		/// Функция устанавливает количество значений FFT, 
@@ -656,7 +654,7 @@ namespace RD_AAOW
 		/// </summary>
 		/// <param name="Count">Количество значений</param>
 		/// <param name="Reversed">Флаг разворота порядка частот</param>
-		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
+		[DllImport (ProgramDescription.AssemblyCDL)]
 		private static extern void SetHistogramFFTValuesCountEx (UInt16 Count, byte Reversed);
 
 		/// <summary>
@@ -673,7 +671,7 @@ namespace RD_AAOW
 		/// <summary>
 		/// Функция возвращает длину текущего файлового потока (для аудиовыхода всегда 0)
 		/// </summary>
-		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
+		[DllImport (ProgramDescription.AssemblyCDL)]
 		private static extern UInt16 GetChannelLengthEx ();
 
 		/// <summary>
@@ -690,7 +688,7 @@ namespace RD_AAOW
 		/// <summary>
 		/// Функция возвращает рекомендацию на сброс лого по признаку спецпалитр
 		/// </summary>
-		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
+		[DllImport (ProgramDescription.AssemblyCDL)]
 		private static extern Byte PaletteRequiresResetEx (Byte PaletteNumber);
 
 		/// <summary>
@@ -705,7 +703,7 @@ namespace RD_AAOW
 		/// <summary>
 		/// Функция выгружает полные данные БПФ в виде сумм амплитуд по частотам в табличный файл
 		/// </summary>
-		[DllImport (ProgramDescription.AssemblyRequirementsCDL)]
+		[DllImport (ProgramDescription.AssemblyCDL)]
 		private static extern Int16 DumpSpectrogramFromFileEx (string SoundFileName);
 
 		/// <summary>

@@ -27,8 +27,8 @@ namespace RD_AAOW
 			// Настройка контролов
 #if DPMODULE
 
-			this.Width = /*Properties.*/DPArrayResources.DeploymentPackages.Width;
-			this.Height = /*Properties.*/DPArrayResources.DeploymentPackages.Height;
+			this.Width = DPArrayResources.DeploymentPackages.Width;
+			this.Height = DPArrayResources.DeploymentPackages.Height;
 			this.BackColor = RDInterface.GetInterfaceColor (RDInterfaceColors.LightGrey);
 
 			gb = Graphics.FromHwnd (this.Handle);
@@ -129,7 +129,7 @@ namespace RD_AAOW
 				s.Dispose ();
 
 				// Отрисовка на фоне
-				g.DrawImage (/*Properties.*/DPArrayResources.DeploymentPackages, 0, 0);
+				g.DrawImage (DPArrayResources.DeploymentPackages, 0, 0);
 				gb.DrawImage (b, 0, 0);
 				}
 

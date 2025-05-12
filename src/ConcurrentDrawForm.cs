@@ -493,7 +493,7 @@ namespace RD_AAOW
 
 				case SoundStreamInitializationErrors.BASS_InvalidDLLVersion:
 					err = string.Format (RDLocale.GetText ("LibraryIsIncompatible"),
-						ProgramDescription.AssemblyRequirements[1], "", "");
+						ProgramDescription.AssemblyLibraries[1][0], "", "");
 					break;
 
 				case SoundStreamInitializationErrors.BASS_ERROR_FILEOPEN:

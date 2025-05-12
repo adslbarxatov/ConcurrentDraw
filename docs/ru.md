@@ -7,7 +7,6 @@
 
 - [Общие сведения](#section-1)
 - [Ссылки для загрузки](https://adslbarxatov.github.io/DPArray/ru#concurrentdraw)
-- [Видеоруководство](https://youtube.com/watch?v=vFKAfOkVs_s)
 - [English version](https://adslbarxatov.github.io/ConcurrentDraw)
 
 ---

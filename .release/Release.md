@@ -1,3 +1,3 @@
-_Changes for v 3.7_:
-- The application has been migrated to `.NET 9.0` from `.NET Framework 4.8.1`;
-- The startup logo rotation has been skipped
+_Changes for v 3.7.1_:
+- Added support for new offline help provider;
+- The application has been migrated to `.NET 9.0` from `.NET Framework 4.8.1`
