@@ -32,25 +32,9 @@ namespace RD_AAOW
 			if (!RDGenerics.CheckLibrariesExistence (ProgramDescription.AssemblyLibraries, true))
 				return;
 
-			// Проверка корреткности версии библиотеки CDLib.dll (BASS проверяется позже)
-			/*if (ConcurrentDrawLib.CDLibVersion != ProgramDescription.AssemblyLibVersion)
-				{
-				RDInterface.MessageBox (RDMessageTypes.Error_Center,
-					string.Format (RDLocale.GetDefaultText (RDLDefaultTexts.MessageFormat_WrongVersion_Fmt),
-					ProgramDescription.AssemblyRequirementsCDL));
-
+			// Проверка корреткности версии библиотеки
+			if (!RDGenerics.CheckLibrariesVersions (ProgramDescription.AssemblyLibraries, true))
 				return;
-				}*/
-			if (!RDGenerics.CheckLibraryVersion (ProgramDescription.AssemblyLibraries[0][0],
-				ProgramDescription.AssemblyLibraries[0][1], GetCDLibVersionEx)
-#if CHECK_BASS
-				|| !RDGenerics.CheckLibraryVersion (ProgramDescription.AssemblyLibraries[1][0],
-				ProgramDescription.AssemblyLibraries[1][1])
-#endif
-				)
-				{
-				return;
-				}
 
 			// Отображение справки и запроса на принятие Политики
 			if (!RDInterface.AcceptEULA ())
@@ -61,12 +45,5 @@ namespace RD_AAOW
 			// Запуск
 			Application.Run (new ConcurrentDrawForm ());
 			}
-
-		/// <summary>
-		/// Функция возвращает версию библиотеки CDLib.dll
-		/// </summary>
-		/// <returns></returns>
-		[DllImport (ProgramDescription.AssemblyCDL)]
-		private static extern IntPtr GetCDLibVersionEx ();
 		}
 	}

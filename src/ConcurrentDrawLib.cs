@@ -630,24 +630,6 @@ namespace RD_AAOW
 			return Color.FromArgb ((int)GetColorFromPaletteEx (ColorNumber));
 			}
 
-		/*/// <summary>
-		/// Функция возвращает версию библиотеки CDLib.dll
-		/// </summary>
-		/// <returns></returns>
-		[DllImport (ProgramDescription.AssemblyCDL)]
-		private static extern IntPtr GetCDLibVersionEx ();*/
-
-		/*/// <summary>
-		/// Возвращает версию библиотеки CDLib.dll
-		/// </summary>
-		public static string CDLibVersion
-			{
-			get
-				{
-				return Marshal.PtrToStringAnsi (GetCDLibVersionEx ());
-				}
-			}*/
-
 		/// <summary>
 		/// Функция устанавливает количество значений FFT, 
 		/// которое будет использоваться в гистограммах

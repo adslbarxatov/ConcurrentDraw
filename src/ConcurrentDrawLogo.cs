@@ -57,7 +57,7 @@ namespace RD_AAOW
 				RDLocale.RN + ProgramDescription.AssemblyDescription +
 #else
 				RDLocale.RNRN + ProgramDescription.AssemblyDescription +
-				RDLocale.RN + "by " + RDGenerics.AssemblyCopyright +
+				RDLocale.RN + "by " + RDGenerics.AssemblyCompany +
 #endif
 				RDLocale.RN + "Updated: " + ProgramDescription.AssemblyLastUpdate;
 			sz = g.MeasureString (title, f);

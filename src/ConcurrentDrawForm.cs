@@ -40,9 +40,6 @@ namespace RD_AAOW
 		// Текущая фаза отрисовки
 		private VisualizationPhases currentPhase = VisualizationPhases.LayersPrecache;
 
-		/*// Флаг, указывающий на выполненное первое отображение лого
-		private bool logoFirstShowMade = false;*/
-
 		// Счётчик шагов отрисовки
 		private uint steps = 0;
 
@@ -573,7 +570,6 @@ namespace RD_AAOW
 
 				// Вращение лого
 				case VisualizationPhases.LogoRotation:
-					/*if (logoFirstShowMade)*/
 					currentPhase = VisualizationPhases.PreVisualization;
 
 					RotatingLogo ();
@@ -594,7 +590,6 @@ namespace RD_AAOW
 							logo[1].Width, this.Height - cdp.SpectrogramHeight);
 						}
 
-					/*logoFirstShowMade = true;*/
 					currentLogoAngleDelta = -logoIdleSpeed;
 					currentPhase++;
 					break;
@@ -830,10 +825,6 @@ namespace RD_AAOW
 		// Метод обрабатывает кумулятивный эффект и затенение изображения
 		private void ApplyCumulativeEffect (bool MaxFilling)
 			{
-			/*// Контроль
-			if (cdp.DecumulationSpeed == CDParametersSet.DecumulationMultiplierMaximum)
-				return;*/
-
 			// Обработка кумулятивного значения
 			uint oldCC = cumulationCounter;
 
