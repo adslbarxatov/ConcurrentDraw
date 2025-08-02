@@ -714,7 +714,7 @@ namespace RD_AAOW
 		public void SaveSettings (string SetName)
 			{
 			if ((SetName == null) || (SetName == "") || (SetName == RDLocale.LanguageValueName) ||
-				(SetName == AboutForm.LastShownVersionKey))
+				(SetName == RDAboutForm.LastShownVersionKey))
 				return;
 
 			// Сборка строки настроек

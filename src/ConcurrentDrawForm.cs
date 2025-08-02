@@ -511,7 +511,7 @@ namespace RD_AAOW
 			if (!string.IsNullOrWhiteSpace (err))
 				{
 				this.TopMost = false;
-				RDInterface.MessageBox (RDMessageTypes.Warning_Left, err);
+				RDInterface.MessageBox (RDMessageFlags.Warning, err);
 				return result;
 				}
 
@@ -545,7 +545,7 @@ namespace RD_AAOW
 			if (!string.IsNullOrWhiteSpace (err))
 				{
 				this.TopMost = false;
-				RDInterface.MessageBox (RDMessageTypes.Warning_Left, err);
+				RDInterface.MessageBox (RDMessageFlags.Warning, err);
 				return result;
 				}
 
@@ -1239,7 +1239,7 @@ namespace RD_AAOW
 						}
 					catch
 						{
-						RDInterface.MessageBox (RDMessageTypes.Warning_Center,
+						RDInterface.MessageBox (RDMessageFlags.Warning | RDMessageFlags.CenterText,
 							string.Format (RDLocale.GetDefaultText (RDLDefaultTexts.Message_SaveFailure_Fmt),
 							ssFile));
 						}

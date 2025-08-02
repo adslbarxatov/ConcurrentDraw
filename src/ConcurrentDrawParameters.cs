@@ -354,7 +354,8 @@ namespace RD_AAOW
 			// Контроль возможности запуска
 			if (!DevicesCombo.Enabled)
 				{
-				RDInterface.LocalizedMessageBox (RDMessageTypes.Warning_Center, "NoCompatibleDevices");
+				RDInterface.LocalizedMessageBox (RDMessageFlags.Warning | RDMessageFlags.CenterText,
+					"NoCompatibleDevices");
 				this.Close ();
 				return;
 				}
@@ -537,7 +538,8 @@ namespace RD_AAOW
 
 		private void BKeys_Click (object sender, EventArgs e)
 			{
-			RDInterface.LocalizedMessageBox (RDMessageTypes.Success_Left, "HelpKeysText");
+			RDInterface.LocalizedMessageBox (RDMessageFlags.Success | RDMessageFlags.NoSound,
+				"HelpKeysText");
 			}
 
 		// Изменение языка интерфейса
@@ -1180,7 +1182,8 @@ namespace RD_AAOW
 			// Контроль
 			if (ProfileCombo.Items.Contains (ProfileCombo.Text) || (ProfileCombo.Text == ""))
 				{
-				RDInterface.LocalizedMessageBox (RDMessageTypes.Warning_Center, "CDP_ProfileError");
+				RDInterface.LocalizedMessageBox (RDMessageFlags.Warning | RDMessageFlags.CenterText,
+					"CDP_ProfileError");
 				return;
 				}
 
@@ -1200,8 +1203,9 @@ namespace RD_AAOW
 			if (ProfileCombo.SelectedIndex <= SSN)
 				return;
 
-			if (RDInterface.LocalizedMessageBox (RDMessageTypes.Question_Center, "CDP_ProfileRemove",
-				RDLDefaultTexts.Button_YesNoFocus, RDLDefaultTexts.Button_No) == RDMessageButtons.ButtonTwo)
+			if (RDInterface.LocalizedMessageBox (RDMessageFlags.Question | RDMessageFlags.CenterText,
+				"CDP_ProfileRemove", RDLDefaultTexts.Button_YesNoFocus,
+				RDLDefaultTexts.Button_No) == RDMessageButtons.ButtonTwo)
 				return;
 
 			// Удаление
@@ -1517,8 +1521,9 @@ namespace RD_AAOW
 					break;
 
 				#region Запрос всех настроек
+
 				case 23:
-					RDInterface.MessageBox (RDMessageTypes.Information_Left,
+					RDInterface.MessageBox (RDMessageFlags.Information | RDMessageFlags.NoSound,
 						DevicesLabel.Text + " " + DevicesCombo.Text + RDLocale.RN +
 						VisTypeLabel.Text + " " + VisualizationCombo.Text +
 						(WithLogoFlag.Checked ? (" + " + WithLogoFlag.Text + RDLocale.RN) : RDLocale.RN) +
@@ -1550,6 +1555,7 @@ namespace RD_AAOW
 
 						CESettings.Text);
 					break;
+
 				#endregion
 
 				#region Увеличение / уменьшение скорости вращения гистограммы

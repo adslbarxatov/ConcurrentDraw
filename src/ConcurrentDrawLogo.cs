@@ -10,7 +10,10 @@ namespace RD_AAOW
 	public partial class ConcurrentDrawLogo: Form
 		{
 		// Переменные
-		private Graphics g, gb;
+		private Graphics g;
+#if DPMODULE
+		private Graphics gb;
+#endif
 		private Bitmap b;
 		private string title;
 		private Font f;
@@ -152,8 +155,10 @@ namespace RD_AAOW
 				b.Dispose ();
 			if (g != null)
 				g.Dispose ();
+#if DPMODULE
 			if (gb != null)
 				gb.Dispose ();
+#endif
 			if (f != null)
 				f.Dispose ();
 
