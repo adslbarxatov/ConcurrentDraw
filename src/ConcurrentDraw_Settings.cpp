@@ -53,13 +53,6 @@ CD_API(uchar) GetDevicesEx (schar **Devices)
 // Функция возвращает текущий фрейм спектрограммы
 CD_API(HBITMAP) GetSpectrogramFrameEx ()
 	{
-	/*// Контроль
-	if (!AS->sgBMP)
-		return NULL;
-
-	// Завершено
-	return AS->sgBMP;*/
-
 	// Инициализация описателя
 	AS->sgBMPInfo.cd_bmpinfo.header.biSize = sizeof (BITMAPINFOHEADER);
 	AS->sgBMPInfo.cd_bmpinfo.header.biWidth = AS->sgFrameWidth;
@@ -67,8 +60,6 @@ CD_API(HBITMAP) GetSpectrogramFrameEx ()
 	AS->sgBMPInfo.cd_bmpinfo.header.biPlanes = 1;
 	AS->sgBMPInfo.cd_bmpinfo.header.biBitCount = 8;
 	AS->sgBMPInfo.cd_bmpinfo.header.biClrUsed = AS->sgBMPInfo.cd_bmpinfo.header.biClrImportant = CD_BMPINFO_COLORS_COUNT;
-
-	/*FillPaletteEx (0);*/
 
 	// Создание BITMAP
 	if (localBitmap)

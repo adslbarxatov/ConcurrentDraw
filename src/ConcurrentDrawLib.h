@@ -18,8 +18,8 @@
 
 /////////////////////////////////////////////////////
 // Константы
-#define CD_VERSION					3,7,1,0
-#define CD_VERSION_S				"3.7.1.0"
+#define CD_VERSION					3,8,0,0
+#define CD_VERSION_S				"3.8.0.0"
 #define CD_PRODUCT					"BASS adapter for ConcurrentDraw"
 #define CD_COMPANY					FDL_COMPANY
 
@@ -84,11 +84,10 @@ struct CDSTATE
 	udlong cdChannelPosition;		// Счётчик принудительного выравнивания курсора чтения аудиофайла
 	udlong cdChannelBPF;			// Число байт на фрейм для текущего канала
 	float cdFFT[FFT_VALUES_COUNT];	// Массив значений, получаемый из канала
+	/*float *cdFFT;					// Указатель на массив значений, получаемый из канала*/
 	MMRESULT cdFFTTimer;			// Дескриптор таймера запроса данных из буфера
 	uchar updating;					// Флаг, указывающий на незавершённость последнего процесса обновления FFT
 
-	/*HBITMAP sgBMP;					// Дескриптор BITMAP спектральной диаграммы*/
-	/*uchar PaletteNumberOut;			// Номер палитры для вывода изображения*/
 	uchar *sgBufferDraw;			// Буфер спектральной диаграммы для отрисовки
 	uchar *sgBufferOut;				// Буфер спектральной диаграммы для возврата изображения
 	uint sgFrameWidth;				// Размеры изображения спектрограммы

@@ -355,4 +355,7 @@ Center placement: X = {1:S}; Y = {2:S}</value>
   <data name="cdsfile" xml:space="preserve">
     <value>ConcurrentDraw profile file</value>
   </data>
+  <data name="BASS_ERROR_LIB" xml:space="preserve">
+    <value>Version of BASS.DLL is incompatible with the current version of application</value>
+  </data>
 </root>

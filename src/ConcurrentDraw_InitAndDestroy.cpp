@@ -7,6 +7,7 @@ ulong SupportedBASSVersions[] = {
 	0x02040F00,
 	0x02041007,
 	0x02041100,
+	//0x02041200,	// Не работает
 	};
 
 float FFT[FFT_CLEAN_VALUES_COUNT];
@@ -132,35 +133,14 @@ CD_API(sint) InitializeSpectrogramEx (uint FrameWidth, uint FrameHeight, uchar P
 		return -1;
 
 	// Спектрограмма не должна быть занята
-	/*if (AS->sgBMP)*/
 	if (AS->sgBufferDraw)
 		return -2;
 
 	AS->sgFrameWidth = FrameWidth & 0xFFFC;		// Хрен знает, почему, но CreateDIBSection не понимает размеры,
-	/*//if (AS->sgFrameWidth != FrameWidth)
-	//	AS->sgFrameWidth += 4;*/
-
 	AS->sgFrameHeight = FrameHeight & 0xFFFC;	// которые не делятся на 4
-	/*//if (AS->sgFrameHeight != FrameHeight)
-	//	AS->sgFrameHeight += 4;*/
-
 	AS->sgSpectrogramMode = SpectrogramMode;
 	AS->sgSpectrogramStep = 1 + (Flags & 0x1);
 
-	/*// Инициализация описателя
-	AS->sgBMPInfo.cd_bmpinfo.header.biSize = sizeof (BITMAPINFOHEADER);
-	AS->sgBMPInfo.cd_bmpinfo.header.biWidth = AS->sgFrameWidth;
-	AS->sgBMPInfo.cd_bmpinfo.header.biHeight = AS->sgFrameHeight;
-	AS->sgBMPInfo.cd_bmpinfo.header.biPlanes = 1;
-	AS->sgBMPInfo.cd_bmpinfo.header.biBitCount = 8;
-	AS->sgBMPInfo.cd_bmpinfo.header.biClrUsed = AS->sgBMPInfo.cd_bmpinfo.header.biClrImportant = CD_BMPINFO_COLORS_COUNT;
-
-	FillPaletteEx (PaletteNumber);
-
-	// Создание BITMAP
-	if ((AS->sgBMP = CreateDIBSection (NULL, (BITMAPINFO *)&AS->sgBMPInfo, DIB_RGB_COLORS,
-		(void **)&AS->sgBuffer, NULL, 0)) == NULL)
-		return -4;*/
 	// Инициализация буфера изображения
 	FillPaletteEx (PaletteNumber);
 
@@ -185,14 +165,6 @@ CD_API(void) DestroySpectrogramEx ()
 	while (AS->updating);
 
 	// Сброс
-	/*if (AS->sgBMP)
-		{
-		AS->sgSpectrogramMode = 0;
-		
-		DeleteObject (AS->sgBMP);
-		AS->sgBMP = NULL;
-		}*/
-
 	if (AS->sgBufferDraw)
 		{
 		AS->sgSpectrogramMode = 0;

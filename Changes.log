@@ -1,6 +1,8 @@
 ConcurrentDraw: changes log
 
-Version 3.7.5:
+Version 3.8:
+• App has been migrated to .NET 10;
+• Fixed the invalid detection of the BASS.DLL version;
 • Internal assemblies have been updated
 
 Version 3.7.4:

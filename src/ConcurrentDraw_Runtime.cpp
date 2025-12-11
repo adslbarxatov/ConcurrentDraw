@@ -12,6 +12,7 @@ float *GetDataFromStream (float *CleanData)
 	if (!CleanData)
 		{
 		// Получение (вариант предельной выгрузки)
+
 		if (BASS_ChannelGetData (AS->cdChannel, &AS->cdFFT, BASS_DATA_AVAILABLE) < FFT_VALUES_COUNT)
 		// Этот вызов призван отсекать заполнение массива FFT неполными (на рисунке – дырявыми) сетами.
 		// Однако отменять обновление фрейма здесь, как это было ранее, нет смысла: задвоенные сеты

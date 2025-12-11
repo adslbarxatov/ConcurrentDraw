@@ -356,4 +356,7 @@
   <data name="cdsfile" xml:space="preserve">
     <value>Файл профиля ConcurrentDraw</value>
   </data>
+  <data name="BASS_ERROR_LIB" xml:space="preserve">
+    <value>Версия BASS.DLL несовместима с текущей версией программы</value>
+  </data>
 </root>

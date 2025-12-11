@@ -489,8 +489,9 @@ namespace RD_AAOW
 					throw new Exception ("Application failure. Debug required at point 2");
 
 				case SoundStreamInitializationErrors.BASS_InvalidDLLVersion:
-					err = string.Format (RDLocale.GetText ("LibraryIsIncompatible"),
-						ProgramDescription.AssemblyLibraries[1][0], "", "");
+					/*err = string.Format (RDLocale.GetText ("LibraryIsIncompatible"),
+						ProgramDescription.AssemblyLibraries[1][0], "", "");*/
+					err = RDLocale.GetText ("BASS_ERROR_LIB");
 					break;
 
 				case SoundStreamInitializationErrors.BASS_ERROR_FILEOPEN:
