@@ -193,7 +193,7 @@ namespace RD_AAOW
 				}
 			this.MouseWheel += ConcurrentDrawForm_MouseClick;
 
-			this.Text = ProgramDescription.AssemblyTitle;
+			this.Text = RDGenerics.DefaultAssemblyVisibleName;
 			if (!RDGenerics.AppHasAccessRights (false, false))
 				this.Text += RDLocale.GetDefaultText (RDLDefaultTexts.Message_LimitedFunctionality);
 
@@ -489,8 +489,6 @@ namespace RD_AAOW
 					throw new Exception ("Application failure. Debug required at point 2");
 
 				case SoundStreamInitializationErrors.BASS_InvalidDLLVersion:
-					/*err = string.Format (RDLocale.GetText ("LibraryIsIncompatible"),
-						ProgramDescription.AssemblyLibraries[1][0], "", "");*/
 					err = RDLocale.GetText ("BASS_ERROR_LIB");
 					break;
 
@@ -1229,7 +1227,7 @@ namespace RD_AAOW
 
 				// Сохранение скриншота визуализации
 				case Keys.S:
-					mainLayer.Descriptor.DrawString (ProgramDescription.AssemblyTitle,
+					mainLayer.Descriptor.DrawString (RDGenerics.DefaultAssemblyTitle,
 						subtitlesFonts[hotKeyTextFontNumber], brushes[1], 0, 0);
 
 					string ssFile = Environment.GetFolderPath (Environment.SpecialFolder.Desktop) + "\\" +

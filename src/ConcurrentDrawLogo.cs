@@ -55,7 +55,7 @@ namespace RD_AAOW
 #endif
 
 			// Надпись
-			title = ProgramDescription.AssemblyTitle +
+			title = RDGenerics.DefaultAssemblyTitle +
 #if DPMODULE
 				RDLocale.RN + ProgramDescription.AssemblyDescription +
 #else

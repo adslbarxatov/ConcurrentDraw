@@ -70,7 +70,7 @@ namespace RD_AAOW
 				}
 
 			// Настройка контролов
-			this.Text = ProgramDescription.AssemblyTitle;
+			this.Text = RDGenerics.DefaultAssemblyVisibleName;
 			MainSelection.MinimumSize = new Size ((int)MinWidth, (int)MinHeight);
 			MainSelection.MaximumSize = new Size ((int)MaxWidth, (int)MaxHeight);
 
