@@ -1,7 +1,10 @@
 ConcurrentDraw: changes log
 
+Version 3.8.3:
+• Package format has been updated
+
 Version 3.8.2:
-• Offline help has been deprecated for this app
+• Support of offline help has been discontinued for this app
 
 Version 3.8.1:
 • Internal assemblies have been updated
