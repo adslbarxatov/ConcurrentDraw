@@ -1,5 +1,15 @@
-_Changes for v 3.8.3_:
+_en_us_
+
+- Improved the updates checking method;
 - Package format has been updated;
-- Offline help has been deprecated for this app;
-- App has been migrated to `.NET 10`;
-- Fixed the invalid detection of the `BASS.DLL` version
+- Offline help has been deprecated for this app
+
+⁂
+
+_ru_ru_
+
+- Улучшен метод проверки обновлений;
+- Обновлён формат пакетов;
+- Оффлайн-справка для этого приложения более не поддерживается
+
+⁂
