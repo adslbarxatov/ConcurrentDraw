@@ -1,5 +1,9 @@
 ConcurrentDraw: changes log
 
+Version 3.8.5:
+• Internal assemblies have been updated;
+• Removed unused code and forms
+
 Version 3.8.4:
 • Upgraded the update checking method
 

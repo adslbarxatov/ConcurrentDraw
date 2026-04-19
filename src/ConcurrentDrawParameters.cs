@@ -133,7 +133,7 @@ namespace RD_AAOW
 			BeatWavesFlag.Checked = parameters[DSN].BeatDetectorWaves;
 
 			// Язык интерфейса
-			LanguageCombo.Items.AddRange (RDLocale.LanguagesNames);
+			/*LanguageCombo.Items.AddRange (RDLocale.LanguagesNames);
 			try
 				{
 				LanguageCombo.SelectedIndex = (int)RDLocale.CurrentLanguage;
@@ -142,7 +142,8 @@ namespace RD_AAOW
 			catch
 				{
 				LanguageCombo.SelectedIndex = 0;
-				}
+				}*/
+			LocalizeForm ();
 
 			// Метрики объектов
 			for (int i = 0; i < LogoDrawerSupport.ObjectTypesCount; i++)
@@ -340,9 +341,11 @@ namespace RD_AAOW
 			ParticlesTab.Text = RDLocale.GetText ("MainTabControl_ParticlesTab");
 			RDLocale.SetControlsText (ParticlesTab);
 
-			RDLocale.SetControlsText (this);
+			/*RDLocale.SetControlsText (this);*/
 			BCancel.Text = RDLocale.GetDefaultText (RDLDefaultTexts.Button_Cancel);
 			BOK.Text = RDLocale.GetDefaultText (RDLDefaultTexts.Button_OK);
+			InterfaceLanguageButton.Text = RDLocale.GetDefaultText (RDLDefaultTexts.Control_InterfaceLanguage);
+			ProfileLabel.Text = RDLocale.GetText ("ConcurrentDrawParameters_ProfileLabel");
 
 			ProfileCombo.Items[DSN] = RDLocale.GetText ("CDP_ProfileDefault");
 			ProfileCombo.Items[SSN] = RDLocale.GetText ("CDP_ProfileSaved");
@@ -543,10 +546,11 @@ namespace RD_AAOW
 			}
 
 		// Изменение языка интерфейса
-		private void LanguageCombo_SelectedIndexChanged (object sender, EventArgs e)
+		private void LocalizeForm_Click (object sender, EventArgs e)
 			{
-			RDLocale.CurrentLanguage = (RDLanguages)LanguageCombo.SelectedIndex;
-			LocalizeForm ();
+			/*RDLocale.CurrentLanguage = (RDLanguages)LanguageCombo.SelectedIndex;*/
+			if (RDInterface.MessageBox ())
+				LocalizeForm ();
 			}
 
 		// Задание размера и позиции окна визуализации мышью
