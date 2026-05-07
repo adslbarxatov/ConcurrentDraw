@@ -314,9 +314,6 @@
   <data name="ParticlesTab_ObjectsCountLabel" xml:space="preserve">
     <value>Количество:</value>
   </data>
-  <data name="ParticlesTab_ObjectsKeepTracksFlag" xml:space="preserve">
-    <value>Оставлять следы</value>
-  </data>
   <data name="ParticlesTab_ObjectsMaxColor" xml:space="preserve">
     <value>Макс. цвет</value>
   </data>

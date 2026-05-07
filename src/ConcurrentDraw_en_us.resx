@@ -313,9 +313,6 @@ Center placement: X = {1:S}; Y = {2:S}</value>
   <data name="ParticlesTab_ObjectsCountLabel" xml:space="preserve">
     <value>Count:</value>
   </data>
-  <data name="ParticlesTab_ObjectsKeepTracksFlag" xml:space="preserve">
-    <value>Keep tracks</value>
-  </data>
   <data name="ParticlesTab_ObjectsMaxColor" xml:space="preserve">
     <value>Max. color</value>
   </data>

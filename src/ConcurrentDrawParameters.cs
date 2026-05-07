@@ -11,7 +11,7 @@ namespace RD_AAOW
 	public partial class ConcurrentDrawParameters: Form
 		{
 		// Константы и переменные
-		private List<CDParametersSet> parameters = [];	// Наборы сохранённых параметров
+		private List<CDParametersSet> parameters = [];  // Наборы сохранённых параметров
 
 		private const int defaultSettingsNumber = 0;
 		private const int savedSettingsNumber = 1;
@@ -133,16 +133,6 @@ namespace RD_AAOW
 			BeatWavesFlag.Checked = parameters[DSN].BeatDetectorWaves;
 
 			// Язык интерфейса
-			/*LanguageCombo.Items.AddRange (RDLocale.LanguagesNames);
-			try
-				{
-				LanguageCombo.SelectedIndex = (int)RDLocale.CurrentLanguage;
-				// По умолчанию - язык системы или английский
-				}
-			catch
-				{
-				LanguageCombo.SelectedIndex = 0;
-				}*/
 			LocalizeForm ();
 
 			// Метрики объектов
@@ -181,7 +171,7 @@ namespace RD_AAOW
 			ObjectsMaxSizeField.Value = parameters[DSN].ParticlesMetrics.MaxSize;
 			ObjectsMinSizeField.Value = parameters[DSN].ParticlesMetrics.MinSize;
 
-			//ObjectsKeepTracksFlag.Checked = parameters[DSN].ParticlesMetrics.KeepTracks;
+			/*ObjectsKeepTracksFlag.Checked = parameters[DSN].ParticlesMetrics.KeepTracks;*/
 
 			ObjectsMaxColor.BackColor = Color.FromArgb (parameters[DSN].ParticlesMetrics.MaxRed,
 				parameters[DSN].ParticlesMetrics.MaxGreen, parameters[DSN].ParticlesMetrics.MaxBlue);
@@ -319,33 +309,75 @@ namespace RD_AAOW
 			{
 			this.Text = ProgramDescription.AssemblyMainName + " – " + RDLocale.GetText ("CDP_Name");
 
-			GenericTab.Text = RDLocale.GetText ("MainTabControl_GenericTab");
-			RDLocale.SetControlsText (GenericTab);
+			/*GenericTab.Text = RDLocale.GetText ("MainTabControl_GenericTab");
+			RDLocale.SetControlsText (GenericTab);*/
+			RDLocale.SetControlText (MainTabControl.Name, GenericTab);
+			RDLocale.SetControlText (GenericTab.Name, AlwaysOnTopFlag);
+			RDLocale.SetControlText (GenericTab.Name, DevicesLabel);
+			RDLocale.SetControlText (GenericTab.Name, PaletteLabel);
+			RDLocale.SetControlText (GenericTab.Name, ShakeLabel);
+			RDLocale.SetControlText (GenericTab.Name, VisLeftTopLabel);
+			RDLocale.SetControlText (GenericTab.Name, VisSizeLabel);
+			RDLocale.SetControlText (GenericTab.Name, VisTypeLabel);
+			RDLocale.SetControlText (GenericTab.Name, WithLogoFlag);
 			FFTScaleMultiplier_ValueChanged (null, null);
 
-			HistoTab.Text = RDLocale.GetText ("MainTabControl_HistoTab");
-			RDLocale.SetControlsText (HistoTab);
+			/*HistoTab.Text = RDLocale.GetText ("MainTabControl_HistoTab");
+			RDLocale.SetControlsText (HistoTab);*/
+			RDLocale.SetControlText (MainTabControl.Name, HistoTab);
+			RDLocale.SetControlText (HistoTab.Name, HGRangeLabel);
+			RDLocale.SetControlText (HistoTab.Name, HistoRotAccToBeats);
+			RDLocale.SetControlText (HistoTab.Name, HistoRotInitialAngleLabel);
+			RDLocale.SetControlText (HistoTab.Name, HistoRotSpeed);
+			/*RDLocale.SetControlText (HistoTab.Name, HzLabelText);*/
+			RDLocale.SetControlText (HistoTab.Name, ReverseFreqOrderFlag);
+			RDLocale.SetControlText (HistoTab.Name, SDDoubleWidthFlag);
+			RDLocale.SetControlText (HistoTab.Name, SGHeightLabel);
+			RDLocale.SetControlText (HistoTab.Name, SGTopOffsetLabel);
+			RDLocale.SetControlText (HistoTab.Name, SwingingHistogramFlag);
 			HistogramRangeField_ValueChanged (null, null);
 
-			LogoTab.Text = RDLocale.GetText ("MainTabControl_LogoTab");
-			RDLocale.SetControlsText (LogoTab);
+			/*LogoTab.Text = RDLocale.GetText ("MainTabControl_LogoTab");
+			RDLocale.SetControlsText (LogoTab);*/
+			RDLocale.SetControlText (MainTabControl.Name, LogoTab);
+			RDLocale.SetControlText (LogoTab.Name, BeatWavesFlag);
+			RDLocale.SetControlText (LogoTab.Name, LogoCenterButton);
+			RDLocale.SetControlText (LogoTab.Name, LogoHeightLabel);
+			RDLocale.SetControlText (LogoTab.Name, LogoInfoLabel);
 			LogoCenterXTrack_ValueChanged (null, null);
 
-			BeatsTab.Text = RDLocale.GetText ("MainTabControl_BeatsTab");
+			/*BeatsTab.Text = RDLocale.GetText ("MainTabControl_BeatsTab");*/
+			RDLocale.SetControlText (MainTabControl.Name, BeatsTab);
 			BDLowEdge_ValueChanged (BDLowEdge, null);
 
-			CumulationTab.Text = RDLocale.GetText ("MainTabControl_CumulationTab");
-			RDLocale.SetControlsText (CumulationTab);
+			/*CumulationTab.Text = RDLocale.GetText ("MainTabControl_CumulationTab");
+			RDLocale.SetControlsText (CumulationTab);*/
+			RDLocale.SetControlText (MainTabControl.Name, CumulationTab);
+			RDLocale.SetControlText (CumulationTab.Name, CEInfoLabel);
+			RDLocale.SetControlText (CumulationTab.Name, ExtendedCumulation);
 			CESpeed_ValueChanged (null, null);
 
-			ParticlesTab.Text = RDLocale.GetText ("MainTabControl_ParticlesTab");
-			RDLocale.SetControlsText (ParticlesTab);
+			/*ParticlesTab.Text = RDLocale.GetText ("MainTabControl_ParticlesTab");
+			RDLocale.SetControlsText (ParticlesTab);*/
+			RDLocale.SetControlText (MainTabControl.Name, ParticlesTab);
+			RDLocale.SetControlText (ParticlesTab.Name, EnlargingCoeffLabel);
+			RDLocale.SetControlText (ParticlesTab.Name, ObjectsAccelerationLabel);
+			RDLocale.SetControlText (ParticlesTab.Name, ObjectsCountLabel);
+			/*RDLocale.SetControlText (ParticlesTab.Name, ObjectsKeepTracksFlag);*/
+			RDLocale.SetControlText (ParticlesTab.Name, ObjectsMaxColor);
+			RDLocale.SetControlText (ParticlesTab.Name, ObjectsMinColor);
+			RDLocale.SetControlText (ParticlesTab.Name, ObjectsSizeLabel);
+			RDLocale.SetControlText (ParticlesTab.Name, ObjectsSpeedLabel);
+			RDLocale.SetControlText (ParticlesTab.Name, ObjectsTypeLabel);
+			RDLocale.SetControlText (ParticlesTab.Name, SidesCountLabel);
+			RDLocale.SetControlText (ParticlesTab.Name, SpeedFluctuationLabel);
+			RDLocale.SetControlText (ParticlesTab.Name, StartupSideLabel);
 
-			/*RDLocale.SetControlsText (this);*/
 			BCancel.Text = RDLocale.GetDefaultText (RDLDefaultTexts.Button_Cancel);
 			BOK.Text = RDLocale.GetDefaultText (RDLDefaultTexts.Button_OK);
 			InterfaceLanguageButton.Text = RDLocale.GetDefaultText (RDLDefaultTexts.Control_InterfaceLanguage);
-			ProfileLabel.Text = RDLocale.GetText ("ConcurrentDrawParameters_ProfileLabel");
+			/*ProfileLabel.Text = RDLocale.GetText ("ConcurrentDrawParameters_ProfileLabel");*/
+			RDLocale.SetControlText (this.Name, ProfileLabel);
 
 			ProfileCombo.Items[DSN] = RDLocale.GetText ("CDP_ProfileDefault");
 			ProfileCombo.Items[SSN] = RDLocale.GetText ("CDP_ProfileSaved");
@@ -424,7 +456,7 @@ namespace RD_AAOW
 			// Исключает инвалидацию при вызове из обработчика горячих клавиш
 			if (this.Visible)
 				{
-				RDGenerics.SaveWindowDimensions (this);
+				/*RDGenerics.Save WindowDimensions (this);*/
 				this.Close ();
 				}
 			}
@@ -513,8 +545,8 @@ namespace RD_AAOW
 		// Отмена настройки
 		private void BCancel_Click (object sender, EventArgs e)
 			{
-			// Перерисовка при отмене бессмысленна (кроме спецпалитр)
-			logoResetFlag = ConcurrentDrawLib.PaletteRequiresReset (parameters[SSN].PaletteNumber);
+			/*// Перерисовка при отмене бессмысленна (кроме спецпалитр)
+			logoResetFlag = ConcurrentDrawLib.PaletteRequiresReset (parameters[SSN].PaletteNumber);*/
 			this.Close ();
 			}
 
@@ -548,7 +580,6 @@ namespace RD_AAOW
 		// Изменение языка интерфейса
 		private void LocalizeForm_Click (object sender, EventArgs e)
 			{
-			/*RDLocale.CurrentLanguage = (RDLanguages)LanguageCombo.SelectedIndex;*/
 			if (RDInterface.MessageBox ())
 				LocalizeForm ();
 			}
@@ -582,6 +613,17 @@ namespace RD_AAOW
 				VisWidth.Value = wsf.WindowSize.Width;
 				VisHeight.Value = wsf.WindowSize.Height;
 				}
+			}
+
+		// Закрытие окна
+		private void ConcurrentDrawParameters_FormClosing (object sender, FormClosingEventArgs e)
+			{
+			// Перерисовка при отмене бессмысленна (кроме спецпалитр)
+			logoResetFlag = logoResetFlag || ConcurrentDrawLib.PaletteRequiresReset (parameters[SSN].PaletteNumber);
+
+			// Исключает инвалидацию при вызове из обработчика горячих клавиш
+			if (this.Visible)
+				RDGenerics.SaveWindowDimensions (this);
 			}
 
 		#endregion
@@ -1701,7 +1743,7 @@ namespace RD_AAOW
 					hotKeyResult = FFTScaleLabel.Text;
 					break;
 
-					#endregion
+				#endregion
 				}
 
 			// Применение новой настройки
