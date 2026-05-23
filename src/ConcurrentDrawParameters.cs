@@ -89,15 +89,15 @@ namespace RD_AAOW
 
 			VisWidth.Value = (int)(9 * VisWidth.Maximum / 16);
 			parameters[DSN].VisualizationWidth = (uint)VisWidth.Value;
-			VisHeight.Value = (int)(9 * VisHeight.Maximum / 16);    // По умолчанию - (9 / 16) размера экрана
+			VisHeight.Value = (int)(9 * VisHeight.Maximum / 16);	// По умолчанию - (9 / 16) размера экрана
 			parameters[DSN].VisualizationHeight = (uint)VisHeight.Value;
 
 			// Позиция визуализации
-			VisLeft.Value = ScreenWidth - VisWidth.Value;   // По умолчанию - верхняя правая четверть экрана
+			VisLeft.Value = ScreenWidth - VisWidth.Value;	// По умолчанию - верхняя правая четверть экрана
 			parameters[DSN].VisualizationLeft = (uint)VisLeft.Value;
 
 			// Смещение спектрограммы / гистограммы
-			SGTopOffset.Minimum = 0;    // Сбивается из-за вызова обработчика изменения SGHeight до установки ограничений на окно
+			SGTopOffset.Minimum = 0;	// Сбивается из-за вызова обработчика изменения SGHeight до установки ограничений на окно
 			SGTopOffset.Value = SGTopOffset.Maximum;
 			parameters[DSN].SpectrogramTopOffset = (uint)SGTopOffset.Value;
 			// Максимумы теперь зависят от размеров окна визуализации; задаются в соответствующем обработчике
@@ -170,8 +170,6 @@ namespace RD_AAOW
 			ObjectsMinSizeField.Maximum = ObjectsMaxSizeField.Maximum = LogoDrawerSupport.MaxObjectSize;
 			ObjectsMaxSizeField.Value = parameters[DSN].ParticlesMetrics.MaxSize;
 			ObjectsMinSizeField.Value = parameters[DSN].ParticlesMetrics.MinSize;
-
-			/*ObjectsKeepTracksFlag.Checked = parameters[DSN].ParticlesMetrics.KeepTracks;*/
 
 			ObjectsMaxColor.BackColor = Color.FromArgb (parameters[DSN].ParticlesMetrics.MaxRed,
 				parameters[DSN].ParticlesMetrics.MaxGreen, parameters[DSN].ParticlesMetrics.MaxBlue);
@@ -373,9 +371,12 @@ namespace RD_AAOW
 			RDLocale.SetControlText (ParticlesTab.Name, SpeedFluctuationLabel);
 			RDLocale.SetControlText (ParticlesTab.Name, StartupSideLabel);
 
-			BCancel.Text = RDLocale.GetDefaultText (RDLDefaultTexts.Button_Cancel);
+			/*BCancel.Text = RDLocale.GetDefaultText (RDLDefaultTexts.Button_Cancel);
 			BOK.Text = RDLocale.GetDefaultText (RDLDefaultTexts.Button_OK);
-			InterfaceLanguageButton.Text = RDLocale.GetDefaultText (RDLDefaultTexts.Control_InterfaceLanguage);
+			InterfaceLanguageButton.Text = RDLocale.GetDefaultText (RDLDefaultTexts.Control_InterfaceLanguage);*/
+			RDLocale.SetDefaultControlText (BCancel, RDLDefaultTexts.Button_Cancel);
+			RDLocale.SetDefaultControlText (BOK, RDLDefaultTexts.Button_OK);
+			RDLocale.SetDefaultControlText (InterfaceLanguageButton, RDLDefaultTexts.Control_InterfaceLanguage);
 			/*ProfileLabel.Text = RDLocale.GetText ("ConcurrentDrawParameters_ProfileLabel");*/
 			RDLocale.SetControlText (this.Name, ProfileLabel);
 
@@ -545,8 +546,6 @@ namespace RD_AAOW
 		// Отмена настройки
 		private void BCancel_Click (object sender, EventArgs e)
 			{
-			/*// Перерисовка при отмене бессмысленна (кроме спецпалитр)
-			logoResetFlag = ConcurrentDrawLib.PaletteRequiresReset (parameters[SSN].PaletteNumber);*/
 			this.Close ();
 			}
 

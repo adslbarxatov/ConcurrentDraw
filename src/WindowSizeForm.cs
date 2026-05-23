@@ -46,13 +46,16 @@ namespace RD_AAOW
 			{
 			// Инициализация
 			InitializeComponent ();
+			RDGenerics.LoadWindowDimensions (this);
 
 			this.Text = RDLocale.GetText ("CDP_WindowSize");
 
-			BOK.Text = RDLocale.GetDefaultText (RDLDefaultTexts.Button_OK);
+			/*BOK.Text = RDLocale.GetDefaultText (RDLDefaultTexts.Button_OK);*/
+			RDLocale.SetDefaultControlText (BOK, RDLDefaultTexts.Button_OK);
 			this.AcceptButton = BOK;
 
-			BCancel.Text = RDLocale.GetDefaultText (RDLDefaultTexts.Button_Cancel);
+			/*BCancel.Text = RDLocale.GetDefaultText (RDLDefaultTexts.Button_Cancel);*/
+			RDLocale.SetDefaultControlText (BCancel, RDLDefaultTexts.Button_Cancel);
 			this.CancelButton = BCancel;
 
 			availableSizes.Clear ();
@@ -90,6 +93,11 @@ namespace RD_AAOW
 		private void BCancel_Click (object sender, EventArgs e)
 			{
 			this.Close ();
+			}
+
+		private void WindowSizeForm_FormClosing (object sender, FormClosingEventArgs e)
+			{
+			RDGenerics.SaveWindowDimensions (this);
 			}
 		}
 	}

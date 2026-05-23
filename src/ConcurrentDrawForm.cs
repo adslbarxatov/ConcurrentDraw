@@ -215,11 +215,11 @@ namespace RD_AAOW
 			mainLayer = new LogoDrawerLayer (0, 0, (uint)this.Width, (uint)this.Height);
 
 			colorMatrix[0] = new ColorMatrix ();
-			colorMatrix[0].Matrix33 = 0.9f;                     // Спектрограмма
+			colorMatrix[0].Matrix33 = 0.9f;						// Спектрограмма
 			colorMatrix[1] = new ColorMatrix ();
-			colorMatrix[1].Matrix33 = 0.5f;                     // Простая гистограмма
+			colorMatrix[1].Matrix33 = 0.5f;						// Простая гистограмма
 			colorMatrix[2] = new ColorMatrix ();
-			colorMatrix[2].Matrix33 = fillingOpacity / 50.0f;   // Фоновое изображение
+			colorMatrix[2].Matrix33 = fillingOpacity / 50.0f;	// Фоновое изображение
 
 			for (int i = 0; i < colorMatrix.Length; i++)
 				{
@@ -228,9 +228,9 @@ namespace RD_AAOW
 				}
 
 			// Формирование кистей
-			brushes.Add (new SolidBrush (ConcurrentDrawLib.GetColorFromPalette (0)));           // Фон
-			brushes.Add (new SolidBrush (ConcurrentDrawLib.GetMasterPaletteColor ()));          // Лого и beat-детектор
-			brushes.Add (new SolidBrush (Color.FromArgb (fillingOpacity, brushes[0].Color)));   // Fade out (переопределяется далее)
+			brushes.Add (new SolidBrush (ConcurrentDrawLib.GetColorFromPalette (0)));			// Фон
+			brushes.Add (new SolidBrush (ConcurrentDrawLib.GetMasterPaletteColor ()));			// Лого и beat-детектор
+			brushes.Add (new SolidBrush (Color.FromArgb (fillingOpacity, brushes[0].Color)));	// Fade out (переопределяется далее)
 
 			// Начальная инициализация слоёв (первый кадр)
 			this.BackColor = brushes[0].Color;
