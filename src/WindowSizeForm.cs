@@ -50,11 +50,8 @@ namespace RD_AAOW
 
 			this.Text = RDLocale.GetText ("CDP_WindowSize");
 
-			/*BOK.Text = RDLocale.GetDefaultText (RDLDefaultTexts.Button_OK);*/
 			RDLocale.SetDefaultControlText (BOK, RDLDefaultTexts.Button_OK);
 			this.AcceptButton = BOK;
-
-			/*BCancel.Text = RDLocale.GetDefaultText (RDLDefaultTexts.Button_Cancel);*/
 			RDLocale.SetDefaultControlText (BCancel, RDLDefaultTexts.Button_Cancel);
 			this.CancelButton = BCancel;
 

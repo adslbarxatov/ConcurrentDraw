@@ -11,7 +11,7 @@ namespace RD_AAOW
 	public partial class ConcurrentDrawParameters: Form
 		{
 		// Константы и переменные
-		private List<CDParametersSet> parameters = [];  // Наборы сохранённых параметров
+		private List<CDParametersSet> parameters = [];	// Наборы сохранённых параметров
 
 		private const int defaultSettingsNumber = 0;
 		private const int savedSettingsNumber = 1;
@@ -212,10 +212,10 @@ namespace RD_AAOW
 				parameters[psn] = new CDParametersSet (false);
 				if (parameters[psn].InitFailure)
 					{
-					ConcurrentDrawLogo cdl = new ConcurrentDrawLogo ();
+					/*ConcurrentDrawLogo cdl = new ConcurrentDrawLogo ();
 					cdl.Dispose ();
-
-					RDInterface.ShowAbout (true);    // Справка на случай первого запуска
+					*/
+					RDInterface.ShowAbout (true);	// Справка на случай первого запуска
 					req = true;
 					}
 				}
@@ -267,11 +267,27 @@ namespace RD_AAOW
 				VisHeight.Value = parameters[psn].VisualizationHeight;
 				VisLeft.Value = parameters[psn].VisualizationLeft;
 				VisTop.Value = parameters[psn].VisualizationTop;
+				}
+			catch
+				{
+				req = true;
+				}
 
+			// При загрузке значений по умолчанию этот участок может вносить дефекты
+			// из-за границ NumericUpDown. Обрабатывается отдельно, чтобы иметь возможность
+			// загрузить остальные параметры
+			try
+				{
 				SGHeight.Value = parameters[psn].SpectrogramHeight;         // Установка размеров окна определяет максимум SGHeight
 				SGTopOffset.Value = parameters[psn].SpectrogramTopOffset;   // Установка SGHeight определяет максимум SGTopOffset
+				}
+			catch
+				{
+				req = true;
+				}
 
-				// Эти параметры теперь тоже сохраняются
+			try
+				{
 				ObjectsMaxSpeedField.Value = parameters[psn].ParticlesMetrics.MaxSpeed;
 				ObjectsMinSpeedField.Value = parameters[psn].ParticlesMetrics.MinSpeed;
 				ObjectsMaxSizeField.Value = parameters[psn].ParticlesMetrics.MaxSize;
@@ -307,8 +323,6 @@ namespace RD_AAOW
 			{
 			this.Text = ProgramDescription.AssemblyMainName + " – " + RDLocale.GetText ("CDP_Name");
 
-			/*GenericTab.Text = RDLocale.GetText ("MainTabControl_GenericTab");
-			RDLocale.SetControlsText (GenericTab);*/
 			RDLocale.SetControlText (MainTabControl.Name, GenericTab);
 			RDLocale.SetControlText (GenericTab.Name, AlwaysOnTopFlag);
 			RDLocale.SetControlText (GenericTab.Name, DevicesLabel);
@@ -320,14 +334,11 @@ namespace RD_AAOW
 			RDLocale.SetControlText (GenericTab.Name, WithLogoFlag);
 			FFTScaleMultiplier_ValueChanged (null, null);
 
-			/*HistoTab.Text = RDLocale.GetText ("MainTabControl_HistoTab");
-			RDLocale.SetControlsText (HistoTab);*/
 			RDLocale.SetControlText (MainTabControl.Name, HistoTab);
 			RDLocale.SetControlText (HistoTab.Name, HGRangeLabel);
 			RDLocale.SetControlText (HistoTab.Name, HistoRotAccToBeats);
 			RDLocale.SetControlText (HistoTab.Name, HistoRotInitialAngleLabel);
 			RDLocale.SetControlText (HistoTab.Name, HistoRotSpeed);
-			/*RDLocale.SetControlText (HistoTab.Name, HzLabelText);*/
 			RDLocale.SetControlText (HistoTab.Name, ReverseFreqOrderFlag);
 			RDLocale.SetControlText (HistoTab.Name, SDDoubleWidthFlag);
 			RDLocale.SetControlText (HistoTab.Name, SGHeightLabel);
@@ -335,8 +346,6 @@ namespace RD_AAOW
 			RDLocale.SetControlText (HistoTab.Name, SwingingHistogramFlag);
 			HistogramRangeField_ValueChanged (null, null);
 
-			/*LogoTab.Text = RDLocale.GetText ("MainTabControl_LogoTab");
-			RDLocale.SetControlsText (LogoTab);*/
 			RDLocale.SetControlText (MainTabControl.Name, LogoTab);
 			RDLocale.SetControlText (LogoTab.Name, BeatWavesFlag);
 			RDLocale.SetControlText (LogoTab.Name, LogoCenterButton);
@@ -344,24 +353,18 @@ namespace RD_AAOW
 			RDLocale.SetControlText (LogoTab.Name, LogoInfoLabel);
 			LogoCenterXTrack_ValueChanged (null, null);
 
-			/*BeatsTab.Text = RDLocale.GetText ("MainTabControl_BeatsTab");*/
 			RDLocale.SetControlText (MainTabControl.Name, BeatsTab);
 			BDLowEdge_ValueChanged (BDLowEdge, null);
 
-			/*CumulationTab.Text = RDLocale.GetText ("MainTabControl_CumulationTab");
-			RDLocale.SetControlsText (CumulationTab);*/
 			RDLocale.SetControlText (MainTabControl.Name, CumulationTab);
 			RDLocale.SetControlText (CumulationTab.Name, CEInfoLabel);
 			RDLocale.SetControlText (CumulationTab.Name, ExtendedCumulation);
 			CESpeed_ValueChanged (null, null);
 
-			/*ParticlesTab.Text = RDLocale.GetText ("MainTabControl_ParticlesTab");
-			RDLocale.SetControlsText (ParticlesTab);*/
 			RDLocale.SetControlText (MainTabControl.Name, ParticlesTab);
 			RDLocale.SetControlText (ParticlesTab.Name, EnlargingCoeffLabel);
 			RDLocale.SetControlText (ParticlesTab.Name, ObjectsAccelerationLabel);
 			RDLocale.SetControlText (ParticlesTab.Name, ObjectsCountLabel);
-			/*RDLocale.SetControlText (ParticlesTab.Name, ObjectsKeepTracksFlag);*/
 			RDLocale.SetControlText (ParticlesTab.Name, ObjectsMaxColor);
 			RDLocale.SetControlText (ParticlesTab.Name, ObjectsMinColor);
 			RDLocale.SetControlText (ParticlesTab.Name, ObjectsSizeLabel);
@@ -371,13 +374,9 @@ namespace RD_AAOW
 			RDLocale.SetControlText (ParticlesTab.Name, SpeedFluctuationLabel);
 			RDLocale.SetControlText (ParticlesTab.Name, StartupSideLabel);
 
-			/*BCancel.Text = RDLocale.GetDefaultText (RDLDefaultTexts.Button_Cancel);
-			BOK.Text = RDLocale.GetDefaultText (RDLDefaultTexts.Button_OK);
-			InterfaceLanguageButton.Text = RDLocale.GetDefaultText (RDLDefaultTexts.Control_InterfaceLanguage);*/
 			RDLocale.SetDefaultControlText (BCancel, RDLDefaultTexts.Button_Cancel);
 			RDLocale.SetDefaultControlText (BOK, RDLDefaultTexts.Button_OK);
 			RDLocale.SetDefaultControlText (InterfaceLanguageButton, RDLDefaultTexts.Control_InterfaceLanguage);
-			/*ProfileLabel.Text = RDLocale.GetText ("ConcurrentDrawParameters_ProfileLabel");*/
 			RDLocale.SetControlText (this.Name, ProfileLabel);
 
 			ProfileCombo.Items[DSN] = RDLocale.GetText ("CDP_ProfileDefault");
@@ -456,10 +455,7 @@ namespace RD_AAOW
 
 			// Исключает инвалидацию при вызове из обработчика горячих клавиш
 			if (this.Visible)
-				{
-				/*RDGenerics.Save WindowDimensions (this);*/
 				this.Close ();
-				}
 			}
 
 		private void SetSettings (uint ParametersSetNumber, string ParametersSetName)
@@ -564,9 +560,9 @@ namespace RD_AAOW
 		// Методы отображают быструю справку по использованию
 		private void BHelp_Click (object sender, EventArgs e)
 			{
-			ConcurrentDrawLogo cdl = new ConcurrentDrawLogo ();
+			/*ConcurrentDrawLogo cdl = new ConcurrentDrawLogo ();
 			cdl.Dispose ();
-
+			*/
 			RDInterface.ShowAbout (false);
 			}
 
@@ -1218,27 +1214,48 @@ namespace RD_AAOW
 		// Запрос настроек из профиля
 		private void ApplyProfile_Click (object sender, EventArgs e)
 			{
+			/*if (GetSettings ((ProfileCombo.SelectedIndex < 0) ? SSN : (uint)ProfileCombo.SelectedIndex))
+				RDInterface.MessageBox (RDMessageFlags.Error | RDMessageFlags.CenterText, "!!!");*/
 			GetSettings ((ProfileCombo.SelectedIndex < 0) ? SSN : (uint)ProfileCombo.SelectedIndex);
 			}
 
 		// Сохранение набора настроек
 		private void AddProfile_Click (object sender, EventArgs e)
 			{
-			// Контроль
+			/*// Контроль
 			if (ProfileCombo.Items.Contains (ProfileCombo.Text) || (ProfileCombo.Text == ""))
 				{
 				RDInterface.LocalizedMessageBox (RDMessageFlags.Warning | RDMessageFlags.CenterText,
 					"CDP_ProfileError");
 				return;
-				}
+				}*/
+			// Запрос имени профиля
+			string name = RDInterface.LocalizedMessageBox ("ProfileNameMessage", true, 30);
+			if (string.IsNullOrWhiteSpace (name))
+				return;
 
 			// Создание профиля
-			parameters.Add (new CDParametersSet (true));
-			ProfileCombo.Items.Add (ProfileCombo.Text);
+			int idx = ProfileCombo.Items.IndexOf (name);
+			if (idx < 2)
+				{
+				// Имя не найдено, или случилась попытка занять зарезервированные слоты
+				parameters.Add (new CDParametersSet (true));
+
+				if ((idx == 0) || (idx == 1))
+					name += "_";
+
+				ProfileCombo.Items.Add (name);
+				idx = parameters.Count - 1;
+				}
+			else
+				{
+				parameters[idx] = new CDParametersSet (true);
+				ProfileCombo.Items[idx] = name;
+				}
 
 			// Заполнение профиля
-			SetSettings ((uint)parameters.Count - 1, ProfileCombo.Text);
-			ProfileCombo.SelectedIndex = parameters.Count - 1;
+			SetSettings ((uint)idx, name);
+			ProfileCombo.SelectedIndex = idx;
 			}
 
 		// Удаление набора настроек

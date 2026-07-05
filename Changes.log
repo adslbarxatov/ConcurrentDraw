@@ -1,5 +1,11 @@
 ConcurrentDraw: changes log
 
+Version 3.9:
+• Updated the profile file format;
+• Fixed the inability to load default settings for particles;
+• Removed the splash window;
+• Applied the updated GitHub markup for version numbers
+
 Version 3.8.7:
 • Internal assemblies have been updated
 

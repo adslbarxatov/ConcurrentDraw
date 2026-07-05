@@ -10,7 +10,7 @@ namespace RD_AAOW
 	public class CDParametersSet
 		{
 		// Параметры
-		private static char[] splitter = [ '|', ';' ];
+		private static char[] splitter = ['|', ';', '~', '_'];
 		private const string defaultSettingsName = "\x1";
 		private const string savedSettingsName = "\x2";
 
@@ -19,9 +19,8 @@ namespace RD_AAOW
 		/// </summary>
 		public const string SettingsFileExtension = ".cds";
 
-		private const string settingsFilesSubdir = "Settings\\";
+		private const string profileFilesSubdir = "Profiles"; /*"Settings\\";*/
 		private static List<string> settingsNames = [];
-
 
 		/// <summary>
 		/// Константа, содержащая максимальную частоту гистограммы, 
@@ -553,6 +552,13 @@ namespace RD_AAOW
 			}
 
 		// Метод загружает настройки программы
+		private enum ProfileVersions
+			{
+			V1 = 0x0A01,
+			V2 = 0x0A02,
+			Actual = V2
+			}
+
 		private void InitParametersSet (string SetName)
 			{
 			// Инициализация несохраняемых параметров
@@ -585,15 +591,58 @@ namespace RD_AAOW
 			string settings;
 
 			// Возврат последнего сохранённого набора настроек
+			ProfileVersions version;
 			if (SetName == savedSettingsName)
 				{
 				settings = RDGenerics.GetAppRegistryValue ("");
+				version = ProfileVersions.Actual;
 				}
+
+			// Загрузка из файла
 			else
 				{
+				// Попытка разбора бинарного формата
+				FileStream FS;
 				try
 					{
-					settings = File.ReadAllText (RDGenerics.AppStartupPath + settingsFilesSubdir +
+					FS = new FileStream (RDGenerics.AppStartupPath + profileFilesSubdir + "\\" +
+						SetName + SettingsFileExtension, FileMode.Open);
+					}
+				catch
+					{
+					goto readOldFormat;
+					}
+				BinaryReader BR = new BinaryReader (FS, RDGenerics.GetEncoding (RDEncodings.UTF8));
+
+				try
+					{
+					version = (ProfileVersions)BR.ReadUInt16 ();
+					}
+				catch
+					{
+					version = ProfileVersions.V1;
+					}
+
+				switch (version)
+					{
+					case ProfileVersions.V2:
+						settings = BR.ReadString ();
+
+						BR.Close ();
+						FS.Close ();
+						goto done;
+
+					case ProfileVersions.V1:
+					default:
+						BR.Close ();
+						FS.Close ();
+						break;
+					}
+
+			readOldFormat:
+				try
+					{
+					settings = File.ReadAllText (RDGenerics.AppStartupPath + profileFilesSubdir + "\\" +
 						SetName + SettingsFileExtension);
 					}
 				catch
@@ -602,6 +651,8 @@ namespace RD_AAOW
 					}
 				}
 
+			// Разбор настроек
+		done:
 			if (string.IsNullOrWhiteSpace (settings))
 				{
 				initFailure = true;
@@ -650,7 +701,8 @@ namespace RD_AAOW
 				beatDetectorWaves = (values[24] != "0");
 
 				histoRotInitialAngle = uint.Parse (values[25]);
-				}
+
+				/*}
 			catch
 				{
 				initFailure = true;
@@ -659,7 +711,7 @@ namespace RD_AAOW
 
 			// Отдельный разбор новых настроек с игнорированием ошибок
 			try
-				{
+				{*/
 				particlesMetrics.MaxSpeed = uint.Parse (values[26]);
 				particlesMetrics.MinSpeed = uint.Parse (values[27]);
 				particlesMetrics.MinSize = uint.Parse (values[28]);
@@ -684,7 +736,10 @@ namespace RD_AAOW
 				particlesMetrics.Acceleration = uint.Parse (values[31]);
 				reverseFreqOrder = (values[47] != "0");
 				}
-			catch { }
+			catch
+				{
+				initFailure = true;
+				}
 			}
 
 		/// <summary>
@@ -718,80 +773,99 @@ namespace RD_AAOW
 				return;
 
 			// Сборка строки настроек
-			string settings = deviceNumber.ToString () + splitter[0].ToString () +
-				paletteNumber.ToString () + splitter[0].ToString () +
-				visualizationMode.ToString () + splitter[0].ToString () +
-				spectrogramHeight.ToString () + splitter[0].ToString () +
+			string sp0 = splitter[2].ToString ();
+			string settings = deviceNumber.ToString () + sp0 +
+				paletteNumber.ToString () + sp0 +
+				visualizationMode.ToString () + sp0 +
+				spectrogramHeight.ToString () + sp0 +
 
-				visualizationWidth.ToString () + splitter[0].ToString () +
-				visualizationHeight.ToString () + splitter[0].ToString () +
-				visualizationLeft.ToString () + splitter[0].ToString () +
-				visualizationTop.ToString () + splitter[0].ToString () +
+				visualizationWidth.ToString () + sp0 +
+				visualizationHeight.ToString () + sp0 +
+				visualizationLeft.ToString () + sp0 +
+				visualizationTop.ToString () + sp0 +
 
-				(spectrogramDoubleWidth ? "SDW" : "0") + splitter[0].ToString () +
-				(alwaysOnTop ? "AOT" : "0") + splitter[0].ToString () +
+				(spectrogramDoubleWidth ? "1" : "0") + sp0 +
+				(alwaysOnTop ? "1" : "0") + sp0 +
 
-				histogramRangeMaximum.ToString () + splitter[0].ToString () +
-				decumulationMultiplier.ToString () + splitter[0].ToString () +
-				cumulationSpeed.ToString () + splitter[0].ToString () +
-				logoHeightPercentage.ToString () + splitter[0].ToString () +
-				histoRotationSpeedDelta.ToString () + splitter[0].ToString () +
+				histogramRangeMaximum.ToString () + sp0 +
+				decumulationMultiplier.ToString () + sp0 +
+				cumulationSpeed.ToString () + sp0 +
+				logoHeightPercentage.ToString () + sp0 +
+				histoRotationSpeedDelta.ToString () + sp0 +
 
-				shakeEffect.ToString () + splitter[0].ToString () +
+				shakeEffect.ToString () + sp0 +
 
-				beatsDetectorLowEdge.ToString () + splitter[0].ToString () +
-				beatsDetectorHighEdge.ToString () + splitter[0].ToString () +
-				beatsDetectorLowLevel.ToString () + splitter[0].ToString () +
-				fftScaleMultiplier.ToString () + splitter[0].ToString () +
+				beatsDetectorLowEdge.ToString () + sp0 +
+				beatsDetectorHighEdge.ToString () + sp0 +
+				beatsDetectorLowLevel.ToString () + sp0 +
+				fftScaleMultiplier.ToString () + sp0 +
 
-				logoCenterX.ToString () + splitter[0].ToString () +
-				logoCenterY.ToString () + splitter[0].ToString () +
-				(swingingHistogram ? "SH" : "0") + splitter[0].ToString () +
-				spectrogramTopOffset.ToString () + splitter[0].ToString () +
-				(beatDetectorWaves ? "BW" : "0") + splitter[0].ToString () +
+				logoCenterX.ToString () + sp0 +
+				logoCenterY.ToString () + sp0 +
+				(swingingHistogram ? "1" : "0") + sp0 +
+				spectrogramTopOffset.ToString () + sp0 +
+				(beatDetectorWaves ? "1" : "0") + sp0 +
 				histoRotInitialAngle.ToString ();
 
-			settings += (splitter[1].ToString () + particlesMetrics.MaxSpeed.ToString () + splitter[0].ToString () +
-				particlesMetrics.MinSpeed.ToString () + splitter[0].ToString () +
-				particlesMetrics.MinSize.ToString () + splitter[0].ToString () +
-				particlesMetrics.MaxSize.ToString () + splitter[0].ToString () +
-				particlesMetrics.PolygonsSidesCount.ToString () + splitter[0].ToString () +
-				particlesMetrics.Acceleration.ToString () + splitter[0].ToString () +
-				(particlesMetrics.AsStars ? "AS" : "0") + splitter[0].ToString () +
-				particlesMetrics.Enlarging.ToString () + splitter[0].ToString () +
-				particlesMetrics.MaxRed.ToString () + splitter[0].ToString () +
-				particlesMetrics.MaxGreen.ToString () + splitter[0].ToString () +
-				particlesMetrics.MaxBlue.ToString () + splitter[0].ToString () +
-				particlesMetrics.MinRed.ToString () + splitter[0].ToString () +
-				particlesMetrics.MinGreen.ToString () + splitter[0].ToString () +
-				particlesMetrics.MinBlue.ToString () + splitter[0].ToString () +
-				particlesMetrics.ObjectsCount.ToString () + splitter[0].ToString () +
-				((byte)particlesMetrics.ObjectsType).ToString () + splitter[0].ToString () +
-				(particlesMetrics.Rotation ? "R" : "0") + splitter[0].ToString () +
-				((byte)particlesMetrics.StartupPosition).ToString () + splitter[0].ToString () +
+			string sp1 = splitter[3].ToString ();
+			settings += (sp1 + particlesMetrics.MaxSpeed.ToString () + sp0 +
+				particlesMetrics.MinSpeed.ToString () + sp0 +
+				particlesMetrics.MinSize.ToString () + sp0 +
+				particlesMetrics.MaxSize.ToString () + sp0 +
+				particlesMetrics.PolygonsSidesCount.ToString () + sp0 +
+				particlesMetrics.Acceleration.ToString () + sp0 +
+				(particlesMetrics.AsStars ? "1" : "0") + sp0 +
+				particlesMetrics.Enlarging.ToString () + sp0 +
+				particlesMetrics.MaxRed.ToString () + sp0 +
+				particlesMetrics.MaxGreen.ToString () + sp0 +
+				particlesMetrics.MaxBlue.ToString () + sp0 +
+				particlesMetrics.MinRed.ToString () + sp0 +
+				particlesMetrics.MinGreen.ToString () + sp0 +
+				particlesMetrics.MinBlue.ToString () + sp0 +
+				particlesMetrics.ObjectsCount.ToString () + sp0 +
+				((byte)particlesMetrics.ObjectsType).ToString () + sp0 +
+				(particlesMetrics.Rotation ? "1" : "0") + sp0 +
+				((byte)particlesMetrics.StartupPosition).ToString () + sp0 +
 				particlesMetrics.MaxSpeedFluctuation.ToString ());
 
-			settings += (splitter[1].ToString () + (histoRotationAccToBeats ? "RAB" : "0") +
-				splitter[0].ToString () + (extendedCumulativeEffect ? "ECE" : "0") +
-				splitter[0].ToString () + (reverseFreqOrder ? "RFO" : "0"));
+			settings += (sp1 + (histoRotationAccToBeats ? "1" : "0") +
+				sp0 + (extendedCumulativeEffect ? "1" : "0") +
+				sp0 + (reverseFreqOrder ? "1" : "0"));
 
 			// Запись
 			if (SetName == savedSettingsName)
 				{
 				RDGenerics.SetAppRegistryValue ("", settings);
+				return;
 				}
-			else
-				{
-				try
-					{
-					if (!Directory.Exists (RDGenerics.AppStartupPath + settingsFilesSubdir))
-						Directory.CreateDirectory (RDGenerics.AppStartupPath + settingsFilesSubdir);
 
-					File.WriteAllText (RDGenerics.AppStartupPath + settingsFilesSubdir +
-						SetName + SettingsFileExtension, settings);
-					}
-				catch { }
+			// В файл
+			try
+				{
+				if (!Directory.Exists (RDGenerics.AppStartupPath + profileFilesSubdir))
+					Directory.CreateDirectory (RDGenerics.AppStartupPath + profileFilesSubdir);
+
+				/*File.WriteAllText (RDGenerics.AppStartupPath + profileFilesSubdir + "\\" +
+					SetName + SettingsFileExtension, settings);*/
 				}
+			catch { }
+
+			FileStream FS;
+			try
+				{
+				FS = new FileStream (RDGenerics.AppStartupPath + profileFilesSubdir + "\\" +
+					SetName + SettingsFileExtension, FileMode.Create);
+				}
+			catch
+				{
+				return;
+				}
+			BinaryWriter BW = new BinaryWriter (FS, RDGenerics.GetEncoding (RDEncodings.UTF8));
+
+			BW.Write ((UInt16)ProfileVersions.Actual);
+			BW.Write (settings);
+			BW.Close ();
+			FS.Close ();
 			}
 
 		/// <summary>
@@ -804,11 +878,19 @@ namespace RD_AAOW
 			if (settingsNames.Count > 0)
 				return settingsNames.ToArray ();
 
+			// Обновление названия папки
+			try
+				{
+				if (Directory.Exists (RDGenerics.AppStartupPath + "Settings"))
+					Directory.Move (RDGenerics.AppStartupPath + "Settings", RDGenerics.AppStartupPath + profileFilesSubdir);
+				}
+			catch { }
+
 			// Получение списка файлов
 			string[] files = [];
 			try
 				{
-				files = Directory.GetFiles (RDGenerics.AppStartupPath + settingsFilesSubdir,
+				files = Directory.GetFiles (RDGenerics.AppStartupPath + profileFilesSubdir,
 					"*" + SettingsFileExtension);
 				}
 			catch
@@ -834,7 +916,7 @@ namespace RD_AAOW
 
 			try
 				{
-				File.Delete (RDGenerics.AppStartupPath + settingsFilesSubdir +
+				File.Delete (RDGenerics.AppStartupPath + profileFilesSubdir + "\\" +
 					SetName + SettingsFileExtension);
 				}
 			catch { }
