@@ -19,8 +19,8 @@ namespace RD_AAOW
 		/// </summary>
 		public const string SettingsFileExtension = ".cds";
 
-		private const string profileFilesSubdir = "Profiles"; /*"Settings\\";*/
-		private static List<string> settingsNames = [];
+		private const string profileFilesSubdir = "Profiles";
+		/*private static List<string> settingsNames = [];*/
 
 		/// <summary>
 		/// Константа, содержащая максимальную частоту гистограммы, 
@@ -551,14 +551,6 @@ namespace RD_AAOW
 			InitParametersSet (SetName);
 			}
 
-		// Метод загружает настройки программы
-		private enum ProfileVersions
-			{
-			V1 = 0x0A01,
-			V2 = 0x0A02,
-			Actual = V2
-			}
-
 		private void InitParametersSet (string SetName)
 			{
 			// Инициализация несохраняемых параметров
@@ -591,11 +583,11 @@ namespace RD_AAOW
 			string settings;
 
 			// Возврат последнего сохранённого набора настроек
-			ProfileVersions version;
+			RDFormatSignatures version;
 			if (SetName == savedSettingsName)
 				{
 				settings = RDGenerics.GetAppRegistryValue ("");
-				version = ProfileVersions.Actual;
+				version = RDFormatSignatures.CDSActual;
 				}
 
 			// Загрузка из файла
@@ -603,10 +595,15 @@ namespace RD_AAOW
 				{
 				// Попытка разбора бинарного формата
 				FileStream FS;
+				int idx = profileNames.IndexOf (SetName);
+				if (idx < 0)
+					goto readOldFormat;
+
 				try
 					{
-					FS = new FileStream (RDGenerics.AppStartupPath + profileFilesSubdir + "\\" +
-						SetName + SettingsFileExtension, FileMode.Open);
+					/*FS = new FileStream (RDGenerics.AppStartupPath + profileFilesSubdir + "\\" +
+						SetName + SettingsFileExtension, FileMode.Open);*/
+					FS = new FileStream (profilePaths[idx], FileMode.Open);
 					}
 				catch
 					{
@@ -616,23 +613,23 @@ namespace RD_AAOW
 
 				try
 					{
-					version = (ProfileVersions)BR.ReadUInt16 ();
+					version = (RDFormatSignatures)BR.ReadUInt16 ();
 					}
 				catch
 					{
-					version = ProfileVersions.V1;
+					version = RDFormatSignatures.CDSv1;
 					}
 
 				switch (version)
 					{
-					case ProfileVersions.V2:
+					case RDFormatSignatures.CDSv2:
 						settings = BR.ReadString ();
 
 						BR.Close ();
 						FS.Close ();
 						goto done;
 
-					case ProfileVersions.V1:
+					case RDFormatSignatures.CDSv1:
 					default:
 						BR.Close ();
 						FS.Close ();
@@ -642,7 +639,7 @@ namespace RD_AAOW
 			readOldFormat:
 				try
 					{
-					settings = File.ReadAllText (RDGenerics.AppStartupPath + profileFilesSubdir + "\\" +
+					settings = File.ReadAllText (RDGenerics.StartupPath + profileFilesSubdir + "\\" +
 						SetName + SettingsFileExtension);
 					}
 				catch
@@ -702,16 +699,6 @@ namespace RD_AAOW
 
 				histoRotInitialAngle = uint.Parse (values[25]);
 
-				/*}
-			catch
-				{
-				initFailure = true;
-				return;
-				}
-
-			// Отдельный разбор новых настроек с игнорированием ошибок
-			try
-				{*/
 				particlesMetrics.MaxSpeed = uint.Parse (values[26]);
 				particlesMetrics.MinSpeed = uint.Parse (values[27]);
 				particlesMetrics.MinSize = uint.Parse (values[28]);
@@ -840,21 +827,20 @@ namespace RD_AAOW
 				}
 
 			// В файл
-			try
+			/*try
 				{
 				if (!Directory.Exists (RDGenerics.AppStartupPath + profileFilesSubdir))
 					Directory.CreateDirectory (RDGenerics.AppStartupPath + profileFilesSubdir);
-
-				/*File.WriteAllText (RDGenerics.AppStartupPath + profileFilesSubdir + "\\" +
-					SetName + SettingsFileExtension, settings);*/
 				}
-			catch { }
+			catch { }*/
 
 			FileStream FS;
+			string fileName = RDGenerics.GetStoragePath (true, profileFilesSubdir) + SetName + SettingsFileExtension;
 			try
 				{
-				FS = new FileStream (RDGenerics.AppStartupPath + profileFilesSubdir + "\\" +
-					SetName + SettingsFileExtension, FileMode.Create);
+				/*FS = new FileStream (RDGenerics.AppStartupPath + profileFilesSubdir + "\\" +
+					SetName + SettingsFileExtension, FileMode.Create);*/
+				FS = new FileStream (fileName, FileMode.Create);
 				}
 			catch
 				{
@@ -862,10 +848,13 @@ namespace RD_AAOW
 				}
 			BinaryWriter BW = new BinaryWriter (FS, RDGenerics.GetEncoding (RDEncodings.UTF8));
 
-			BW.Write ((UInt16)ProfileVersions.Actual);
+			BW.Write ((UInt16)RDFormatSignatures.CDSActual);
 			BW.Write (settings);
 			BW.Close ();
 			FS.Close ();
+
+			profileNames.Add (SetName);
+			profilePaths.Add (fileName);
 			}
 
 		/// <summary>
@@ -874,24 +863,30 @@ namespace RD_AAOW
 		/// <returns>Список имён наборов настроек</returns>
 		public static string[] GetSettingsNames ()
 			{
-			// Защита
+			/*// Защита
 			if (settingsNames.Count > 0)
-				return settingsNames.ToArray ();
+				return settingsNames.ToArray ();*/
 
-			// Обновление названия папки
-			try
-				{
-				if (Directory.Exists (RDGenerics.AppStartupPath + "Settings"))
-					Directory.Move (RDGenerics.AppStartupPath + "Settings", RDGenerics.AppStartupPath + profileFilesSubdir);
-				}
-			catch { }
+			// !!! Обновление названия папки
+			if (Directory.Exists (RDGenerics.StartupPath + "Settings"))
+				try
+					{
+					Directory.Move (RDGenerics.StartupPath + "Settings", RDGenerics.GetStoragePath (true, profileFilesSubdir));
+					/*Directory.Move (RDGenerics.StartupPath + "Settings", RDGenerics.StartupPath + profileFilesSubdir);*/
+					}
+				catch { }
 
 			// Получение списка файлов
 			string[] files = [];
 			try
 				{
-				files = Directory.GetFiles (RDGenerics.AppStartupPath + profileFilesSubdir,
+				/*files = Directory.GetFiles (RDGenerics.AppStartupPath + profileFilesSubdir,
+					"*" + SettingsFileExtension);*/
+				files = Directory.GetFiles (RDGenerics.GetStoragePath (true, profileFilesSubdir),
 					"*" + SettingsFileExtension);
+				if (files.Length < 1)
+					files = Directory.GetFiles (RDGenerics.StartupPath + profileFilesSubdir,
+						"*" + SettingsFileExtension);
 				}
 			catch
 				{
@@ -899,11 +894,18 @@ namespace RD_AAOW
 				}
 
 			// Обработка и возврат
+			profileNames.Clear ();
+			profilePaths.Clear ();
 			for (int i = 0; i < files.Length; i++)
-				settingsNames.Add (Path.GetFileNameWithoutExtension (files[i]));
+				{
+				profileNames.Add (Path.GetFileNameWithoutExtension (files[i]));
+				profilePaths.Add (files[i]);
+				}
 
-			return settingsNames.ToArray ();
+			return profileNames.ToArray ();
 			}
+		private static List<string> profileNames = [];
+		private static List<string> profilePaths = [];
 
 		/// <summary>
 		/// Метод удаляет сохранённые настройки
@@ -911,17 +913,23 @@ namespace RD_AAOW
 		/// <param name="SetName">Удаляемый набор настроек</param>
 		public static void RemoveSettings (string SetName)
 			{
-			if (!settingsNames.Contains (SetName))
+			/*if (!settingsNames.Contains (SetName))
+				return;*/
+			int idx = profileNames.IndexOf (SetName);
+			if (idx < 0)
 				return;
 
 			try
 				{
-				File.Delete (RDGenerics.AppStartupPath + profileFilesSubdir + "\\" +
-					SetName + SettingsFileExtension);
+				/*File.Delete (RDGenerics.AppStartupPath + profileFilesSubdir + "\\" +
+					SetName + SettingsFileExtension);*/
+				File.Delete (profilePaths[idx]);
 				}
 			catch { }
 
-			settingsNames.Remove (SetName);
+			/*settingsNames.Remove (SetName);*/
+			profileNames.RemoveAt (idx);
+			profilePaths.RemoveAt (idx);
 			}
 		}
 	}

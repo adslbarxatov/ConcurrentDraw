@@ -1,5 +1,8 @@
 ConcurrentDraw: changes log
 
+Version 3.9.2:
+• Updated the storage method for profile files
+
 Version 3.9:
 • Updated the profile file format;
 • Fixed the inability to load default settings for particles;

@@ -212,9 +212,6 @@ namespace RD_AAOW
 				parameters[psn] = new CDParametersSet (false);
 				if (parameters[psn].InitFailure)
 					{
-					/*ConcurrentDrawLogo cdl = new ConcurrentDrawLogo ();
-					cdl.Dispose ();
-					*/
 					RDInterface.ShowAbout (true);	// Справка на случай первого запуска
 					req = true;
 					}
@@ -560,9 +557,6 @@ namespace RD_AAOW
 		// Методы отображают быструю справку по использованию
 		private void BHelp_Click (object sender, EventArgs e)
 			{
-			/*ConcurrentDrawLogo cdl = new ConcurrentDrawLogo ();
-			cdl.Dispose ();
-			*/
 			RDInterface.ShowAbout (false);
 			}
 
@@ -1214,21 +1208,12 @@ namespace RD_AAOW
 		// Запрос настроек из профиля
 		private void ApplyProfile_Click (object sender, EventArgs e)
 			{
-			/*if (GetSettings ((ProfileCombo.SelectedIndex < 0) ? SSN : (uint)ProfileCombo.SelectedIndex))
-				RDInterface.MessageBox (RDMessageFlags.Error | RDMessageFlags.CenterText, "!!!");*/
 			GetSettings ((ProfileCombo.SelectedIndex < 0) ? SSN : (uint)ProfileCombo.SelectedIndex);
 			}
 
 		// Сохранение набора настроек
 		private void AddProfile_Click (object sender, EventArgs e)
 			{
-			/*// Контроль
-			if (ProfileCombo.Items.Contains (ProfileCombo.Text) || (ProfileCombo.Text == ""))
-				{
-				RDInterface.LocalizedMessageBox (RDMessageFlags.Warning | RDMessageFlags.CenterText,
-					"CDP_ProfileError");
-				return;
-				}*/
 			// Запрос имени профиля
 			string name = RDInterface.LocalizedMessageBox ("ProfileNameMessage", true, 30);
 			if (string.IsNullOrWhiteSpace (name))
