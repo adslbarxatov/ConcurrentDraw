@@ -878,15 +878,23 @@ namespace RD_AAOW
 
 			// Получение списка файлов
 			string[] files = [];
+			bool updateRequired = false;
 			try
 				{
+				// Новая схема
+				// !!! Временное решение: директория создаётся во избежание выпуска исключения
 				/*files = Directory.GetFiles (RDGenerics.AppStartupPath + profileFilesSubdir,
 					"*" + SettingsFileExtension);*/
 				files = Directory.GetFiles (RDGenerics.GetStoragePath (true, profileFilesSubdir),
 					"*" + SettingsFileExtension);
+
+				// Старая схема
 				if (files.Length < 1)
+					{
 					files = Directory.GetFiles (RDGenerics.StartupPath + profileFilesSubdir,
 						"*" + SettingsFileExtension);
+					updateRequired = (files.Length > 0);
+					}
 				}
 			catch
 				{
@@ -900,6 +908,23 @@ namespace RD_AAOW
 				{
 				profileNames.Add (Path.GetFileNameWithoutExtension (files[i]));
 				profilePaths.Add (files[i]);
+				}
+
+			// Миграция
+			if (updateRequired)
+				{
+				for (int i = 0; i < profilePaths.Count; i++)
+					try
+						{
+						string newPath = RDGenerics.GetStoragePath (true, profileFilesSubdir) +
+							Path.GetFileName (profilePaths[i]);
+
+						File.Copy (profilePaths[i], newPath);
+						File.Move (profilePaths[i], profilePaths[i] + ".bak");
+
+						profilePaths[i] = newPath;
+						}
+					catch { }
 				}
 
 			return profileNames.ToArray ();

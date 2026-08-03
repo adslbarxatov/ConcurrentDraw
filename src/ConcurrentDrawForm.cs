@@ -243,14 +243,14 @@ namespace RD_AAOW
 			pp.ShowDialog ();
 
 			// Настройка диалогов
-			SFVideo.Title = "Select placement of new video file";
+			/*SFVideo. Title = "Select placement of new video file";*/
 			SFVideo.Filter = "Audio-Video Interchange video format|*.avi";
 			SFVideo.FileName = pp.SubtitlesStrings[1] + ".avi";
 
-			OFAudio.Title = "Select audio file for rendering";
+			/*OFAudio. Title = "Select audio file for rendering";*/
 			OFAudio.Filter = "Windows PCM audio files|*.wav";
 
-			OFBackground.Title = "Select background file for rendering";
+			/*OFBackground. Title = "Select background file for rendering";*/
 			OFBackground.Filter = "Image file|*.png|Image files set, including this one|*.png|" + SFVideo.Filter;
 
 			// Только дамп БПФ

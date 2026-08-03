@@ -1,6 +1,6 @@
 _en_us_
 
-- Updated the storage method for profile files;
+- Updated the storage method for profile files; 
 - Updated the profile file format;
 - Fixed the inability to load default settings for particles;
 - Removed the splash window;
